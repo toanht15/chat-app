@@ -771,12 +771,24 @@
 
       // アクションの追加・削除を検知する
       $scope.watchActionList = [];
+      $scope.beginData = null;
       $scope.$watchCollection('setActionList', function(newObject, oldObject) {
 
         // 編集されたことを検知する
         if (!$scope.changeFlg && newObject !== oldObject) {
           $scope.changeFlg = true;
+        } else if($scope.beginData === newObject) {
+          $scope.changeFlg = false;
         }
+
+        try {
+          if(!$scope.beginData || Object.keys($scope.beginData).length > 0) {
+            $scope.beginData = newObject;
+          }
+        } catch(e) {
+          $scope.beginData = newObject;
+        }
+
 
         $timeout(function() {
           $scope.$apply();
