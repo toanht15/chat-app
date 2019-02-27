@@ -25,9 +25,9 @@
 #tchatbotscenario_form_preview_body .sinclo_re a { color: {{widget.settings['re_text_color']}}; background-color: {{widget.makeFaintColor()}};}
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.notNone { border: 1px solid {{widget.getTalkBorderColor('re')}}; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType:not(.no-wrap) { margin-left: 10px; padding-right: 15px; border-bottom-left-radius: 0px; }
-#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType:before:not(.no-wrap) { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; z-index: 2; border: 5px solid transparent; border-right: 5px solid {{widget.makeFaintColor()}}; border-bottom: 5px solid {{widget.makeFaintColor()}}; }
-#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType:after:not(.no-wrap) { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; z-index: 1; border: 5px solid transparent; }
-#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType.notNone:after:not(.no-wrap) { border-right: 5px solid {{widget.getTalkBorderColor('re')}}; border-bottom: 5px solid {{widget.getTalkBorderColor('re')}}; }
+#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType:not(.no-wrap):before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; z-index: 2; border: 5px solid transparent; border-right: 5px solid {{widget.makeFaintColor()}}; border-bottom: 5px solid {{widget.makeFaintColor()}}; }
+#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType:not(.no-wrap):after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; z-index: 1; border: 5px solid transparent; }
+#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType.notNone:not(.no-wrap):after { border-right: 5px solid {{widget.getTalkBorderColor('re')}}; border-bottom: 5px solid {{widget.getTalkBorderColor('re')}}; }
 #tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left { margin-right: 17.5px; }
 #tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left.middleSize { margin-right: 21px; }
 #tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left.largeSize { margin-right: 24.6px; }
