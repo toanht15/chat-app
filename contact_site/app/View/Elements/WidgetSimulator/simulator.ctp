@@ -621,6 +621,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li.effect_left_wait_none { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:1;}
         #sincloBox ul#chatTalk .grid_balloon i.effect_left { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }
         #sincloBox ul#chatTalk .grid_balloon img.effect_left { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }
+        #sincloBox ul#chatTalk .grid_preview li.boxType.chat_left.smallSize { margin-left: 2px; }
+        #sincloBox ul#chatTalk .grid_preview li.boxType.chat_left.middleSize { margin-left: 3px; }
+        #sincloBox ul#chatTalk .grid_preview li.boxType.chat_left.largeSize { margin-left: 5px; }
+        #sincloBox ul#chatTalk .grid_preview li.balloonType.chat_left.smallSize { margin-left: 2px; }
+        #sincloBox ul#chatTalk .grid_preview li.balloonType.chat_left.middleSize { margin-left: 3px; }
+        #sincloBox ul#chatTalk .grid_preview li.balloonType.chat_left.largeSize { margin-left: 5px; }
         #sincloBox ul#chatTalk li.boxType.chat_right.arrowUp { border-radius: 12px 0 12px 12px; }
         #sincloBox ul#chatTalk li.boxType.chat_right.arrowBottom { border-radius: 12px 12px 0 12px; }
         #sincloBox ul#chatTalk li.boxType.chat_left.arrowUp { border-radius: 0 12px 12px 12px; }
