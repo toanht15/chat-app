@@ -26,6 +26,5 @@
     <p>CVポイント</p>
   </div>
 </div>
-<div id="canvas">
-
+<div id="canvas" >
 </div>
