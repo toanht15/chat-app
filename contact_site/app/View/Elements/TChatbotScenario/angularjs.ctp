@@ -776,7 +776,6 @@
 
         // 編集されたことを検知する
         if (!$scope.changeFlg && newObject !== oldObject) {
-          alert('hoige');
           $scope.changeFlg = true;
         } else if($scope.beginData === newObject) {
           $scope.changeFlg = false;
