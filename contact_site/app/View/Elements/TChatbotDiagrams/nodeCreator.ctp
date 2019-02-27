@@ -275,7 +275,7 @@ function constantNodeOnlyInPort(posX, posY) {
         y: 12,
       },
       '.icon' : {
-        transform: "scale(0.05) translate(70, 70)"
+        transform: "scale(0.04) translate(150, 150)"
       },
       '.body': {
         fill: bgColor,
@@ -368,7 +368,7 @@ function constantNode(posX, posY) {
         y: 12,
       },
       '.icon' : {
-        transform: "scale(0.05) translate(70, 70)",
+        transform: "scale(0.04) translate(150, 150)",
       },
       '.body': {
         fill: bgColor,
