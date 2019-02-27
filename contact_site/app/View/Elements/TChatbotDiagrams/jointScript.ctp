@@ -85,7 +85,7 @@
           var links = graph.getLinks();
           var count = 0;
           links.forEach(function(l) {
-            if (l.get('source').id == sourceId)
+            if (l.get('source').id === sourceId)
               count++;
           });
           if (count > 1) {
@@ -104,12 +104,8 @@
 
     graph.addCell(startNode());
 
-    console.log(paper);
-
-
-
     var dragReferencePosition = null;
-    var dataForUpdate = $('#TChatbotDiagramActivity').val()
+    var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
     if (dataForUpdate !== null && dataForUpdate !== '') {
       graph.fromJSON(JSON.parse(dataForUpdate));
@@ -128,8 +124,8 @@
       function(cellView, evt, x, y) {
         //init current edit cell to null;
 
-        haloCreator(cellView);
         currentEditCell = null;
+        haloCreator(cellView);
         if (!wasMoved && isNeedModalOpen(cellView)) {
           currentEditCell = setViewElement(cellView);
           if($('#popup-main > div')[0]) {
@@ -221,6 +217,16 @@
       halo.changeHandle('remove', {
         position: 'ne',
         icon: '/img/close_halo.PNG'
+      });
+      currentEditCell = halo._events["action:remove:pointerdown"][0].ctx.options.cellView.model.getEmbeddedCells()[0];
+      halo.off('action:remove:pointerdown');
+      halo.on('action:remove:pointerdown', function(){
+        popupEventOverlap.closePopup = function() {
+          previewHandler.typeJump.deleteTargetName(currentEditCell);
+          deleteEditNode();
+          popupEventOverlap.closeNoPopupOverlap();
+        };
+        popupEventOverlap.open('現在のノードを削除します。よろしいですか？',"p_diagram_delete_alert" ,"削除の確認");
       });
       halo.render();
     };
