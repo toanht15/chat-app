@@ -954,6 +954,7 @@ sinclo@medialink-ml.co.jp
           "1" => array(
             'messageIntervalTimeSec' => '2',
             'chatTextArea' => '1',
+            'actionType' => '2',
             'hearings' =>
               array(
                 0 =>
