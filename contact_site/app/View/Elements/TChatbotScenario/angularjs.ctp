@@ -521,7 +521,7 @@
         target.settings.customDesign.buttonActiveColor            = this.getRawColor($scope.widget.settings.main_color,
             0.5);
         target.settings.customDesign.buttonBorderColor            = '#E3E3E3';
-        target.settings.customDesign.buttonUIBackgroundColor      = $scope.widget.settings.description_text_color;
+        target.settings.customDesign.buttonUIBackgroundColor      = $scope.widget.settings.re_text_color;
         target.settings.customDesign.buttonUITextColor            = $scope.widget.settings.re_background_color;
         target.settings.customDesign.buttonUITextAlign            = '2';
         target.settings.customDesign.buttonUIActiveColor          = this.getRawColor($scope.widget.settings.main_color,
@@ -529,7 +529,7 @@
         target.settings.customDesign.buttonUIBorderColor          = '#E3E3E3';
         target.settings.customDesign.checkboxBackgroundColor      = '#FFFFFF';
         target.settings.customDesign.checkboxActiveColor          = '#FFFFFF';
-        target.settings.customDesign.checkboxBorderColor          = $scope.widget.settings.main_color;;
+        target.settings.customDesign.checkboxBorderColor          = $scope.widget.settings.main_color;
         target.settings.customDesign.checkboxCheckmarkColor       = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBackgroundColor         = '#FFFFFF';
         target.settings.customDesign.radioActiveColor             = $scope.widget.settings.main_color;
@@ -649,7 +649,7 @@
         var defaultColor = '#FFFFFF';
         switch (customDesignIndex) {
           case 'buttonUIBackgroundColor':
-            defaultColor = $scope.widget.settings.description_text_color;
+            defaultColor = $scope.widget.settings.re_text_color;
             break;
           case 'buttonUITextColor':
             defaultColor = $scope.widget.settings.re_background_color;
@@ -831,6 +831,15 @@
               startWithSpace: false,
               data: definedVariables,
               insertTpl: "{{${name}}}",
+              suffix: '',
+              limit: 1000
+            });
+
+            $('.raw-variable-suggest').atwho({
+              at: "@",
+              startWithSpace: false,
+              data: definedVariables,
+              insertTpl: "${name}",
               suffix: '',
               limit: 1000
             });
