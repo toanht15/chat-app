@@ -122,7 +122,7 @@
     #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 28.42px;}
     #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: -1px;width: 28px;height: 29px;display: inline-block;}
   }
-  #tchatbotscenario_form_preview_body .chatTalk li select { border: 1px solid #909090; border-radius: 0; padding: 5px; height: 30px; margin-top: 9px; margin-bottom: -2px; min-width: 210px; max-width: 220px}
+  #tchatbotscenario_form_preview_body .chatTalk li select { border: 1px solid #909090; border-radius: 0; padding: 5px; height: 30px; margin-top: 9px; margin-bottom: -2px; width: 100%; word-break: break-all}
   #tchatbotscenario_form_preview_body .chatTalk .grid_preview li.smallSize select { min-width: 183px;}
 
 /* slick css */
@@ -274,7 +274,7 @@
         <li ng-show="hearings.message || hearings.settings.options[0]" ng-if="hearings.uiType === '9'" class="sinclo_re chat_left details action{{setActionId}}_checkbox{{index}}" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="sinclo-text-line" ng-bind="hearings.message"></span><div ng-class="{hasText: hearings.message, noneText: !hearings.message}"><label class="sinclo-checkbox" ng-repeat="(optionIndex, option) in hearings.settings.options track by $index" ng-if="option"><input type="checkbox">{{option}}<span class="checkmark" ng-class="{noneBorder: hearings.settings.checkboxNoneBorder, hasBorder: !hearings.settings.checkboxNoneBorder}"></span></label><div style="display: grid; margin-top: 8px;" ng-if="hearings.settings.options[0]"><div style="display: flex"><span class="ok-button">OK</span></div></div></div></li>
 
         <!-- エラーメッセージ -->
-        <br><li ng-show="hearings.errorMessage" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span id="action{{setActionId}}_error_message" class="details">{{hearings.errorMessage}}</span></li>
+        <br><li ng-show="hearings.errorMessage && (hearings.uiType === '1' || hearings.uiType === '2')" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span id="action{{setActionId}}_error_message" class="details">{{hearings.errorMessage}}</span></li>
       </div>
     </div>
     <!-- 確認メッセージ -->

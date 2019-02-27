@@ -3976,8 +3976,7 @@
           $('input[name=' + name + '][type="radio"]').prop('disabled', true);
           // ラジオボタンを非活性にする
           self.disableHearingInput($scope.actionStep);
-          $('#action' + actionStep + '_hearing0_question').parent().nextAll('div').removeAttr('id');
-          $('#action' + actionStep + '_hearing0_question').parent().removeAttr('id');
+          $('[id^="action' + actionStep + '_hearing"][id$="_question"]').removeAttr('id');
         } else {
           self.handleReselectionInput(message, actionStep, hearingIndex);
         }
@@ -4034,7 +4033,7 @@
       });
       // button ui
       $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
-        $(this).parents('div').find('.sinclo-button-ui').removeClass('selected');
+        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
         $(this).addClass('selected');
         var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
         var message = $(this).text().replace(/^\s/, '');
