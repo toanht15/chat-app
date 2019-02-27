@@ -881,7 +881,12 @@
         var allCells = graph.getCells();
         console.log(targetCell);
         for(var i = 0; i < allCells.length; i++) {
-
+          if(allCells[i].isElement()
+          && allCells[i].attr("nodeBasicInfo/nodeType") === "jump"
+          && allCells[i].attr("actionParam/targetId") === targetCell.getAncestors()[0].id){
+            allCells[i].attr("actionParam/targetId", "");
+            allCells[i].getEmbeddedCells()[0].attr("text/text", "");
+          }
         }
       }
     }
