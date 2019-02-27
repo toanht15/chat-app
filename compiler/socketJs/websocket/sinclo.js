@@ -4299,7 +4299,7 @@
           }
         }
 
-        if (sinclo.chatApi.isJsonString(obj.message)) {
+        if (check.isJSON(obj.message)) {
           // checkbox message
           var checkboxData = JSON.parse(obj.message);
           var array = checkboxData.message.split(checkboxData.separator);
@@ -4475,14 +4475,6 @@
 
           }
         }
-      },
-      isJsonString: function(string) {
-        try {
-          JSON.parse(string);
-        } catch (e) {
-          return false;
-        }
-        return true;
       },
       createMessageHtml: function(message, align) {
         if (!message || message.length === 0) {
@@ -5114,7 +5106,7 @@
         var html = '';
 
         if (storedValue) {
-          if (sinclo.chatApi.isJsonString(storedValue)) {
+          if (check.isJSON(storedValue)) {
             var checkboxData = JSON.parse(storedValue);
             var oldMessages = checkboxData.message.split(checkboxData.separator);
           } else {
@@ -11236,7 +11228,7 @@
         _isMatch: function(targetValKey, condition) {
           var self = sinclo.scenarioApi._branchOnCond;
           var targetValue = self._parent._getSavedVariable(targetValKey);
-          if (sinclo.chatApi.isJsonString(targetValue)) {
+          if (check.isJSON(targetValue)) {
             // checkbox message
             targetValue = JSON.parse(targetValue).message;
           }
