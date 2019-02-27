@@ -141,7 +141,9 @@ $(function(){
       || strcmp($val['THistoryChatLog']['message_type'], 34) === 0 || strcmp($val['THistoryChatLog']['message_type'], 35) === 0
       || strcmp($val['THistoryChatLog']['message_type'], 36) === 0 || strcmp($val['THistoryChatLog']['message_type'], 37) === 0
       || strcmp($val['THistoryChatLog']['message_type'], 38) === 0 || strcmp($val['THistoryChatLog']['message_type'], 39) === 0
-      || strcmp($val['THistoryChatLog']['message_type'], 43) === 0 || strcmp($val['THistoryChatLog']['message_type'], 44) === 0) {
+      || strcmp($val['THistoryChatLog']['message_type'], 43) === 0 || strcmp($val['THistoryChatLog']['message_type'], 44) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 50) === 0 || strcmp($val['THistoryChatLog']['message_type'], 51) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 53) === 0 || strcmp($val['THistoryChatLog']['message_type'], 54) === 0) {
       $className = "sinclo_re";
       $id = $val['THistoryChatLog']['id'];
       $historyId = $val['THistoryChatLog']['t_histories_id'];
@@ -307,8 +309,10 @@ $(function(){
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 41) === 0
       || strcmp($val['THistoryChatLog']['message_type'], 42) === 0
-      || strcmp($val['THistoryChatLog']['message_type'], 45) === 0) {
-      // pulldown and calendar
+      || strcmp($val['THistoryChatLog']['message_type'], 45) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 49) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 52) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 55) === 0) {
       $className = "sinclo_auto";
       $name = "シナリオメッセージ（ヒアリング）";
       $id = $val['THistoryChatLog']['id'];
@@ -379,8 +383,13 @@ $(function(){
               echo $json['message'];
               break;
           }
-        } else if(intval($val['THistoryChatLog']['message_type']) === 41 || intval($val['THistoryChatLog']['message_type']) === 42 || intval($val['THistoryChatLog']['message_type']) === 45) {
-          // pulldown, calendar, carousel
+        } else if(intval($val['THistoryChatLog']['message_type']) === 41
+          || intval($val['THistoryChatLog']['message_type']) === 42
+          || intval($val['THistoryChatLog']['message_type']) === 45
+          || intval($val['THistoryChatLog']['message_type']) === 49
+          || intval($val['THistoryChatLog']['message_type']) === 52
+          || intval($val['THistoryChatLog']['message_type']) === 53
+          || intval($val['THistoryChatLog']['message_type']) === 55) {
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
           $textOfMessage = '';
           if (!$json['message']) {
@@ -393,6 +402,15 @@ $(function(){
                 break;
               case 45:
                 $textOfMessage = '（カルーセル質問内容なし）';
+                break;
+              case 49:
+                $textOfMessage = '（ボタン質問内容なし）';
+                break;
+              case 52:
+                $textOfMessage = '（チェックボックス質問内容なし）';
+                break;
+              case 55:
+                $textOfMessage = '（ラジオボタン質問内容なし）';
                 break;
               default:
                 $textOfMessage = '（質問内容なし）';

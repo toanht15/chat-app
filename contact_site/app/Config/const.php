@@ -210,6 +210,7 @@ define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
 define('C_AUTO_ACTION_TYPE_SELECTSCENARIO', 2);  // シナリオを呼び出す
+define('C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE', 3);  // オートメッセージを呼び出す
 
 // オートメッセージ機能－ウィジェット種別コード
 define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
@@ -254,6 +255,8 @@ define('C_SCENARIO_UI_TYPE_CALENDAR', 5);
 define('C_SCENARIO_UI_TYPE_CAROUSEL', 6);
 
 define('C_SCENARIO_UI_TYPE_BUTTON', 7);
+define('C_SCENARIO_UI_TYPE_BUTTON_UI', 8);
+define('C_SCENARIO_UI_TYPE_CHECKBOX', 9);
 
 /* シナリオ設定(ヒアリング) - 改行設定 */
 define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
@@ -789,7 +792,8 @@ $config['outMessageTriggerList'] = array(
 /* オートメッセージ － アクション種別 */
 $config['outMessageActionType'] = array(
   C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
-  C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す"
+  C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す",
+  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "オートメッセージを呼び出す"
 );
 
 /* オートメッセージ － ウィジェット種別 */
@@ -844,7 +848,6 @@ $config['chatbotScenarioActionList'] = array(
             'isEnableAfterDate' => false,
             'enableAfterDate' => null,
             'isDisableAfterData' => false,
-            'enableAfterDate' => null,
             'dayOfWeekSetting' => array(
               0 => false, // sun
               1 => false, // mon
@@ -860,6 +863,9 @@ $config['chatbotScenarioActionList'] = array(
             'pulldownCustomDesign' => false,
             'calendarCustomDesign' => false,
             'carouselCustomDesign' => false,
+            'buttonUICustomDesign' => false,
+            'checkboxCustomDesign' => false,
+            'radioCustomDesign' => false,
             'balloonStyle' => '1', //1: 吹き出しあり、２：吹き出しなし
             'lineUpStyle' => '1', //1: 1つずつ表示、２：並べて表示
             'carouselPattern' => '2', // arrow position
@@ -868,7 +874,11 @@ $config['chatbotScenarioActionList'] = array(
             'subTitlePosition' => '1', // 1 : left, 2: center , 3: right
             'outCarouselNoneBorder' => false,
             'inCarouselNoneBorder' => false,
+            'outButtonUINoneBorder' => true,
+            'checkboxNoneBorder' => false,
+            'radioNoneBorder' => false,
             'aspectRatio' => null,
+            'checkboxSeparator' => '1', // 1: , 2: / 3: |
             'customDesign' => array(
               'borderColor'                  => '',
               'backgroundColor'              => '#FFFFFF',
@@ -892,7 +902,19 @@ $config['chatbotScenarioActionList'] = array(
               'buttonTextColor'              => '#007AFF',
               'buttonAlign'                  => '2',
               'buttonActiveColor'            => '#BABABA',
-              'buttonBorderColor'            => '#E3E3E3'
+              'buttonBorderColor'            => '#E3E3E3',
+              'buttonUIBackgroundColor'      => '',
+              'buttonUITextAlign'            => '2',
+              'buttonUITextColor'            => '',
+              'buttonUIActiveColor'          => '',
+              'buttonUIBorderColor'          => '',
+              'checkboxBackgroundColor'      => '',
+              'checkboxActiveColor'          => '',
+              'checkboxBorderColor'          => '',
+              'checkboxCheckmarkColor'       => '',
+              'radioBackgroundColor'         => '',
+              'radioActiveColor'             => '',
+              'radioBorderColor'             => '',
             ),
             'images' => array(
               array(
@@ -1018,6 +1040,7 @@ $config['chatbotScenarioActionList'] = array(
         array(
           "matchValue" => "",
           "matchValueType" => "1", // のいずれかを含む場合
+          "matchValuePattern" => "1", // 1: 完全一致 2:部分一致
           "actionType" => 1, //テキスト発言
           "action" => array(
             "message" => ""
