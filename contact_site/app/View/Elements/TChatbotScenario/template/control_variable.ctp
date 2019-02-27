@@ -27,7 +27,7 @@
           ng-model="setItem.calcRules">
         <li class='grid-container-control-variable grid-container-body itemListGroup'
             ng-repeat="(formulaId, item) in setItem.calcRules track by $index">
-          <div class='area-name'><input type="text" class="variable-suggest" ng-model="item.variableName"></div>
+          <div class='area-name'><input type="text" class="raw-variable-suggest" ng-model="item.variableName"></div>
           <div class='area-type'>
             <select name="hearing-input-option" ng-model="item.calcType" ng-change="main.handleControlVariableDetail(item.calcType, formulaId, setActionId)">
               <option value="1">数値</option>

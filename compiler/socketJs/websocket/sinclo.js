@@ -2128,6 +2128,51 @@
                 button.settings);
             sinclo.chatApi.scDown();
             return false;
+          } if (obj.messageType ===
+              sinclo.chatApi.messageType.scenario.message.buttonUI) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = 'sinclo_re';
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = '';
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            var button = JSON.parse(obj.chatMessage);
+            this.chatApi.addButtonUI('hearing_msg sinclo_re', button.message,
+                button.settings);
+            sinclo.chatApi.scDown();
+            return false;
+          } if (obj.messageType ===
+              sinclo.chatApi.messageType.scenario.message.checkbox) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = 'sinclo_re';
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = '';
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            var checkbox = JSON.parse(obj.chatMessage);
+            this.chatApi.addCheckbox('hearing_msg sinclo_re', checkbox.message,
+                checkbox.settings);
+            sinclo.chatApi.scDown();
+            return false;
+          } if (obj.messageType ===
+              sinclo.chatApi.messageType.scenario.message.radio) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = 'sinclo_re';
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = '';
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            var radio = JSON.parse(obj.chatMessage);
+            this.chatApi.addRadioButton('hearing_msg sinclo_re', radio.message,
+                radio.settings);
+            sinclo.chatApi.scDown();
+            return false;
           } else if (obj.messageType ===
               sinclo.chatApi.messageType.scenario.message.receiveFile) {
             this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage),
@@ -2463,13 +2508,6 @@
       if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.calendar) {
         // 別タブで送信されたシナリオのメッセージは表示する
-        cn = 'sinclo_re';
-        if (window.sincloInfo.widget.showAutomessageName === 2) {
-          userName = '';
-        } else {
-          userName = window.sincloInfo.widget.subTitle;
-        }
-
         var calendar = JSON.parse(obj.message);
         this.chatApi.addCalendar('hearing_msg sinclo_re', calendar.message,
             calendar.settings);
@@ -2480,13 +2518,6 @@
       if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.carousel) {
         // 別タブで送信されたシナリオのメッセージは表示する
-        cn = 'sinclo_re';
-        if (window.sincloInfo.widget.showAutomessageName === 2) {
-          userName = '';
-        } else {
-          userName = window.sincloInfo.widget.subTitle;
-        }
-
         var carousel = JSON.parse(obj.message);
         this.chatApi.addCarousel('', carousel.message,
             carousel.settings);
@@ -2497,6 +2528,30 @@
       if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.button) {
         this.chatApi.addButton('hearing_msg sinclo_re', JSON.parse(obj.message).message,
+            JSON.parse(obj.message).settings);
+        this.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.buttonUI) {
+        this.chatApi.addButtonUI('hearing_msg sinclo_re', JSON.parse(obj.message).message,
+            JSON.parse(obj.message).settings);
+        this.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.checkbox) {
+        this.chatApi.addCheckbox('hearing_msg sinclo_re', JSON.parse(obj.message).message,
+            JSON.parse(obj.message).settings);
+        this.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.radio) {
+        this.chatApi.addRadioButton('hearing_msg sinclo_re', JSON.parse(obj.message).message,
             JSON.parse(obj.message).settings);
         this.chatApi.scDown();
         return false;

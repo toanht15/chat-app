@@ -43,8 +43,8 @@
             <option value="10">メールアドレス</option>
           </select>
         </div>
-        <div class='area-name'><input type="text" ng-model="condition.label"></div>
-        <div class='area-variable'><input type="text" ng-model="condition.variableName"></div>
+        <div class='area-name'><input type="text" class="variable-suggest" ng-model="condition.label"></div>
+        <div class='area-variable'><input type="text" class="raw-variable-suggest" ng-model="condition.variableName"></div>
         <div class='area-btn'>
           <div class="btnBlock">
             <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn hearingBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn hearingBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
