@@ -373,7 +373,7 @@
           $class = "vHidden";
         }
         ?>
-        <?php if($this->data['disallowActiveChanging']): ?>
+        <?php if(array_key_exists('disallowActiveChanging', $this->data) && $this->data['disallowActiveChanging']): ?>
           <a class="grayBtn btn-shadow <?=$class?> commontooltip" data-text="呼出先に設定されている場合は<br>削除できません">削除</a>
         <?php else: ?>
           <a href="javascript:void(0)" onclick="removeAct(<?= $lastPage?>)" class="redBtn btn-shadow <?=$class?>">削除</a>
