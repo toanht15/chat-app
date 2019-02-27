@@ -1364,7 +1364,7 @@ var socket, // socket.io
               ':not(.no-wrap):after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; border: 5px solid transparent; z-index: 1; }';
           if (colorList['reBorderNone'] === 0) {
             html += '      #sincloBox ul#chatTalk li.' + leftMessageClass +
-                ':after {border-right: 5px solid ' +
+                ':not(.no-wrap):after {border-right: 5px solid ' +
                 chatPosition.re.borderColor + '; border-bottom: 5px solid ' +
                 chatPosition.re.borderColor + '; }';
           }
