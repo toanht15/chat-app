@@ -98,6 +98,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->actionTypeMap = [
+      'オートメッセージを呼び出す'    => 3,
       'シナリオを呼び出す'    => 2,
       'チャットメッセージを送る' => 1
     ];
@@ -255,6 +256,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
       'BP' => NULL,
       'BQ' => NULL,
       'BR' => NULL,
+      'BS' => NULL
     ];
     $importData = [];
     $errorFound = false;
@@ -377,7 +379,10 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
             $importData[$key]['activity']['conditions'][4][0]['operatingHoursTime'] = $this->businessHourMap[$row['T']];
           }
 
-          if ($actionType == 2) {
+          if ($actionType == 3) {
+            // call auto message
+            $importData[$key]['call_automessage_name'] = $row['BS'];
+          } else if($actionType == 2) {
             // scenario
             $importData[$key]['activity']['widgetOpen']   = $this->widgetOpenMap[$row['BR']];
             $importData[$key]['activity']['message']      = "";
@@ -424,6 +429,10 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     $errors = [];
     if (!Validation::maxLength($row['C'], 50)) {
       $this->addError($errors, 'C', '５０文字以内で入力してください');
+    }
+
+    if(!$this->isNameUnique($row['C']) && (!empty($row['B']) && $this->activeFlgMap[$row['B']] === 0)) {
+      $this->addError($errors, 'C', '有効状態の名称は一意になるように設定してください');
     }
 
     if (empty($row['C'])) {
@@ -711,6 +720,23 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     return $errors;
+  }
+
+  private function isNameUnique($name) {
+    $list = $this->getActiveNameList();
+    $countData = array_count_values($list);
+    return $countData[$name] > 1 ? false : true;
+  }
+
+  private function getActiveNameList() {
+    $list = $this->getColumnData('B', 5, 'C',  count($this->dataArray));
+    $result = array();
+    foreach($list as $index => $datum) {
+      if($this->activeFlgMap[$datum[0]] === 0) {
+        array_push($result, $datum[1]);
+      }
+    }
+    return $result;
   }
 
   /**

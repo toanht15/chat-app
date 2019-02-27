@@ -149,6 +149,10 @@
       var scenarioId = document.getElementById('TChatbotScenarioId').value || 'tmp';
       $scope.storageKey = 'scenario_' + scenarioId;
 
+      $scope.initActionType = function(num) {
+        return num ? Number(num) : 1;
+      };
+
       $scope.chatbotIconIsFontIcon = function(target) {
         return target.match(/^fa/) !== null;
       };
@@ -529,7 +533,7 @@
         target.settings.customDesign.checkboxCheckmarkColor       = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBackgroundColor         = '#FFFFFF';
         target.settings.customDesign.radioActiveColor             = $scope.widget.settings.main_color;
-        target.settings.customDesign.radioBorderColor             = $scope.widget.settings.main_color;
+        target.settings.customDesign.radioBorderColor             = '#999';
 
         return target;
       };
@@ -697,7 +701,7 @@
             defaultColor = $scope.widget.settings.main_color;
             break;
           case 'radioBorderColor':
-            defaultColor = $scope.widget.settings.main_color;
+            defaultColor = '#999';
             break;
         }
 
@@ -4021,6 +4025,61 @@
         var actionStep = numbers[0];
         var hearingIndex = numbers[1];
         self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
+      // button ui
+      $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
+        $(this).parents('div').find('.sinclo-button-ui').removeClass('selected');
+        $(this).addClass('selected');
+        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
+        var message = $(this).text().replace(/^\s/, '');
+
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
+
+      $(document).on('click', '#chatTalk .checkbox-submit-btn', function() {
+        $(this).addClass('disabledArea');
+        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-checkbox[0-9a-z-]+$/i, '');
+        var message = [];
+        $(this).parent('div').find('input:checked').each(function(e) {
+          message.push($(this).val());
+        });
+
+        var separator = ',';
+        switch (Number($(this).parents('div').attr('data-separator'))) {
+          case 1:
+            separator = ',';
+            break;
+          case 2:
+            separator = '/';
+            break;
+          case 3:
+            separator = '|';
+            break;
+          default:
+            separator = ',';
+            break;
+        }
+
+        message = message.join(separator);
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
+
+      $(document).on('change', '#chatTalk input[type="checkbox"]', function() {
+        if ($(this).is('checked')) {
+          $(this).prop('checked', false);
+        }
+
+        if ($(this).parent().parent().find('input:checked').length > 0) {
+          $(this).parent().parent().find('.checkbox-submit-btn').removeClass('disabledArea');
+        } else {
+          $(this).parent().parent().find('.checkbox-submit-btn').addClass('disabledArea')
+        }
       });
 
       $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
