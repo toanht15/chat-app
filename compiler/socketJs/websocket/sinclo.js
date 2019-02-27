@@ -3392,7 +3392,7 @@
 
           var text = $(this).text();
           $(this).
-              parents('div').
+              parent('div').
               find('.sinclo-button-ui').
               removeClass('selected');
           $(this).addClass('selected');
@@ -5035,19 +5035,25 @@
         return html;
       },
       createRadioButtonHtml: function(settings, index, storedValue) {
-        // var style = sinclo.chatApi.createPulldownStyle(settings);
         var name = 'sinclo-radio-button' + index;
         var html = '';
         var storedValueIsFound = false;
         html += '<div id="' + name + '">';
         if (settings.radioCustomDesign) {
           var style = '<style>';
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {background-color: ' + settings.customDesign.radioBackgroundColor + ' !important;}';
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {background: ' + settings.customDesign.radioActiveColor + ' !important;}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio [type="radio"] + label:before {background-color: ' +
+              settings.customDesign.radioBackgroundColor + ' !important;}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
+              settings.customDesign.radioActiveColor + ' !important;}';
           if (settings.radioNoneBorder) {
-            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
           } else {
-            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {border-color: ' + settings.customDesign.radioBorderColor + '!important;}';
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio [type="radio"] + label:before {border-color: ' +
+                settings.customDesign.radioBorderColor + '!important;}';
           }
           style += '</style>';
           html += style;
@@ -5055,10 +5061,13 @@
         settings.options.forEach(function(option, index) {
           html += '<sinclo-radio style="display: block;">';
           if (storedValue === option) {
-            html += '<input type="radio" name="' + name + '" value="' + option + '" id="' + name + index + '" class="sinclo-chat-radio" checked="checked">';
+            html += '<input type="radio" name="' + name + '" value="' + option +
+                '" id="' + name + index +
+                '" class="sinclo-chat-radio" checked="checked">';
             storedValueIsFound = true;
           } else {
-            html += '<input type="radio" name="' + name + '" value="' + option + '" id="' + name + index + '" class="sinclo-chat-radio">';
+            html += '<input type="radio" name="' + name + '" value="' + option +
+                '" id="' + name + index + '" class="sinclo-chat-radio">';
           }
           html += '<label for="' + name + index + '">' + option + '</label>';
           html += '</sinclo-radio>';
@@ -5073,18 +5082,21 @@
         return html;
       },
       createButtonUIHtml: function(settings, index, storedValue) {
-        var name = 'sinclo-buttonUI' + index;
-        var style = sinclo.chatApi.createButtonUIStyle(settings, '#' + name);
-        var html = '';
+        var name               = 'sinclo-buttonUI' + index;
+        var style              = sinclo.chatApi.createButtonUIStyle(settings,
+            '#' + name);
+        var html               = '';
         var storedValueIsFound = false;
         html += '<div id="' + name + '" style="margin-top: 5px;">';
         html += style;
-        settings.options.forEach(function(option, index) {
+        settings.options.forEach(function(option) {
           if (storedValue === option) {
             storedValueIsFound = true;
-            html += '<button onclick="return false;" class="sinclo-button-ui selected">' + option + '</button>';
+            html += '<button onclick="return false;" class="sinclo-button-ui selected">' +
+                option + '</button>';
           } else {
-            html += '<button onclick="return false;" class="sinclo-button-ui">' + option + '</button>'
+            html += '<button onclick="return false;" class="sinclo-button-ui">' +
+                option + '</button>';
           }
         });
         html += '</div>';
@@ -5112,7 +5124,7 @@
 
         html += '<div id="' + name + '" style="margin-top: 5px;" data-separator="' + settings.checkboxSeparator + '">';
         html += style;
-        settings.options.forEach(function(option, index) {
+        settings.options.forEach(function(option) {
           if (!option || option === '') return false;
           var hasOldOptionValue = false;
           html += '<label class="sinclo-checkbox">';
@@ -5167,7 +5179,7 @@
       },
       createPulldownStyle: function(settings) {
         var style = '';
-        style += 'margin-top: 10px; height: 30px; min-width: 210px; ';
+        style += 'margin-top: 10px; height: 30px; width: 100%; word-break: break-all; ';
         style += 'color: ' + settings.customDesign.textColor + ';';
         style += 'background-color: ' + settings.customDesign.backgroundColor +
             ';';
@@ -5180,33 +5192,51 @@
       },
       createButtonUIStyle: function(settings, id) {
         var style = '<style>';
-        style += '#sincloBox ul#chatTalk ' + id + ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
-        style += '#sincloBox ul#chatTalk ' + id + ' button {background-color: ' + settings.customDesign.buttonUIBackgroundColor + '}';
-        style += '#sincloBox ul#chatTalk ' + id + ' button {width: ' + this.getButtonUIWidth() + 'px;}';
-        style += '#sincloBox ul#chatTalk ' + id + ' button {color: ' + settings.customDesign.buttonUITextColor + '}';
-        style += '#sincloBox ul#chatTalk ' + id + ' button:focus {outline: none}';
-        style += '#sincloBox ul#chatTalk ' + id + ' button:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
-        style += '#sincloBox ul#chatTalk ' + id + ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
-        style += '#sincloBox ul#chatTalk ' + id + ' button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
-        style += '#sincloBox ul#chatTalk ' + id + ' button.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
+        style += '#sincloBox ul#chatTalk ' + id +
+            ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+        style += '#sincloBox ul#chatTalk ' + id +
+            ' button {background-color: ' +
+            settings.customDesign.buttonUIBackgroundColor + '}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button {width: ' +
+            this.getButtonUIWidth() + 'px;}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button {color: ' +
+            settings.customDesign.buttonUITextColor + '}';
+        style += '#sincloBox ul#chatTalk ' + id +
+            ' button:focus {outline: none}';
+        style += '#sincloBox ul#chatTalk ' + id +
+            ' button:active {background-color: ' +
+            settings.customDesign.buttonUIActiveColor + '}';
+        style += '#sincloBox ul#chatTalk ' + id +
+            ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+        style += '#sincloBox ul#chatTalk ' + id +
+            ' button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+        style += '#sincloBox ul#chatTalk ' + id +
+            ' button.selected {background-color: ' +
+            settings.customDesign.buttonUIActiveColor + ' !important;}';
         if (settings.outButtonUINoneBorder) {
           style += '#sincloBox ul#chatTalk ' + id + ' button {border: none}';
         } else {
-          style += '#sincloBox ul#chatTalk ' + id + ' button {border: 1px solid ' + settings.customDesign.buttonUIBorderColor +' }';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button {border: 1px solid ' +
+              settings.customDesign.buttonUIBorderColor + ' }';
         }
 
         switch (Number(settings.customDesign.buttonUITextAlign)) {
           case 1:
-            style += '#sincloBox ul#chatTalk ' + id + ' button {text-align: left}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button {text-align: left}';
             break;
           case 2:
-            style += '#sincloBox ul#chatTalk ' + id + ' button {text-align: center}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button {text-align: center}';
             break;
           case 3:
-            style += '#sincloBox ul#chatTalk ' + id + ' button {text-align: right}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button {text-align: right}';
             break;
           default:
-            style += '#sincloBox ul#chatTalk ' + id + ' button {text-align: center}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button {text-align: center}';
             break;
         }
         style += '</style>';

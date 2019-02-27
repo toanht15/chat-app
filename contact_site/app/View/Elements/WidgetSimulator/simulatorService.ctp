@@ -792,14 +792,8 @@
         var index = $('#chatTalk > div:not([style*="display: none;"])').length;
         var pulldownName = prefix + 'sinclo-pulldown-' + index;
         var hasOldOptionValue = false;
-        /* ウィジェットサイズ小でアイコン表示だとプルダウンが見切れてしまう対策*/
-        var minWidth = '210';
-        if (this._needResizeCauseIcon()) {
-          minWidth = '183';
-        }
         // style
-
-        var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; min-width: ' + minWidth + 'px;';
+        var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; width: 100%; word-break: break-all;';
         style += 'background-color: ' + data.design.backgroundColor + ';';
         style += 'color: ' + data.design.textColor + ';';
         style += 'border-color: ' + data.design.borderColor + ';"';
