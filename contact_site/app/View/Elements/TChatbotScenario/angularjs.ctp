@@ -3038,6 +3038,9 @@
           }
         } else if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length) &&
             $scope.replaceVariable(actionDetail.cancel) === message) {
+          angular.forEach(actionDetail.hearings, function(hearing) {
+            hearing.canRestore = true;
+          });
           // 最初から入力し直し
           $scope.hearingIndex = 0;
         } else {
