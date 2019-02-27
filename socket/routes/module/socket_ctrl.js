@@ -570,7 +570,7 @@ function getMessageTypeByUiType(type) {
       result = 22;
       break;
     case 3:
-      result = 22;
+      result = 55;
       break;
     case 4:
       result = 41;

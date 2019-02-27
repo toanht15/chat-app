@@ -69,7 +69,7 @@
           </thead>
           <tbody class="externalApiResponseBody itemListGroup">
           <tr ng-repeat="(listId, bodyItem) in setItem.responseBodyMaps">
-            <td class="item_name"><input ng-model="bodyItem.variableName" type="text" class="variable-suggest frame"></td>
+            <td class="item_name"><input ng-model="bodyItem.variableName" type="text" class="raw-variable-suggest frame"></td>
             <td class="item_value"><input ng-model="bodyItem.sourceKey" type="text" class="variable-suggest frame"></td>
             <td class="item_btn_block">
               <div class="btnBlock">

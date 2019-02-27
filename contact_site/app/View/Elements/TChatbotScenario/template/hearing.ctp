@@ -33,7 +33,7 @@
               <span class="checkmark"></span>
             </label>
           </div>
-          <div class='area-name'><input type="text" class="variable-suggest" ng-model="hearingItem.variableName"></div>
+          <div class='area-name'><input type="text" class="raw-variable-suggest" ng-model="hearingItem.variableName"></div>
           <div class='area-type'>
             <select name="hearing-input-option" ng-model="hearingItem.uiType"
                     ng-change="main.handleChangeUitype(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
@@ -154,8 +154,7 @@
             </div>
 
             <div ng-if=" hearingItem.uiType === '9'" class="checkbox-separator" style="display: flex; margin-top: 6px">
-              <span><label class="">複数選択された際の区切り文字<span class="questionBalloon"><icon class="questionBtn"
-                                                                                      data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+              <span><label class="">複数選択された際の区切り文字</label></span>
               <select name="checkbox-separator" ng-model="hearingItem.settings.checkboxSeparator" style="width: 150px; margin-left: 20px; height: 29.5px;">
                 <option value="1"> ,（カンマ）</option>
                 <option value="2">/（スラッシュ）</option>
