@@ -28,7 +28,7 @@ $config['default'] = array(
           )
         ),
         "widgetOpen" => 1,
-        "message" => "（No.1：最初の挨拶のサンプルです。）\n\n<div class=\"free-block\" style=\"color:#333333\"><span style=\"font-weight => bold;font-size => 11pt\">はじめまして♪</span></div>\nsinclo（シンクロ）に興味を持っていただきありがとうございます。\n\n<div class=”free-block” style=\"color:#333333\">sincloを利用することで、このようなチャットボットを<span style=\"color => #00A0C1;font-weight => bold;font-size => 11pt\"> 簡単に自社サイトに導入</span></div>することができます。",
+        "message" => "（No.1：最初の挨拶のサンプルです。）\n\n<div class=\"free-block\" style=\"color:#333333\"><span style=\"font-weight:bold;font-size:11pt\">はじめまして♪</span></div>\nsinclo（シンクロ）に興味を持っていただきありがとうございます。\n\n<div class=”free-block” style=\"color:#333333\">sincloを利用することで、このようなチャットボットを<span style=\"color:#00A0C1;font-weight:bold;font-size:11pt\"> 簡単に自社サイトに導入</span></div>することができます。",
         "chatTextarea" => 1,
         "cv" => 2
       ),
@@ -57,7 +57,7 @@ $config['default'] = array(
           )
         ),
         "widgetOpen" => 1,
-        "message" => "（No.2：最初の挨拶のサンプルです。）\n\n<div class=\"free-block\" style=\"color:#333333\"><span style=\"font-weight => bold;font-size => 11pt\">おかえりなさいませ♪</span></div>\n再訪問ありがとうございます。\n\n<div class=”free-block” style=\"color:#333333\">sincloを利用することで、このようなチャットボットを<span style=\"color => #00A0C1;font-weight => bold;font-size => 11pt\"> 簡単に自社サイトに導入</span></div>することができます。",
+        "message" => "（No.2：最初の挨拶のサンプルです。）\n\n<div class=\"free-block\" style=\"color:#333333\"><span style=\"font-weight:bold;font-size:11pt\">おかえりなさいませ♪</span></div>\n再訪問ありがとうございます。\n\n<div class=”free-block” style=\"color:#333333\">sincloを利用することで、このようなチャットボットを<span style=\"color:#00A0C1;font-weight:bold;font-size:11pt\"> 簡単に自社サイトに導入</span></div>することができます。",
         "chatTextarea" => 1,
         "cv" => 2
       ),
@@ -161,7 +161,7 @@ $config['default'] = array(
           )
         ),
         "widgetOpen" => 2,
-        "message" => "（No.6：リンクを使った設定サンプルです。）\n\n無料トライアルをご希望ですね。\n下記ページからお申し込みください。\n\n<a href=\"https://sinclo.medialink-ml.co.jp/lp/trial.php\" target=\"_blank\"style=\"display => inline-block;width:290px;text-align:center;font-weight => bold;text-decoration => none;background => #ABCD05;color:#FFFFFF;padding:10px;border-radius => 5px;\">無料トライアル申し込み</a>",
+        "message" => "（No.6：リンクを使った設定サンプルです。）\n\n無料トライアルをご希望ですね。\n下記ページからお申し込みください。\n\n<a href=\"https://sinclo.medialink-ml.co.jp/lp/trial.php\" target=\"_blank\"style=\"display:inline-block;width:290px;text-align:center;font-weight:bold;text-decoration:none;background:#ABCD05;color:#FFFFFF;padding:10px;border-radius:5px;\">無料トライアル申し込み</a>",
         "chatTextarea" => 2,
         "cv" => 2
       ),
