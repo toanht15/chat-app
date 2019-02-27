@@ -7385,14 +7385,14 @@
                     message.id) {
                   sinclo.trigger.setAction(message.id, message.action_type,
                       message.activity, message.send_mail_flg,
-                      message.scenario_id);
+                      message.scenario_id, message.call_automessage_id);
                   sinclo.trigger.processing = false;
                   console.log('scenarioStart');
                 }
               } else {
                 sinclo.trigger.setAction(message.id, message.action_type,
                     message.activity, message.send_mail_flg,
-                    message.scenario_id);
+                    message.scenario_id, message.call_automessage_id);
                 sinclo.trigger.processing = false;
               }
             }, ret);
@@ -7470,14 +7470,14 @@
                     message.id) {
                   sinclo.trigger.setAction(message.id, message.action_type,
                       message.activity, message.send_mail_flg,
-                      message.scenario_id);
+                      message.scenario_id, message.call_automessage_id);
                   sinclo.trigger.processing = false;
                   console.log('scenarioStart');
                 }
               } else {
                 sinclo.trigger.setAction(message.id, message.action_type,
                     message.activity, message.send_mail_flg,
-                    message.scenario_id);
+                    message.scenario_id, message.call_automessage_id);
                 sinclo.trigger.processing = false;
               }
             }, ret);
@@ -7810,7 +7810,7 @@
           emit('sendAutoChatMessage', data);
         }
       },
-      setAction: function(id, type, cond, sendMail, scenarioId) {
+      setAction: function(id, type, cond, sendMail, scenarioId, callId, forceCall) {
         console.log('setAction id : ' + id + ' type : ' + type + ' cond : ' +
             JSON.stringify(cond));
         // TODO 今のところはメッセージ送信のみ、拡張予定
@@ -7822,8 +7822,8 @@
 
         if (String(type) === '1' && ('message' in cond) &&
             (String(chatActFlg) === 'false')) {
-          if (sinclo.chatApi.autoMessages.exists(id) ||
-              sinclo.scenarioApi.isProcessing()) {
+          if (!forceCall && (sinclo.chatApi.autoMessages.exists(id) ||
+              sinclo.scenarioApi.isProcessing())) {
             console.log('exists id : ' + id + ' or scenario is processing');
             return;
           }
@@ -7888,6 +7888,23 @@
               }
               sinclo.operatorInfo.ev();
             }
+          }
+        } else if (String(type) === '3') {
+          console.log('CALL AUTO MESSAGE!!!!!! ' + callId);
+          // 設定ごと
+          var targetAutomessage = null;
+          for (var i = 0; window.sincloInfo.messages.length > i; i++) {
+            if (Number(window.sincloInfo.messages[i].id) === Number(callId)) {
+              targetAutomessage = window.sincloInfo.messages[i];
+              break;
+            }
+          }
+          if (targetAutomessage) {
+            // 再帰呼び出し
+            sinclo.trigger.setAction(targetAutomessage.id,
+                targetAutomessage.action_type, targetAutomessage.activity,
+                targetAutomessage.send_mail_flg,
+                targetAutomessage.scenario_id, targetAutomessage.call_automessage_id, true);
           }
         }
       },
@@ -11311,6 +11328,24 @@
                   self._parent._process();
                 }
               });
+              break;
+            case 5:
+              // リンク呼出
+              var url = condition.action.url,
+                  openType = condition.action.openType;
+              console.log('url : %s openType : %s',url ,openType);
+              switch(Number(openType)) {
+                case 1:
+                  // ページ遷移
+                  location.href = url;
+                  break;
+                case 2:
+                  window.open(url);
+                  break;
+              }
+              if (self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
               break;
           }
         },
