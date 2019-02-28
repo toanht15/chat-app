@@ -5254,7 +5254,8 @@
         style += '#sincloBox ' + id +
             ' span.ok-button {width: 100px; height: 30px; cursor: pointer; margin: auto; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + sincloInfo.widget.chatSendBtnBackgroundColor + '; color: ' + sincloInfo.widget.chatSendBtnTextColor + ';}';
         style += '#sincloBox ' + id + ' {display: grid; }';
-        style += '#sincloBox ' + id + ' .sinclo-checkbox .checkmark {border: none;}';
+        if (settings.checkboxNoneBorder) {
+          style += '#sincloBox ' + id + ' .sinclo-checkbox .checkmark {border: none;}';
         } else {
           style += '#sincloBox ' + id + ' .sinclo-checkbox .checkmark {border: 1px solid ' +
               settings.customDesign.checkboxBorderColor + ';}';
