@@ -24,13 +24,13 @@
 
   $(function() {
     //アイコンクリック時のイベント付与
-    $('#node_list > i ').each(function(index, target) {
+    /*$('#node_list > i ').each(function(index, target) {
       $(target).draggable({
         helper: 'clone'
       });
-    });
+    });*/
 
-    var canvas = document.getElementById('canvas');
+    /*var canvas = document.getElementById('canvas');
     $(canvas).droppable({
       drop: function(e, ui) {
         if (ui.draggable.attr('id') === 'popup-frame') return;
@@ -38,9 +38,11 @@
         nodeMaster(ui.draggable.attr('id'), cursorPos.x, cursorPos.y);
       }
     });
+    */
 
-    graph = new joint.dia.Graph;
+    //graph = new joint.dia.Graph;
 
+    /*
     var paper = new joint.dia.Paper({
       el: canvas,
       width: canvas.width,
@@ -67,7 +69,11 @@
         }
       }),
       validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
-
+        if (cellViewS.model.attr('nodeBasicInfo/nextNodeId') && cellViewS.model.attr('nodeBasicInfo/nextNodeId') !==
+            '') {
+          linkView.model.remove();
+          return false;
+        }
         // in portからは矢印を表示させない
         if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
         // 同一Elementのout → in portは許容しない
@@ -79,20 +85,7 @@
           return false;
         }
         //既に他ポートに接続しているout portは線を出さない
-        if (cellViewS.model.attr('nodeBasicInfo/nextNodeId') && cellViewS.model.attr('nodeBasicInfo/nextNodeId') !==
-          '') {
-          var sourceId = cellViewS.model.id;
-          var links = graph.getLinks();
-          var count = 0;
-          links.forEach(function(l) {
-            if (l.get('source').id === sourceId)
-              count++;
-          });
-          if (count > 1) {
-            linkView.model.remove();
-            return false;
-          }
-        }
+
 
         // outPortには入力させない
         return magnetT && magnetT.getAttribute('port-group') === 'in';
@@ -101,13 +94,14 @@
         return magnet.getAttribute('magnet') !== 'passive';
       }
     });
+    */
 
-    graph.addCell(startNode());
+    //graph.addCell(startNode());
 
-    var dragReferencePosition = null;
-    var dataForUpdate = $('#TChatbotDiagramActivity').val();
+    //var dragReferencePosition = null;
+    //var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
-    if (dataForUpdate !== null && dataForUpdate !== '') {
+    /*if (dataForUpdate !== null && dataForUpdate !== '') {
       graph.fromJSON(JSON.parse(dataForUpdate));
       setTimeout(function(){
         graph.resetCells(dataForUpdate.cells);
@@ -186,7 +180,7 @@
           e.offsetY - dragReferencePosition.y
         );
       }
-    });
+    });*/
 
 
 
@@ -338,6 +332,7 @@
       switch (type) {
         case 1:
           saveEditNode();
+          previewHandler.typeJump.editTargetName();
           popupEvent.closeNoPopup();
           //保存処理
           break;
@@ -880,6 +875,15 @@
     },
     typeJump: {
       editTargetName: function(){
+        var allCells = graph.getCells();
+        var targetCell = currentEditCell;
+        for(var i = 0; i < allCells.length; i++) {
+          if(allCells[i].isElement()
+              && allCells[i].attr("nodeBasicInfo/nodeType") === "jump"
+              && allCells[i].attr("actionParam/targetId") === targetCell.getAncestors()[0].id){
+            allCells[i].getEmbeddedCells()[0].attr("text/text", convertTextLength(targetCell.getAncestors()[0].attr("actionParam/nodeName"), 14));
+          }
+        }
 
       },
       deleteTargetName: function(targetCell){
