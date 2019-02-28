@@ -6123,6 +6123,9 @@ ul.naviBtn {
       &.actionValueCallAutomessageLabel {
         background-color: #d251c4;
       }
+      &.actionValueSelectDiagramLabel {
+        background-color: #E44EA1;
+      }
     }
 
     #balloons {
@@ -7206,12 +7209,14 @@ ul.naviBtn {
           label{
             display: flex;
             align-items: center;
+            min-width: 134px;
             span {
               margin-left: 10px;
             }
           }
           div {
             margin-left: 20px;
+            min-width: 201px;
           }
         }
       }
@@ -7269,30 +7274,31 @@ ul.naviBtn {
           margin-top:2px;
         }
         .branch {
-          background-color: #fd9644;
+          background-color: #ee5253;
         }
         .text {
-          background-color: #fed330;
+          background-color: #ff9f43;
         }
         .scenario {
-          background-color: #26de81;
+          background-color: #0abde3;
         }
         .jump {
-          background-color: #2bcbba;
+          background-color: #10ac84;
         }
         .link {
-          background-color: #45aaf2;
+          background-color: #960C84;
         }
         .operator {
-          background-color: #4b7bec;
+          background-color: #2e86de;
         }
         .cv {
-          background-color: #a55eea;
+          background-color: #5f27cd;
         }
       }
     }
     #canvas {
       -ms-grid-column: 2;
+      overflow: hidden;
       z-index: 1;
       svg {
         cursor: move;
@@ -7303,7 +7309,7 @@ ul.naviBtn {
 
 /* SVGの矢印用 */
 .joint-link.joint-theme-default .link-tools .tool-remove circle.diagram{
-  fill: #00B7FF;
+  fill: #D69B9B;
 }
 
 /* チャットボットシナリオ設定 */
@@ -9285,6 +9291,31 @@ ul.naviBtn {
       font-size: 12px !important;
       line-height: 12px;
       padding: 0.1em;
+    }
+  }
+}
+
+/* チャットツリー設定 */
+#TChatbotDiagram_idx {
+  .callerTypeLabel {
+    display: inline-block;
+    padding: 4px 2px;
+    margin-right: 8px;
+    border-radius: 5px;
+    width: 10em;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+
+    &.typeAutoMessage {
+      background-color: #B2D251;
+    }
+    &.typeScenario {
+      background-color: #EDBF35;
+    }
+
+    & + span {
+      line-height: 2;
     }
   }
 }

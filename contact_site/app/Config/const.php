@@ -211,6 +211,7 @@ define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
 define('C_AUTO_ACTION_TYPE_SELECTSCENARIO', 2);  // シナリオを呼び出す
 define('C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE', 3);  // オートメッセージを呼び出す
+define('C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM', 4);  // チャットツリーを呼び出す
 
 // オートメッセージ機能－ウィジェット種別コード
 define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
@@ -793,7 +794,8 @@ $config['outMessageTriggerList'] = array(
 $config['outMessageActionType'] = array(
   C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
   C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す",
-  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "オートメッセージを呼び出す"
+  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "オートメッセージを呼び出す",
+  C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM => "チャットツリーを呼び出す"
 );
 
 /* オートメッセージ － ウィジェット種別 */

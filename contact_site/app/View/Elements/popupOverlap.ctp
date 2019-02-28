@@ -104,13 +104,13 @@ var popupEventOverlap = {
                 };
                 break;
               case 'p_diagram_delete_alert':
-                var closeBtn = _button('いいえ');
-                closeBtn.onclick = function () {
-                  return popupEventOverlap.closeNoPopupOverlap();
-                };
                 var entryBtn = _button('はい');
                 entryBtn.onclick = function () {
                   return popupEventOverlap.closePopup();
+                };
+                var closeBtn = _button('いいえ');
+                closeBtn.onclick = function () {
+                  return popupEventOverlap.closeNoPopupOverlap();
                 };
                 this.moveType = "moment";
                 break;

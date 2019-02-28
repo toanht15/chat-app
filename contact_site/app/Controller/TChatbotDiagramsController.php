@@ -9,32 +9,41 @@
  * @property TChatbotScenario $TChatbotScenario
  * @property TransactionManager $TransactionManager
  */
-class TChatbotDiagramsController extends AppController
+App::uses('WidgetSettingController', 'Controller');
+
+class TChatbotDiagramsController extends WidgetSettingController
 {
-  public $uses = array('TChatbotDiagram', 'TransactionManager', 'TChatbotScenario');
-  public $paginate = [
-    'TChatbotDiagram' => [
+  public $uses = array('TChatbotDiagram', 'TransactionManager', 'TChatbotScenario', 'MWidgetSetting', 'TAutoMessage');
+  public $paginate = array(
+    'TChatbotDiagram' => array(
       'limit' => 100,
-      'order' => [
+      'order' => array(
         'TChatbotDiagram.sort' => 'asc',
         'TChatbotDiagram.id' => 'asc'
-      ],
-      'fields' => ['TChatbotDiagram.*'],
-      'conditions' => ['TChatbotDiagram.del_flg != ' => 1],
+      ),
+      'fields' => array('TChatbotDiagram.*'),
+      'conditions' => array('TChatbotDiagram.del_flg != ' => 1),
+      'joins' => array(
+        array(
+          'type' => 'LEFT',
+          'table' => 't_auto_messages',
+          'alias' => 'TAutoMessage',
+          'conditions' => array(
+            'TChatbotDiagram.id = TAutoMessage.t_chatbot_diagram_id'
+          )
+        )
+      ),
       'recursive' => -1
-    ]
-  ];
-
-  public function beforeFilter()
-  {
-    parent::beforeFilter();
-    $this->set('title_for_layout', 'チャットツリー設定');
-  }
+    )
+  );
 
   public function index()
   {
     $this->paginate['TChatbotDiagram']['conditions']['TChatbotDiagram.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TChatbotDiagram');
+    foreach($data as &$item) {
+      $item['callerInfo'] = $this->_getDiagramCallerInfo($item['TChatbotDiagram']['id'], array());
+    }
     $this->set('settingList', $data);
   }
 
@@ -42,6 +51,8 @@ class TChatbotDiagramsController extends AppController
   {
     $scenarioData = $this->_getScenarioList();
     $this->set('scenarioList', $scenarioData);
+    // プレビュー・シミュレーター表示用ウィジェット設定の取得
+    $this->set('widgetSettings', $this->_getWidgetSettings());
     if (empty($id)) {
 
     } else {
@@ -60,11 +71,16 @@ class TChatbotDiagramsController extends AppController
     if ($this->request->is('post')) {
       $transaction = $this->TransactionManager->begin();
 
+      // FIXME ソート
       $saveData = array(
         'm_companies_id' => $this->userInfo['MCompany']['id'],
-        'name' => $this->request->data['TChatbotDiagrams']['name'],
-        'activity' => $this->request->data['TChatbotDiagrams']['activity']
+        'name' => $this->request->data['TChatbotDiagram']['name'],
+        'activity' => $this->request->data['TChatbotDiagram']['activity']
       );
+
+      if(!empty($this->request->data['TChatbotDiagram']['id'])) {
+        $saveData['id'] = $this->request->data['TChatbotDiagram']['id'];
+      }
 
       try {
         $this->TChatbotDiagram->save($saveData);
@@ -76,6 +92,7 @@ class TChatbotDiagramsController extends AppController
       }
 
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      $this->redirect(['action' => 'index']);
     }
   }
 
@@ -158,7 +175,7 @@ class TChatbotDiagramsController extends AppController
       }
       if ($ret) {
         $this->TChatbotDiagram->commit();
-        $this->redirect(array('Controller' => $this->name, 'action' => 'index'));
+        $this->redirect(['action' => 'index']);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
 
       } else {
@@ -219,5 +236,49 @@ class TChatbotDiagramsController extends AppController
         'TChatbotScenario.del_flg != ' => 1
       ]
     ]);
+  }
+
+  /**
+   * 呼び出し元情報を取得する
+   * @param  Int    $id           ダイアグラムID
+   * @param  Array  $scenarioList アクション「チャットツリー呼び出し」を含むシナリオ一覧
+   * @return Array                呼び出し元情報
+   */
+  private function _getDiagramCallerInfo($id, $scenarioList) {
+    $callerInfo = [];
+
+    // 呼び出し元オートメッセージ情報を取得する
+    $callerInfo['TAutoMessage'] = $this->TAutoMessage->coFind('list', [
+      'fileds' => ['id', 'name'],
+      'order' => [
+        'TAutoMessage.sort' => 'asc',
+        'TAutoMessage.id' => 'asc'
+      ],
+      'conditions' => [
+        'TAutoMessage.del_flg != ' => 1,
+        'TAutoMessage.t_chatbot_diagram_id' => $id,
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]);
+
+    // 呼び出し元シナリオ情報を取得する
+    $matchScenarioNames = [];
+    /*
+    $keyword = '"tChatbotScenarioId":"'. $id . '"';
+    $branchOnCondKeyword = '"callScenarioId":"'. $id . '"';
+    $branchOnCondKeywordForSelf = '"callScenarioId":"self"';
+    foreach ($scenarioList as $scenario) {
+      if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
+        $matchScenarioNames[] = $scenario['TChatbotScenario']['name'];
+      } else if (strpos($scenario['TChatbotScenario']['activity'], $branchOnCondKeyword)) {
+        $matchScenarioNames[] = $scenario['TChatbotScenario']['name'];
+      } else if (strcmp($id, $scenario['TChatbotScenario']['id']) === 0 && strpos($scenario['TChatbotScenario']['activity'], $branchOnCondKeywordForSelf)) {
+        $matchScenarioNames[] = self::CALL_SELF_SCENARIO_NAME;
+      }
+    }
+    */
+    $callerInfo['TChatbotScenario'] = $matchScenarioNames;
+
+    return $callerInfo;
   }
 }

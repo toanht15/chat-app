@@ -14,14 +14,17 @@
     sincloApp.controllerProvider = $controllerProvider;
   });
   sincloApp.controller('DiagramController', [
-    '$scope', '$timeout', function($scope, $timeout) {
+    '$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
 
       // 保存ボタン
       $('#submitBtn').on('click', function(e) {
         // データをJSONにして送信
-        $('#TChatbotDiagramsActivity').val(exportJSON());
+        $('#TChatbotDiagramActivity').val(exportJSON());
         $('#TChatbotDiagramsEntryForm').submit();
       });
+      $scope.widget = SimulatorService;
+      var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
+      $scope.widget.settings = widgetSettings;
 
     }]).controller('ModalController', [
       '$scope', '$timeout', '$compile', function($dialogScope, $timeout, $compile) {

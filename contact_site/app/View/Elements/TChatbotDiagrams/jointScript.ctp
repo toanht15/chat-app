@@ -7,6 +7,7 @@
  */
 ?>
 <script>
+
   var nodeFactory = new NodeFactory();
   var wasMoved = false;
   var nodeTypeArray = [
@@ -17,6 +18,7 @@
     'link'
   ];
   var scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
+  var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
 
   var currentEditCell = null;
 
@@ -25,10 +27,6 @@
     $('#node_list > i ').each(function(index, target) {
       $(target).draggable({
         helper: 'clone'
-      });
-
-      $(target).on('click', function() {
-        console.log(paper.localToClientPoint());
       });
     });
 
@@ -53,13 +51,13 @@
       defaultLink: new joint.dia.Link({
         attrs: {
           '.connection': {
-            stroke: '#0984e3',
-            'stroke-width': 4
+            stroke: '#AAAAAA',
+            'stroke-width': 3
           },
           '.marker-target': {
-            stroke: '#0984e3',
-            fill: '#0984e3',
-            d: 'M 14 0 L 0 7 L 14 14 z'
+            stroke: '#AAAAAA',
+            fill: '#AAAAAA',
+            d: 'M 15 0 L 0 6 L 0 9 L 15 15 z'
           },
           '.link-tools .link-tool .tool-remove circle': {
             'class': 'diagram'
@@ -69,6 +67,7 @@
         }
       }),
       validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+
         // in portからは矢印を表示させない
         if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
         // 同一Elementのout → in portは許容しない
@@ -86,7 +85,7 @@
           var links = graph.getLinks();
           var count = 0;
           links.forEach(function(l) {
-            if (l.get('source').id == sourceId)
+            if (l.get('source').id === sourceId)
               count++;
           });
           if (count > 1) {
@@ -103,7 +102,23 @@
       }
     });
 
+    graph.addCell(startNode());
+
     var dragReferencePosition = null;
+    var dataForUpdate = $('#TChatbotDiagramActivity').val();
+
+    if (dataForUpdate !== null && dataForUpdate !== '') {
+      graph.fromJSON(JSON.parse(dataForUpdate));
+      setTimeout(function(){
+        graph.resetCells(dataForUpdate.cells);
+        initNodeEvent(graph.getCells());
+      }, 500);
+    }
+
+    var allDrawnCellList = graph.getCells();
+    for( var i = 0; i < allDrawnCellList; i++) {
+      haloCreator(paper.findViewByModel(allDrawnCellList[i]));
+    }
 
     if ($('#TChatbotDiagramActivity').val() !== null && $('#TChatbotDiagramActivity').val() !== '') {
       graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
@@ -113,10 +128,13 @@
       function(cellView, evt, x, y) {
         //init current edit cell to null;
 
-        haloCreator(cellView);
         currentEditCell = null;
+        haloCreator(cellView);
         if (!wasMoved && isNeedModalOpen(cellView)) {
           currentEditCell = setViewElement(cellView);
+          if($('#popup-main > div')[0]) {
+            $('#popup-main')[0].removeChild($('#popup-main > div')[0]);
+          }
           var modalData = processModalCreate(cellView);
           modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
           initPopupCloseEvent();
@@ -130,12 +148,11 @@
       dragReferencePosition = {x: x * paper.scale().sx, y: y * paper.scale().sy};
     });
 
-    $(document).on('keyup', 'textarea', function(evt){
-      $('.preview_moc').text(this.value);
-    });
-
-    $(document).on('keydown', 'textarea', function(evt){
-      $('.preview_moc').text(this.value);
+    //テキスト発言用のイベントを作成する
+    $(document).on('keyup keydown', '.text_modal_setting > textarea', function(evt){
+      var index = $('.text_modal_setting > textarea').index(this);
+      console.log(index);
+      $($('#text_modal_preview span.detail')[index]).text(this.value);
     });
 
     paper.on('blank:pointerup', function() {
@@ -145,7 +162,12 @@
     paper.on('link:connect', function(linkView, e) {
       try {
         linkView.sourceView.model.attr('nodeBasicInfo/nextNodeId', linkView.targetView.model.attributes.id);
-        console.log("合体しました");
+        // 接続元が分岐　かつ　(接続先が テキスト　か　分岐)
+        if( linkView.sourceView.model.attr('nodeBasicInfo/nodeType') === "childPortNode"
+        &&( linkView.targetView.model.attr('nodeBasicInfo/nodeType') === "text"
+          ||linkView.targetView.model.attr('nodeBasicInfo/nodeType') === "branch" )) {
+          previewHandler.setDefaultNodeName(linkView.sourceView.model, linkView.targetView.model);
+        }
       } catch (e) {
         console.log('unexpected connect');
       }
@@ -170,13 +192,19 @@
       }
     });
 
+
+
     var nodeMaster = function(type, posX, posY) {
       var node = nodeFactory.createNode(type, posX, posY);
       graph.addCell(node);
       initNodeEvent(node);
+      for(var i = 0; i < graph.getCells().length; i++) {
+        haloCreator(paper.findViewByModel(graph.getCells()[i]));
+      }
     };
 
     var haloCreator = function(cellView) {
+      if(cellView.model.attr("nodeBasicInfo/nodeType") === "start") return;
       if (cellView.model.isLink()) return;
       if (cellView.model.getAncestors()[0]) {
         cellView = paper.findViewByModel(cellView.model.getAncestors()[0]);
@@ -191,9 +219,19 @@
       halo.removeHandle('unlink');
       halo.removeHandle('clone');
       halo.changeHandle('remove', {
-        position: 'ne'
+        position: 'ne',
+        icon: '/img/close_halo.PNG'
       });
-      halo.render();
+      currentEditCell = halo._events["action:remove:pointerdown"][0].ctx.options.cellView.model.getEmbeddedCells()[0];
+      halo.off('action:remove:pointerdown');
+      halo.on('action:remove:pointerdown', function(){
+        popupEventOverlap.closePopup = function() {
+          previewHandler.typeJump.deleteTargetName(currentEditCell);
+          deleteEditNode();
+          popupEventOverlap.closeNoPopupOverlap();
+        };
+        popupEventOverlap.open('現在のノードを削除します。よろしいですか？',"p_diagram_delete_alert" ,"削除の確認");
+      });
     };
   });
 
@@ -310,6 +348,7 @@
         case 2:
           //削除処理
             popupEventOverlap.closePopup = function() {
+              previewHandler.typeJump.deleteTargetName(currentEditCell);
               deleteEditNode();
               popupEventOverlap.closeNoPopupOverlap();
               popupEvent.closeNoPopup()
@@ -393,8 +432,8 @@
         nodeName = $('#my_node_name').val();
         speakTextContents = nodeEditHandler.typeText.convertContents($('.text_modal_setting'));
         currentEditCell.getAncestors()[0].attr('.label/text',
-          convertTextForTitle(convertTextLength(nodeName, 4), 'テキスト発言'));
-        currentEditCell.attr('text/text', convertTextLength(speakTextContents[0], 8));
+          convertTextForTitle(convertTextLength(nodeName, 3), 'テキスト発言'));
+        currentEditCell.attr('text/text', convertTextLength(speakTextContents[0], 14));
         //配列は直接上書きができないので一度nullにする
         currentEditCell.getAncestors()[0].attr('actionParam/text', null);
         nodeParam = {
@@ -412,7 +451,7 @@
         currentEditCell.getAncestors()[0].attr('.label/text',
           convertTextForTitle(convertTextLength(nodeName, 6), '分岐'));
         currentEditCell.getAncestors()[0].attr('actionParam/selection', null);
-        currentEditCell.attr('text/text', convertTextLength(speakTextContents, 8));
+        currentEditCell.attr('text/text', convertTextLength(speakTextContents, 14));
         nodeParam = {
           nodeName: nodeName,
           text: speakTextContents,
@@ -422,19 +461,23 @@
         break;
       case 'scenario':
         target = $('#callTargetScenario option:selected');
-        viewText = target.text();
+        if(target.val() !== ""){
+          viewText = target.text();
+        }
         nodeParam = {
           scenarioId: target.val()
         };
-        currentEditCell.attr('text/text', convertTextLength(viewText, 8));
+        currentEditCell.attr('text/text', convertTextLength(viewText, 14));
         break;
       case 'jump':
         target = $('#jumpTargetNode option:selected');
-        viewText = target.text();
+        if(target.val() !== ""){
+          viewText = target.text();
+        }
         nodeParam = {
           targetId: target.val()
         };
-        currentEditCell.attr('text/text', convertTextLength(viewText, 8));
+        currentEditCell.attr('text/text', convertTextLength(viewText, 14));
         break;
       case 'link':
         viewText = $('#linkTarget').val();
@@ -443,7 +486,7 @@
           link: viewText,
           linkType: radio
         };
-        currentEditCell.attr('text/text', convertTextLength(viewText, 16));
+        currentEditCell.attr('text/text', convertTextLength(viewText, 28));
         break;
       default:
         break;
@@ -478,7 +521,7 @@
       '<div class=\'branch_modal_setting_header\'>' +
       '<div class=\'flex_row_box\'>' +
       '<p>発言内容</p>' +
-      '<textarea></textarea>' +
+      '<textarea class="node_branch"></textarea>' +
       '</div>' +
       '<div class=\'flex_row_box\'>' +
       '<label for=\'branch_button\'>表示形式</label>' +
@@ -521,7 +564,7 @@
       '<p>発言内容</p>' +
       '<div id="text_modal_contents" >' +
       '<div class=\'text_modal_setting\'>' +
-      '<textarea></textarea>' +
+      '<textarea class="node_text"></textarea>' +
       '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
       '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
       '</div>' +
@@ -529,7 +572,6 @@
       '</div>' +
       '</div>' +
       '<div id=\'text_modal_preview\'>' +
-      '<p class="preview_moc"></p>' +
       '</div>' +
       '</div>');
     html.find('input[type=text]').val(nodeData.nodeName);
@@ -585,7 +627,13 @@
 
   function addTextBox(e) {
     var cloneElm = $(e.parentNode).clone();
-    cloneElm.children('textarea').val('');
+    var index = 0;
+    //テキストエリアが追加されたら、previewに新しく要素を追加する
+    if(cloneElm.find('textarea') != null) {
+      index = $('.text_modal_setting').index($(e.parentNode));
+      cloneElm.children('textarea').val('');
+      previewHandler.typeText.addBalloon(index);
+    }
     cloneElm.children('input[type=text]').val('');
     $(e.parentNode).after(cloneElm);
     btnViewHandler.switcher();
@@ -684,12 +732,13 @@
         } else {
 
         }
+        html.find("#text_modal_preview").append($(".chatTalk").clone());
         return html;
       }
     },
     typeBranch: {
       convertContents: function(originContents) {
-        return nodeEditHandler.textAreaToArray(originContents);
+        return nodeEditHandler.textToArray(originContents);
       },
       createContents: function(html, nodeData) {
         if (nodeData.selection.length > 0) {
@@ -743,17 +792,19 @@
       portCreator: function(posX, posY, text, additionalY) {
         return new joint.shapes.devs.Model({
           position: {x: posX + 5, y: posY + additionalY},
-          size: {width: 170, height: 30},
+          size: {width: 190, height: 30},
           outPorts: ['out'],
           ports: {
             groups: {
               'out': {
                 attrs: {
                   '.port-body': {
-                    fill: "#FDCBA4",
+                    fill: "#F6ABAC",
                     height: 30,
-                    width: 30,
-                    stroke: false
+                    width: 41,
+                    stroke: false,
+                    rx: 3,
+                    ry: 3
                   },
                   '.port-label': {
                     'font-size': 0
@@ -762,10 +813,11 @@
                 position: {
                   name: 'absolute',
                   args: {
-                    x: 175,
+                    x: 185,
                     y: 0
                   }
                 },
+                z: 0,
                 markup: '<rect class="port-body"/>'
               }
             }
@@ -778,16 +830,8 @@
               fill: '#000'
             },
             rect: {
-              fill: '#FFFFFF',
+              fill: '#EEEEEE',
               stroke: false
-            },
-            button: {
-              cursor: 'pointer',
-              ref: 'buttonLabel',
-              refWidth: '150%',
-              refHeight: '150%',
-              refX: '-25%',
-              refY: '-25%'
             },
             nodeBasicInfo: {
               nodeType: 'childPortNode',
@@ -797,7 +841,7 @@
         });
       }
     },
-    textAreaToArray: function(contents) {
+    textToArray: function(contents) {
       var contentArray = [];
       for (var i = 0; i < contents.length; i++) {
         if ($(contents[i]).children('input[type=text]').val()) {
@@ -805,6 +849,55 @@
         }
       }
       return contentArray;
+    },
+    textAreaToArray: function(contents) {
+      var contentArray = [];
+      for (var i = 0; i < contents.length; i++) {
+        if ($(contents[i]).children('textarea').val()) {
+          contentArray.push($(contents[i]).children('textarea').val());
+        }
+      }
+      return contentArray;
+    }
+  };
+
+  var previewHandler = {
+    typeText: {
+      addBalloon: function(index){
+        var newBalloon = $('#text_modal_preview > div.chatTalk:first-child').clone();
+        console.log(newBalloon.find('span').text());
+        newBalloon.find('span').text("");
+        console.log($($('#text_modal_preview')[index]));
+        $($('#text_modal_preview')[index]).after(newBalloon);
+      },
+      removeBalloon: function(){
+
+      }
+    },
+    setDefaultNodeName: function(source, target){
+      //既に情報が入っている場合はreturnさせる
+      if(target.attr("actionParam/nodeName") !== "") return;
+      var defaultValue = source.attr(".label/text");
+      target.attr("actionParam/nodeName", defaultValue);
+      target.attr(".label/text",
+        convertTextForTitle(convertTextLength(defaultValue, 8), 'テキスト発言'));
+    },
+    typeJump: {
+      editTargetName: function(){
+
+      },
+      deleteTargetName: function(targetCell){
+        var allCells = graph.getCells();
+        console.log(targetCell);
+        for(var i = 0; i < allCells.length; i++) {
+          if(allCells[i].isElement()
+          && allCells[i].attr("nodeBasicInfo/nodeType") === "jump"
+          && allCells[i].attr("actionParam/targetId") === targetCell.getAncestors()[0].id){
+            allCells[i].attr("actionParam/targetId", "");
+            allCells[i].getEmbeddedCells()[0].attr("text/text", "");
+          }
+        }
+      }
     }
   };
 
