@@ -33,7 +33,7 @@
               <span class="checkmark"></span>
             </label>
           </div>
-          <div class='area-name'><input type="text" class="variable-suggest" ng-model="hearingItem.variableName"></div>
+          <div class='area-name'><input type="text" class="raw-variable-suggest" ng-model="hearingItem.variableName"></div>
           <div class='area-type'>
             <select name="hearing-input-option" ng-model="hearingItem.uiType"
                     ng-change="main.handleChangeUitype(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
