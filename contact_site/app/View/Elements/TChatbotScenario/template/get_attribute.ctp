@@ -8,7 +8,7 @@
       </div>
       <div  class='styleFlexbox' ng-repeat="(listId, getAttributes) in setItem.getAttributes track by $index">
         <div class='grid-container grid-container-body itemListGroup'>
-          <div class='area-name'><input type="text" class="variable-suggest" ng-model="getAttributes.variableName"></div>
+          <div class='area-name'><input type="text" class="raw-variable-suggest" ng-model="getAttributes.variableName"></div>
           <input type="hidden" ng-model="getAttributes.type" ng-init="getAttributes.type=3" value="3"/>
           <div class='area-selector'><input type = "text" ng-model="getAttributes.attributeValue" rows="1" data-maxRow="10" class="variable-suggest textarea-message"></input></div>
           <div class='area-btn'>
