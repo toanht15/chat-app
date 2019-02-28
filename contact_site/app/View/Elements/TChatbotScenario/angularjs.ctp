@@ -860,6 +860,16 @@
           // 編集されたことを検知する
           if (!$scope.changeFlg && newObject !== oldObject) {
             $scope.changeFlg = true;
+          } else if($scope.beginData === newObject) {
+            $scope.changeFlg = false;
+          }
+
+          try {
+            if(!$scope.beginData || Object.keys($scope.beginData).length > 0) {
+              $scope.beginData = newObject;
+            }
+          } catch(e) {
+            $scope.beginData = newObject;
           }
 
           // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
@@ -894,9 +904,13 @@
           // hearings
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
-              document.getElementById('action' + index + '-'
-              + hearingIndex + '_message').innerHTML = $scope.widget.createMessage(
-                  hearing.message);
+              if(document.getElementById('action' + index + '-'
+                  + hearingIndex + '_message')) {
+                document.getElementById('action' + index + '-'
+                    + hearingIndex + '_message').innerHTML = $scope.widget.createMessage(
+                    hearing.message);
+              }
+
               if (hearing.uiType === '3') {
                 $timeout(function() {
                   $scope.$apply();
