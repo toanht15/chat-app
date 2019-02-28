@@ -916,6 +916,7 @@
         }
         if (data.message) {
           style += '#sincloBox #' + checkboxName + ' {margin-top: 8px}';
+
         }
         style += '</style>';
 
@@ -953,6 +954,7 @@
           html += '<span  class="ok-button checkbox-submit-btn disabledArea">OK</span >';
         }
         html += '</div>';
+
 
         return messageHtml + html;
       },

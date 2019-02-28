@@ -106,9 +106,9 @@
           $id = $val['TChatbotDiagram']['id'];
         }
 
-//        // 呼び出し元情報
-//        $callerAutoMessage = count($val['callerInfo']['TAutoMessage']) > 0 ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
-//        $callerScenario = count($val['callerInfo']['TChatbotDiagram']) > 0 ? implode(', ', $val['callerInfo']['TChatbotDiagram']) : '';
+        // 呼び出し元情報
+        $callerAutoMessage = count($val['callerInfo']['TAutoMessage']) > 0 ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
+        $callerScenario = count($val['callerInfo']['TChatbotDiagram']) > 0 ? implode(', ', $val['callerInfo']['TChatbotDiagram']) : '';
 
         $no = $prevCnt + h($key+1);
         ?>

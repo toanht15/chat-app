@@ -202,11 +202,27 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             }
             break;
           case C_AUTO_ACTION_TYPE_SELECTSCENARIO:
+          $allActionList[$id] = [
+            'type' => $val['TAutoMessage']['action_type'],
+            'detail' => $val['TChatbotScenario']['name']
+          ];
+          $activity_detail = "<span class='actionValueScenarioLabel'>シナリオ</span><span class='actionValue'>" . h($val['TChatbotScenario']['name']) . "</span>";
+          break;
+          case C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE:
+          if (array_key_exists($val['TAutoMessage']['call_automessage_id'],$autoMessageList )) {
             $allActionList[$id] = [
               'type' => $val['TAutoMessage']['action_type'],
               'detail' => $val['TChatbotScenario']['name']
             ];
-            $activity_detail = "<span class='actionValueScenarioLabel'>シナリオ</span><span class='actionValue'>" . h($val['TChatbotScenario']['name']) . "</span>";
+            $activity_detail = "<span class='actionValueCallAutomessageLabel'>呼び出し</span><span class='actionValue'>" . h($autoMessageList[$val['TAutoMessage']['call_automessage_id']]) . "</span>";
+          }
+          break;
+          case C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM:
+            $allActionList[$id] = [
+              'type' => $val['TAutoMessage']['action_type'],
+              'detail' => $val['TChatbotDiagram']['name']
+            ];
+            $activity_detail = "<span class='actionValueSelectDiagramLabel'>チャットツリー</span><span class='actionValue'>" . h($val['TChatbotDiagram']['name']) . "</span>";
             break;
         }
         $conditionType = "";
@@ -243,7 +259,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 1em; font-weight: bold;" width=" 5%">
             <?php
-              if(strcmp($val['TAutoMessage']['action_type'], 2) === 0) {
+              if(strcmp($val['TAutoMessage']['action_type'], 2) === 0 || strcmp($val['TAutoMessage']['action_type'], 3) === 0) {
                 echo '<span class="m10b">－</span>';
               } elseif (isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2) {
                 echo '<span class="m10b"></span>';
@@ -254,7 +270,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 1em;" width=" 4%">
             <?php
-            if(strcmp($val['TAutoMessage']['action_type'], 2) === 0) {
+            if(strcmp($val['TAutoMessage']['action_type'], 2) === 0 || strcmp($val['TAutoMessage']['action_type'], 3) === 0) {
               echo '<span class="m10b">－</span>';
             } elseif (isset($activity['cv']) && $activity['cv'] === 2) {
               echo '<span class="m10b"></span>';
@@ -265,7 +281,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 1em;" width=" 4%">
             <?php
-            if (strcmp($val['TAutoMessage']['action_type'], 2) === 0) {
+            if (strcmp($val['TAutoMessage']['action_type'], 2) === 0 || strcmp($val['TAutoMessage']['action_type'], 3) === 0) {
               echo '<span class="m10b">－</span>';
             } elseif (isset($val['TAutoMessage']['send_mail_flg']) && !$val['TAutoMessage']['send_mail_flg']) {
               echo '<span class="m10b"></span>';

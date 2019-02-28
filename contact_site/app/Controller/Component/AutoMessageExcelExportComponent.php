@@ -140,6 +140,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     ];
 
     $this->actionTypeMap = [
+      3 => 'オートメッセージを呼び出す',
       2 => 'シナリオを呼び出す',
       1 => 'チャットメッセージを送る'
     ];
@@ -174,6 +175,9 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
       if ($value['TAutoMessage']['action_type'] == 2) {
         // select scenarios
         $this->writeScenarioData($json, $row, $value);
+      } else if($value['TAutoMessage']['action_type'] == 3) {
+        // call automessage
+        $this->writeCallAutomessageData($json, $row, $value);
       } else {
         // send message
         $this->writeSendMessageData($json, $row, $value);
@@ -221,8 +225,12 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function setColumnConditionalFormat($beginColumn, $row, $condition)
   {
-    $conditionCol   = ($beginColumn == 'BE' || $beginColumn == 'BQ') ? 'BD' : $beginColumn;
-    $condition      = '$' . $conditionCol . $row . ' = "' . $condition . '"';
+    $operator = '=';
+    if($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS') {
+      $operator = '<>';
+    }
+    $conditionCol   = ($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS') ? 'BD' : $beginColumn;
+    $condition      = '$' . $conditionCol . $row . ' '.$operator.' "' . $condition . '"';
     $objConditional = new PHPExcel_Style_Conditional();
     $objConditional->setConditionType(PHPExcel_Style_Conditional::CONDITION_EXPRESSION);
     $objConditional->addCondition($condition);
@@ -248,8 +256,9 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     $this->setColumnConditionalFormat('AH', $row, $this->isSettingMap[2]);
     $this->setColumnConditionalFormat('AP', $row, $this->isSettingMap[2]);
     $this->setColumnConditionalFormat('AW', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('BE', $row, $this->actionTypeMap[2]);
-    $this->setColumnConditionalFormat('BQ', $row, $this->actionTypeMap[1]);
+    $this->setColumnConditionalFormat('BE', $row, $this->actionTypeMap[1]);
+    $this->setColumnConditionalFormat('BQ', $row, $this->actionTypeMap[2]);
+    $this->setColumnConditionalFormat('BS', $row, $this->actionTypeMap[3]);
   }
 
   /**
@@ -295,6 +304,9 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
         break;
       case 'BQ':
         $targetArray = ['BQ', 'BR'];
+        break;
+      case 'BS':
+        $targetArray = ['BS'];
         break;
       default:
         $targetArray = [];
@@ -391,10 +403,12 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function copyRowStyle($baseRow, $endRow)
   {
-    foreach (range('A', 'R') as $column) {
+    // column BA ~ BS
+    foreach (range('A', 'S') as $column) {
       $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('B' . $column . $baseRow), 'B' . $column . self::SECOND_ROW . ':' . 'B' . $column . $endRow);
     }
 
+    // column A ~ AZ
     foreach (range('A', 'Z') as $column) {
       $this->currentSheet->duplicateStyle($this->currentSheet->getStyle($column . $baseRow), $column . self::SECOND_ROW . ':' . $column . $endRow);
       $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('A' . $column . $baseRow), 'A' . $column . self::SECOND_ROW . ':' . 'A' . $column . $endRow);
@@ -576,6 +590,17 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     $this->currentSheet->setCellValue('BG' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
     $this->currentSheet->setCellValue('BQ' . $row, $value['TChatbotScenario']['name']);
     $this->currentSheet->setCellValue('BR' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   * @param $value
+   */
+  private function writeCallAutomessageData($json, $row, $value)
+  {
+    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[3]);
+    $this->currentSheet->setCellValue('BS' . $row, $value['CalledAutoMessage']['name']);
   }
 
   /**

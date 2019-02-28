@@ -570,7 +570,7 @@ function getMessageTypeByUiType(type) {
       result = 22;
       break;
     case 3:
-      result = 55;
+      result = 22;
       break;
     case 4:
       result = 41;
@@ -4745,6 +4745,36 @@ io.sockets.on('connection', function(socket) {
       default:
         scenarioLogger.info(joinMessage(obj.message, obj.data));
     }
+  });
+
+  // ============================================
+  // チャットツリーイベントハンドラ
+  // ============================================
+  socket.on('getChatDiagram', function(data, ack) {
+    var obj = JSON.parse(data);
+    var result = {};
+    pool.query(
+      'select activity from t_chatbot_diagrams where m_companies_id = ? and id = ?;',
+      [companyList[obj.siteKey], obj.diagramId],
+      function(err, row) {
+        if (err !== null && err !== '') {
+          if (ack) {
+            ack(result);
+          } else {
+            emit.toMine('resGetChatDiagram', result, socket);
+          }
+          return;
+        }
+        if (row.length !== 0) {
+          result = JSON.parse(row[0].activity);
+        }
+        if (ack) {
+          ack({id: obj.scenarioId, activity: result});
+        } else {
+          emit.toMine('resGetChatDiagram',
+              {id: obj.diagramId, activity: result}, socket);
+        }
+      });
   });
 
   // ============================================
