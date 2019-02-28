@@ -214,7 +214,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
                 'type' => $val['TAutoMessage']['action_type'],
                 'detail' => $val['TChatbotScenario']['name']
               ];
-              $activity_detail = "<span class='actionValueCallAutomessageLabel'>呼び出し</span><span class='actionValue'>" . h($autoMessageList[$val['TAutoMessage']['call_automessage_id']]) . "</span>";
+              $activity_detail = "<span class='actionValueCallAutomessageLabel'>ジャンプ</span><span class='actionValue'>" . h($autoMessageList[$val['TAutoMessage']['call_automessage_id']]) . "</span>";
             }
             break;
         }

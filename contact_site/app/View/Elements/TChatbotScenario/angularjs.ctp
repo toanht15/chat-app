@@ -771,12 +771,24 @@
 
       // アクションの追加・削除を検知する
       $scope.watchActionList = [];
+      $scope.beginData = null;
       $scope.$watchCollection('setActionList', function(newObject, oldObject) {
 
         // 編集されたことを検知する
         if (!$scope.changeFlg && newObject !== oldObject) {
           $scope.changeFlg = true;
+        } else if($scope.beginData === newObject) {
+          $scope.changeFlg = false;
         }
+
+        try {
+          if(!$scope.beginData || Object.keys($scope.beginData).length > 0) {
+            $scope.beginData = newObject;
+          }
+        } catch(e) {
+          $scope.beginData = newObject;
+        }
+
 
         $timeout(function() {
           $scope.$apply();
@@ -3618,6 +3630,38 @@
                 hearingDetail.required);
           }
 
+          if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_BUTTON_UI ?>) {
+            var data       = {};
+            data.settings  = hearingDetail.settings;
+            data.options   = hearingDetail.settings.options;
+            data.prefix    = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
+            data.message   = $scope.replaceVariable(message);
+            data.isRestore = isRestore;
+            data.oldValue  = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
+            data.textColor = $scope.widget.settings.re_background_color;
+            data.backgroundColor = $scope.widget.settings.re_text_color;
+
+            $scope.$broadcast('addReButtonUI', data);
+            $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
+                hearingDetail.required);
+          }
+
+          if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CHECKBOX ?>) {
+            var data       = {};
+            data.settings  = hearingDetail.settings;
+            data.options   = hearingDetail.settings.options;
+            data.prefix    = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
+            data.message   = $scope.replaceVariable(message);
+            data.isRestore = isRestore;
+            data.oldValue  = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
+            data.textColor = $scope.widget.settings.re_background_color;
+            data.backgroundColor = $scope.widget.settings.re_text_color;
+
+            $scope.$broadcast('addReCheckbox', data);
+            $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
+                hearingDetail.required);
+          }
+
           $scope.$emit('setRestoreStatus', $scope.actionStep, $scope.hearingIndex, true);
         } else if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length)) {
           // 確認メッセージ
@@ -4049,6 +4093,61 @@
         var actionStep = numbers[0];
         var hearingIndex = numbers[1];
         self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
+      // button ui
+      $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
+        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
+        $(this).addClass('selected');
+        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
+        var message = $(this).text().replace(/^\s/, '');
+
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
+
+      $(document).on('click', '#chatTalk .checkbox-submit-btn', function() {
+        $(this).addClass('disabledArea');
+        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-checkbox[0-9a-z-]+$/i, '');
+        var message = [];
+        $(this).parent('div').find('input:checked').each(function(e) {
+          message.push($(this).val());
+        });
+
+        var separator = ',';
+        switch (Number($(this).parents('div').attr('data-separator'))) {
+          case 1:
+            separator = ',';
+            break;
+          case 2:
+            separator = '/';
+            break;
+          case 3:
+            separator = '|';
+            break;
+          default:
+            separator = ',';
+            break;
+        }
+
+        message = message.join(separator);
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
+
+      $(document).on('change', '#chatTalk input[type="checkbox"]', function() {
+        if ($(this).is('checked')) {
+          $(this).prop('checked', false);
+        }
+
+        if ($(this).parent().parent().find('input:checked').length > 0) {
+          $(this).parent().parent().find('.checkbox-submit-btn').removeClass('disabledArea');
+        } else {
+          $(this).parent().parent().find('.checkbox-submit-btn').addClass('disabledArea')
+        }
       });
 
       $(document).on('click', '#chatTalk .checkbox-submit-btn', function() {
