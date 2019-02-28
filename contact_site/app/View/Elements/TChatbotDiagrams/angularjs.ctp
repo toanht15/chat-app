@@ -14,7 +14,7 @@
     sincloApp.controllerProvider = $controllerProvider;
   });
   sincloApp.controller('DiagramController', [
-    '$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
+    '$scope', '$timeout', 'SimulatorService', '$compile', function($scope, $timeout, SimulatorService, $compile) {
 
 
       //メニューバーのアイコンにdraggableを付与
@@ -34,7 +34,46 @@
         'link'
       ];
 
-      var scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
+
+      /* Scenario List */
+      $scope.scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
+      $scope.scenarioArrayList = [{"key": "", "value":"シナリオを選択して下さい"}];
+      for ( var idx in $scope.scenarioList ) {
+        $scope.scenarioArrayList.push({
+          "key": idx,
+          "value": $scope.scenarioList[idx]
+        });
+      }
+      /* Scenario List */
+
+      /* Model for scenario node */
+      $scope.selectedScenario = $scope.scenarioArrayList[0];
+      /* Model for scenario node */
+
+      /* Model for link node */
+      $scope.linkUrl = "";
+      $scope.linkType = "same";
+      /* Model for link node */
+
+      /* Jump list */
+      $scope.jumpTargetListOrigin = [{"key": "", "value": "ノード名を選択してください"}];
+      $scope.jumpTargetList = $scope.jumpTargetListOrigin.concat();
+      /* Jump list  */
+
+      /* Model for jump node */
+      $scope.jumpTarget = $scope.jumpTargetList[0];
+      /* Model for jump node */
+
+      /* Model for text node */
+      $scope.speakTextList = [];
+      $scope.speakTextTitle = "";
+      /* Model for text node */
+
+      /* Model for handle button */
+      $scope.addBtnHide = false;
+      $scope.deleteBtnHide = false;
+      /* Model for handle button */
+
 
       var currentEditCell = null;
 
@@ -43,7 +82,6 @@
         graph.addCell(node);
         initNodeEvent(node);
         for(var i = 0; i < graph.getCells().length; i++) {
-          //haloCreator(paper.findViewByModel(graph.getCells()[i]));
         }
       };
 
@@ -125,25 +163,24 @@
 
       var allDrawnCellList = graph.getCells();
       for( var i = 0; i < allDrawnCellList; i++) {
-        //haloCreator(paper.findViewByModel(allDrawnCellList[i]));
       }
 
       paper.on('cell:pointerup',
           function(cellView, evt, x, y) {
-            //init current edit cell to null;
 
+            //init current edit cell to null;
             currentEditCell = null;
-            //haloCreator(cellView);
             if (!wasMoved && isNeedModalOpen(cellView)) {
               currentEditCell = setViewElement(cellView);
               if($('#popup-main > div')[0]) {
                 $('#popup-main')[0].removeChild($('#popup-main > div')[0]);
               }
               var modalData = processModalCreate(cellView);
-              modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
-              initPopupCloseEvent();
-              btnViewHandler.switcher();
-              $(document).trigger('diagram.openModal', [modalData.content]);
+              $compile(modalData.content)($scope);
+              $timeout(function(){
+                modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
+                initPopupCloseEvent();
+              });
             }
             wasMoved = false;
           });
@@ -197,37 +234,6 @@
         $('#TChatbotDiagramActivity').val(exportJSON());
         $('#TChatbotDiagramsEntryForm').submit();
       });
-
-      var haloCreator = function(cellView) {
-        if(cellView.model.attr("nodeBasicInfo/nodeType") === "start") return;
-        if (cellView.model.isLink()) return;
-        if (cellView.model.getAncestors()[0]) {
-          cellView = paper.findViewByModel(cellView.model.getAncestors()[0]);
-        }
-        var halo = new joint.ui.Halo({
-          cellView: cellView,
-          boxContent: false
-        });
-        halo.removeHandle('resize');
-        halo.removeHandle('rotate');
-        halo.removeHandle('link');
-        halo.removeHandle('unlink');
-        halo.removeHandle('clone');
-        halo.changeHandle('remove', {
-          position: 'ne',
-          icon: '/img/close_halo.PNG'
-        });
-        currentEditCell = halo._events["action:remove:pointerdown"][0].ctx.options.cellView.model.getEmbeddedCells()[0];
-        halo.off('action:remove:pointerdown');
-        halo.on('action:remove:pointerdown', function(){
-          popupEventOverlap.closePopup = function() {
-            previewHandler.typeJump.deleteTargetName(currentEditCell);
-            deleteEditNode();
-            popupEventOverlap.closeNoPopupOverlap();
-          };
-          popupEventOverlap.open('現在のノードを削除します。よろしいですか？',"p_diagram_delete_alert" ,"削除の確認");
-        });
-      };
 
       var addMoveFlg = function() {
         wasMoved = true;
@@ -337,6 +343,7 @@
             case 1:
               saveEditNode();
               previewHandler.typeJump.editTargetName();
+              console.log($scope.selectedScenario);
               popupEvent.closeNoPopup();
               //保存処理
               break;
@@ -351,7 +358,6 @@
               popupEventOverlap.open('現在のノードを削除します。よろしいですか？',"p_diagram_delete_alert" ,"削除の確認");
               break;
             default:
-              //一応保存処理にしておく
               break;
           }
         };
@@ -506,171 +512,82 @@
       }
 
       function createBranchHtml(nodeData) {
-        var html = $('<div id=\'branch_modal\'>' +
-            '<div id=\'branch_modal_editor\'>' +
-            '<div id=\'branch_modal_head\'>' +
-            '<label for=\'node_name\'>ノード名</label>' +
-            '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
-            '</div>' +
-            '<div id=\'branch_modal_body\'>' +
-            '<div class=\'branch_modal_setting_header\'>' +
-            '<div class=\'flex_row_box\'>' +
-            '<p>発言内容</p>' +
-            '<textarea class="node_branch"></textarea>' +
-            '</div>' +
-            '<div class=\'flex_row_box\'>' +
-            '<label for=\'branch_button\'>表示形式</label>' +
-            '<select name=\'branch_button\' id=\'branchBtnType\'>' +
-            '<option>表示形式を選択して下さい</option>' +
-            '<option value=\'1\'>ラジオボタン</option>' +
-            '<option value=\'2\'>ボタン</option>' +
-            '<select>' +
-            '</div>' +
-            '</div>' +
-            '<div class=\'branch_modal_setting_content\'>' +
-            '<div class=\'setting_row\'>' +
-            '<p>選択肢</p>' +
-            '<input type="text"/>' +
-            '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
-            '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
-            '</div>' +
-            '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id=\'branch_modal_preview\'>' +
-            '</div>' +
-            '</div>');
-        html.find('input[type=text]').val(nodeData.nodeName);
-        html.find('.flex_row_box > textarea').val(nodeData.text);
-        html.find('select').val(nodeData.btnType);
-        html = nodeEditHandler.typeBranch.createContents(html, nodeData);
-        return html;
+        //html.find('input[type=text]').val(nodeData.nodeName);
+        //html.find('.flex_row_box > textarea').val(nodeData.text);
+        //html.find('select').val(nodeData.btnType);
+        //html = nodeEditHandler.typeBranch.createContents(html, nodeData);
+        return $('<branch_modal></branch_modal>');
       }
 
       function createTextHtml(nodeData) {
-        var html = $('<div id=\'text_modal\'>' +
-            '<div id=\'text_modal_editor\'>' +
-            '<div id=\'text_modal_head\'>' +
-            '<label for=\'node_name\'>ノード名</label>' +
-            '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
-            '</div>' +
-            '<div id=\'text_modal_body\'>' +
-            '<p>発言内容</p>' +
-            '<div id="text_modal_contents" >' +
-            '<div class=\'text_modal_setting\'>' +
-            '<textarea class="node_text"></textarea>' +
-            '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
-            '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id=\'text_modal_preview\'>' +
-            '</div>' +
-            '</div>');
-        html.find('input[type=text]').val(nodeData.nodeName);
-        html = nodeEditHandler.typeText.createContents(html, nodeData);
-        return html;
+        nodeEditHandler.typeText.createTextArray(nodeData);
+        $scope.speakTextTitle = nodeData.nodeName;
+        return $('<text-modal></text-modal>');
       }
 
       function createLinkHtml(nodeData) {
-        var html = $('<div id=\'link_modal\'>' +
-            '<label for=\'link\'>遷移先URL</label>' +
-            '<input id=\'linkTarget\' name=\'link\' type=\'text\' placeholder=\'URLを入力して下さい\'/>' +
-            '</div>' +
-            '<div id=\'link_type_area\'>' +
-            '<label><input type=\'radio\' name=\'link_type\' value=\'same\'>ページ遷移する</label>' +
-            '<label><input type=\'radio\' name=\'link_type\' value=\'another\'>別タブで開く</label>' +
-            '</div>');
-        html.find('input[type=text]').val(nodeData.link);
-        html.find('input[type=radio]').val([nodeData.linkType]);
-        return html;
+        $scope.linkUrl = nodeData.link;
+        $scope.linkType = nodeData.linkType;
+        return $('<link-modal></link-modal>');
       }
 
       function createScenarioHtml(nodeData) {
-        var html = $('<div id=\'scenario_modal\'>' +
-            '<label for=\'scenario\'>シナリオ名</label>' +
-            '<select name=\'scenario\' id=\'callTargetScenario\'>' +
-            '<option value="">シナリオを選択してください</option>' +
-            '<select>' +
-            '</div>');
-        html = nodeEditHandler.typeScenario.createContents(html);
-        html.find('select').val(nodeData.scenarioId);
-        return html;
+        $scope.selectedScenario.key = nodeData.scenarioId;
+        return $('<scenario-modal></scenario-modal>');
       }
 
       function createJumpHtml(nodeData) {
-        var html = $('<div id=\'jump_modal\'>' +
-            '<label for=\'jump\'>ノード名</label>' +
-            '<select name=\'jump\' id=\'jumpTargetNode\'>' +
-            '<option value=\'\'>ノード名を選択してください</option>' +
-            '<select>' +
-            '</div>');
-        html = nodeEditHandler.typeJump.createContents(html);
-        html.find('select').val(nodeData.targetId);
-        return html;
+        nodeEditHandler.typeJump.createJumpArray();
+        $scope.jumpTarget.key = nodeData.targetId;
+        return $('<jump-modal></jump-modal>');
       }
 
       function createOperatorHtml(nodeData) {
-        return $('<p>このノードに到達した場合、オペレーターを呼び出します。</p>');
+        return $('<operator-modal></operator-modal>');
       }
 
       function createCvHtml(nodeData) {
-        return $('<p>このノードに到達した場合、CVに登録します。</p>');
+        return $('<cv-modal></cv-modal>');
       }
 
-      function addTextBox(e) {
-        var cloneElm = $(e.parentNode).clone();
-        var index = 0;
-        //テキストエリアが追加されたら、previewに新しく要素を追加する
-        if(cloneElm.find('textarea') != null) {
-          index = $('.text_modal_setting').index($(e.parentNode));
-          cloneElm.children('textarea').val('');
-          previewHandler.typeText.addBalloon(index);
-        }
-        cloneElm.children('input[type=text]').val('');
-        $(e.parentNode).after(cloneElm);
-        btnViewHandler.switcher();
-        popupEvent.resize();
-      }
-
-      function deleteTextBox(e) {
-        e.parentNode.parentNode.removeChild(e.parentNode);
-        btnViewHandler.switcher();
-        popupEvent.resize();
-      }
-
-      var btnViewHandler = {
-        switcher: function() {
-          var self = btnViewHandler;
-          var textElm = document.getElementsByClassName('text_modal_setting');
-          var branchElm = document.getElementsByClassName('setting_row');
-          if (textElm.length > 0) {
-            self._controller(textElm, 1, 5);
-          }
-          if (branchElm.length > 0) {
-            self._controller(branchElm, 1, 10);
-          }
-
-        },
-        _controller: function(elm, min, max) {
-          if (elm.length >= max) {
-            for (var i = 0; i < elm.length; i++) {
-              $(elm[i]).children('img.disOffgreenBtn').hide();
-            }
-          } else if (elm.length <= min) {
-            for (var j = 0; j < elm.length; j++) {
-              $(elm[j]).children('img.redBtn').hide();
-            }
-          } else {
-            for (var k = 0; k < elm.length; k++) {
-              $(elm[k]).children('img.disOffgreenBtn').show();
-              $(elm[k]).children('img.redBtn').show();
-            }
-          }
+      $scope.addBtnClick = function(type, index){
+        switch(type) {
+          case "text":
+            $scope.speakTextList.push({"content": ""});
+            break;
+          case "branch":
+            break;
         }
       };
+      
+      $scope.deleteBtnClick = function(type, index){
+        switch(type) {
+          case "text":
+            $scope.speakTextList.splice(index, 1);
+            break;
+          case "branch":
+            break;
+        }
+        $timeout(function(){
+          popupEvent.resize();
+        })
+      };
+
+      $scope.$watch("speakTextList", function(){
+        if($scope.speakTextList.length === 1) {
+          $scope.addBtnHide = false;
+          $scope.deleteBtnHide = true;
+        } else if ($scope.speakTextList.length === 5) {
+          $scope.addBtnHide = true;
+          $scope.deleteBtnHide = false;
+        } else {
+          $scope.addBtnHide = false;
+          $scope.deleteBtnHide = false;
+        }
+        $timeout(function(){
+          $scope.$apply();
+        })
+      }, true);
 
       function resetNextNode(targetId) {
         var allElmList = graph.getElements();
@@ -683,52 +600,41 @@
 
       var nodeEditHandler = {
         typeJump: {
-          createContents: function(html) {
+          createJumpArray: function() {
+            //呼び出される際に、一度リストの初期化を行っておく（concatは値渡し用）
+            $scope.jumpTargetList = $scope.jumpTargetListOrigin.concat();
             var allElmList = graph.getElements();
             for (var i = 0; i < allElmList.length; i++) {
               if (allElmList[i].attr('nodeBasicInfo/nodeType') === 'text'
                   || allElmList[i].attr('nodeBasicInfo/nodeType') === 'branch') {
                 if (allElmList[i].attr('actionParam/nodeName') !== '') {
-                  //ノード名がある場合は、option属性を生成し付与する
-                  var newOption = $('<option></option>');
-                  newOption.val(allElmList[i].attributes.id);
-                  newOption.text(allElmList[i].attr('actionParam/nodeName'));
-                  html.children('select').append(newOption);
+                  //ノード名がある場合は、optionリストに追加
+                  $scope.jumpTargetList.push({
+                    "key": allElmList[i].attributes.id,
+                    "value": allElmList[i].attr('actionParam/nodeName')
+                  });
                 }
               }
             }
-            return html;
-          }
-        },
-        typeScenario: {
-          createContents: function(html) {
-            var keyList = Object.keys(scenarioList);
-            for (var i = 0; i < keyList.length; i++) {
-              var newOption = $('<option></option>');
-              newOption.val(keyList[i]);
-              newOption.text(scenarioList[keyList[i]]);
-              html.children('select').append(newOption);
-            }
-            return html;
           }
         },
         typeText: {
           convertContents: function(originContents) {
             return nodeEditHandler.textAreaToArray(originContents);
           },
-          createContents: function(html, nodeData) {
+          createTextArray: function(nodeData) {
+            //いれる前に一旦空にする
+            $scope.speakTextList = null;
             if (nodeData.text.length > 0) {
-              html.find('.text_modal_setting > textarea').val(nodeData.text[0]);
-              for (var i = 1; i < nodeData.text.length; i++) {
-                var tmpClone = html.find('.text_modal_setting:last-child').clone();
-                tmpClone.find('textarea').val(nodeData.text[i]);
-                html.find('#text_modal_body').append(tmpClone);
+              for (var i = 0; i < nodeData.text.length; i++) {
+                $scope.speakTextList = [];
+                $scope.speakTextList.push({
+                  "content": nodeData.text
+                });
               }
             } else {
-
+              $scope.speakTextList = [{"content" : ""}];
             }
-            html.find("#text_modal_preview").append($(".chatTalk").clone());
-            return html;
           }
         },
         typeBranch: {
@@ -795,8 +701,9 @@
                     attrs: {
                       '.port-body': {
                         fill: "#F6ABAC",
+                        'fill-opacity': "0.9",
                         height: 30,
-                        width: 41,
+                        width: 30,
                         stroke: false,
                         rx: 3,
                         ry: 3
@@ -812,7 +719,7 @@
                         y: 0
                       }
                     },
-                    z: 0,
+                    z: 4,
                     markup: '<rect class="port-body"/>'
                   }
                 }
@@ -825,7 +732,7 @@
                   fill: '#000'
                 },
                 rect: {
-                  fill: '#EEEEEE',
+                  fill: '#FFFFFF',
                   stroke: false
                 },
                 nodeBasicInfo: {
@@ -898,10 +805,19 @@
         setDefaultNodeName: function(source, target){
           //既に情報が入っている場合はreturnさせる
           if(target.attr("actionParam/nodeName") !== "") return;
+          var prefix,
+              splitNum;
           var defaultValue = source.attr(".label/text");
+          if(target.attr("nodeBasicInfo/nodeType") === "text") {
+            prefix = "テキスト発言";
+            splitNum = 3;
+          } else {
+            prefix = "分岐";
+            splitNum = 6;
+          }
           target.attr("actionParam/nodeName", defaultValue);
           target.attr(".label/text",
-              convertTextForTitle(convertTextLength(defaultValue, 8), 'テキスト発言'));
+              convertTextForTitle(convertTextLength(defaultValue, splitNum), prefix));
         },
         typeJump: {
           editTargetName: function(){
@@ -937,64 +853,57 @@
         return json;
       }
 
-
-
       $scope.widget = SimulatorService;
       var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
       $scope.widget.settings = widgetSettings;
 
-      $scope.greeting ="hla";
+      $scope.$on('ngRepeatFinish', function(){
+        popupEvent.resize();
+      })
 
-    }]).controller('ModalController', [
-      '$scope', '$timeout', '$compile', function($dialogScope, $timeout, $compile) {
-        $(document).on('diagram.openModal', function(e, elm) {
-          $timeout(function() {
-            $dialogScope.$apply();
-          });
-        });
-        $dialogScope.greeting = "Hola";
-    }]).directive('resizeTextarea', function() {
+
+    }]);
+  sincloApp.directive('branchModal', function(){
     return {
       restrict: 'E',
       replace: true,
-      template: '<textarea style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea>',
-      link: function(scope, element, attrs) {
-        var maxRow = element[0].dataset.maxRow || 10;                       // 表示可能な最大行数
-        var fontSize = parseFloat(element[0].style.fontSize, 10);           // 行数計算のため、templateにて設定したフォントサイズを取得
-        var borderSize = parseFloat(element[0].style.borderWidth, 10) * 2;  // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
-        var paddingSize = parseFloat(element[0].style.padding, 10) * 2;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
-        var lineHeight = parseFloat(element[0].style.lineHeight, 10);       // 表示高さの計算のため、templateにて設定した行の高さを取得
-        var elm = angular.element(element[0]);
-
-        function autoResize() {
-          // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
-          var areaWidth = elm[0].getBoundingClientRect().width - borderSize - paddingSize;
-
-          // フォントサイズとテキストエリアのサイズを基に、行数を計算する
-          var textRow = 0;
-          elm[0].value.split('\n').forEach(function(string) {
-            var stringWidth = string.length * fontSize;
-            textRow += Math.max(Math.ceil(stringWidth / areaWidth), 1);
-          });
-
-          // 表示する行数に応じて、テキストエリアの高さを調整する
-          if (textRow > maxRow) {
-            elm[0].style.height = (maxRow * (fontSize * lineHeight)) + paddingSize + 'px';
-            elm[0].style.overflow = 'auto';
-          } else {
-            elm[0].style.height = (textRow * (fontSize * lineHeight)) + paddingSize + 'px';
-            elm[0].style.overflow = 'hidden';
-          }
-        }
-
-        autoResize();
-        scope.$watch(attrs.ngModel, autoResize);
-        $(window).on('load', autoResize);
-        $(window).on('resize', autoResize);
-        elm[0].addEventListener('input', autoResize);
-      }
-    };
-  }).directive('holl', function(){
+      template: '<div id=\'branch_modal\'>' +
+          '<div id=\'branch_modal_editor\'>' +
+          '<div id=\'branch_modal_head\'>' +
+          '<label for=\'node_name\'>ノード名</label>' +
+          '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
+          '</div>' +
+          '<div id=\'branch_modal_body\'>' +
+          '<div class=\'branch_modal_setting_header\'>' +
+          '<div class=\'flex_row_box\'>' +
+          '<p>発言内容</p>' +
+          '<textarea class="node_branch"></textarea>' +
+          '</div>' +
+          '<div class=\'flex_row_box\'>' +
+          '<label for=\'branch_button\'>表示形式</label>' +
+          '<select name=\'branch_button\' id=\'branchBtnType\'>' +
+          '<option>表示形式を選択して下さい</option>' +
+          '<option value=\'1\'>ラジオボタン</option>' +
+          '<option value=\'2\'>ボタン</option>' +
+          '<select>' +
+          '</div>' +
+          '</div>' +
+          '<div class=\'branch_modal_setting_content\'>' +
+          '<div class=\'setting_row\'>' +
+          '<p>選択肢</p>' +
+          '<input type="text"/>' +
+          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="addBtnClick($event)">' +
+          '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="deleteBtnClick($event)">' +
+          '</div>' +
+          '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '<div id=\'branch_modal_preview\'>' +
+          '</div>' +
+          '</div>'
+    }
+  }).directive('textModal', function($timeout){
     return {
       restrict: 'E',
       replace: true,
@@ -1002,15 +911,15 @@
           '<div id=\'text_modal_editor\'>' +
           '<div id=\'text_modal_head\'>' +
           '<label for=\'node_name\'>ノード名</label>' +
-          '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
+          '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'ng-model="speakTextTitle"/>' +
           '</div>' +
           '<div id=\'text_modal_body\'>' +
           '<p>発言内容</p>' +
           '<div id="text_modal_contents" >' +
-          '<div class=\'text_modal_setting\'>' +
-          '<textarea class="node_text"></textarea>' +
-          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
-          '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
+          '<div class=\'text_modal_setting\' ng-repeat="speakText in speakTextList" finisher>' +
+          '<textarea class="node_text" ng-model="speakText.content"></textarea>' +
+          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="addBtnClick(\'text\', $index)">' +
+          '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="deleteBtnClick(\'text\', $index)">' +
           '</div>' +
           '</div>' +
           '</div>' +
@@ -1019,5 +928,66 @@
           '</div>' +
           '</div>'
     }
+  }).directive('linkModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<div>' +
+          '<div  id=\'link_modal\'>' +
+          '<label for=\'link\'>遷移先URL</label>' +
+          '<input id=\'linkTarget\' name=\'link\' type=\'text\' ng-model="linkUrl" placeholder=\'URLを入力して下さい\'/>' +
+          '</div>' +
+          '<div id=\'link_type_area\'>' +
+          '<label><input type=\'radio\' ng-model="linkType" name=\'link_type\' value=\'same\'>ページ遷移する</label>' +
+          '<label><input type=\'radio\' ng-model="linkType" name=\'link_type\' value=\'another\'>別タブで開く</label>' +
+          '</div>' +
+          '</div>'
+    }
+  }).directive('scenarioModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<div id=\'scenario_modal\'>' +
+          '<label for=\'scenario\'>シナリオ名</label>' +
+          '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key">' +
+          '</select>' +
+          '</div>'
+    }
+  }).directive('jumpModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<div id=\'jump_modal\'>' +
+          '<label for=\'jump\'>ノード名</label>' +
+          '<select ng-model="jumpTarget" name=\'jump\' id=\'jumpTargetNode\' ng-options="jump.value for jump in jumpTargetList track by jump.key">' +
+          '<select>' +
+          '</div>'
+    }
+  }).directive('cvModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<p id="cv_modal">このノードに到達した場合、CVに登録します。</p>'
+    }
+  }).directive('operatorModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<p id="op_modal">このノードに到達した場合、オペレーターを呼び出します。</p>'
+    }
   });
+
+  // ng-repeat完了後にControllerへ通知
+  sincloApp.directive('finisher', function($timeout){
+    return {
+      restrict: 'A',
+      link: function(scope, element, attr){
+        if ( scope.$last === true) {
+          $timeout( function(){
+            scope.$emit('ngRepeatFinish');
+          });
+        }
+      }
+    }
+  })
 </script>

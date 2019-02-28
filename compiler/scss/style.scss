@@ -7249,7 +7249,9 @@ ul.naviBtn {
       z-index: 4;
       .form_subtitle {
         border-bottom: 3px solid #C3D69B;
-        padding-left: 5px;
+        padding-right: 3px;
+        text-align: center;
+        padding-bottom: 10px;
       }
       #node_list {
         display: flex;
