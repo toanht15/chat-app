@@ -226,7 +226,7 @@
         li.action{{setActionId}}_buttonUI{{index}} .hasText {margin-top: 8px}
       </style>
       <style ng-if="hearings.uiType === '9'">
-        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: {{widget.settings['re_text_color']}};}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {position: absolute;top: 2px;left: 0;height: {{widget.re_text_size}}px; width: {{widget.re_text_size}}px;}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {background-color: {{hearings.settings.customDesign.checkboxBackgroundColor}};}
