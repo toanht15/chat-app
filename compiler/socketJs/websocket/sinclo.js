@@ -1718,7 +1718,7 @@
           if ((Number(chat.messageType) === 22 || Number(chat.messageType) ===
               23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
             prevMessageBlock = $('sinclo-chat').find('div:last-child');
-          } else if (Number(chat.messageType) === 41 || Number(chat.messageType) === 45 || Number(chat.messageType) === 55) {
+          } else if (Number(chat.messageType) === 41 || Number(chat.messageType) === 45 || Number(chat.messageType) === 49 || Number(chat.messageType) === 52 || Number(chat.messageType) === 55) {
             prevMessageBlock = $('sinclo-chat').find('div.sinclo-scenario-msg:last');
           } else {
             if (prevMessageBlock !== null) {
@@ -1749,6 +1749,22 @@
                       find('[id^="slide_sinclo-carousel"]').
                       prop('disabled', true).
                       css('opacity', 0.5);
+                });
+              } else if(prevMessageBlock.find('.sinclo-button-ui').length > 0) {
+                prevMessageBlock.find('.sinclo-button-ui').each(function(index, elm) {
+                  if ($(this).text() === chat.message) {
+                    $(this).addClass('selected');
+                  }
+                });
+              } else if(prevMessageBlock.find('.sinclo-checkbox').length > 0) {
+                var checkboxData = JSON.parse(chat.message);
+                var checkboxMessages = checkboxData.message.split(checkboxData.separator);
+                checkboxMessages.forEach(function(message) {
+                  prevMessageBlock.find('.sinclo-checkbox').each(function(index, elm) {
+                    if ($(this).text() === message) {
+                      $(this).find('[type="checkbox"]').prop('checked', true);
+                    }
+                  });
                 });
               }
               prevMessageBlock = null;
@@ -4656,11 +4672,17 @@
         div.appendChild(li);
         chatList.appendChild(div);
 
+        if (settings.isCustomDesign) {
+          var buttonActiveColor = settings.customDesign.buttonActiveColor;
+        } else {
+          var buttonActiveColor = this.getRawColor(sincloInfo.widget.mainColor, 0.5);
+        }
+
         var messageHtml = '<style>';
         messageHtml += '  #sincloBox li.sinclo_re.no-wrap.all-round .sincloHearingButtons[name="sinclo-button' +
             chatList.children.length +
             '"] .sincloHearingButton:active {background-color: ' +
-            settings.customDesign.buttonActiveColor + '!important;}';
+            buttonActiveColor + '!important;}';
         messageHtml += '  #sincloBox li.sinclo_re.no-wrap.all-round .sincloHearingButtons[name="sinclo-button' +
             chatList.children.length +
             '"] .sincloHearingButton:hover {background-color: ' +
@@ -4669,7 +4691,7 @@
         messageHtml += '  #sincloBox li.sinclo_re.no-wrap.all-round .sincloHearingButtons[name="sinclo-button' +
             chatList.children.length +
             '"] .sincloHearingButton.selected {background-color: ' +
-            settings.customDesign.buttonActiveColor + '!important;}';
+            buttonActiveColor + '!important;}';
         messageHtml += '</style>';
         var messageAlign = 'left';
         switch (Number(settings.customDesign.messageAlign)) {
@@ -4766,20 +4788,30 @@
         return html;
       },
       createCalendarStyle: function(settings, index) {
-        var style = '<style>';
+        if (settings.calendarCustomDesign) {
+          var borderColor                  = settings.customDesign.borderColor;
+          var headerBackgroundColor        = settings.customDesign.headerBackgroundColor;
+          var headerWeekdayBackgroundColor = settings.customDesign.headerWeekdayBackgroundColor;
+        } else {
+          var borderColor                  = sincloInfo.widget.mainColor;
+          var headerBackgroundColor        = sincloInfo.widget.mainColor;
+          var headerWeekdayBackgroundColor = this.getRawColor(
+              sincloInfo.widget.mainColor);
+        }
+        var style  = '<style>';
         var target = '#sincloBox ul#chatTalk li.sinclo_re #sinclo-calendar' +
             index;
         style += target + ' .flatpickr-calendar { border: 2px solid ' +
-            settings.customDesign.borderColor + '}';
+            borderColor + '}';
         style += target +
             ' .flatpickr-calendar .flatpickr-months { background: ' +
-            settings.customDesign.headerBackgroundColor + '} ';
+            headerBackgroundColor + '} ';
         style += target +
             ' .flatpickr-calendar .flatpickr-months .flatpickr-month { color: ' +
             settings.customDesign.headerTextColor + '}';
         style += target +
             ' .flatpickr-calendar .flatpickr-weekdays { background: ' +
-            settings.customDesign.headerWeekdayBackgroundColor + '}';
+            headerWeekdayBackgroundColor + '}';
         style += target +
             ' .flatpickr-calendar .flatpickr-months .flatpickr-prev-month { fill: ' +
             settings.customDesign.headerTextColor + '}';
@@ -4791,26 +4823,23 @@
             settings.customDesign.calendarBackgroundColor + '}';
         style += target +
             ' .flatpickr-calendar .dayContainer .flatpickr-day.selected { background-color: ' +
-            settings.customDesign.headerBackgroundColor + '; color: ' +
-            sinclo.chatApi.getContrastColor(
-                settings.customDesign.headerBackgroundColor) + ' !important;}';
-        // style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none }';
+            headerBackgroundColor + '; color: ' +
+            sinclo.chatApi.getContrastColor(headerBackgroundColor) + ' !important;}';
         style += target +
             ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { border: 1px solid ' +
-            settings.customDesign.headerBackgroundColor +
+            headerBackgroundColor +
             '; outline: 1px solid ' +
-            settings.customDesign.headerWeekdayBackgroundColor + ';}';
+            headerWeekdayBackgroundColor + ';}';
         style += target +
             ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid ' +
-            settings.customDesign.headerWeekdayBackgroundColor +
+            headerWeekdayBackgroundColor +
             '; border-right: 1px solid ' +
-            settings.customDesign.headerWeekdayBackgroundColor + ';}';
+            headerWeekdayBackgroundColor + ';}';
         style += target +
             ' .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none }';
         style += target +
             ' .flatpickr-calendar span.flatpickr-weekday { color: ' +
-            sinclo.chatApi.getContrastColor(
-                settings.customDesign.headerWeekdayBackgroundColor) +
+            sinclo.chatApi.getContrastColor(headerWeekdayBackgroundColor) +
             ' !important; };';
         style += '</style>';
 
@@ -4935,27 +4964,36 @@
           firstDayOfWeek[0].innerText = settings.language === 1 ? '日' : 'Sun';
         }
         sinclo.chatApi.customCalendarTextColor(calendarTarget,
-            settings.customDesign);
+            settings);
         // change color when change month
         calendarTarget.find('.flatpickr-calendar .flatpickr-months').
             on('mousedown', function() {
               sinclo.chatApi.customCalendarTextColor(calendarTarget,
-                  settings.customDesign);
+                  settings);
             });
         // keep color when click on date
         $('#sinclo-datepicker' + index).on('change', function() {
           sinclo.chatApi.customCalendarTextColor(calendarTarget,
-              settings.customDesign);
+              settings);
         });
       },
-      customCalendarTextColor: function(calendarTarget, design) {
+      customCalendarTextColor: function(calendarTarget, settings) {
+        if (settings.calendarCustomDesign) {
+          var calendarTextColor            = settings.customDesign.calendarTextColor;
+          var sundayColor                  = settings.customDesign.sundayColor;
+          var saturdayColor                = settings.customDesign.saturdayColor;
+        } else {
+          var calendarTextColor            = sincloInfo.widget.descriptionTextColor;
+          var sundayColor                  = sincloInfo.widget.descriptionTextColor;
+          var saturdayColor                = sincloInfo.widget.descriptionTextColor;
+        }
         var calendarTextColorTarget = calendarTarget.find(
             '.flatpickr-calendar .flatpickr-day');
         calendarTextColorTarget.each(function() {
           if (!$(this).hasClass('disabled') &&
               !$(this).hasClass('nextMonthDay') &&
               !$(this).hasClass('prevMonthDay')) {
-            $(this).css('color', design.calendarTextColor);
+            $(this).css('color', calendarTextColor);
           }
         });
 
@@ -4965,7 +5003,7 @@
           if (!$(this).hasClass('disabled') &&
               !$(this).hasClass('nextMonthDay') &&
               !$(this).hasClass('prevMonthDay')) {
-            $(this).css('color', design.sundayColor);
+            $(this).css('color', sundayColor);
           }
         });
 
@@ -4975,12 +5013,12 @@
           if (!$(this).hasClass('disabled') &&
               !$(this).hasClass('nextMonthDay') &&
               !$(this).hasClass('prevMonthDay')) {
-            $(this).css('color', design.saturdayColor);
+            $(this).css('color', saturdayColor);
           }
         });
 
         calendarTarget.find('.flatpickr-calendar .dayContainer').
-            css('background-color', design.calendarBackgroundColor);
+            css('background-color', settings.customDesign.calendarBackgroundColor);
       },
       getContrastColor: function(hex) {
         var rgb = this.hexToRgb(hex);
@@ -5031,8 +5069,8 @@
         var html = '';
         var storedValueIsFound = false;
         html += '<div id="' + name + '">';
+        var style = '<style>';
         if (settings.radioCustomDesign) {
-          var style = '<style>';
           style += '#sincloBox ul#chatTalk #' + name +
               ' sinclo-radio [type="radio"] + label:before {background-color: ' +
               settings.customDesign.radioBackgroundColor + ' !important;}';
@@ -5047,9 +5085,9 @@
                 ' sinclo-radio [type="radio"] + label:before {border-color: ' +
                 settings.customDesign.radioBorderColor + '!important;}';
           }
-          style += '</style>';
-          html += style;
         }
+        style += '</style>';
+        html += style;
         settings.options.forEach(function(option, index) {
           html += '<sinclo-radio style="display: block;">';
           if (storedValue === option) {
@@ -5172,10 +5210,16 @@
       createPulldownStyle: function(settings) {
         var style = '';
         style += 'margin-top: 10px; height: 30px; width: 100%; word-break: break-all; ';
-        style += 'color: ' + settings.customDesign.textColor + ';';
         style += 'background-color: ' + settings.customDesign.backgroundColor +
             ';';
-        style += 'border: 1px solid ' + settings.customDesign.borderColor + ';';
+        if (settings.pulldownCustomDesign) {
+          style += 'color: ' + settings.customDesign.textColor + ';';
+          style += 'border: 1px solid ' + settings.customDesign.borderColor + ';';
+        } else {
+          style += 'color: ' + sincloInfo.widget.descriptionTextColor + ';';
+          style += 'border: 1px solid ' + sincloInfo.widget.mainColor + ';';
+        }
+
         if (check.smartphone()) {
           style += 'font-size: 16px;';
         }
@@ -5186,25 +5230,42 @@
         var style = '<style>';
         style += '#sincloBox ul#chatTalk ' + id +
             ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
-        style += '#sincloBox ul#chatTalk ' + id +
-            ' button {background-color: ' +
-            settings.customDesign.buttonUIBackgroundColor + '}';
+        if (settings.buttonUICustomDesign) {
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button {background-color: ' +
+              settings.customDesign.buttonUIBackgroundColor + '}';
+          style += '#sincloBox ul#chatTalk ' + id + ' button {color: ' +
+              settings.customDesign.buttonUITextColor + '}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button:focus {outline: none}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button:active {background-color: ' +
+              settings.customDesign.buttonUIActiveColor + '}';
+
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button.selected {background-color: ' +
+              settings.customDesign.buttonUIActiveColor + ' !important;}';
+        } else {
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button {background-color: ' +
+              sincloInfo.widget.reTextColor + '}';
+          style += '#sincloBox ul#chatTalk ' + id + ' button {color: ' +
+              sincloInfo.widget.reBackgroundColor + '}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button:focus {outline: none}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button:active {background-color: ' +
+              this.getRawColor(sincloInfo.widget.mainColor, 0.5) + '}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button.selected {background-color: ' +
+              this.getRawColor(sincloInfo.widget.mainColor, 0.5) + ' !important;}';
+        }
         style += '#sincloBox ul#chatTalk ' + id + ' button {width: ' +
             this.getButtonUIWidth() + 'px;}';
-        style += '#sincloBox ul#chatTalk ' + id + ' button {color: ' +
-            settings.customDesign.buttonUITextColor + '}';
-        style += '#sincloBox ul#chatTalk ' + id +
-            ' button:focus {outline: none}';
-        style += '#sincloBox ul#chatTalk ' + id +
-            ' button:active {background-color: ' +
-            settings.customDesign.buttonUIActiveColor + '}';
         style += '#sincloBox ul#chatTalk ' + id +
             ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
         style += '#sincloBox ul#chatTalk ' + id +
             ' button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
-        style += '#sincloBox ul#chatTalk ' + id +
-            ' button.selected {background-color: ' +
-            settings.customDesign.buttonUIActiveColor + ' !important;}';
         if (settings.outButtonUINoneBorder) {
           style += '#sincloBox ul#chatTalk ' + id + ' button {border: none}';
         } else {
@@ -5236,6 +5297,13 @@
         return style;
       },
       createCheckboxStyle: function(settings, id) {
+        if (settings.checkboxCustomDesign) {
+          var borderColor = settings.customDesign.checkboxBorderColor;
+          var checkmarkColor = settings.customDesign.checkboxCheckmarkColor;
+        } else {
+          var borderColor = sincloInfo.widget.mainColor;
+          var checkmarkColor = sincloInfo.widget.mainColor;
+        }
         var style = '<style>';
         style += '#sincloBox ' + id +
             ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + sincloInfo.widget.reTextColor + ';}';
@@ -5245,7 +5313,7 @@
             ' .sinclo-checkbox .checkmark {position: absolute;top: 2px;left: 0;height: ' + sincloInfo.widget.reTextSize + 'px;width: ' + sincloInfo.widget.reTextSize + 'px; background-color: ' +
             settings.customDesign.checkboxBackgroundColor + '}';
         style += '#sincloBox ' + id +
-            ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (sincloInfo.widget.reTextSize - 10) + 'px;top: ' + (sincloInfo.widget.reTextSize - 13) + 'px;width: 3px;height: 6px;border: solid ' + settings.customDesign.checkboxCheckmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+            ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (sincloInfo.widget.reTextSize - 10) + 'px;top: ' + (sincloInfo.widget.reTextSize - 13) + 'px;width: 3px;height: 6px;border: solid ' + checkmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
         style += '#sincloBox ' + id + ' .sinclo-checkbox input:checked ~ .checkmark {background-color: ' +
             settings.customDesign.checkboxActiveColor + '}';
         style += '#sincloBox ' + id + ' .sinclo-checkbox input:checked ~ .checkmark:after {display: block}';
@@ -5258,7 +5326,7 @@
           style += '#sincloBox ' + id + ' .sinclo-checkbox .checkmark {border: none;}';
         } else {
           style += '#sincloBox ' + id + ' .sinclo-checkbox .checkmark {border: 1px solid ' +
-              settings.customDesign.checkboxBorderColor + ';}';
+              borderColor + ';}';
         }
 
         style += '</style>';
@@ -5308,10 +5376,15 @@
         return html;
       },
       createButtonStyle: function(settings, index, isNoText) {
+        if (settings.isCustomDesign) {
+          var buttonBackgroundColor = settings.customDesign.buttonBackgroundColor;
+        } else {
+          var buttonBackgroundColor = sincloInfo.widget.reBackgroundColor
+        }
         var alignItems = 'align-items: center; ';
         var style = alignItems + 'padding: 12px; color: ' +
             settings.customDesign.buttonTextColor + '; background-color: ' +
-            settings.customDesign.buttonBackgroundColor + ';';
+            buttonBackgroundColor + ';';
         if (!settings.customDesign.outButtonNoneBorder) {
           if (isNoText && settings.options.length > 2 && Number(index) !==
               settings.options.length - 1) {
@@ -5384,8 +5457,13 @@
         var style = '<style>';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: 25px;}';
-        style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-family: ' + fontFamily + '; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
-        style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-family: ' + fontFamily + '; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
+        if (settings.carouselCustomDesign) {
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-family: ' + fontFamily + '; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-family: ' + fontFamily + '; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
+        } else {
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-family: ' + fontFamily + '; font-size: 28px; opacity: .5; color: ' + sincloInfo.widget.mainColor + ';}';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-family: ' + fontFamily + '; font-size: 28px; opacity: .5; color: ' + sincloInfo.widget.mainColor + ';}';
+        }
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize + 'px; color: ' + settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: 10px 12px 3px 12px; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin: 0 12px 8px 12px; font-size: ' + settings.customDesign.subTitleFontSize + 'px; color: ' + settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(settings.subTitlePosition) + ';}';
@@ -5414,6 +5492,29 @@
         style += '</style>';
 
         return style;
+      },
+      getRawColor: function(hex, opacity) {
+        if(!opacity) {
+          opacity = 0.1;
+        }
+        var code = hex.substr(1), r, g, b;
+        if (code.length === 3) {
+          r = String(code.substr(0, 1)) + String(code.substr(0, 1));
+          g = String(code.substr(1, 1)) + String(code.substr(1, 1));
+          b = String(code.substr(2)) + String(code.substr(2));
+        } else {
+          r = String(code.substr(0, 2));
+          g = String(code.substr(2, 2));
+          b = String(code.substr(4));
+        }
+        var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * opacity));
+        var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * opacity));
+        var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * opacity));
+        var codeR = parseInt(balloonR).toString(16);
+        var codeG = parseInt(balloonG).toString(16);
+        var codeB = parseInt(balloonB).toString(16);
+
+        return ('#' + codeR + codeG + codeB).toUpperCase();
       },
       getButtonUIWidth: function() {
         var width = 280;
