@@ -24,13 +24,13 @@
 
   $(function() {
     //アイコンクリック時のイベント付与
-    /*$('#node_list > i ').each(function(index, target) {
+    $('#node_list > i ').each(function(index, target) {
       $(target).draggable({
         helper: 'clone'
       });
-    });*/
+    });
 
-    /*var canvas = document.getElementById('canvas');
+    var canvas = document.getElementById('canvas');
     $(canvas).droppable({
       drop: function(e, ui) {
         if (ui.draggable.attr('id') === 'popup-frame') return;
@@ -38,11 +38,11 @@
         nodeMaster(ui.draggable.attr('id'), cursorPos.x, cursorPos.y);
       }
     });
-    */
+
 
     //graph = new joint.dia.Graph;
 
-    /*
+
     var paper = new joint.dia.Paper({
       el: canvas,
       width: canvas.width,
@@ -94,14 +94,13 @@
         return magnet.getAttribute('magnet') !== 'passive';
       }
     });
-    */
 
-    //graph.addCell(startNode());
+    graph.addCell(startNode());
 
-    //var dragReferencePosition = null;
-    //var dataForUpdate = $('#TChatbotDiagramActivity').val();
+    var dragReferencePosition = null;
+    var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
-    /*if (dataForUpdate !== null && dataForUpdate !== '') {
+    if (dataForUpdate !== null && dataForUpdate !== '') {
       graph.fromJSON(JSON.parse(dataForUpdate));
       setTimeout(function(){
         graph.resetCells(dataForUpdate.cells);
@@ -180,7 +179,7 @@
           e.offsetY - dragReferencePosition.y
         );
       }
-    });*/
+    });
 
 
 

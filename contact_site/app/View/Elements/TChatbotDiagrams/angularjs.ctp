@@ -428,7 +428,7 @@
             speakTextContents = nodeEditHandler.typeText.convertContents($('.text_modal_setting'));
             currentEditCell.getAncestors()[0].attr('.label/text',
                 convertTextForTitle(convertTextLength(nodeName, 3), 'テキスト発言'));
-            currentEditCell.attr('text/text', convertTextLength(speakTextContents[0], 14));
+            currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate(speakTextContents[0]), 46));
             //配列は直接上書きができないので一度nullにする
             currentEditCell.getAncestors()[0].attr('actionParam/text', null);
             nodeParam = {
@@ -446,7 +446,7 @@
             currentEditCell.getAncestors()[0].attr('.label/text',
                 convertTextForTitle(convertTextLength(nodeName, 6), '分岐'));
             currentEditCell.getAncestors()[0].attr('actionParam/selection', null);
-            currentEditCell.attr('text/text', convertTextLength(speakTextContents, 14));
+            currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate(speakTextContents), 46));
             nodeParam = {
               nodeName: nodeName,
               text: speakTextContents,
@@ -476,7 +476,7 @@
             break;
           case 'link':
             viewText = $('#linkTarget').val();
-            radio = $('input[name=link_type]:checked').val();
+            var radio = $('input[name=link_type]:checked').val();
             nodeParam = {
               link: viewText,
               linkType: radio
@@ -720,7 +720,7 @@
             if (nodeData.text.length > 0) {
               html.find('.text_modal_setting > textarea').val(nodeData.text[0]);
               for (var i = 1; i < nodeData.text.length; i++) {
-                tmpClone = html.find('.text_modal_setting:last-child').clone();
+                var tmpClone = html.find('.text_modal_setting:last-child').clone();
                 tmpClone.find('textarea').val(nodeData.text[i]);
                 html.find('#text_modal_body').append(tmpClone);
               }
@@ -739,7 +739,7 @@
             if (nodeData.selection.length > 0) {
               html.find('.setting_row > input[type=text]').val(nodeData.selection[0]);
               for (var i = 1; i < nodeData.selection.length; i++) {
-                tmpClone = html.find('.setting_row').last().clone();
+                var tmpClone = html.find('.setting_row').last().clone();
                 tmpClone.find('input[type=text]').val(nodeData.selection[i]);
                 console.log(tmpClone);
                 html.find('.branch_modal_setting_content').append(tmpClone);
@@ -751,7 +751,7 @@
           },
           handleBranchPorts: function(additionalPortList) {
             var self = nodeEditHandler.typeBranch;
-            var offsetMasterNodeHeight = 70;
+            var offsetMasterNodeHeight = 90;
             var addMasterNodeHeight = 0;
             var masterBranch = currentEditCell.getAncestors()[0];
             self.removeAllPortView(masterBranch);
@@ -761,7 +761,7 @@
                   masterViewData.position.x,
                   masterViewData.position.y,
                   additionalPortList[i],
-                  70 + i * 35
+                  90 + i * 35
               );
               addMasterNodeHeight += 35;
               currentEditCell.getAncestors()[0].embed(port);
@@ -853,6 +853,32 @@
             }
           }
           return contentArray;
+        }
+      };
+      
+      var textEditor = {
+        textLineSeparate: function(text){
+          var self = textEditor;
+          var originTextArray = text.split(/\r\n|\n/);
+          var resultTextArray = [];
+          for( var i = 0; i < originTextArray.length; i++ ){
+            if( originTextArray[i].length > 14 ){
+              Array.prototype.push.apply(resultTextArray, self.textLineCreate(originTextArray[i]));
+            } else {
+              resultTextArray.push(originTextArray[i]);
+            }
+          }
+          return resultTextArray.join("\n");
+        },
+        textLineCreate: function(textLine){
+          var currentText = textLine;
+          var textArray = [];
+          var loopNum = currentText.length / 15;
+          for( var i = 0; i < loopNum ; i++){
+            textArray.push(currentText.substr(0, 15));
+            currentText = currentText.substr(15);
+          }
+          return textArray;
         }
       };
 
