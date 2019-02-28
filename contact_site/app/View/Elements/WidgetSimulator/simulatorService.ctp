@@ -137,6 +137,9 @@
       get re_text_size() {
         return Number(this._settings['re_text_size']);
       },
+      get re_text_color() {
+        return this._settings['re_text_color'];
+      },
       get radioButtonBeforeTop() {
         return Math.ceil((Number(this.re_text_size) / 2));
       },
@@ -886,7 +889,7 @@
         var separator = this.getCheckboxSeparator(data.settings.checkboxSeparator);
         var style = '<style>';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}';
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox #' + checkboxName +
