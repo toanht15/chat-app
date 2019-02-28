@@ -535,7 +535,7 @@
        * @param String prefix ラジオボタンに付与するプレフィックス
        * @return String       変換したメッセージ
        */
-      createMessage: function(val, prefix, align) {
+      createMessage: function(val, prefix, align, nospan) {
         if (val === '') return　'';
         prefix = (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
         var isSmartphone = Number(this._showWidgetType) !== 1;
@@ -585,7 +585,9 @@
           //リンク、電話番号、imgタグ
           str = replaceVariable(str, isSmartphone, this._settings['widget_size_type']);
 
-          if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
+          if(nospan) {
+            content += '' + str;
+          } else if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
             content += '' + str + '\n';
           } else {
             if (isAddUnderline) {
