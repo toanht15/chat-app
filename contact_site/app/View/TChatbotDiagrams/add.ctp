@@ -6,7 +6,9 @@
  * Time: 10:33
  */
 ?>
-<div id="t_chatbot_diagrams_idx" class="card-shadow entry-wrapper">
+<?php echo $this->element('TChatbotDiagrams/angularjs'); ?>
+<div id="t_chatbot_diagrams_idx" class="card-shadow entry-wrapper" ng-app="sincloApp"
+     ng-controller="DiagramController as main" ng-cloak>
 
   <div id="t_chatbot_diagramas_add_title">
     <div class="fLeft"><i class="fal fa-sitemap fa-rotate-270 fa-2x"></i></div>

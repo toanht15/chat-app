@@ -2010,6 +2010,8 @@
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.radio
             || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.message.radio
+            || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.pulldown
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.calendar
@@ -2558,6 +2560,30 @@
       if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.button) {
         this.chatApi.addButton('hearing_msg sinclo_re', JSON.parse(obj.message).message,
+            JSON.parse(obj.message).settings);
+        this.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.buttonUI) {
+        this.chatApi.addButtonUI('hearing_msg sinclo_re', JSON.parse(obj.message).message,
+            JSON.parse(obj.message).settings);
+        this.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.checkbox) {
+        this.chatApi.addCheckbox('hearing_msg sinclo_re', JSON.parse(obj.message).message,
+            JSON.parse(obj.message).settings);
+        this.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.radio) {
+        this.chatApi.addRadioButton('hearing_msg sinclo_re', JSON.parse(obj.message).message,
             JSON.parse(obj.message).settings);
         this.chatApi.scDown();
         return false;
@@ -4505,14 +4531,6 @@
 
           }
         }
-      },
-      isJsonString: function(string) {
-        try {
-          JSON.parse(string);
-        } catch (e) {
-          return false;
-        }
-        return true;
       },
       createMessageHtml: function(message, align) {
         if (!message || message.length === 0) {
@@ -10836,20 +10854,6 @@
                     find('input[name^="sinclo-checkbox"]').
                     prop('disabled', true).
                     css('opacity', 0.5);
-                // button UI
-                $(this).
-                    find('.sinclo-button-ui').
-                    prop('disabled', true).
-                    css('opacity', 0.5);
-                // checkbox
-                $(this).
-                    find('.sinclo-checkbox').
-                    prop('disabled', true).
-                    css('opacity', 0.5);
-                $(this).
-                    find('.checkbox-submit-btn').
-                    prop('disabled', true).
-                    css('opacity', 0.5);
               });
 
           $('#sincloBox ul#chatTalk li.hearing_msg').
@@ -12177,6 +12181,64 @@
               sinclo.hideTextarea();
               break;
           }
+        }
+      }
+    },
+    /**
+     * ダイアグラムAPI
+     */
+    diagramApi: {
+      _lKey: {
+        beforeTextareaOpened: 'd_beforeTextareaOpened',
+        scenarioBase: 'scl_d_currentdata',
+        scenarioId: 'd_id',
+        processing: 'd_processing',
+        waitingInput: 'd_waiting',
+        variables: 'scl_d_variables',
+        messages: 'd_messages',
+        allowSave: 'd_allowSave',
+        scenarios: 'd_scenarios',
+        scenarioLength: 'd_scenarioLength',
+        currentScenario: 'd_currentScenario',
+        currentScenarioSeqNum: 'd_currentScenarioSeqNum',
+        storedVariableKeys: 'd_storedVariableKeys',
+        sendCustomerMessageType: 'd_sendCustomerMessageType',
+        showSequenceSet: 'd_showSequenceList',
+        scenarioMessageType: 'd_scenarioMessageType',
+        previousChatMessageLength: 'd_prevChatMessageLength',
+        stackReturnSettings: 'd_stackReturnSettings',
+        isSentMail: 'd_isSentMail'
+      },
+      defaultVal: {
+        's_id': 0,
+        's_currentdata': {},
+        's_processing': {},
+        's_waiting': false,
+        's_messages': [],
+        's_allowSave': false,
+        's_scenarios': {},
+        's_scenarioLength': 0,
+        's_currentScenario': 0,
+        's_currentScenarioSeqNum': 0,
+        's_storedVariableKeys': [],
+        's_sendCustomerMessageType': 1,
+        's_showSequenceList': {},
+        's_scenarioMessageType': 3,
+        's_stackReturnSettings': {},
+        's_targetChatId': [],
+        's_isSentMail': false
+      },
+      common: {
+        init: function(data) {
+
+        }
+      },
+      /**
+       * 分岐
+       */
+      branch: {
+        init: function(data) {
+
         }
       }
     },

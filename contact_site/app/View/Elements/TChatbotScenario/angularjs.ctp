@@ -4096,7 +4096,7 @@
       });
       // button ui
       $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
-        $(this).parents('div').find('.sinclo-button-ui').removeClass('selected');
+        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
         $(this).addClass('selected');
         var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
         var message = $(this).text().replace(/^\s/, '');
