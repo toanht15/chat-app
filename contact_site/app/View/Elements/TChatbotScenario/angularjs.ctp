@@ -894,6 +894,9 @@
           // hearings
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
+              document.getElementById('action' + index + '-'
+              + hearingIndex + '_message').innerHTML = $scope.widget.createMessage(
+                  hearing.message);
               if (hearing.uiType === '3') {
                 $timeout(function() {
                   $scope.$apply();
