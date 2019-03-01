@@ -440,7 +440,7 @@
         speakTextContents = $('.flex_row_box > textarea').val();
         btnType = $('#branchBtnType option:selected').val();
         selectionList = nodeEditHandler.typeBranch.convertContents($('.setting_row'));
-        nodeEditHandler.typeBranch.handleBranchPorts(selectionList);
+        nodeEditHandler.typeBranch.branchPortController(selectionList);
         //配列は直接上書きができないので一度nullにする
         currentEditCell.getAncestors()[0].attr('.label/text',
           convertTextForTitle(convertTextLength(nodeName, 6), '分岐'));
@@ -748,7 +748,7 @@
         }
         return html;
       },
-      handleBranchPorts: function(additionalPortList) {
+      branchPortController: function(additionalPortList) {
         var self = nodeEditHandler.typeBranch;
         var offsetMasterNodeHeight = 70;
         var addMasterNodeHeight = 0;
