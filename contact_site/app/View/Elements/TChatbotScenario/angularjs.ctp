@@ -905,9 +905,16 @@
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
               if(document.getElementById('action' + index + '-' + hearingIndex + '_message')) {
-                debugger;
-                document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = $scope.widget.createMessage(
+                var addHtml = $scope.widget.createMessage(
                     hearing.message, null, null, (hearing.uiType === '7'));
+                if(addHtml.length === 0 && (hearing.uiType === '8' || hearing.uiType === '9')) {
+                  addHtml = '<span class="sinclo-text-line"></span>';
+                }
+                document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = addHtml;
+              } else if (hearing.uiType === '7') {
+                var addHtml = $scope.widget.createMessage(
+                    hearing.message, null, hearing.settings.customDesign.messageAlign, (hearing.uiType === '7'));
+                $('.action' + index + '_button' + hearingIndex).find('.details').html(addHtml);
               }
               if (hearing.uiType === '3') {
                 $timeout(function() {

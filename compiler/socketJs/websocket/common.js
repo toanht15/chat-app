@@ -3645,6 +3645,7 @@ var socket, // socket.io
           'margin-left: 0; ' +
           '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
           'margin-left: -25px; ' +
+          'margin-right: -25px; ' +
           '}';
     },
     //バナーを生成する関数
