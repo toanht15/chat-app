@@ -533,10 +533,12 @@
        * 表示用HTMLへの変換
        * @param String val    変換したいメッセージ
        * @param String prefix ラジオボタンに付与するプレフィックス
+       * @param String align 文字寄せを指定したい場合に使う。'2': 中央寄せ、'3': 右寄せ
+       * @param boolean nospan 出力するHTMLにspanのラップを付けるかどうか
        * @return String       変換したメッセージ
        */
       createMessage: function(val, prefix, align, nospan) {
-        if (val === '') return　'';
+        if (val === '') return '';
         prefix = (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
         var isSmartphone = Number(this._showWidgetType) !== 1;
         var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
