@@ -62,6 +62,13 @@ class TAutoMessage extends AppModel {
         'message' => '呼出先を選択してください'
       ));
       $this->validator()->remove('action');
+    } else if($actionType == C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM) {
+      $this->validator()->add('t_chatbot_diagram_id', 'checkCallAutoMessage', array(
+        'rule' => 'checkSelectChatDiagram',
+        'required' => true,
+        'message' => '呼出先を選択してください'
+      ));
+      $this->validator()->remove('action');
     }
   }
 
@@ -209,6 +216,13 @@ class TAutoMessage extends AppModel {
       return true;
     }
     return !empty($param['call_automessage_id']);
+  }
+
+  public function checkSelectChatDiagram($param) {
+    if ($this->data['TAutoMessage']['action_type'] != C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM) {
+      return true;
+    }
+    return !empty($param['t_chatbot_diagram_id']);
   }
 
   public function isActiveNameUnique($param) {

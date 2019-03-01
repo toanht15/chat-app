@@ -108,9 +108,10 @@
     var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
     if (dataForUpdate !== null && dataForUpdate !== '') {
-      graph.fromJSON(JSON.parse(dataForUpdate));
+      var obj = JSON.parse(dataForUpdate);
+      graph.fromJSON(obj);
       setTimeout(function(){
-        graph.resetCells(dataForUpdate.cells);
+        graph.resetCells(obj.cells);
         initNodeEvent(graph.getCells());
       }, 500);
     }
