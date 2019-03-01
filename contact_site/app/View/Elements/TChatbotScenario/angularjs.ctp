@@ -911,6 +911,10 @@
                   addHtml = '<span class="sinclo-text-line"></span>';
                 }
                 document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = addHtml;
+              } else if (hearing.uiType === '7') {
+                var addHtml = $scope.widget.createMessage(
+                    hearing.message, null, hearing.settings.customDesign.messageAlign, (hearing.uiType === '7'));
+                $('.action' + index + '_button' + hearingIndex).find('.details').html(addHtml);
               }
               if (hearing.uiType === '3') {
                 $timeout(function() {

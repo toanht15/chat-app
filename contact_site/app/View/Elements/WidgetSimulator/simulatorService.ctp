@@ -561,10 +561,12 @@
         }
 
         var isFreeBlock = false;
+        var hasFreeBlock = false;
         for (var i = 0; strings.length > i; i++) {
           if(strings[i].match(/(<div class="free-block")/)) {
             content += strings[i];
             isFreeBlock = true;
+            hasFreeBlock = true;
             continue;
           } else if(strings[i].match(/(<\/div>)/)) {
             isFreeBlock = false;
@@ -587,9 +589,7 @@
           //リンク、電話番号、imgタグ
           str = replaceVariable(str, isSmartphone, this._settings['widget_size_type']);
 
-          if(nospan) {
-            content += '' + str;
-          } else if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
+          if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
             content += '' + str + '\n';
           } else {
             if (isAddUnderline) {
