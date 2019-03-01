@@ -860,6 +860,16 @@
           // 編集されたことを検知する
           if (!$scope.changeFlg && newObject !== oldObject) {
             $scope.changeFlg = true;
+          } else if($scope.beginData === newObject) {
+            $scope.changeFlg = false;
+          }
+
+          try {
+            if(!$scope.beginData || Object.keys($scope.beginData).length > 0) {
+              $scope.beginData = newObject;
+            }
+          } catch(e) {
+            $scope.beginData = newObject;
           }
 
           // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
@@ -894,6 +904,11 @@
           // hearings
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
+              if(document.getElementById('action' + index + '-' + hearingIndex + '_message')) {
+                debugger;
+                document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = $scope.widget.createMessage(
+                    hearing.message, null, null, (hearing.uiType === '7'));
+              }
               if (hearing.uiType === '3') {
                 $timeout(function() {
                   $scope.$apply();
@@ -1647,6 +1662,7 @@
           var target = $scope.setActionList[actionStep].hearings;
           src.inputType = src.inputType.toString();
           src.uiType = src.uiType.toString();
+          src.settings.options = [""];
           target.splice(listIndex + 1, 0, angular.copy(src));
           this.controllHearingSettingView(actionStep);
 
@@ -3566,7 +3582,6 @@
 
           if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CALENDAR ?>) {
             var data = {};
-            console.log(hearingDetail.settings);
             data.settings = hearingDetail.settings;
             data.design = hearingDetail.settings.customDesign;
             data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
@@ -3629,7 +3644,6 @@
             $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
                 hearingDetail.required);
           }
-
           $scope.$emit('setRestoreStatus', $scope.actionStep, $scope.hearingIndex, true);
         } else if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length)) {
           // 確認メッセージ
