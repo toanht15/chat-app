@@ -661,6 +661,7 @@
         document.getElementById('chatTalk').appendChild(gridElm);
         if (data.settings.carouselPattern === '2') {
           $('#' + divElm.id).find('.sinclo-text-line').css('margin-left', '-25px');
+          $('#' + divElm.id).find('.sinclo-text-line').css('margin-right', '-25px');
         }
         $('#chatTalk > div:last-child').show();
         var prevIconClass = '';
