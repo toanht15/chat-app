@@ -725,12 +725,6 @@
   }(popupEvent, shortMessage);
 
 </script>
-<?php
-$ngParam = "";
-if(strcmp($this->request->url, "TChatbotDiagrams/add") == 0
-|| strcmp($this->request->url, "TChatbotDiagrams/edit") == 0) {
-  $ngParam = "ng-app='sincloApp' ng-controller='DiagramController'";
-}?>
 <div id="popup" class="popup-off" style="">
   <div id="popup-frame-base">
     <div id="popup-bg"></div>
@@ -751,7 +745,7 @@ if(strcmp($this->request->url, "TChatbotDiagrams/add") == 0
           ?>
         </div>
         <div id="popup-title"></div>
-        <div id="popup-main" <?=$ngParam?>></div>
+        <div id="popup-main"></div>
         <div id="popup-button"></div>
         <div id="popup-warning" style="color: #FF7B7B; text-align:center;"></div>
       </div>
@@ -761,11 +755,3 @@ if(strcmp($this->request->url, "TChatbotDiagrams/add") == 0
 </div>
 <div id="shortMessage" class="popup-off">
 </div>
-<script>
-  console.log(location.href);
-  if(location.href.indexOf("TChatbotDiagrams/add") > -1
-      || location.href.indexOf("TChatbotDiagrams/edit") > -1) {
-    $('#popup').attr("ng-app", "sincloApp")
-    .attr("ng-controller", "ModalController");
-  }
-</script>

@@ -1575,6 +1575,29 @@
       }
 
       /*チャットツリーエディタ用*/
+      &[class*="diagrams"] {
+        #popup-title {
+          background-color: #C3D69B;
+          border-bottom: none!important;
+          color: #FFFFFF!important;
+          font-size: 17px!important;
+          font-weight: bold;
+        }
+      }
+
+      &.diagram-ui {
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        #popup-title{
+          cursor: move;
+        }
+        h3 {
+          margin: 20px 20px 0 20px;
+          border-bottom: 3px solid #C3D69B;
+          padding-bottom: 5px;
+        }
+      }
+
+
       /* 設定個数が固定のモーダル */
       &.p_const_diagrams {
         width: 400px;
@@ -1644,8 +1667,6 @@
         }
         #text_modal {
           display: flex;
-          justify-content: start;
-          align-items: center;
           border-bottom: 1px solid #909090;
           #text_modal_editor {
             width: 500px;
@@ -1693,7 +1714,7 @@
             }
           }
           #text_modal_preview {
-            width: 200px;
+            width: 370px;
           }
         }
         #popup-button {
@@ -1787,6 +1808,9 @@
               margin-top: 10px;
             }
           }
+        }
+        #branch_modal_preview {
+          width: 370px;
         }
         #popup-button {
           display:flex;

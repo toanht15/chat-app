@@ -7249,7 +7249,9 @@ ul.naviBtn {
       z-index: 4;
       .form_subtitle {
         border-bottom: 3px solid #C3D69B;
-        padding-left: 5px;
+        padding-right: 3px;
+        text-align: center;
+        padding-bottom: 10px;
       }
       #node_list {
         display: flex;
@@ -7274,25 +7276,25 @@ ul.naviBtn {
           margin-top:2px;
         }
         .branch {
-          background-color: #ee5253;
+          background-color: #c73576;
         }
         .text {
-          background-color: #ff9f43;
+          background-color: #845d9e;
         }
         .scenario {
-          background-color: #0abde3;
+          background-color: #82c0cd;
         }
         .jump {
-          background-color: #10ac84;
+          background-color: #c8d627;
         }
         .link {
-          background-color: #960C84;
+          background-color: #D48BB3;
         }
         .operator {
-          background-color: #2e86de;
+          background-color: #98B5E0;
         }
         .cv {
-          background-color: #5f27cd;
+          background-color: #A2CCBA;
         }
       }
     }
@@ -7530,6 +7532,10 @@ ul.naviBtn {
               position: relative;
               border: 1px solid #B7B7B7;
               margin-top: 20px;
+
+              &#action0_setting {
+                margin-top: 8px;
+              }
 
               hr.separator {
                 border-color: #C3D69B;
@@ -8704,7 +8710,8 @@ ul.naviBtn {
                         label {
                           padding-top: 6px;
                           &.executeNextActionCheck {
-                            display: block;
+                            display: flex;
+                            align-items: center;
                           }
                           &.jumpLinkAction {
                             display: inline-flex;

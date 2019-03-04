@@ -545,9 +545,123 @@ sinclo@medialink-ml.co.jp
             'chatTextArea' => '1',
             'hearings' => array(
               0 => array(
+                "variableName" => "コース",
+                "uiType" => "6",
+                "message" => "ご希望のコースを選択してください。",
+                "required" => true,
+                "errorMessage" => "",
+                "settings" => array(
+                  "options" => array(
+                    ""
+                  ),
+                  "disablePastDate" => true,
+                  "isSetDisableDate" => false,
+                  "isDisableDayOfWeek" => false,
+                  "isSetSpecificDate" => false,
+                  "isEnableAfterDate" => false,
+                  "enableAfterDate" => null,
+                  "isDisableAfterData" => false,
+                  "dayOfWeekSetting" => array(
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                  ),
+                  "setSpecificDateType" => "",
+                  "specificDateData" => array(
+                    ""
+                  ),
+                  "language" => 1,
+                  "pulldownCustomDesign" => false,
+                  "calendarCustomDesign" => false,
+                  "carouselCustomDesign" => false,
+                  "buttonUICustomDesign" => false,
+                  "checkboxCustomDesign" => false,
+                  "radioCustomDesign" => false,
+                  "balloonStyle" => "1",
+                  "lineUpStyle" => "1",
+                  "carouselPattern" => "2",
+                  "arrowType" => "4",
+                  "titlePosition" => "1",
+                  "subTitlePosition" => "1",
+                  "outCarouselNoneBorder" => false,
+                  "inCarouselNoneBorder" => false,
+                  "outButtonUINoneBorder" => true,
+                  "checkboxNoneBorder" => false,
+                  "radioNoneBorder" => false,
+                  "aspectRatio" => 1.1542857142857,
+                  "checkboxSeparator" => "1",
+                  "customDesign" => array(
+                    "borderColor" => "#ABCD05",
+                    "backgroundColor" => "#FFFFFF",
+                    "textColor" => "#666666",
+                    "headerBackgroundColor" => "#ABCD05",
+                    "headerTextColor" => "#FFFFFF",
+                    "headerWeekdayBackgroundColor" => "#F6FAE6",
+                    "calendarBackgroundColor" => "#FFFFFF",
+                    "calendarTextColor" => "#666666",
+                    "saturdayColor" => "#666666",
+                    "sundayColor" => "#666666",
+                    "titleColor" => "#333333",
+                    "subTitleColor" => "#333333",
+                    "arrowColor" => "#ABCD05",
+                    "titleFontSize" => 14,
+                    "subTitleFontSize" => 13,
+                    "outBorderColor" => "#E8E7E0",
+                    "inBorderColor" => "#E8E7E0",
+                    "messageAlign" => "2",
+                    "buttonBackgroundColor" => "#F6FAE6",
+                    "buttonTextColor" => "#007AFF",
+                    "buttonAlign" => "2",
+                    "buttonActiveColor" => "#D5E682",
+                    "buttonBorderColor" => "#E3E3E3",
+                    "buttonUIBackgroundColor" => "#333333",
+                    "buttonUITextAlign" => "2",
+                    "buttonUITextColor" => "#F6FAE6",
+                    "buttonUIActiveColor" => "#D5E682",
+                    "buttonUIBorderColor" => "#E3E3E3",
+                    "checkboxBackgroundColor" => "#FFFFFF",
+                    "checkboxActiveColor" => "#FFFFFF",
+                    "checkboxBorderColor" => "#ABCD05",
+                    "checkboxCheckmarkColor" => "#ABCD05",
+                    "radioBackgroundColor" => "#FFFFFF",
+                    "radioActiveColor" => "#ABCD05",
+                    "radioBorderColor" => "#999"
+                  ),
+                  "images" => array(
+                    array(
+                      "title" => "バナナ",
+                      "subTitle" => "サンプルです。サンプルです。サンプルです。サンプルです。サンプルです。サンプルです。サンプルです。",
+                      "answer" => "バナナ",
+                      "url" => "banana.png",
+                      "isUploading" => false
+                    ),
+                    array(
+                      "title" => "りんご",
+                      "subTitle" => "サンプルです。サンプルです。サンプルです。サンプルです。サンプルです。サンプルです。サンプルです。",
+                      "answer" => "りんご",
+                      "url" => "apple.png",
+                      "isUploading" => false
+                    ),
+                    array(
+                      "title" => "オレンジ",
+                      "subTitle" => "サンプルです。サンプルです。サンプルです。サンプルです。サンプルです。サンプルです。サンプルです。",
+                      "answer" => "オレンジ",
+                      "url" => "orange.png",
+                      "isUploading" => false
+                    )
+                  )
+                ),
+                "inputLFType" => 2,
+                "canRestore" => true
+              ),
+              1 => array(
                 'variableName' => '店舗',
                 'uiType' => '4',
-                'message' => 'まずご希望の店舗を選択してください。',
+                'message' => '続いて、ご希望の店舗を選択してください。',
                 'required' => true,
                 'errorMessage' => '',
                 'settings' => array(
@@ -611,7 +725,7 @@ sinclo@medialink-ml.co.jp
                 'inputLFType' => 2,
                 'canRestore' => true,
               ),
-              1 => array(
+              2 => array(
                 'variableName' => '来店希望日',
                 'uiType' => '5',
                 'message' => 'ご希望日を選択してください。',
@@ -661,7 +775,7 @@ sinclo@medialink-ml.co.jp
                 'inputLFType' => 2,
                 'canRestore' => true,
               ),
-              2 => array(
+              3 => array(
                 'variableName' => '時間帯',
                 'uiType' => '4',
                 'message' => 'ご希望の時間帯を選択してください。',
@@ -724,7 +838,7 @@ sinclo@medialink-ml.co.jp
                 'inputLFType' => 2,
                 'canRestore' => true,
               ),
-              3 => array(
+              4 => array(
                 'variableName' => '名前',
                 'inputType' => '1',
                 'uiType' => '1',
@@ -734,7 +848,7 @@ sinclo@medialink-ml.co.jp
                 'inputLFType' => 2,
                 'canRestore' => true,
               ),
-              4 => array(
+              5 => array(
                 'variableName' => '電話番号',
                 'inputType' => '4',
                 'uiType' => '1',
@@ -840,6 +954,7 @@ sinclo@medialink-ml.co.jp
           "1" => array(
             'messageIntervalTimeSec' => '2',
             'chatTextArea' => '1',
+            'actionType' => '2',
             'hearings' =>
               array(
                 0 =>
@@ -870,46 +985,17 @@ sinclo@medialink-ml.co.jp
                       ),
                     'inputLFType' => 2,
                   ),
-              ),
-            'restore' => false,
-            'isConfirm' => '2',
-            'confirmMessage' => '',
-            'success' => '',
-            'cancel' => '',
-            'cv' => '2',
-            'actionType' => '2',
-          ),
-          "2" => array(
-            'chatTextArea' => '2',
-            'actionType' => '1',
-            'messageIntervalTimeSec' => '2',
-            'message' => '{{会員コース}}ですね。',
-            'restore' => false,
-          ),
-          "3" => array(
-            'chatTextArea' => '2',
-            'actionType' => '1',
-            'messageIntervalTimeSec' => '2',
-            'message' => '続いて、お客様情報をご入力いただきます。',
-            'restore' => false,
-          ),
-          "4" => array(
-            'chatTextArea' => '1',
-            'actionType' => '2',
-            'messageIntervalTimeSec' => '2',
-            'hearings' =>
-              array(
-                0 =>
+                1 =>
                   array(
                     'variableName' => '名前',
                     'inputType' => '1',
                     'uiType' => '1',
-                    'message' => 'お客様のお名前をフルネーム（漢字）で入力して下さい。',
+                    'message' => "続いて、お客様情報をご入力いただきます。\n\nお客様のお名前をフルネーム（漢字）で入力して下さい。",
                     'required' => true,
                     'errorMessage' => '',
                     'inputLFType' => 2,
                   ),
-                1 =>
+                2 =>
                   array(
                     'variableName' => 'カナ',
                     'inputType' => '1',
@@ -919,37 +1005,469 @@ sinclo@medialink-ml.co.jp
                     'errorMessage' => '',
                     'inputLFType' => 2,
                   ),
-                2 =>
-                  array(
-                    'variableName' => '生年月日',
-                    'inputType' => '2',
-                    'uiType' => '1',
-                    'message' => '生年月日を8桁で入力してください。（例：1990年1月1日生まれの場合 → 19900101）',
-                    'required' => true,
-                    'errorMessage' => '入力が正しく確認できませんでした。',
-                    'inputLFType' => 2,
-                  ),
                 3 =>
                   array(
-                    'variableName' => '住所',
-                    'inputType' => '1',
-                    'uiType' => '2',
-                    'message' => '住所を郵便番号から入力してください。',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'inputLFType' => 2,
+                    "variableName" => "生年月日（年）",
+                    "uiType" => "4",
+                    "message" => "お客様の生年月日を入力していただきます。\n※このあと残り３つの質問がございます。\n\nはじめに西暦からお選びください。",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "inputLFType" => 2,
+                    "settings" => array(
+                      "options" => array(
+                        "1920年",
+                        "1921年",
+                        "1922年",
+                        "1923年",
+                        "1924年",
+                        "1925年",
+                        "1926年",
+                        "1927年",
+                        "1928年",
+                        "1929年",
+                        "1930年",
+                        "1931年",
+                        "1932年",
+                        "1933年",
+                        "1934年",
+                        "1935年",
+                        "1936年",
+                        "1937年",
+                        "1938年",
+                        "1939年",
+                        "1940年",
+                        "1941年",
+                        "1942年",
+                        "1943年",
+                        "1944年",
+                        "1945年",
+                        "1946年",
+                        "1947年",
+                        "1948年",
+                        "1949年",
+                        "1950年",
+                        "1951年",
+                        "1952年",
+                        "1953年",
+                        "1954年",
+                        "1955年",
+                        "1956年",
+                        "1957年",
+                        "1958年",
+                        "1959年",
+                        "1960年",
+                        "1961年",
+                        "1962年",
+                        "1963年",
+                        "1964年",
+                        "1965年",
+                        "1966年",
+                        "1967年",
+                        "1968年",
+                        "1969年",
+                        "1970年",
+                        "1971年",
+                        "1972年",
+                        "1973年",
+                        "1974年",
+                        "1975年",
+                        "1976年",
+                        "1977年",
+                        "1978年",
+                        "1979年",
+                        "1980年",
+                        "1981年",
+                        "1982年",
+                        "1983年",
+                        "1984年",
+                        "1985年",
+                        "1986年",
+                        "1987年",
+                        "1988年",
+                        "1989年",
+                        "1990年",
+                        "1991年",
+                        "1992年",
+                        "1993年",
+                        "1994年",
+                        "1995年",
+                        "1996年",
+                        "1997年",
+                        "1998年",
+                        "1999年",
+                        "2000年",
+                        "2001年",
+                        "2002年",
+                        "2003年",
+                        "2004年",
+                        "2005年",
+                        "2006年",
+                        "2007年",
+                        "2008年",
+                        "2009年",
+                        "2010年",
+                        "2011年",
+                        "2012年",
+                        "2013年",
+                        "2014年",
+                        "2015年",
+                        "2016年",
+                        "2017年",
+                        "2018年",
+                        "2019年"
+                      ),
+                      "disablePastDate" => true,
+                      "isSetDisableDate" => false,
+                      "isDisableDayOfWeek" => false,
+                      "isSetSpecificDate" => false,
+                      "isEnableAfterDate" => false,
+                      "enableAfterDate" => null,
+                      "isDisableAfterData" => false,
+                      "dayOfWeekSetting" => array(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                      ),
+                      "setSpecificDateType" => "",
+                      "specificDateData" => array(
+                        ""
+                      ),
+                      "language" => 1,
+                      "pulldownCustomDesign" => false,
+                      "calendarCustomDesign" => false,
+                      "carouselCustomDesign" => false,
+                      "buttonUICustomDesign" => false,
+                      "checkboxCustomDesign" => false,
+                      "radioCustomDesign" => false,
+                      "balloonStyle" => "1",
+                      "lineUpStyle" => "1",
+                      "carouselPattern" => "2",
+                      "arrowType" => "4",
+                      "titlePosition" => "1",
+                      "subTitlePosition" => "1",
+                      "outCarouselNoneBorder" => false,
+                      "inCarouselNoneBorder" => false,
+                      "outButtonUINoneBorder" => true,
+                      "checkboxNoneBorder" => false,
+                      "radioNoneBorder" => false,
+                      "aspectRatio" => null,
+                      "checkboxSeparator" => "1",
+                      "customDesign" => array(
+                        "borderColor" => "#ABCD05",
+                        "backgroundColor" => "#FFFFFF",
+                        "textColor" => "#666666",
+                        "headerBackgroundColor" => "#ABCD05",
+                        "headerTextColor" => "#FFFFFF",
+                        "headerWeekdayBackgroundColor" => "#F6FAE6",
+                        "calendarBackgroundColor" => "#FFFFFF",
+                        "calendarTextColor" => "#666666",
+                        "saturdayColor" => "#666666",
+                        "sundayColor" => "#666666",
+                        "titleColor" => "#333333",
+                        "subTitleColor" => "#333333",
+                        "arrowColor" => "#ABCD05",
+                        "titleFontSize" => 14,
+                        "subTitleFontSize" => 13,
+                        "outBorderColor" => "#E8E7E0",
+                        "inBorderColor" => "#E8E7E0",
+                        "messageAlign" => "2",
+                        "buttonBackgroundColor" => "#F6FAE6",
+                        "buttonTextColor" => "#007AFF",
+                        "buttonAlign" => "2",
+                        "buttonActiveColor" => "#D5E682",
+                        "buttonBorderColor" => "#E3E3E3",
+                        "buttonUIBackgroundColor" => "#333333",
+                        "buttonUITextAlign" => "2",
+                        "buttonUITextColor" => "#F6FAE6",
+                        "buttonUIActiveColor" => "#D5E682",
+                        "buttonUIBorderColor" => "#E3E3E3",
+                        "checkboxBackgroundColor" => "#FFFFFF",
+                        "checkboxActiveColor" => "#FFFFFF",
+                        "checkboxBorderColor" => "#ABCD05",
+                        "checkboxCheckmarkColor" => "#ABCD05",
+                        "radioBackgroundColor" => "#FFFFFF",
+                        "radioActiveColor" => "#ABCD05",
+                        "radioBorderColor" => "#999"
+                      ),
+                      "images" => array(
+                        array(
+                          "title" => "",
+                          "subTitle" => "",
+                          "answer" => "",
+                          "url" => ""
+                        )
+                      )
+                    ),
+                    "canRestore" => true
                   ),
                 4 =>
                   array(
-                    'variableName' => '電話番号',
-                    'inputType' => '4',
-                    'uiType' => '1',
-                    'message' => '電話番号を入力してください。',
-                    'required' => true,
-                    'errorMessage' => '入力が正しく確認できませんでした。',
-                    'inputLFType' => 2,
+                    "variableName" => "生年月日（月）",
+                    "uiType" => "4",
+                    "message" => "続けて月をお選びください。",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "settings" => array(
+                      "options" => array(
+                        "1月",
+                        "2月",
+                        "3月",
+                        "4月",
+                        "5月",
+                        "6月",
+                        "7月",
+                        "8月",
+                        "9月",
+                        "10月",
+                        "11月",
+                        "12月"
+                      ),
+                      "disablePastDate" => true,
+                      "isSetDisableDate" => false,
+                      "isDisableDayOfWeek" => false,
+                      "isSetSpecificDate" => false,
+                      "isEnableAfterDate" => false,
+                      "enableAfterDate" => null,
+                      "isDisableAfterData" => false,
+                      "dayOfWeekSetting" => array(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                      ),
+                      "setSpecificDateType" => "",
+                      "specificDateData" => array(
+                        ""
+                      ),
+                      "language" => 1,
+                      "pulldownCustomDesign" => false,
+                      "calendarCustomDesign" => false,
+                      "carouselCustomDesign" => false,
+                      "buttonUICustomDesign" => false,
+                      "checkboxCustomDesign" => false,
+                      "radioCustomDesign" => false,
+                      "balloonStyle" => "1",
+                      "lineUpStyle" => "1",
+                      "carouselPattern" => "2",
+                      "arrowType" => "4",
+                      "titlePosition" => "1",
+                      "subTitlePosition" => "1",
+                      "outCarouselNoneBorder" => false,
+                      "inCarouselNoneBorder" => false,
+                      "outButtonUINoneBorder" => true,
+                      "checkboxNoneBorder" => false,
+                      "radioNoneBorder" => false,
+                      "aspectRatio" => null,
+                      "checkboxSeparator" => "1",
+                      "customDesign" => array(
+                        "borderColor" => "#ABCD05",
+                        "backgroundColor" => "#FFFFFF",
+                        "textColor" => "#666666",
+                        "headerBackgroundColor" => "#ABCD05",
+                        "headerTextColor" => "#FFFFFF",
+                        "headerWeekdayBackgroundColor" => "#F6FAE6",
+                        "calendarBackgroundColor" => "#FFFFFF",
+                        "calendarTextColor" => "#666666",
+                        "saturdayColor" => "#666666",
+                        "sundayColor" => "#666666",
+                        "titleColor" => "#333333",
+                        "subTitleColor" => "#333333",
+                        "arrowColor" => "#ABCD05",
+                        "titleFontSize" => 14,
+                        "subTitleFontSize" => 13,
+                        "outBorderColor" => "#E8E7E0",
+                        "inBorderColor" => "#E8E7E0",
+                        "messageAlign" => "2",
+                        "buttonBackgroundColor" => "#F6FAE6",
+                        "buttonTextColor" => "#007AFF",
+                        "buttonAlign" => "2",
+                        "buttonActiveColor" => "#D5E682",
+                        "buttonBorderColor" => "#E3E3E3",
+                        "buttonUIBackgroundColor" => "#333333",
+                        "buttonUITextAlign" => "2",
+                        "buttonUITextColor" => "#F6FAE6",
+                        "buttonUIActiveColor" => "#D5E682",
+                        "buttonUIBorderColor" => "#E3E3E3",
+                        "checkboxBackgroundColor" => "#FFFFFF",
+                        "checkboxActiveColor" => "#FFFFFF",
+                        "checkboxBorderColor" => "#ABCD05",
+                        "checkboxCheckmarkColor" => "#ABCD05",
+                        "radioBackgroundColor" => "#FFFFFF",
+                        "radioActiveColor" => "#ABCD05",
+                        "radioBorderColor" => "#999"
+                      ),
+                      "images" => array(
+                        array(
+                          "title" => "",
+                          "subTitle" => "",
+                          "answer" => "",
+                          "url" => ""
+                        )
+                      )
+                    ),
+                    "inputLFType" => 2,
+                    "canRestore" => true
                   ),
                 5 =>
+                  array(
+                    "variableName" => "生年月日（日）",
+                    "uiType" => "4",
+                    "message" => "最後に日にちを選択してください。",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "settings" => array(
+                      "options" => array(
+                        "1日",
+                        "2日",
+                        "3日",
+                        "4日",
+                        "5日",
+                        "6日",
+                        "7日",
+                        "8日",
+                        "9日",
+                        "10日",
+                        "11日",
+                        "12日",
+                        "13日",
+                        "14日",
+                        "15日",
+                        "16日",
+                        "17日",
+                        "18日",
+                        "19日",
+                        "20日",
+                        "21日",
+                        "22日",
+                        "23日",
+                        "24日",
+                        "25日",
+                        "26日",
+                        "27日",
+                        "28日",
+                        "29日",
+                        "30日",
+                        "31日"
+                      ),
+                      "disablePastDate" => true,
+                      "isSetDisableDate" => false,
+                      "isDisableDayOfWeek" => false,
+                      "isSetSpecificDate" => false,
+                      "isEnableAfterDate" => false,
+                      "enableAfterDate" => null,
+                      "isDisableAfterData" => false,
+                      "dayOfWeekSetting" => array(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                      ),
+                      "setSpecificDateType" => "",
+                      "specificDateData" => array(
+                        ""
+                      ),
+                      "language" => 1,
+                      "pulldownCustomDesign" => false,
+                      "calendarCustomDesign" => false,
+                      "carouselCustomDesign" => false,
+                      "buttonUICustomDesign" => false,
+                      "checkboxCustomDesign" => false,
+                      "radioCustomDesign" => false,
+                      "balloonStyle" => "1",
+                      "lineUpStyle" => "1",
+                      "carouselPattern" => "2",
+                      "arrowType" => "4",
+                      "titlePosition" => "1",
+                      "subTitlePosition" => "1",
+                      "outCarouselNoneBorder" => false,
+                      "inCarouselNoneBorder" => false,
+                      "outButtonUINoneBorder" => true,
+                      "checkboxNoneBorder" => false,
+                      "radioNoneBorder" => false,
+                      "aspectRatio" => null,
+                      "checkboxSeparator" => "1",
+                      "customDesign" => array(
+                        "borderColor" => "#ABCD05",
+                        "backgroundColor" => "#FFFFFF",
+                        "textColor" => "#666666",
+                        "headerBackgroundColor" => "#ABCD05",
+                        "headerTextColor" => "#FFFFFF",
+                        "headerWeekdayBackgroundColor" => "#F6FAE6",
+                        "calendarBackgroundColor" => "#FFFFFF",
+                        "calendarTextColor" => "#666666",
+                        "saturdayColor" => "#666666",
+                        "sundayColor" => "#666666",
+                        "titleColor" => "#333333",
+                        "subTitleColor" => "#333333",
+                        "arrowColor" => "#ABCD05",
+                        "titleFontSize" => 14,
+                        "subTitleFontSize" => 13,
+                        "outBorderColor" => "#E8E7E0",
+                        "inBorderColor" => "#E8E7E0",
+                        "messageAlign" => "2",
+                        "buttonBackgroundColor" => "#F6FAE6",
+                        "buttonTextColor" => "#007AFF",
+                        "buttonAlign" => "2",
+                        "buttonActiveColor" => "#D5E682",
+                        "buttonBorderColor" => "#E3E3E3",
+                        "buttonUIBackgroundColor" => "#333333",
+                        "buttonUITextAlign" => "2",
+                        "buttonUITextColor" => "#F6FAE6",
+                        "buttonUIActiveColor" => "#D5E682",
+                        "buttonUIBorderColor" => "#E3E3E3",
+                        "checkboxBackgroundColor" => "#FFFFFF",
+                        "checkboxActiveColor" => "#FFFFFF",
+                        "checkboxBorderColor" => "#ABCD05",
+                        "checkboxCheckmarkColor" => "#ABCD05",
+                        "radioBackgroundColor" => "#FFFFFF",
+                        "radioActiveColor" => "#ABCD05",
+                        "radioBorderColor" => "#999"
+                      ),
+                      "images" => array(
+                        array(
+                          "title" => "",
+                          "subTitle" => "",
+                          "answer" => "",
+                          "url" => ""
+                        )
+                      )
+                    ),
+                    "inputLFType" => 2,
+                    "canRestore" => true
+                  ),
+                6 =>
+                  array(
+                    "variableName" => "住所",
+                    "inputType" => "1",
+                    "uiType" => "2",
+                    "message" => "住所を郵便番号から入力してください。\n※質問は残り２つです。",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "inputLFType" => 2,
+                    "canRestore" => true
+                  ),
+                7 =>
+                  array(
+                    "variableName" => "電話番号",
+                    "inputType" => "4",
+                    "uiType" => "1",
+                    "message" => "電話番号を入力してください。",
+                    "required" => true,
+                    "errorMessage" => "入力が正しく確認できませんでした。",
+                    "inputLFType" => 2,
+                    "canRestore" => true
+                  ),
+                8 =>
                   array(
                     'variableName' => 'メールアドレス',
                     'inputType' => '3',
@@ -960,22 +1478,16 @@ sinclo@medialink-ml.co.jp
                     'inputLFType' => 2,
                   ),
               ),
-            'errorMessage' => '入力が正しく確認できませんでした。',
-            'isConfirm' => '1',
-            'confirmMessage' => 'お名前　　　　：{{名前}}（{{カナ}}）
-生年月日　　　：{{生年月日}}
-住所　　　　　：{{住所}}
-電話番号　　　：{{電話番号}}
-メールアドレス：{{メールアドレス}}
-
-でよろしいでしょうか？',
-            'success' => 'はい',
-            'cancel' => 'いいえ',
-            'cv' => '1',
-            'cvCondition' => 1,
-            'restore' => true,
+            "errorMessage" => "入力が正しく確認できませんでした。",
+            "isConfirm" => "1",
+            "confirmMessage" => "お名前　　　　：{{名前}}（{{カナ}}）\n生年月日　　　：{{生年月日（年）}}{{生年月日（月）}}{{生年月日（日）}}\n住所　　　　　：{{住所}}\n電話番号　　　：{{電話番号}}\nメールアドレス：{{メールアドレス}}\n\nでよろしいでしょうか？",
+            "success" => "はい",
+            "cancel" => "いいえ",
+            "cv" => "1",
+            "cvCondition" => 1,
+            "restore" => true
           ),
-          "5" => array(
+          "2" => array(
             "chatTextArea" => "2",
             "actionType" => "13",
             "messageIntervalTimeSec" => "2",
@@ -996,25 +1508,33 @@ sinclo@medialink-ml.co.jp
                   'leadVariableName' => 'カナ'
                 ),
                 3 => array(
-                  'leadLabelName' => '生年月日',
-                  'leadVariableName' => '生年月日'
+                  'leadLabelName' => '生年月日（年）',
+                  'leadVariableName' => '生年月日（年）'
                 ),
                 4 => array(
+                  'leadLabelName' => '生年月日（月）',
+                  'leadVariableName' => '生年月日（月）'
+                ),
+                5 => array(
+                  'leadLabelName' => '生年月日（日）',
+                  'leadVariableName' => '生年月日（日）'
+                ),
+                6 => array(
                   'leadLabelName' => '住所',
                   'leadVariableName' => '住所'
                 ),
-                5 => array(
+                7 => array(
                   'leadLabelName' => '電話番号',
                   'leadVariableName' => '電話番号'
                 ),
-                6 => array(
+                8 => array(
                   'leadLabelName' => 'メールアドレス',
                   'leadVariableName' => 'メールアドレス'
                 )
               )
             )
           ),
-          "6" => array(
+          "3" => array(
             "chatTextArea" => "2",
             "actionType" => "11",
             "messageIntervalTimeSec" => "2",
@@ -1033,7 +1553,7 @@ sinclo@medialink-ml.co.jp
               )
             )
           ),
-          "7" => array(
+          "4" => array(
             "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
@@ -1062,13 +1582,13 @@ sinclo@medialink-ml.co.jp
 ------------------------------------------------------------------'
             )
           ),
-          "8" => array(
+          "5" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "2",
             "message" => "{{名前}}様からの会員登録（入会）を受付いたしました。\n\nこの度はご入会いただきありがとうございました。"
           ),
-          "9" => array(
+          "6" => array(
             "actionType" => "2",
             "messageIntervalTimeSec" => "2",
             "chatTextArea" => "1",
@@ -1118,312 +1638,478 @@ sinclo@medialink-ml.co.jp
               array(
                 0 =>
                   array(
-                    'variableName' => '性別',
-                    'uiType' => '7',
-                    'message' => 'お客様の性別をお選びください。（１／７）',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'settings' =>
-                      array(
-                        'options' =>
-                          array(
-                            0 => '男性',
-                            1 => '女性',
-                          ),
-                        'customDesign' =>
-                          array(
-                            "buttonBackgroundColor" => "#F6FAE6",
-                            "buttonTextColor" => "#007AFF",
-                            "buttonActiveColor" => "#D5E682",
-                            "buttonBorderColor" => "#FFFFFF",
-                            "messageAlign" => "2",
-                            "buttonAlign" => "2"
-                          ),
-                        'isCustomDesign' => true
+                    "variableName" => "性別",
+                    "uiType" => "7",
+                    "message" => "お客様の性別をお選びください。（１／７）",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "settings" => array(
+                      "options" => array(
+                        "男性",
+                        "女性"
                       ),
-                    'inputLFType' => 2,
-                    'canRestore' => true,
+                      "disablePastDate" => true,
+                      "isSetDisableDate" => false,
+                      "isDisableDayOfWeek" => false,
+                      "isSetSpecificDate" => false,
+                      "isEnableAfterDate" => false,
+                      "enableAfterDate" => null,
+                      "dayOfWeekSetting" => array(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                      ),
+                      "setSpecificDateType" => "",
+                      "specificDateData" => array(
+                        ""
+                      ),
+                      "language" => 1,
+                      "pulldownCustomDesign" => false,
+                      "calendarCustomDesign" => false,
+                      "customDesign" => array(
+                        "borderColor" => "#ABCD05",
+                        "backgroundColor" => "#FFFFFF",
+                        "textColor" => "#666666",
+                        "headerBackgroundColor" => "#ABCD05",
+                        "headerTextColor" => "#FFFFFF",
+                        "headerWeekdayBackgroundColor" => "#F6FAE6",
+                        "calendarBackgroundColor" => "#FFFFFF",
+                        "calendarTextColor" => "#666666",
+                        "saturdayColor" => "#666666",
+                        "sundayColor" => "#666666",
+                        "messageAlign" => "2",
+                        "buttonBackgroundColor" => "#F6FAE6",
+                        "buttonTextColor" => "#007AFF",
+                        "buttonAlign" => "2",
+                        "buttonActiveColor" => "#D5E682",
+                        "buttonBorderColor" => "#FFFFFF"
+                      ),
+                      "isCustomDesign" => true
+                    ),
+                    "inputLFType" => 2,
+                    "canRestore" => true
                   ),
                 1 =>
                   array(
-                    'variableName' => '年代',
-                    'uiType' => '4',
-                    'message' => 'お客様の年齢をお選びください。（２／７）',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'settings' =>
-                      array(
-                        'options' =>
-                          array(
-                            0 => '10代',
-                            1 => '20代',
-                            2 => '30代',
-                            3 => '40代',
-                            4 => '50代',
-                            5 => '60代以上',
-                          ),
-                        'disablePastDate' => true,
-                        'isSetDisableDate' => false,
-                        'isDisableDayOfWeek' => false,
-                        'isSetSpecificDate' => false,
-                        'isEnableAfterDate' => false,
-                        'enableAfterDate' => null,
-                        'dayOfWeekSetting' =>
-                          array(
-                            0 => false,
-                            1 => false,
-                            2 => false,
-                            3 => false,
-                            4 => false,
-                            5 => false,
-                            6 => false,
-                          ),
-                        'setSpecificDateType' => '',
-                        'specificDateData' =>
-                          array(
-                            0 => '',
-                          ),
-                        'language' => 1,
-                        'pulldownCustomDesign' => false,
-                        'calendarCustomDesign' => false,
-                        'customDesign' =>
-                          array(
-                            'borderColor' => '#ABCD05',
-                            'backgroundColor' => '#FFFFFF',
-                            'textColor' => '#666666',
-                            'headerBackgroundColor' => '#ABCD05',
-                            'headerTextColor' => '#FFFFFF',
-                            'headerWeekdayBackgroundColor' => '#F6FAE6',
-                            'calendarBackgroundColor' => '#FFFFFF',
-                            'calendarTextColor' => '#666666',
-                            'saturdayColor' => '#666666',
-                            'sundayColor' => '#666666',
-                          ),
+                    "variableName" => "年代",
+                    "uiType" => "4",
+                    "message" => "お客様の年齢をお選びください。（２／７）",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "settings" => array(
+                      "options" => array(
+                        "10代",
+                        "20代",
+                        "30代",
+                        "40代",
+                        "50代",
+                        "60代以上"
                       ),
-                    'inputLFType' => 2,
-                    'canRestore' => true,
+                      "disablePastDate" => true,
+                      "isSetDisableDate" => false,
+                      "isDisableDayOfWeek" => false,
+                      "isSetSpecificDate" => false,
+                      "isEnableAfterDate" => false,
+                      "enableAfterDate" => null,
+                      "dayOfWeekSetting" => array(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                      ),
+                      "setSpecificDateType" => "",
+                      "specificDateData" => array(
+                        ""
+                      ),
+                      "language" => 1,
+                      "pulldownCustomDesign" => false,
+                      "calendarCustomDesign" => false,
+                      "customDesign" => array(
+                        "borderColor" => "#ABCD05",
+                        "backgroundColor" => "#FFFFFF",
+                        "textColor" => "#666666",
+                        "headerBackgroundColor" => "#ABCD05",
+                        "headerTextColor" => "#FFFFFF",
+                        "headerWeekdayBackgroundColor" => "#F6FAE6",
+                        "calendarBackgroundColor" => "#FFFFFF",
+                        "calendarTextColor" => "#666666",
+                        "saturdayColor" => "#666666",
+                        "sundayColor" => "#666666",
+                        "messageAlign" => "2",
+                        "buttonBackgroundColor" => "#F6FAE6",
+                        "buttonTextColor" => "#007AFF",
+                        "buttonAlign" => "2",
+                        "buttonActiveColor" => "#D5E682",
+                        "buttonBorderColor" => "#E3E3E3",
+                        "titleColor" => "#333333",
+                        "subTitleColor" => "#333333",
+                        "arrowColor" => "#ABCD05",
+                        "outBorderColor" => "#E8E7E0",
+                        "inBorderColor" => "#E8E7E0",
+                        "titleFontSize" => 14,
+                        "subTitleFontSize" => 13,
+                        "buttonUIBackgroundColor" => "#333333",
+                        "buttonUITextColor" => "#F6FAE6",
+                        "buttonUITextAlign" => "2",
+                        "buttonUIActiveColor" => "#D5E682",
+                        "buttonUIBorderColor" => "#E3E3E3",
+                        "checkboxBackgroundColor" => "#FFFFFF",
+                        "checkboxActiveColor" => "#FFFFFF",
+                        "checkboxBorderColor" => "#ABCD05",
+                        "checkboxCheckmarkColor" => "#ABCD05",
+                        "radioBackgroundColor" => "#FFFFFF",
+                        "radioActiveColor" => "#ABCD05",
+                        "radioBorderColor" => "#999"
+                      )
+                    ),
+                    "inputLFType" => 2,
+                    "canRestore" => true
                   ),
                 2 =>
                   array(
-                    'variableName' => '地域',
-                    'uiType' => '4',
-                    'message' => 'お客様のお住いのエリアをお選びください。（３／７）',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'settings' =>
-                      array(
-                        'options' =>
-                          array(
-                            0 => '北海道',
-                            1 => '東北',
-                            2 => '関東',
-                            3 => '中部',
-                            4 => '近畿',
-                            5 => '中国',
-                            6 => '四国',
-                            7 => '九州',
-                          ),
-                        'disablePastDate' => true,
-                        'isSetDisableDate' => false,
-                        'isDisableDayOfWeek' => false,
-                        'isSetSpecificDate' => false,
-                        'isEnableAfterDate' => false,
-                        'enableAfterDate' => null,
-                        'dayOfWeekSetting' =>
-                          array(
-                            0 => false,
-                            1 => false,
-                            2 => false,
-                            3 => false,
-                            4 => false,
-                            5 => false,
-                            6 => false,
-                          ),
-                        'setSpecificDateType' => '',
-                        'specificDateData' =>
-                          array(
-                            0 => '',
-                          ),
-                        'language' => 1,
-                        'pulldownCustomDesign' => false,
-                        'calendarCustomDesign' => false,
-                        'customDesign' =>
-                          array(
-                            'borderColor' => '#ABCD05',
-                            'backgroundColor' => '#FFFFFF',
-                            'textColor' => '#666666',
-                            'headerBackgroundColor' => '#ABCD05',
-                            'headerTextColor' => '#FFFFFF',
-                            'headerWeekdayBackgroundColor' => '#F6FAE6',
-                            'calendarBackgroundColor' => '#FFFFFF',
-                            'calendarTextColor' => '#666666',
-                            'saturdayColor' => '#666666',
-                            'sundayColor' => '#666666',
-                          ),
+                    "variableName" => "地域",
+                    "uiType" => "4",
+                    "message" => "お客様のお住いのエリアをお選びください。（３／７）",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "settings" => array(
+                      "options" => array(
+                        "北海道",
+                        "東北",
+                        "関東",
+                        "中部",
+                        "近畿",
+                        "中国",
+                        "四国",
+                        "九州"
                       ),
-                    'inputLFType' => 2,
-                    'canRestore' => true,
+                      "disablePastDate" => true,
+                      "isSetDisableDate" => false,
+                      "isDisableDayOfWeek" => false,
+                      "isSetSpecificDate" => false,
+                      "isEnableAfterDate" => false,
+                      "enableAfterDate" => null,
+                      "dayOfWeekSetting" => array(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                      ),
+                      "setSpecificDateType" => "",
+                      "specificDateData" => array(
+                        ""
+                      ),
+                      "language" => 1,
+                      "pulldownCustomDesign" => false,
+                      "calendarCustomDesign" => false,
+                      "customDesign" => array(
+                        "borderColor" => "#ABCD05",
+                        "backgroundColor" => "#FFFFFF",
+                        "textColor" => "#666666",
+                        "headerBackgroundColor" => "#ABCD05",
+                        "headerTextColor" => "#FFFFFF",
+                        "headerWeekdayBackgroundColor" => "#F6FAE6",
+                        "calendarBackgroundColor" => "#FFFFFF",
+                        "calendarTextColor" => "#666666",
+                        "saturdayColor" => "#666666",
+                        "sundayColor" => "#666666",
+                        "messageAlign" => "2",
+                        "buttonBackgroundColor" => "#F6FAE6",
+                        "buttonTextColor" => "#007AFF",
+                        "buttonAlign" => "2",
+                        "buttonActiveColor" => "#D5E682",
+                        "buttonBorderColor" => "#E3E3E3",
+                        "titleColor" => "#333333",
+                        "subTitleColor" => "#333333",
+                        "arrowColor" => "#ABCD05",
+                        "outBorderColor" => "#E8E7E0",
+                        "inBorderColor" => "#E8E7E0",
+                        "titleFontSize" => 14,
+                        "subTitleFontSize" => 13,
+                        "buttonUIBackgroundColor" => "#333333",
+                        "buttonUITextColor" => "#F6FAE6",
+                        "buttonUITextAlign" => "2",
+                        "buttonUIActiveColor" => "#D5E682",
+                        "buttonUIBorderColor" => "#E3E3E3",
+                        "checkboxBackgroundColor" => "#FFFFFF",
+                        "checkboxActiveColor" => "#FFFFFF",
+                        "checkboxBorderColor" => "#ABCD05",
+                        "checkboxCheckmarkColor" => "#ABCD05",
+                        "radioBackgroundColor" => "#FFFFFF",
+                        "radioActiveColor" => "#ABCD05",
+                        "radioBorderColor" => "#999"
+                      )
+                    ),
+                    "inputLFType" => 2,
+                    "canRestore" => true
                   ),
                 3 =>
                   array(
-                    'variableName' => 'きっかけ',
-                    'uiType' => '3',
-                    'message' => '当サイトをどのようにして知りましたか。（４／７）',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'settings' =>
-                      array(
-                        'options' =>
-                          array(
-                            0 => '検索エンジン',
-                            1 => 'インターネット広告',
-                            2 => 'メールマガジン',
-                            3 => 'ＳＮＳ・ブログ',
-                            4 => '比較サイト',
-                            5 => 'ご家族・知人・友人からの紹介',
-                            6 => 'その他',
-                          ),
-                        'disablePastDate' => true,
-                        'isSetDisableDate' => false,
-                        'isDisableDayOfWeek' => false,
-                        'isSetSpecificDate' => false,
-                        'isEnableAfterDate' => false,
-                        'enableAfterDate' => null,
-                        'dayOfWeekSetting' =>
-                          array(
-                            0 => false,
-                            1 => false,
-                            2 => false,
-                            3 => false,
-                            4 => false,
-                            5 => false,
-                            6 => false,
-                          ),
-                        'setSpecificDateType' => '',
-                        'specificDateData' =>
-                          array(
-                            0 => '',
-                          ),
-                        'language' => 1,
-                        'pulldownCustomDesign' => false,
-                        'calendarCustomDesign' => false,
-                        'customDesign' =>
-                          array(
-                            'borderColor' => '#ABCD05',
-                            'backgroundColor' => '#FFFFFF',
-                            'textColor' => '#666666',
-                            'headerBackgroundColor' => '#ABCD05',
-                            'headerTextColor' => '#FFFFFF',
-                            'headerWeekdayBackgroundColor' => '#F6FAE6',
-                            'calendarBackgroundColor' => '#FFFFFF',
-                            'calendarTextColor' => '#666666',
-                            'saturdayColor' => '#666666',
-                            'sundayColor' => '#666666',
-                          ),
+                    "variableName" => "きっかけ",
+                    "uiType" => "9",
+                    "message" => "当サイトを知った理由をすべて教えてください。（４／７）",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "settings" => array(
+                      "options" => array(
+                        "検索エンジン",
+                        "インターネット広告",
+                        "メールマガジン",
+                        "ＳＮＳ・ブログ",
+                        "比較サイト",
+                        "ご家族・知人・友人からの紹介",
+                        "その他"
                       ),
-                    'inputLFType' => 2,
-                    'canRestore' => true,
+                      "disablePastDate" => true,
+                      "isSetDisableDate" => false,
+                      "isDisableDayOfWeek" => false,
+                      "isSetSpecificDate" => false,
+                      "isEnableAfterDate" => false,
+                      "enableAfterDate" => null,
+                      "isDisableAfterData" => false,
+                      "dayOfWeekSetting" => array(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                      ),
+                      "setSpecificDateType" => "",
+                      "specificDateData" => array(
+                        ""
+                      ),
+                      "language" => 1,
+                      "pulldownCustomDesign" => false,
+                      "calendarCustomDesign" => false,
+                      "carouselCustomDesign" => false,
+                      "buttonUICustomDesign" => false,
+                      "checkboxCustomDesign" => false,
+                      "radioCustomDesign" => false,
+                      "balloonStyle" => "1",
+                      "lineUpStyle" => "1",
+                      "carouselPattern" => "2",
+                      "arrowType" => "4",
+                      "titlePosition" => "1",
+                      "subTitlePosition" => "1",
+                      "outCarouselNoneBorder" => false,
+                      "inCarouselNoneBorder" => false,
+                      "outButtonUINoneBorder" => true,
+                      "checkboxNoneBorder" => false,
+                      "radioNoneBorder" => false,
+                      "aspectRatio" => null,
+                      "checkboxSeparator" => "3",
+                      "customDesign" => array(
+                        "borderColor" => "#ABCD05",
+                        "backgroundColor" => "#FFFFFF",
+                        "textColor" => "#666666",
+                        "headerBackgroundColor" => "#ABCD05",
+                        "headerTextColor" => "#FFFFFF",
+                        "headerWeekdayBackgroundColor" => "#F6FAE6",
+                        "calendarBackgroundColor" => "#FFFFFF",
+                        "calendarTextColor" => "#666666",
+                        "saturdayColor" => "#666666",
+                        "sundayColor" => "#666666",
+                        "titleColor" => "#333333",
+                        "subTitleColor" => "#333333",
+                        "arrowColor" => "#ABCD05",
+                        "titleFontSize" => 14,
+                        "subTitleFontSize" => 13,
+                        "outBorderColor" => "#E8E7E0",
+                        "inBorderColor" => "#E8E7E0",
+                        "messageAlign" => "2",
+                        "buttonBackgroundColor" => "#F6FAE6",
+                        "buttonTextColor" => "#007AFF",
+                        "buttonAlign" => "2",
+                        "buttonActiveColor" => "#D5E682",
+                        "buttonBorderColor" => "#E3E3E3",
+                        "buttonUIBackgroundColor" => "#333333",
+                        "buttonUITextAlign" => "2",
+                        "buttonUITextColor" => "#F6FAE6",
+                        "buttonUIActiveColor" => "#D5E682",
+                        "buttonUIBorderColor" => "#E3E3E3",
+                        "checkboxBackgroundColor" => "#FFFFFF",
+                        "checkboxActiveColor" => "#FFFFFF",
+                        "checkboxBorderColor" => "#ABCD05",
+                        "checkboxCheckmarkColor" => "#ABCD05",
+                        "radioBackgroundColor" => "#FFFFFF",
+                        "radioActiveColor" => "#ABCD05",
+                        "radioBorderColor" => "#999"
+                      ),
+                      "images" => array(
+                        array(
+                          "title" => "",
+                          "subTitle" => "",
+                          "answer" => "",
+                          "url" => ""
+                        )
+                      )
+                    ),
+                    "inputLFType" => 2,
+                    "canRestore" => true
                   ),
                 4 =>
                   array(
-                    'variableName' => '頻度',
-                    'uiType' => '3',
-                    'message' => '当サイトにどれぐらいの頻度でアクセスしていますか。（５／７）',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'settings' =>
-                      array(
-                        'options' =>
-                          array(
-                            0 => 'ほぼ毎日',
-                            1 => '１週間に２～３回程度',
-                            2 => '１週間に１回程度',
-                            3 => '１か月に２～３回程度',
-                            4 => '１か月に１回程度',
-                            5 => '２～３か月に１回程度',
-                            6 => 'それ以下',
-                          ),
-                        'disablePastDate' => true,
-                        'isSetDisableDate' => false,
-                        'isDisableDayOfWeek' => false,
-                        'isSetSpecificDate' => false,
-                        'isEnableAfterDate' => false,
-                        'enableAfterDate' => null,
-                        'dayOfWeekSetting' =>
-                          array(
-                            0 => false,
-                            1 => false,
-                            2 => false,
-                            3 => false,
-                            4 => false,
-                            5 => false,
-                            6 => false,
-                          ),
-                        'setSpecificDateType' => '',
-                        'specificDateData' =>
-                          array(
-                            0 => '',
-                          ),
-                        'language' => 1,
-                        'pulldownCustomDesign' => false,
-                        'calendarCustomDesign' => false,
-                        'customDesign' =>
-                          array(
-                            'borderColor' => '#ABCD05',
-                            'backgroundColor' => '#FFFFFF',
-                            'textColor' => '#666666',
-                            'headerBackgroundColor' => '#ABCD05',
-                            'headerTextColor' => '#FFFFFF',
-                            'headerWeekdayBackgroundColor' => '#F6FAE6',
-                            'calendarBackgroundColor' => '#FFFFFF',
-                            'calendarTextColor' => '#666666',
-                            'saturdayColor' => '#666666',
-                            'sundayColor' => '#666666',
-                          ),
+                    "variableName" => "頻度",
+                    "uiType" => "3",
+                    "message" => "当サイトにどれぐらいの頻度でアクセスしていますか。（５／７）",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "settings" => array(
+                      "options" => array(
+                        "ほぼ毎日",
+                        "１週間に２～３回程度",
+                        "１週間に１回程度",
+                        "１か月に２～３回程度",
+                        "１か月に１回程度",
+                        "２～３か月に１回程度",
+                        "それ以下"
                       ),
-                    'inputLFType' => 2,
-                    'canRestore' => true,
+                      "disablePastDate" => true,
+                      "isSetDisableDate" => false,
+                      "isDisableDayOfWeek" => false,
+                      "isSetSpecificDate" => false,
+                      "isEnableAfterDate" => false,
+                      "enableAfterDate" => null,
+                      "dayOfWeekSetting" => array(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                      ),
+                      "setSpecificDateType" => "",
+                      "specificDateData" => array(
+                        ""
+                      ),
+                      "language" => 1,
+                      "pulldownCustomDesign" => false,
+                      "calendarCustomDesign" => false,
+                      "customDesign" => array(
+                        "borderColor" => "#ABCD05",
+                        "backgroundColor" => "#FFFFFF",
+                        "textColor" => "#666666",
+                        "headerBackgroundColor" => "#ABCD05",
+                        "headerTextColor" => "#FFFFFF",
+                        "headerWeekdayBackgroundColor" => "#F6FAE6",
+                        "calendarBackgroundColor" => "#FFFFFF",
+                        "calendarTextColor" => "#666666",
+                        "saturdayColor" => "#666666",
+                        "sundayColor" => "#666666",
+                        "titleColor" => "#333333",
+                        "subTitleColor" => "#333333",
+                        "arrowColor" => "#ABCD05",
+                        "outBorderColor" => "#E8E7E0",
+                        "inBorderColor" => "#E8E7E0",
+                        "titleFontSize" => 14,
+                        "subTitleFontSize" => 13,
+                        "messageAlign" => "2",
+                        "buttonBackgroundColor" => "#F6FAE6",
+                        "buttonTextColor" => "#007AFF",
+                        "buttonAlign" => "2",
+                        "buttonActiveColor" => "#D5E682",
+                        "buttonBorderColor" => "#E3E3E3",
+                        "buttonUIBackgroundColor" => "#333333",
+                        "buttonUITextColor" => "#F6FAE6",
+                        "buttonUITextAlign" => "2",
+                        "buttonUIActiveColor" => "#D5E682",
+                        "buttonUIBorderColor" => "#E3E3E3",
+                        "checkboxBackgroundColor" => "#FFFFFF",
+                        "checkboxActiveColor" => "#FFFFFF",
+                        "checkboxBorderColor" => "#ABCD05",
+                        "checkboxCheckmarkColor" => "#ABCD05",
+                        "radioBackgroundColor" => "#FFFFFF",
+                        "radioActiveColor" => "#ABCD05",
+                        "radioBorderColor" => "#ABCD05"
+                      ),
+                      "radioCustomDesign" => true
+                    ),
+                    "inputLFType" => 2,
+                    "canRestore" => true
                   ),
                 5 =>
                   array(
-                    'variableName' => '満足度',
-                    'uiType' => '7',
-                    'message' => '当サイトについて、総合的にどのぐらい満足していますか。（６／７）',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'settings' =>
-                      array(
-                        'options' =>
-                          array(
-                            '満足',
-                            'やや満足',
-                            'やや不満',
-                            '不満',
-                          ),
-                        'customDesign' =>
-                          array(
-                            "buttonBackgroundColor" => "#F6FAE6",
-                            "buttonTextColor" => "#007AFF",
-                            "buttonActiveColor" => "#D5E682",
-                            "buttonBorderColor" => "#FFFFFF",
-                            "messageAlign" => "1",
-                            "buttonAlign" => "2"
-                          ),
-                        "isCustomDesign" => true
+                    "variableName" => "満足度",
+                    "uiType" => "7",
+                    "message" => "当サイトについて、総合的にどのぐらい満足していますか。（６／７）",
+                    "required" => true,
+                    "errorMessage" => "",
+                    "settings" => array(
+                      "options" => array(
+                        "満足",
+                        "やや満足",
+                        "やや不満",
+                        "不満"
                       ),
-                    'inputLFType' => 2,
-                    'canRestore' => true,
+                      "disablePastDate" => true,
+                      "isSetDisableDate" => false,
+                      "isDisableDayOfWeek" => false,
+                      "isSetSpecificDate" => false,
+                      "isEnableAfterDate" => false,
+                      "enableAfterDate" => null,
+                      "dayOfWeekSetting" => array(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                      ),
+                      "setSpecificDateType" => "",
+                      "specificDateData" => array(
+                        ""
+                      ),
+                      "language" => 1,
+                      "pulldownCustomDesign" => false,
+                      "calendarCustomDesign" => false,
+                      "customDesign" => array(
+                        "borderColor" => "#ABCD05",
+                        "backgroundColor" => "#FFFFFF",
+                        "textColor" => "#666666",
+                        "headerBackgroundColor" => "#ABCD05",
+                        "headerTextColor" => "#FFFFFF",
+                        "headerWeekdayBackgroundColor" => "#F6FAE6",
+                        "calendarBackgroundColor" => "#FFFFFF",
+                        "calendarTextColor" => "#666666",
+                        "saturdayColor" => "#666666",
+                        "sundayColor" => "#666666",
+                        "messageAlign" => "1",
+                        "buttonBackgroundColor" => "#F6FAE6",
+                        "buttonTextColor" => "#007AFF",
+                        "buttonAlign" => "2",
+                        "buttonActiveColor" => "#D5E682",
+                        "buttonBorderColor" => "#FFFFFF"
+                      ),
+                      "isCustomDesign" => true
+                    ),
+                    "inputLFType" => 2,
+                    "canRestore" => true
                   ),
                 6 =>
                   array(
-                    'variableName' => 'フリー入力',
-                    'inputType' => '1',
-                    'uiType' => '2',
-                    'message' => '当サイトに対してご意見、ご要望などがございましたらご自由にご記入ください。（特にない場合は「スキップ」ボタンを押してください）（７／７）',
-                    'required' => false,
-                    'errorMessage' => '',
-                    'inputLFType' => 2,
-                    'canRestore' => true,
+                    "variableName" => "フリー入力",
+                    "inputType" => "1",
+                    "uiType" => "2",
+                    "message" => "当サイトに対してご意見、ご要望などがございましたらご自由にご記入ください。（特にない場合は「スキップ」ボタンを押してください）（７／７）",
+                    "required" => false,
+                    "errorMessage" => "",
+                    "inputLFType" => 2,
+                    "canRestore" => true
+                  ,
                   ),
               ),
             'restore' => true,
@@ -1517,271 +2203,6 @@ sinclo@medialink-ml.co.jp
       'del_flg' => 0,
       'sort' => 5,
       'relation_auto_message_index' => 11
-    ),
-    6 => array(
-      'name' => '【サンプル】問い合わせフォーム',
-      'activity' => array(
-        "chatbotType" => "1",
-        "scenarios" => array(
-          "0" => array(
-            'chatTextArea' => '2',
-            'actionType' => '1',
-            'messageIntervalTimeSec' => '1',
-            'message' => 'その他のお問い合わせですね。',
-            'restore' => false,
-          ),
-          "1" => array(
-            'chatTextArea' => '1',
-            'actionType' => '2',
-            'messageIntervalTimeSec' => '1',
-            'hearings' =>
-              array(
-                0 =>
-                  array(
-                    'variableName' => '会社名',
-                    'inputType' => '1',
-                    'uiType' => '1',
-                    'message' => 'お客様の会社名を入力して下さい。',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'inputLFType' => 2,
-                  ),
-                1 =>
-                  array(
-                    'variableName' => '名前',
-                    'inputType' => '1',
-                    'uiType' => '1',
-                    'message' => 'お名前を入力して下さい。',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'inputLFType' => 2,
-                  ),
-                2 =>
-                  array(
-                    'variableName' => '電話番号',
-                    'inputType' => '4',
-                    'uiType' => '1',
-                    'message' => '電話番号を入力して下さい。',
-                    'required' => true,
-                    'errorMessage' => '入力が正しく確認できませんでした。',
-                    'inputLFType' => 2,
-                  ),
-                3 =>
-                  array(
-                    'variableName' => 'メールアドレス',
-                    'inputType' => '3',
-                    'uiType' => '1',
-                    'message' => 'メールアドレスを入力して下さい。',
-                    'required' => true,
-                    'errorMessage' => '入力が正しく確認できませんでした。',
-                    'inputLFType' => 2,
-                  ),
-                4 =>
-                  array(
-                    'variableName' => '問い合わせ内容',
-                    'inputType' => '1',
-                    'uiType' => '2',
-                    'message' => 'お問い合わせ内容を記入してください。',
-                    'required' => true,
-                    'errorMessage' => '',
-                    'inputLFType' => 2,
-                  ),
-              ),
-            'errorMessage' => '入力が正しく確認できませんでした。',
-            'isConfirm' => '1',
-            'confirmMessage' => '会社名　　　　　　：{{会社名}}
-お名前　　　　　　：{{名前}}
-電話番号　　　　　：{{電話番号}}
-メールアドレス　　：{{メールアドレス}}
-お問い合わせ内容　：{{問い合わせ内容}}
-
-でよろしいでしょうか？',
-            'success' => 'はい',
-            'cancel' => 'いいえ',
-            'cv' => '1',
-            'cvCondition' => 1,
-            'restore' => true,
-          ),
-          "2" => array(
-            "chatTextArea" => "2",
-            "actionType" => "13",
-            "messageIntervalTimeSec" => "2",
-            "settings" => array(
-              "makeLeadTypeList" => "1", // 新規作成
-              "leadTitleLabel" => "リードリスト（問い合わせ）",
-              "leadInformations" => array(
-                0 => array(
-                  'leadLabelName' => '会社名',
-                  'leadVariableName' => '会社名'
-                ),
-                1 => array(
-                  'leadLabelName' => '名前',
-                  'leadVariableName' => '名前'
-                ),
-                2 => array(
-                  'leadLabelName' => '電話番号',
-                  'leadVariableName' => '電話番号'
-                ),
-                3 => array(
-                  'leadLabelName' => 'メールアドレス',
-                  'leadVariableName' => 'メールアドレス'
-                ),
-                4 => array(
-                  'leadLabelName' => '問い合わせ内容',
-                  'leadVariableName' => '問い合わせ内容'
-                )
-              )
-            )
-          ),
-          "3" => array(
-            "chatTextArea" => "2",
-            "actionType" => "11",
-            "messageIntervalTimeSec" => "1",
-            "addCustomerInformations" => array(
-              array(
-                "variableName" => "会社名",
-                "targetItemName" => "会社名"
-              ),
-              array(
-                "variableName" => "名前",
-                "targetItemName" => "名前"
-              ),
-              array(
-                "variableName" => "電話番号",
-                "targetItemName" => "電話番号"
-              ),
-              array(
-                "variableName" => "メールアドレス",
-                "targetItemName" => "メールアドレス"
-              )
-            )
-          ),
-          "4" => array(
-            "chatTextArea" => "2",
-            "actionType" => "4",
-            "messageIntervalTimeSec" => "1",
-            "mailType" => "3",
-            "mailTransmission" => array(
-              'from_address' => '',
-              'from_name' => '★★★自由に編集してください★★★',
-              'to_address' => '{{メールアドレス}}',
-              'subject' => 'お問い合わせを受付いたしました'
-            ), // FIXME
-            "mailTemplate" => array(
-              'mail_type_cd' => 'CS001',
-              'template' => '--------------------------------------------------------------------
-このメールは自動返信にてお届けしています。
-本メールへの返信は受け付けておりませんのでご了承ください。
---------------------------------------------------------------------
-{{会社名}}
-{{名前}}様
-
-このたびはお問い合わせを頂き、誠にありがとうございました。
-下記の内容でお問い合わせを承りました。
-
----------------------------------------------------------------
-■会社名
-{{会社名}}
-
-■お名前
-{{名前}}
-
-■電話番号
-{{電話番号}}
-
-■メールアドレス
-{{メールアドレス}}
-
-■お問い合わせ内容
-{{問い合わせ内容}}
----------------------------------------------------------------
-
-
-────────────────────────────
-
-★★★署名を自由に編集してください★★★
-
-────────────────────────────'
-            )
-          ),
-          "5" => array(
-            "chatTextArea" => "2",
-            "actionType" => "4",
-            "messageIntervalTimeSec" => "1",
-            "mailType" => "1",
-            "mailTransmission" => array(
-              'from_address' => '',
-              'from_name' => '{{会社名}}　{{名前}}',
-              'to_address' => '★★★貴社アドレスを設定して下さい★★★',
-              'subject' => 'お問い合わせ通知'
-            ), // FIXME
-            "mailTemplate" => array(
-              'mail_type_cd' => 'CS001',
-              'template' => '※このメールはお客様の設定によりsincloから自動送信されました。
-
-ご担当者様
-
-sincloのシナリオ設定によりメールを送信致しました。
-以下のメッセージ内容をご確認下さい。
-
-##SCENARIO_ALL_MESSAGE_BLOCK##
-
-------------------------------------------------------------------
-このメールにお心当たりのない方は、誠に恐れ入りますが
-下記連絡先までご連絡ください。
-sinclo@medialink-ml.co.jp
-------------------------------------------------------------------'
-            )
-          ),
-          "6" => array(
-            "chatTextArea" => "2",
-            "actionType" => "1",
-            "messageIntervalTimeSec" => "1",
-            "message" => "{{名前}}様からのお問い合わせを受付いたしました。"
-          ),
-          "7" => array(
-            "chatTextArea" => "2",
-            "actionType" => "1",
-            "messageIntervalTimeSec" => "1",
-            "message" => "この度は、お問い合わせ頂き誠にありがとうございました。"
-          ),
-          "8" => array(
-            "actionType" => "2",
-            "messageIntervalTimeSec" => "2",
-            "chatTextArea" => "1",
-            "hearings" => array(
-              array(
-                "variableName" => "メニューに戻る",
-                "uiType" => "7",
-                "message" => "",
-                "required" => true,
-                "settings" => array(
-                  "options" => array(
-                    "メニューに戻る"
-                  ),
-                  "customDesign" => array(
-                    "buttonBackgroundColor" => "#F6FAE6",
-                    "buttonTextColor" => "#007AFF",
-                    "buttonActiveColor" => "#D5E682",
-                    "buttonBorderColor" => "#E3E3E3",
-                    "messageAlign" => "2",
-                    "buttonAlign" => "2"
-                  )
-                )
-              )
-            ),
-            "restore" => false,
-            "isConfirm" => "2",
-            "confirmMessage" => "",
-            "success" => "",
-            "cancel" => "",
-            "cv" => "2"
-          )
-        )
-      ),
-      'del_flg' => 0,
-      'sort' => 6,
-      'relation_auto_message_index' => 12
     )
   )
 );

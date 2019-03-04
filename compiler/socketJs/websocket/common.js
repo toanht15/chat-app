@@ -1010,7 +1010,8 @@ var socket, // socket.io
             chatPosition.re.mg = 'margin-left: 10px; margin-right: 21px;' + reArrowPosition;
           }
           if (Number(widget.widgetSizeType) == 3 ||
-              Number(widget.widgetSizeType) == 4) {
+              Number(widget.widgetSizeType) == 4 ||
+              Number(widget.widgetSizeType) == 5) {
             chatPosition.se.mg = 'margin-left: 52.7px; margin-right: 10px;' + seArrowPosition;
             chatPosition.re.mg = 'margin-left: 10px; margin-right: 24.6px;' + reArrowPosition;
           }
@@ -1025,7 +1026,8 @@ var socket, // socket.io
             chatPosition.re.mg = 'margin-right: 21px;';
           }
           if (Number(widget.widgetSizeType) == 3 ||
-              Number(widget.widgetSizeType) == 4) {
+              Number(widget.widgetSizeType) == 4 ||
+              Number(widget.widgetSizeType) == 5) {
             chatPosition.se.mg = 'margin-left: 52.7px;';
             chatPosition.re.mg = 'margin-right: 24.6px;';
           }
@@ -1040,7 +1042,8 @@ var socket, // socket.io
             chatPosition.re.mg = 'margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;';
           }
           if (Number(widget.widgetSizeType) == 3 ||
-              Number(widget.widgetSizeType) == 4) {
+              Number(widget.widgetSizeType) == 4 ||
+              Number(widget.widgetSizeType) == 5) {
             chatPosition.se.mg = 'margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;';
             chatPosition.re.mg = 'margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;';
           }
@@ -1361,7 +1364,7 @@ var socket, // socket.io
               ':not(.no-wrap):after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; border: 5px solid transparent; z-index: 1; }';
           if (colorList['reBorderNone'] === 0) {
             html += '      #sincloBox ul#chatTalk li.' + leftMessageClass +
-                ':after {border-right: 5px solid ' +
+                ':not(.no-wrap):after {border-right: 5px solid ' +
                 chatPosition.re.borderColor + '; border-bottom: 5px solid ' +
                 chatPosition.re.borderColor + '; }';
           }
