@@ -13,7 +13,7 @@ module.exports = class ChatLogTimeManager {
   static saveTime(chatLogId, historyId, type, definedTime) {
     if (!definedTime) {
       // 現在時刻を入れる
-      definedTime = moment.format('YYYY-MM-DD HH:mm:ss.SS');
+      definedTime = moment().format('YYYY-MM-DD HH:mm:ss.SS');
     }
     this.existsRecord(chatLogId, historyId, type).then((result) => {
       if (!result) {

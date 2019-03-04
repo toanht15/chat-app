@@ -570,7 +570,7 @@ function getMessageTypeByUiType(type) {
       result = 22;
       break;
     case 3:
-      result = 55;
+      result = 22;
       break;
     case 4:
       result = 41;
@@ -1228,7 +1228,7 @@ io.sockets.on('connection', function(socket) {
         m_companies_id: companyList[d.siteKey],
         visitors_id: d.userId,
         m_users_id: d.mUserId,
-        message: d.chatMessage,
+        message: (d.isDiagramMessage) ? d.chatMessage.message : d.chatMessage,
         message_type: d.messageType,
         message_distinction: d.messageDistinction,
         message_request_flg: d.messageRequestFlg,
@@ -1250,7 +1250,7 @@ io.sockets.on('connection', function(socket) {
                 new Date(d.created) :
                 new Date();
 
-            // オートメッセージとシナリオの場合は既読
+            // オートメッセージとシナリオとチャットツリーの場合は既読
             if (Number(insertData.message_type === 3) ||
                 Number(insertData.message_type === 22) ||
                 Number(insertData.message_type === 40) ||
@@ -1292,7 +1292,7 @@ io.sockets.on('connection', function(socket) {
           messageType: d.messageType,
           created: insertData.created,
           ret: true,
-          chatMessage: d.chatMessage,
+          chatMessage: (d.isDiagramMessage) ? d.chatMessage.message : d.chatMessage,
           siteKey: d.siteKey,
           matchAutoSpeech: !d.notifyToCompany,
           isScenarioMessage: d.isScenarioMessage,
@@ -1428,10 +1428,10 @@ io.sockets.on('connection', function(socket) {
             userId: insertData.m_users_id,
             messageType: d.messageType,
             ret: true,
-            message: d.chatMessage,
+            message: (d.isDiagramMessage) ? d.chatMessage.message : d.chatMessage,
             siteKey: d.siteKey,
-            notifyToCompany: d.isScenarioMessage ?
-                !d.isScenarioMessage :
+            notifyToCompany: (d.isScenarioMessage || d.isDiagramMessage) ?
+                false :
                 d.notifyToCompany
           };
 
@@ -1449,6 +1449,14 @@ io.sockets.on('connection', function(socket) {
           if (d.messageType === 1) {
             sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
           }
+        }
+
+        if(d.isDiagramMessage) {
+          var obj = d.chatMessage;
+          var sql = 'INSERT INTO t_history_diagram_logs VALUES (null,?,?,?,?,?,0,now(),NULL,NULL)';
+          pool.query(sql, [companyList[d.siteKey], results.insertId, obj.did, obj.sourceNodeId, obj.nextNodeId], (err, result) => {
+
+          });
         }
 
         //オペレータリクエスト件数
@@ -1470,7 +1478,7 @@ io.sockets.on('connection', function(socket) {
                     var userId = Object.keys(scList[d.siteKey].user)[key];
                     //対応数がMAX人数か確認
                     if (scList[d.siteKey].user[userId] >
-                        scList[d.siteKey].cnt[userId]) {
+                        scList[d.esiteKey].cnt[userId]) {
                       addChatActiveUser(results.insertId, userId, d.siteKey);
                     }
                   }

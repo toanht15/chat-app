@@ -529,7 +529,7 @@
         target.settings.customDesign.checkboxCheckmarkColor       = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBackgroundColor         = '#FFFFFF';
         target.settings.customDesign.radioActiveColor             = $scope.widget.settings.main_color;
-        target.settings.customDesign.radioBorderColor             = '#999';
+        target.settings.customDesign.radioBorderColor             = $scope.widget.settings.main_color;
 
         return target;
       };
@@ -697,7 +697,7 @@
             defaultColor = $scope.widget.settings.main_color;
             break;
           case 'radioBorderColor':
-            defaultColor = '#999';
+            defaultColor = $scope.widget.settings.main_color;
             break;
         }
 
@@ -767,12 +767,24 @@
 
       // アクションの追加・削除を検知する
       $scope.watchActionList = [];
+      $scope.beginData = null;
       $scope.$watchCollection('setActionList', function(newObject, oldObject) {
 
         // 編集されたことを検知する
         if (!$scope.changeFlg && newObject !== oldObject) {
           $scope.changeFlg = true;
+        } else if($scope.beginData === newObject) {
+          $scope.changeFlg = false;
         }
+
+        try {
+          if(!$scope.beginData || Object.keys($scope.beginData).length > 0) {
+            $scope.beginData = newObject;
+          }
+        } catch(e) {
+          $scope.beginData = newObject;
+        }
+
 
         $timeout(function() {
           $scope.$apply();
@@ -844,6 +856,16 @@
           // 編集されたことを検知する
           if (!$scope.changeFlg && newObject !== oldObject) {
             $scope.changeFlg = true;
+          } else if($scope.beginData === newObject) {
+            $scope.changeFlg = false;
+          }
+
+          try {
+            if(!$scope.beginData || Object.keys($scope.beginData).length > 0) {
+              $scope.beginData = newObject;
+            }
+          } catch(e) {
+            $scope.beginData = newObject;
           }
 
           // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
@@ -878,6 +900,11 @@
           // hearings
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
+              if(document.getElementById('action' + index + '-' + hearingIndex + '_message')) {
+                debugger;
+                document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = $scope.widget.createMessage(
+                    hearing.message, null, null, (hearing.uiType === '7'));
+              }
               if (hearing.uiType === '3') {
                 $timeout(function() {
                   $scope.$apply();
@@ -1631,6 +1658,7 @@
           var target = $scope.setActionList[actionStep].hearings;
           src.inputType = src.inputType.toString();
           src.uiType = src.uiType.toString();
+          src.settings.options = [""];
           target.splice(listIndex + 1, 0, angular.copy(src));
           this.controllHearingSettingView(actionStep);
 
@@ -3038,6 +3066,9 @@
           }
         } else if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length) &&
             $scope.replaceVariable(actionDetail.cancel) === message) {
+          angular.forEach(actionDetail.hearings, function(hearing) {
+            hearing.canRestore = true;
+          });
           // 最初から入力し直し
           $scope.hearingIndex = 0;
         } else {
@@ -3547,7 +3578,6 @@
 
           if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CALENDAR ?>) {
             var data = {};
-            console.log(hearingDetail.settings);
             data.settings = hearingDetail.settings;
             data.design = hearingDetail.settings.customDesign;
             data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
@@ -3610,7 +3640,6 @@
             $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
                 hearingDetail.required);
           }
-
           $scope.$emit('setRestoreStatus', $scope.actionStep, $scope.hearingIndex, true);
         } else if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length)) {
           // 確認メッセージ
@@ -3976,8 +4005,7 @@
           $('input[name=' + name + '][type="radio"]').prop('disabled', true);
           // ラジオボタンを非活性にする
           self.disableHearingInput($scope.actionStep);
-          $('#action' + actionStep + '_hearing0_question').parent().nextAll('div').removeAttr('id');
-          $('#action' + actionStep + '_hearing0_question').parent().removeAttr('id');
+          $('[id^="action' + actionStep + '_hearing"][id$="_question"]').removeAttr('id');
         } else {
           self.handleReselectionInput(message, actionStep, hearingIndex);
         }
@@ -4032,9 +4060,21 @@
         var hearingIndex = numbers[1];
         self.handleReselectionInput(message, actionStep, hearingIndex);
       });
+
+      $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
+        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
+        $(this).addClass('selected');
+        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
+        var message = $(this).text().replace(/^\s/, '');
+
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
       // button ui
       $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
-        $(this).parents('div').find('.sinclo-button-ui').removeClass('selected');
+        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
         $(this).addClass('selected');
         var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
         var message = $(this).text().replace(/^\s/, '');
@@ -4086,18 +4126,6 @@
         } else {
           $(this).parent().parent().find('.checkbox-submit-btn').addClass('disabledArea')
         }
-      });
-
-      $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
-        $(this).parents('div').find('.sinclo-button-ui').removeClass('selected');
-        $(this).addClass('selected');
-        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
-        var message = $(this).text().replace(/^\s/, '');
-
-        var numbers = prefix.match(/\d+/g).map(Number);
-        var actionStep = numbers[0];
-        var hearingIndex = numbers[1];
-        self.handleReselectionInput(message, actionStep, hearingIndex);
       });
 
       $(document).on('click', '#chatTalk .checkbox-submit-btn', function() {
