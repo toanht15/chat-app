@@ -14,7 +14,7 @@
     sincloApp.controllerProvider = $controllerProvider;
   });
   sincloApp.controller('DiagramController', [
-    '$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
+    '$scope', '$timeout', 'SimulatorService', '$compile', function($scope, $timeout, SimulatorService, $compile) {
 
 
       //メニューバーのアイコンにdraggableを付与
@@ -34,16 +34,58 @@
         'link'
       ];
 
-      var scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
 
-      var currentEditCell = null;
+      /* Scenario List */
+      $scope.scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
+      $scope.scenarioArrayList = [{"key": "", "value":"シナリオを選択して下さい"}];
+      for ( var idx in $scope.scenarioList ) {
+        $scope.scenarioArrayList.push({
+          "key": idx,
+          "value": $scope.scenarioList[idx]
+        });
+      }
+
+      /* Model for scenario node */
+      $scope.selectedScenario = $scope.scenarioArrayList[0];
+
+      /* Model for link node */
+      $scope.linkUrl = "";
+      $scope.linkType = "same";
+
+      /* Model for jump node */
+      $scope.jumpTargetListOrigin = [{"key": "", "value": "ノード名を選択してください"}];
+      $scope.jumpTargetList = $scope.jumpTargetListOrigin.concat();
+      $scope.jumpTarget = $scope.jumpTargetList[0];
+
+      /* Model for text node */
+      $scope.speakTextList = [];
+      $scope.speakTextTitle = "";
+
+      /* Model for handle button */
+      $scope.addBtnHide = false;
+      $scope.deleteBtnHide = false;
+
+      /* Model for branch node */
+      $scope.branchTitle = "";
+      $scope.branchTypeList = [
+        {"key": "", "value": "表示形式を選択して下さい"},
+        {"key": "1", "value": "ラジオボタン"},
+        {"key": "2", "value": "ボタン"}
+      ];
+      $scope.branchType = $scope.branchTypeList[0];
+      $scope.branchText = "";
+      $scope.branchSelectionList = [];
+      $scope.oldSelectionList = [];
+
+      /* Cell data Storage  */
+      $scope.currentEditCell = null;
+      $scope.currentEditCellParent = null;
 
       var nodeMaster = function(type, posX, posY) {
         var node = nodeFactory.createNode(type, posX, posY);
         graph.addCell(node);
         initNodeEvent(node);
         for(var i = 0; i < graph.getCells().length; i++) {
-          //haloCreator(paper.findViewByModel(graph.getCells()[i]));
         }
       };
 
@@ -84,6 +126,7 @@
           }
         }),
         validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+          //既に他ポートに接続しているout portは線を出さない
           if (cellViewS.model.attr('nodeBasicInfo/nextNodeId') && cellViewS.model.attr('nodeBasicInfo/nextNodeId') !==
               '') {
             linkView.model.remove();
@@ -99,9 +142,6 @@
           if (parents.length > 0 && parents[0].id === cellViewT.model.id) {
             return false;
           }
-          //既に他ポートに接続しているout portは線を出さない
-
-
           // outPortには入力させない
           return magnetT && magnetT.getAttribute('port-group') === 'in';
         },
@@ -125,26 +165,36 @@
 
       var allDrawnCellList = graph.getCells();
       for( var i = 0; i < allDrawnCellList; i++) {
-        //haloCreator(paper.findViewByModel(allDrawnCellList[i]));
       }
 
       paper.on('cell:pointerup',
           function(cellView, evt, x, y) {
-            //init current edit cell to null;
-
-            currentEditCell = null;
-            //haloCreator(cellView);
+            /* init current cell to null */
+            $scope.currentEditCell = null;
+            /* when edit cell */
             if (!wasMoved && isNeedModalOpen(cellView)) {
-              currentEditCell = setViewElement(cellView);
-              if($('#popup-main > div')[0]) {
-                $('#popup-main')[0].removeChild($('#popup-main > div')[0]);
-              }
+              $scope.currentEditCell = setViewElement(cellView);
+              $scope.currentEditCellParent = $scope.currentEditCell.getAncestors()[0];
               var modalData = processModalCreate(cellView);
-              modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
-              initPopupCloseEvent();
-              btnViewHandler.switcher();
-              $(document).trigger('diagram.openModal', [modalData.content]);
+              $compile(modalData.content)($scope);
+              $timeout(function(){
+                $scope.currentTop = null;
+                modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
+                var frame = $('#popup-frame');
+                frame.addClass("diagram-ui");
+                /* Bind node name if diagram is text or scenario */
+                if(frame.hasClass("p_diagrams_branch")){
+                  $scope.titleHandler($scope.branchTitle, "分岐");
+                }else if(frame.hasClass("p_diagrams_text")){
+                  $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
+                }
+                $('#popup-bg').hide();
+                $scope.popupHandler();
+                initPopupCloseEvent();
+              });
             }
+
+            $scope.removeToolScale();
             wasMoved = false;
           });
 
@@ -191,47 +241,22 @@
 
       /*paper関連ここまで*/
 
-      // 保存ボタン
-      $('#submitBtn').on('click', function(e) {
-        // データをJSONにして送信
-        $('#TChatbotDiagramActivity').val(exportJSON());
+      $scope.removeToolScale = function(){
+        var links = $('.link-tool');
+        for( var i = 0; i < links.length; i++ ){
+          var tmp = $(links[i]).attr("transform").indexOf(" scale");
+          if(tmp > -1){
+            $(links[i]).attr("transform", $(links[i]).attr("transform").substr(0, tmp));
+          }
+        }
+      };
+
+      /* save Act */
+      $('#submitBtn').on('click', function() {
+        $('#TChatbotDiagramActivity').val(JSON.stringify(graph.toJSON()));
         $('#TChatbotDiagramsEntryForm').submit();
       });
-
-      var haloCreator = function(cellView) {
-        if(cellView.model.attr("nodeBasicInfo/nodeType") === "start") return;
-        if (cellView.model.isLink()) return;
-        if (cellView.model.getAncestors()[0]) {
-          cellView = paper.findViewByModel(cellView.model.getAncestors()[0]);
-        }
-        var halo = new joint.ui.Halo({
-          cellView: cellView,
-          boxContent: false
-        });
-        halo.removeHandle('resize');
-        halo.removeHandle('rotate');
-        halo.removeHandle('link');
-        halo.removeHandle('unlink');
-        halo.removeHandle('clone');
-        halo.changeHandle('remove', {
-          position: 'ne',
-          icon: '/img/close_halo.PNG'
-        });
-        currentEditCell = halo._events["action:remove:pointerdown"][0].ctx.options.cellView.model.getEmbeddedCells()[0];
-        halo.off('action:remove:pointerdown');
-        halo.on('action:remove:pointerdown', function(){
-          popupEventOverlap.closePopup = function() {
-            previewHandler.typeJump.deleteTargetName(currentEditCell);
-            deleteEditNode();
-            popupEventOverlap.closeNoPopupOverlap();
-          };
-          popupEventOverlap.open('現在のノードを削除します。よろしいですか？',"p_diagram_delete_alert" ,"削除の確認");
-        });
-      };
-
-      var addMoveFlg = function() {
-        wasMoved = true;
-      };
+      /* save Act */
 
       function initNodeEvent(node) {
         for (var i = 0; i < node.length; i++) {
@@ -244,7 +269,9 @@
           if (nodeTypeArray.indexOf(node[i].attr('nodeBasicInfo/nodeType')) > -1
               || node[i].attr('nodeBasicInfo/nodeType') === 'operator'
               || node[i].attr('nodeBasicInfo/nodeType') === 'cv') {
-            node[i].on('change:position', addMoveFlg);
+            node[i].on('change:position', function(){
+              wasMoved = true;
+            });
           }
         }
       }
@@ -319,14 +346,10 @@
           default:
             return null;
         }
-        var nodeData = currentEditCell.attr('actionParam');
-        if (currentEditCell.getAncestors()[0]) {
-          nodeData = currentEditCell.getAncestors()[0].attr('actionParam');
-        }
 
         return {
           name: modalName,
-          content: htmlCreator(nodeData),
+          content: htmlCreator($scope.currentEditCellParent.attr('actionParam')),
           id: modalClass
         };
       }
@@ -335,15 +358,17 @@
         popupEvent.closePopup = function(type) {
           switch (type) {
             case 1:
+              /* save */
               saveEditNode();
               previewHandler.typeJump.editTargetName();
               popupEvent.closeNoPopup();
-              //保存処理
+              $scope.addLineHeight();
+              console.log(graph.getCells());
               break;
             case 2:
-              //削除処理
+              /* delete */
               popupEventOverlap.closePopup = function() {
-                previewHandler.typeJump.deleteTargetName(currentEditCell);
+                previewHandler.typeJump.deleteTargetName($scope.currentEditCell);
                 deleteEditNode();
                 popupEventOverlap.closeNoPopupOverlap();
                 popupEvent.closeNoPopup()
@@ -351,42 +376,32 @@
               popupEventOverlap.open('現在のノードを削除します。よろしいですか？',"p_diagram_delete_alert" ,"削除の確認");
               break;
             default:
-              //一応保存処理にしておく
               break;
           }
         };
       }
 
+      $scope.addLineHeight = function(){
+        /* To override svg */
+        $("text:not('.label') > tspan:not(:first-child)").attr("dy", "1.2em");
+      };
+
       function deleteEditNode() {
-        if (currentEditCell == null) {
-          //編集対象が無い場合は処理を実行しない
-          return;
+        if ($scope.currentEditCell == null || $scope.currentEditCellParent == null) return;
+        /* bind node name list for jump node when delete text node or branch node */
+        if ($scope.currentEditCellParent.attr('nodeType') === 'text'
+            || $scope.currentEditCellParent.attr('nodeType') === 'branch') {
+          bindJumpData($scope.currentEditCellParent);
         }
-        if (currentEditCell.getAncestors()[0]) {
-          //テキスト発言、または条件分岐の場合、全てのジャンプアクションを取得
-          if (currentEditCell.getAncestors()[0].attr('nodeType') === 'text'
-              || currentEditCell.getAncestors()[0].attr('nodeType') === 'branch') {
-            bindJumpData(currentEditCell.getAncestors()[0]);
-          }
-          currentEditCell.getAncestors()[0].remove();
-        } else {
-          currentEditCell.remove();
-        }
-        currentEditCell = null;
+        $scope.currentEditCellParent.remove();
+        $scope.currentEditCell = null;
+        $scope.currentEditCellParent = null;
       }
 
       function saveEditNode() {
-        if (currentEditCell == null) {
-          //編集対象が無い場合は処理を実行しない
-          return;
+        if ($scope.currentEditCell && $scope.currentEditCellParent) {
+          bindSingleView($scope.currentEditCellParent.attr('nodeBasicInfo/nodeType'));
         }
-        if (currentEditCell.getAncestors()[0]) {
-          //シナリオ呼出・ジャンプ・リンクの場合
-          bindSingleView(currentEditCell.getAncestors()[0].attr('nodeBasicInfo/nodeType'));
-        } else {
-
-        }
-
       }
 
       function bindJumpData() {
@@ -395,14 +410,9 @@
 
       function setViewElement(target) {
         //親エレメント直下の子エレメントを設定
-        //
         var viewNode = target.model;
         var childList = viewNode.getEmbeddedCells();
-        if (viewNode.attr('nodeBasicInfo/nodeType') === 'operator'
-            || viewNode.attr('nodeBasicInfo/nodeType') === 'cv') {
-          // オペレーター、 CVの場合は
-          return viewNode;
-        } else if (childList.length > 0) {
+        if (childList.length > 0) {
           //一番上のViewを基準にする
           //親の場合は、直下の子供
           viewNode = childList[0];
@@ -415,79 +425,94 @@
       }
 
       function bindSingleView(type) {
-        var viewText = '';
-        var nodeParam = {};
-        var target,
-            nodeName,
-            speakTextContents,
-            btnType,
-            selectionList;
-        switch (type) {
-          case 'text':
-            nodeName = $('#my_node_name').val();
-            speakTextContents = nodeEditHandler.typeText.convertContents($('.text_modal_setting'));
-            currentEditCell.getAncestors()[0].attr('.label/text',
-                convertTextForTitle(convertTextLength(nodeName, 3), 'テキスト発言'));
-            currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate(speakTextContents[0]), 46));
-            //配列は直接上書きができないので一度nullにする
-            currentEditCell.getAncestors()[0].attr('actionParam/text', null);
-            nodeParam = {
-              nodeName: nodeName,
-              text: speakTextContents
-            };
-            break;
-          case 'branch':
-            nodeName = $('#my_node_name').val();
-            speakTextContents = $('.flex_row_box > textarea').val();
-            btnType = $('#branchBtnType option:selected').val();
-            selectionList = nodeEditHandler.typeBranch.convertContents($('.setting_row'));
-            nodeEditHandler.typeBranch.handleBranchPorts(selectionList);
-            //配列は直接上書きができないので一度nullにする
-            currentEditCell.getAncestors()[0].attr('.label/text',
-                convertTextForTitle(convertTextLength(nodeName, 6), '分岐'));
-            currentEditCell.getAncestors()[0].attr('actionParam/selection', null);
-            currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate(speakTextContents), 46));
-            nodeParam = {
-              nodeName: nodeName,
-              text: speakTextContents,
-              btnType: btnType,
-              selection: selectionList
-            };
-            break;
-          case 'scenario':
-            target = $('#callTargetScenario option:selected');
-            if(target.val() !== ""){
-              viewText = target.text();
-            }
-            nodeParam = {
-              scenarioId: target.val()
-            };
-            currentEditCell.attr('text/text', convertTextLength(viewText, 14));
-            break;
-          case 'jump':
-            target = $('#jumpTargetNode option:selected');
-            if(target.val() !== ""){
-              viewText = target.text();
-            }
-            nodeParam = {
-              targetId: target.val()
-            };
-            currentEditCell.attr('text/text', convertTextLength(viewText, 14));
-            break;
-          case 'link':
-            viewText = $('#linkTarget').val();
-            var radio = $('input[name=link_type]:checked').val();
-            nodeParam = {
-              link: viewText,
-              linkType: radio
-            };
-            currentEditCell.attr('text/text', convertTextLength(viewText, 28));
-            break;
-          default:
-            break;
-        }
-        currentEditCell.getAncestors()[0].attr('actionParam', nodeParam);
+        $scope.saveProcess[type].setView();
+        $timeout(function(){
+          $scope.currentEditCellParent.attr('actionParam', $scope.saveProcess[type].getData());
+        });
       }
+
+      $scope.saveProcess = {
+        text: {
+          setView: function() {
+            $scope.currentEditCellParent.attr('.label/text',
+                convertTextForTitle(convertTextLength($scope.speakTextTitle, 3), 'テキスト発言'));
+            $scope.currentEditCell.attr('text/text', convertTextLength(
+                textEditor.textLineSeparate($scope.speakTextList.filter(Boolean)[0]), 46));
+            $scope.currentEditCellParent.attr('actionParam/text', null);
+          },
+          getData: function() {
+            return {
+              nodeName: $scope.speakTextTitle,
+              text: $scope.speakTextList.filter(Boolean)
+            };
+          }
+        },
+        branch: {
+          setView: function(){
+            nodeEditHandler.typeBranch.branchPortController(
+                $scope.branchSelectionList.filter(Boolean), $scope.currentEditCellParent.attr("actionParam"));
+            $scope.currentEditCellParent.attr('.label/text',
+                convertTextForTitle(convertTextLength($scope.branchTitle, 6), '分岐'));
+            $scope.currentEditCellParent.attr('actionParam/selection', null);
+            $scope.currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate($scope.branchText), 46));
+          },
+          getData: function(){
+            return {
+              nodeName: $scope.branchTitle,
+              text: $scope.branchText,
+              btnType: $scope.branchType.key,
+              selection: $scope.branchSelectionList.filter(Boolean)
+            };
+          }
+        },
+        scenario: {
+          setView: function(){
+            if($scope.selectedScenario.key !== ""){
+              $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 14));
+            }
+          },
+          getData: function(){
+            return {
+              scenarioId: $scope.selectedScenario.key
+            };
+          }
+        },
+        jump: {
+          setView: function(){
+            if($scope.jumpTarget.key !== ""){
+              $scope.currentEditCell.attr('text/text', convertTextLength($scope.jumpTarget.value, 14));
+            }
+          },
+          getData: function(){
+            return {
+              targetId: $scope.jumpTarget.key
+            }
+          }
+        },
+        link: {
+          setView: function(){
+            $scope.currentEditCell.attr('text/text', convertTextLength($scope.linkUrl, 28));
+          },
+          getData: function(){
+            return {
+              link: $scope.linkUrl,
+              linkType: $scope.linkType
+            }
+          }
+        },
+        operator: {
+          setView: function(){
+          },
+          getData: function(){
+          }
+        },
+        cv: {
+          setView: function(){
+          },
+          getData: function(){
+          }
+        }
+      };
 
       function convertTextLength(text, regNum) {
         if (text) {
@@ -506,169 +531,110 @@
       }
 
       function createBranchHtml(nodeData) {
-        var html = $('<div id=\'branch_modal\'>' +
-            '<div id=\'branch_modal_editor\'>' +
-            '<div id=\'branch_modal_head\'>' +
-            '<label for=\'node_name\'>ノード名</label>' +
-            '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
-            '</div>' +
-            '<div id=\'branch_modal_body\'>' +
-            '<div class=\'branch_modal_setting_header\'>' +
-            '<div class=\'flex_row_box\'>' +
-            '<p>発言内容</p>' +
-            '<textarea class="node_branch"></textarea>' +
-            '</div>' +
-            '<div class=\'flex_row_box\'>' +
-            '<label for=\'branch_button\'>表示形式</label>' +
-            '<select name=\'branch_button\' id=\'branchBtnType\'>' +
-            '<option>表示形式を選択して下さい</option>' +
-            '<option value=\'1\'>ラジオボタン</option>' +
-            '<option value=\'2\'>ボタン</option>' +
-            '<select>' +
-            '</div>' +
-            '</div>' +
-            '<div class=\'branch_modal_setting_content\'>' +
-            '<div class=\'setting_row\'>' +
-            '<p>選択肢</p>' +
-            '<input type="text"/>' +
-            '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
-            '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
-            '</div>' +
-            '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id=\'branch_modal_preview\'>' +
-            '</div>' +
-            '</div>');
-        html.find('input[type=text]').val(nodeData.nodeName);
-        html.find('.flex_row_box > textarea').val(nodeData.text);
-        html.find('select').val(nodeData.btnType);
-        html = nodeEditHandler.typeBranch.createContents(html, nodeData);
-        return html;
+        if(nodeData.selection.length > 0){
+          $scope.branchSelectionList = nodeData.selection
+        } else {
+          $scope.branchSelectionList.length = 0;
+          $scope.branchSelectionList.push("");
+        }
+        $scope.oldSelectionList = $scope.branchSelectionList.concat();
+        $scope.branchTitle = nodeData.nodeName;
+        $scope.branchType.key = nodeData.btnType;
+        $scope.branchText = nodeData.text;
+        return $('<branch-modal></branch-modal>');
       }
 
       function createTextHtml(nodeData) {
-        var html = $('<div id=\'text_modal\'>' +
-            '<div id=\'text_modal_editor\'>' +
-            '<div id=\'text_modal_head\'>' +
-            '<label for=\'node_name\'>ノード名</label>' +
-            '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
-            '</div>' +
-            '<div id=\'text_modal_body\'>' +
-            '<p>発言内容</p>' +
-            '<div id="text_modal_contents" >' +
-            '<div class=\'text_modal_setting\'>' +
-            '<textarea class="node_text"></textarea>' +
-            '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
-            '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div id=\'text_modal_preview\'>' +
-            '</div>' +
-            '</div>');
-        html.find('input[type=text]').val(nodeData.nodeName);
-        html = nodeEditHandler.typeText.createContents(html, nodeData);
-        return html;
+        if(nodeData.text.length > 0){
+          $scope.speakTextList = nodeData.text;
+        } else {
+          $scope.speakTextList.length = 0;
+          $scope.speakTextList.push("");
+        }
+        $scope.speakTextTitle = nodeData.nodeName;
+        return $('<text-modal></text-modal>');
       }
 
       function createLinkHtml(nodeData) {
-        var html = $('<div id=\'link_modal\'>' +
-            '<label for=\'link\'>遷移先URL</label>' +
-            '<input id=\'linkTarget\' name=\'link\' type=\'text\' placeholder=\'URLを入力して下さい\'/>' +
-            '</div>' +
-            '<div id=\'link_type_area\'>' +
-            '<label><input type=\'radio\' name=\'link_type\' value=\'same\'>ページ遷移する</label>' +
-            '<label><input type=\'radio\' name=\'link_type\' value=\'another\'>別タブで開く</label>' +
-            '</div>');
-        html.find('input[type=text]').val(nodeData.link);
-        html.find('input[type=radio]').val([nodeData.linkType]);
-        return html;
+        $scope.linkUrl = nodeData.link;
+        $scope.linkType = nodeData.linkType;
+        return $('<link-modal></link-modal>');
       }
 
       function createScenarioHtml(nodeData) {
-        var html = $('<div id=\'scenario_modal\'>' +
-            '<label for=\'scenario\'>シナリオ名</label>' +
-            '<select name=\'scenario\' id=\'callTargetScenario\'>' +
-            '<option value="">シナリオを選択してください</option>' +
-            '<select>' +
-            '</div>');
-        html = nodeEditHandler.typeScenario.createContents(html);
-        html.find('select').val(nodeData.scenarioId);
-        return html;
+        $scope.selectedScenario.key = nodeData.scenarioId;
+        return $('<scenario-modal></scenario-modal>');
       }
 
       function createJumpHtml(nodeData) {
-        var html = $('<div id=\'jump_modal\'>' +
-            '<label for=\'jump\'>ノード名</label>' +
-            '<select name=\'jump\' id=\'jumpTargetNode\'>' +
-            '<option value=\'\'>ノード名を選択してください</option>' +
-            '<select>' +
-            '</div>');
-        html = nodeEditHandler.typeJump.createContents(html);
-        html.find('select').val(nodeData.targetId);
-        return html;
+        nodeEditHandler.typeJump.createJumpArray();
+        $scope.jumpTarget.key = nodeData.targetId;
+        return $('<jump-modal></jump-modal>');
       }
 
       function createOperatorHtml(nodeData) {
-        return $('<p>このノードに到達した場合、オペレーターを呼び出します。</p>');
+        return $('<operator-modal></operator-modal>');
       }
 
       function createCvHtml(nodeData) {
-        return $('<p>このノードに到達した場合、CVに登録します。</p>');
+        return $('<cv-modal></cv-modal>');
       }
 
-      function addTextBox(e) {
-        var cloneElm = $(e.parentNode).clone();
-        var index = 0;
-        //テキストエリアが追加されたら、previewに新しく要素を追加する
-        if(cloneElm.find('textarea') != null) {
-          index = $('.text_modal_setting').index($(e.parentNode));
-          cloneElm.children('textarea').val('');
-          previewHandler.typeText.addBalloon(index);
+      $scope.btnClick = function(type, target, index){
+        $scope.currentTop = $('#popup-frame').offset().top;
+        switch (type) {
+          case "add":
+            target.splice(index + 1, 0, "");
+            break;
+          case "delete":
+            target.splice(index, 1);
+            break;
+          default:
+            break;
         }
-        cloneElm.children('input[type=text]').val('');
-        $(e.parentNode).after(cloneElm);
-        btnViewHandler.switcher();
-        popupEvent.resize();
-      }
+        $timeout(function(){
+          popupEvent.resize();
+          $scope.popupFix();
+        })
+      };
 
-      function deleteTextBox(e) {
-        e.parentNode.parentNode.removeChild(e.parentNode);
-        btnViewHandler.switcher();
-        popupEvent.resize();
-      }
+      $scope.popupHandler = function(){
+        var popup = $('#popup-frame.diagram-ui');
+        popup.css({
+          "margin": "0",
+          "position": "absolute",
+          "top": (window.innerHeight / 2 - popup.height() / 2 - $('#color-bar').height()),
+          "left": (window.innerWidth  / 2 - popup.width() / 2 - $('#sidebar-main').width())
+        });
+        popup.draggable({
+          scroll: false,
+          cancel: "#popup-main, #popup-button, .p-personal-update",
+          stop: function(e, ui) {
+            /* restrict popup position */
+            console.log(e);
+            console.log(ui);
+          }
+        });
+      };
 
-      var btnViewHandler = {
-        switcher: function() {
-          var self = btnViewHandler;
-          var textElm = document.getElementsByClassName('text_modal_setting');
-          var branchElm = document.getElementsByClassName('setting_row');
-          if (textElm.length > 0) {
-            self._controller(textElm, 1, 5);
-          }
-          if (branchElm.length > 0) {
-            self._controller(branchElm, 1, 10);
-          }
+      $scope.$watch("speakTextList", function(){
+        $scope.btnHandler($scope.speakTextList.length, 1, 5);
+      }, true);
 
-        },
-        _controller: function(elm, min, max) {
-          if (elm.length >= max) {
-            for (var i = 0; i < elm.length; i++) {
-              $(elm[i]).children('img.disOffgreenBtn').hide();
-            }
-          } else if (elm.length <= min) {
-            for (var j = 0; j < elm.length; j++) {
-              $(elm[j]).children('img.redBtn').hide();
-            }
-          } else {
-            for (var k = 0; k < elm.length; k++) {
-              $(elm[k]).children('img.disOffgreenBtn').show();
-              $(elm[k]).children('img.redBtn').show();
-            }
-          }
+      $scope.$watch("branchSelectionList", function(){
+        $scope.btnHandler($scope.branchSelectionList.length, 1, 10);
+      }, true);
+
+      $scope.btnHandler = function(amount, min, max){
+        if(amount === min){
+          $scope.addBtnHide = false;
+          $scope.deleteBtnHide = true;
+        } else if (amount === max) {
+          $scope.addBtnHide = true;
+          $scope.deleteBtnHide = false;
+        } else {
+          $scope.addBtnHide = false;
+          $scope.deleteBtnHide = false;
         }
       };
 
@@ -683,120 +649,77 @@
 
       var nodeEditHandler = {
         typeJump: {
-          createContents: function(html) {
+          createJumpArray: function() {
+            //呼び出される際に、一度リストの初期化を行う
+            $scope.jumpTargetList = $scope.jumpTargetListOrigin.concat();
             var allElmList = graph.getElements();
             for (var i = 0; i < allElmList.length; i++) {
               if (allElmList[i].attr('nodeBasicInfo/nodeType') === 'text'
                   || allElmList[i].attr('nodeBasicInfo/nodeType') === 'branch') {
                 if (allElmList[i].attr('actionParam/nodeName') !== '') {
-                  //ノード名がある場合は、option属性を生成し付与する
-                  var newOption = $('<option></option>');
-                  newOption.val(allElmList[i].attributes.id);
-                  newOption.text(allElmList[i].attr('actionParam/nodeName'));
-                  html.children('select').append(newOption);
+                  //ノード名がある場合は、optionリストに追加
+                  $scope.jumpTargetList.push({
+                    "key": allElmList[i].attributes.id,
+                    "value": allElmList[i].attr('actionParam/nodeName')
+                  });
                 }
               }
             }
-            return html;
-          }
-        },
-        typeScenario: {
-          createContents: function(html) {
-            var keyList = Object.keys(scenarioList);
-            for (var i = 0; i < keyList.length; i++) {
-              var newOption = $('<option></option>');
-              newOption.val(keyList[i]);
-              newOption.text(scenarioList[keyList[i]]);
-              html.children('select').append(newOption);
-            }
-            return html;
-          }
-        },
-        typeText: {
-          convertContents: function(originContents) {
-            return nodeEditHandler.textAreaToArray(originContents);
-          },
-          createContents: function(html, nodeData) {
-            if (nodeData.text.length > 0) {
-              html.find('.text_modal_setting > textarea').val(nodeData.text[0]);
-              for (var i = 1; i < nodeData.text.length; i++) {
-                var tmpClone = html.find('.text_modal_setting:last-child').clone();
-                tmpClone.find('textarea').val(nodeData.text[i]);
-                html.find('#text_modal_body').append(tmpClone);
-              }
-            } else {
-
-            }
-            html.find("#text_modal_preview").append($(".chatTalk").clone());
-            return html;
           }
         },
         typeBranch: {
-          convertContents: function(originContents) {
-            return nodeEditHandler.textToArray(originContents);
-          },
-          createContents: function(html, nodeData) {
-            if (nodeData.selection.length > 0) {
-              html.find('.setting_row > input[type=text]').val(nodeData.selection[0]);
-              for (var i = 1; i < nodeData.selection.length; i++) {
-                var tmpClone = html.find('.setting_row').last().clone();
-                tmpClone.find('input[type=text]').val(nodeData.selection[i]);
-                console.log(tmpClone);
-                html.find('.branch_modal_setting_content').append(tmpClone);
-              }
-            } else {
-
-            }
-            return html;
-          },
-          handleBranchPorts: function(additionalPortList) {
+          branchPortController: function(newSelectionList) {
             var self = nodeEditHandler.typeBranch;
-            var offsetMasterNodeHeight = 90;
-            var addMasterNodeHeight = 0;
-            var masterBranch = currentEditCell.getAncestors()[0];
-            self.removeAllPortView(masterBranch);
-            var masterViewData = masterBranch.attributes;
-            for (var i = 0; i < additionalPortList.length; i++) {
-              var port = self.portCreator(
-                  masterViewData.position.x,
-                  masterViewData.position.y,
-                  additionalPortList[i],
-                  90 + i * 35
-              );
-              addMasterNodeHeight += 35;
-              currentEditCell.getAncestors()[0].embed(port);
-              graph.addCell(port);
+            for(var i = 0; i < newSelectionList.length; i++){
+              /* Set rect height */
+              self._resizeParentHeight(i);
+              var port = self.portCreator(self._getSelfPosition(i), newSelectionList[i], self._getCoverOpacity(i, newSelectionList.length));
+              $scope.currentEditCellParent.embed(port);
               initNodeEvent([port]);
+              graph.addCell(port);
             }
-            self.resizeParent();
-            masterViewData.size.height = offsetMasterNodeHeight + addMasterNodeHeight;
-            console.log(masterViewData);
-
           },
-          resizeParent: function() {
-
+          _checkPastPortListFromCurrent: function(target) {
+            if($scope.oldSelectionList.indexOf(target) === -1 ){
+              /* Port is Added */
+            }
           },
-          removeAllPortView: function(branch) {
-            var childList = branch.getEmbeddedCells();
-            for (var i = 0; i < childList.length; i++) {
-              if (childList[i].attr('nodeBasicInfo/nodeType') === 'childPortNode') {
-                childList[i].remove();
+          _checkCurrentPortListFromPast: function(targetList) {
+            for( var i = 0; i < $scope.oldSelectionList; i++ ){
+              if(targetList.indexOf($scope.oldSelectionList[i]) === -1){
+                /* Port is deleted */
               }
             }
           },
-          portCreator: function(posX, posY, text, additionalY) {
+          _getSelfPosition :function(index) {
+            return {
+              x: $scope.currentEditCellParent.get('position').x,
+              y: $scope.currentEditCellParent.get('position').y + 95 + index * 40
+            }
+          },
+          _resizeParentHeight: function(index) {
+            $scope.currentEditCellParent.get('size').height = 140 + index * 40;
+          },
+          _getCoverOpacity: function(index, maxLength){
+            return {
+              top : index === 0 ? "0" : "1",
+              bot : index === maxLength - 1 ? "0" : "1"
+            }
+          },
+          portCreator: function(position, text, opacity) {
             return new joint.shapes.devs.Model({
-              position: {x: posX + 5, y: posY + additionalY},
-              size: {width: 190, height: 30},
+              position: {x: position.x + 5, y: position.y},
+              size: {width: 190, height: 36},
               outPorts: ['out'],
               ports: {
                 groups: {
                   'out': {
                     attrs: {
                       '.port-body': {
-                        fill: "#F6ABAC",
+                        fill: "#DD82AB",
+                        'fill-opacity': "0.9",
                         height: 30,
-                        width: 41,
+                        width: 30,
                         stroke: false,
                         rx: 3,
                         ry: 3
@@ -809,10 +732,10 @@
                       name: 'absolute',
                       args: {
                         x: 185,
-                        y: 0
+                        y: 3
                       }
                     },
-                    z: 0,
+                    z: 4,
                     markup: '<rect class="port-body"/>'
                   }
                 }
@@ -822,42 +745,42 @@
                   text: text,
                   'ref-width': '70%',
                   'font-size': '12px',
-                  fill: '#000'
+                  fill: '#000',
+                  y: 12
                 },
-                rect: {
-                  fill: '#EEEEEE',
-                  stroke: false
+                'rect.body': {
+                  fill: '#FFFFFF',
+                  stroke: false,
+                  rx: 10,
+                  ry: 10
                 },
                 nodeBasicInfo: {
                   nodeType: 'childPortNode',
                   nextNode: ''
+                },
+                '.cover_top': {
+                  fill: '#FFFFFF',
+                  width: 190,
+                  height: 10,
+                  'fill-opacity': opacity.top
+                },
+                '.cover_bottom': {
+                  fill: '#FFFFFF',
+                  width: 190,
+                  height: 10,
+                  transform: "translate(0 26)",
+                  'fill-opacity': opacity.bot
                 }
-              }
+              },
+              markup: '<rect class="body"/><text class="label"/><rect class="cover_top"/><rect class="cover_bottom"/>'
             });
           }
-        },
-        textToArray: function(contents) {
-          var contentArray = [];
-          for (var i = 0; i < contents.length; i++) {
-            if ($(contents[i]).children('input[type=text]').val()) {
-              contentArray.push($(contents[i]).children('input[type=text]').val());
-            }
-          }
-          return contentArray;
-        },
-        textAreaToArray: function(contents) {
-          var contentArray = [];
-          for (var i = 0; i < contents.length; i++) {
-            if ($(contents[i]).children('textarea').val()) {
-              contentArray.push($(contents[i]).children('textarea').val());
-            }
-          }
-          return contentArray;
         }
       };
       
       var textEditor = {
         textLineSeparate: function(text){
+          if(text == null) return;
           var self = textEditor;
           var originTextArray = text.split(/\r\n|\n/);
           var resultTextArray = [];
@@ -898,15 +821,24 @@
         setDefaultNodeName: function(source, target){
           //既に情報が入っている場合はreturnさせる
           if(target.attr("actionParam/nodeName") !== "") return;
+          var prefix,
+              splitNum;
           var defaultValue = source.attr(".label/text");
+          if(target.attr("nodeBasicInfo/nodeType") === "text") {
+            prefix = "テキスト発言";
+            splitNum = 3;
+          } else {
+            prefix = "分岐";
+            splitNum = 6;
+          }
           target.attr("actionParam/nodeName", defaultValue);
           target.attr(".label/text",
-              convertTextForTitle(convertTextLength(defaultValue, 8), 'テキスト発言'));
+              convertTextForTitle(convertTextLength(defaultValue, splitNum), prefix));
         },
         typeJump: {
           editTargetName: function(){
             var allCells = graph.getCells();
-            var targetCell = currentEditCell;
+            var targetCell = $scope.currentEditCell;
             for(var i = 0; i < allCells.length; i++) {
               if(allCells[i].isElement()
                   && allCells[i].attr("nodeBasicInfo/nodeType") === "jump"
@@ -931,70 +863,83 @@
         }
       };
 
-      function exportJSON() {
-        var json = JSON.stringify(graph.toJSON());
-        console.log(json);
-        return json;
-      }
-
-
-
       $scope.widget = SimulatorService;
       var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
       $scope.widget.settings = widgetSettings;
 
-      $scope.greeting ="hla";
+      $scope.$on('ngRepeatFinish', function(){
+        popupEvent.resize();
+        $scope.popupFix();
+      });
 
-    }]).controller('ModalController', [
-      '$scope', '$timeout', '$compile', function($dialogScope, $timeout, $compile) {
-        $(document).on('diagram.openModal', function(e, elm) {
-          $timeout(function() {
-            $dialogScope.$apply();
-          });
+      $scope.popupFix = function(){
+        var popup = $('#popup-frame');
+        popup.offset({
+          top: $scope.currentTop ? $scope.currentTop : 300,
+          left: popup.offset().left
         });
-        $dialogScope.greeting = "Hola";
-    }]).directive('resizeTextarea', function() {
+      };
+
+      $scope.$watch("speakTextTitle", function(){
+        $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
+      });
+
+      $scope.$watch("branchTitle", function(){
+        $scope.titleHandler($scope.branchTitle, "分岐");
+      });
+
+      $scope.titleHandler = function(target, prefix){
+        $('#popup-title').text(prefix + $scope.getConjunction(target) + target);
+      };
+
+      $scope.getConjunction = function(target){
+        var conjunction = "";
+        if(target && target !== ""){
+          conjunction = "："
+        }
+        return conjunction;
+      };
+
+    }]);
+
+  sincloApp.directive('branchModal', function(){
     return {
       restrict: 'E',
       replace: true,
-      template: '<textarea style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea>',
-      link: function(scope, element, attrs) {
-        var maxRow = element[0].dataset.maxRow || 10;                       // 表示可能な最大行数
-        var fontSize = parseFloat(element[0].style.fontSize, 10);           // 行数計算のため、templateにて設定したフォントサイズを取得
-        var borderSize = parseFloat(element[0].style.borderWidth, 10) * 2;  // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
-        var paddingSize = parseFloat(element[0].style.padding, 10) * 2;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
-        var lineHeight = parseFloat(element[0].style.lineHeight, 10);       // 表示高さの計算のため、templateにて設定した行の高さを取得
-        var elm = angular.element(element[0]);
-
-        function autoResize() {
-          // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
-          var areaWidth = elm[0].getBoundingClientRect().width - borderSize - paddingSize;
-
-          // フォントサイズとテキストエリアのサイズを基に、行数を計算する
-          var textRow = 0;
-          elm[0].value.split('\n').forEach(function(string) {
-            var stringWidth = string.length * fontSize;
-            textRow += Math.max(Math.ceil(stringWidth / areaWidth), 1);
-          });
-
-          // 表示する行数に応じて、テキストエリアの高さを調整する
-          if (textRow > maxRow) {
-            elm[0].style.height = (maxRow * (fontSize * lineHeight)) + paddingSize + 'px';
-            elm[0].style.overflow = 'auto';
-          } else {
-            elm[0].style.height = (textRow * (fontSize * lineHeight)) + paddingSize + 'px';
-            elm[0].style.overflow = 'hidden';
-          }
-        }
-
-        autoResize();
-        scope.$watch(attrs.ngModel, autoResize);
-        $(window).on('load', autoResize);
-        $(window).on('resize', autoResize);
-        elm[0].addEventListener('input', autoResize);
-      }
-    };
-  }).directive('holl', function(){
+      template: '<div id=\'branch_modal\'>' +
+          '<div id=\'branch_modal_editor\'>' +
+          '<div id=\'branch_modal_head\'>' +
+          '<label for=\'node_name\'>ノード名</label>' +
+          '<input ng-model="branchTitle" id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
+          '</div>' +
+          '<div id=\'branch_modal_body\'>' +
+          '<div class=\'branch_modal_setting_header\'>' +
+          '<div class=\'flex_row_box\'>' +
+          '<p>発言内容</p>' +
+          '<textarea class="node_branch" ng-model="branchText"></textarea>' +
+          '</div>' +
+          '<div class=\'flex_row_box\'>' +
+          '<label for=\'branch_button\'>表示形式</label>' +
+          '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
+          '</select>' +
+          '</div>' +
+          '</div>' +
+          '<div class=\'branch_modal_setting_content\'>' +
+          '<div class=\'setting_row\' ng-repeat="selection in branchSelectionList track by $index">' +
+          '<p>選択肢</p>' +
+          '<input type="text" ng-model="branchSelectionList[$index]" />' +
+          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index)">' +
+          '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
+          '</div>' +
+          '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '<div id=\'branch_modal_preview\'>' +
+          '</div>' +
+          '</div>'
+    }
+  }).directive('textModal', function($timeout){
     return {
       restrict: 'E',
       replace: true,
@@ -1002,15 +947,15 @@
           '<div id=\'text_modal_editor\'>' +
           '<div id=\'text_modal_head\'>' +
           '<label for=\'node_name\'>ノード名</label>' +
-          '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
+          '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'ng-model="speakTextTitle"/>' +
           '</div>' +
           '<div id=\'text_modal_body\'>' +
           '<p>発言内容</p>' +
           '<div id="text_modal_contents" >' +
-          '<div class=\'text_modal_setting\'>' +
-          '<textarea class="node_text"></textarea>' +
-          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
-          '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
+          '<div class=\'text_modal_setting\' ng-repeat="speakText in speakTextList track by $index" finisher>' +
+          '<textarea class="node_text" ng-model="speakTextList[$index]"></textarea>' +
+          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index)">' +
+          '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', speakTextList, $index)">' +
           '</div>' +
           '</div>' +
           '</div>' +
@@ -1019,5 +964,66 @@
           '</div>' +
           '</div>'
     }
+  }).directive('linkModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<div>' +
+          '<div  id=\'link_modal\'>' +
+          '<label for=\'link\'>遷移先URL</label>' +
+          '<input id=\'linkTarget\' name=\'link\' type=\'text\' ng-model="linkUrl" placeholder=\'URLを入力して下さい\'/>' +
+          '</div>' +
+          '<div id=\'link_type_area\'>' +
+          '<label><input type=\'radio\' ng-model="linkType" name=\'link_type\' value=\'same\'>ページ遷移する</label>' +
+          '<label><input type=\'radio\' ng-model="linkType" name=\'link_type\' value=\'another\'>別タブで開く</label>' +
+          '</div>' +
+          '</div>'
+    }
+  }).directive('scenarioModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<div id=\'scenario_modal\'>' +
+          '<label for=\'scenario\'>シナリオ名</label>' +
+          '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key">' +
+          '</select>' +
+          '</div>'
+    }
+  }).directive('jumpModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<div id=\'jump_modal\'>' +
+          '<label for=\'jump\'>ノード名</label>' +
+          '<select ng-model="jumpTarget" name=\'jump\' id=\'jumpTargetNode\' ng-options="jump.value for jump in jumpTargetList track by jump.key">' +
+          '<select>' +
+          '</div>'
+    }
+  }).directive('cvModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<p id="cv_modal">このノードに到達した場合、CVに登録します。</p>'
+    }
+  }).directive('operatorModal', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<p id="op_modal">このノードに到達した場合、オペレーターを呼び出します。</p>'
+    }
   });
+
+  // ng-repeat完了後にControllerへ通知
+  sincloApp.directive('finisher', function($timeout){
+    return {
+      restrict: 'A',
+      link: function(scope, element, attr){
+        if ( scope.$last === true) {
+          $timeout( function(){
+            scope.$emit('ngRepeatFinish');
+          });
+        }
+      }
+    }
+  })
 </script>

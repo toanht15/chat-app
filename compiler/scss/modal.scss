@@ -1575,6 +1575,24 @@
       }
 
       /*チャットツリーエディタ用*/
+      &[class*="diagrams"] {
+        #popup-title {
+          background-color: #C3D69B;
+          border-bottom: none!important;
+          color: #FFFFFF!important;
+          font-size: 17px!important;
+          font-weight: bold;
+        }
+      }
+
+      &.diagram-ui {
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        #popup-title{
+          cursor: move;
+        }
+      }
+
+
       /* 設定個数が固定のモーダル */
       &.p_const_diagrams {
         width: 400px;
