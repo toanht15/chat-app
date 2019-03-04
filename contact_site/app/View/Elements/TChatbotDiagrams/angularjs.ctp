@@ -263,7 +263,50 @@
         $('#TChatbotDiagramActivity').val(JSON.stringify(graphJSON));
         $('#TChatbotDiagramsEntryForm').submit();
       });
-      /* save Act */
+
+      /* bulkRegister Btn */
+      $(document).on('click', '#bulkRegister',  function() {
+        $scope.bulkRegist.open();
+      });
+
+      /* bulkRegister Event */
+      $scope.bulkRegist = {
+        modalData: {},
+        open: function() {
+          if(!$scope.branchType.key || $scope.branchType.key === "") return;
+          this._initProcess.start();
+          //this.convertSelection();
+          //popupEventOverlap.open(this.overlapHtml(),"p_diagram_bulk_register",);
+        },
+        _initProcess: {
+          start: function(){
+            this.modalData = this._initModalData();
+          },
+          _initModalData: function(){
+            switch($scope.branchType) {
+              case "1":
+              /* radiobutton */
+              return {
+                title: "",
+
+              };
+              case "2":
+              /* button */
+                break;
+            }
+          }
+        },
+        convertSelection: function() {
+          console.log("こんばーと");
+        },
+        /*overlapHtml: '<div class="select-option-one-time-popup">\n' +
+            '    <p style="margin-top: -10px; width: 350px;">' + description + '</p>\n' +
+            '\n' +
+            '    <textarea name=""  id="bulk_textarea" style="overflow: hidden; resize: none; font-size: 13px;" cols="48" rows="3" placeholder="' +
+            placeholder + '">' + convertedOptions + '</textarea>\n' +
+            '</div>',*/
+      };
+
 
       function initNodeEvent(node) {
         for (var i = 0; i < node.length; i++) {

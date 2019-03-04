@@ -25,7 +25,7 @@ var portSetting = {
 
 var middleNode = {
   width: 200,
-  height: 115,
+  height: 90,
   inPortX: -30,
   inPortY: 30,
   outPortX: 200,
@@ -156,7 +156,7 @@ function NodeFactory() {
 function contentViewNode(posX, posY) {
   return new joint.shapes.basic.Rect({
     position: {x :posX + 5, y: posY + 35},
-    size: { width: 190, height: 75 },
+    size: { width: 190, height: 50 },
     attrs: {
       rect: {
         fill: "#FFFFFF",
