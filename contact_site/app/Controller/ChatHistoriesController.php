@@ -890,7 +890,8 @@ class ChatHistoriesController extends AppController
             || $val['THistoryChatLog']['message_type'] == 44
             || $val['THistoryChatLog']['message_type'] == 48
             || $val['THistoryChatLog']['message_type'] == 51
-            || $val['THistoryChatLog']['message_type'] == 54) {
+            || $val['THistoryChatLog']['message_type'] == 54
+            || $val['THistoryChatLog']['message_type'] == 55) {
             $row['transmissionKind']   = 'シナリオメッセージ（ヒアリング再回答）';
             $row['transmissionPerson'] = '';
           }
@@ -939,6 +940,16 @@ class ChatHistoriesController extends AppController
               }
             } else {
               $val['THistoryChatLog']['message'] = $json->message;
+            }
+            if($val['THistoryChatLog']['message_type'] == 55) {
+              $val['THistoryChatLog']['message'] .= "\n";
+              foreach($json->settings->options as $idx => $option) {
+                if($idx === (count($json->settings->options) - 1)) {
+                  $val['THistoryChatLog']['message'] .= '[] '.$option;
+                } else {
+                  $val['THistoryChatLog']['message'] .= '[] '.$option."\n";
+                }
+              }
             }
           }
           if ($val['THistoryChatLog']['message_type'] == 81) {
