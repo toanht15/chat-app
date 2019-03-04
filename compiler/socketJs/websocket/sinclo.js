@@ -2477,7 +2477,9 @@
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.receiveFile) {
+          sinclo.chatApi.messageType.scenario.message.receiveFile
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.radio) {
         if (obj.tabId === userInfo.tabId) {
           common.chatBotTypingCall(obj);
           this.chatApi.scDown();
