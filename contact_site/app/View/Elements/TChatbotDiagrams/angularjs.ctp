@@ -158,6 +158,8 @@
       if (dataForUpdate !== null && dataForUpdate !== '') {
         graph.fromJSON(JSON.parse(dataForUpdate));
         setTimeout(function(){
+          debugger;
+          dataForUpdate = JSON.parse(dataForUpdate);
           graph.resetCells(dataForUpdate.cells);
           initNodeEvent(graph.getCells());
         }, 500);
@@ -777,7 +779,7 @@
           }
         }
       };
-      
+
       var textEditor = {
         textLineSeparate: function(text){
           if(text == null) return;
