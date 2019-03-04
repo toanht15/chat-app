@@ -111,12 +111,12 @@
           attrs: {
             '.connection': {
               stroke: '#AAAAAA',
-              'stroke-width': 3
+              'stroke-width': 2,
             },
             '.marker-target': {
               stroke: '#AAAAAA',
               fill: '#AAAAAA',
-              d: 'M 15 0 L 0 6 L 0 9 L 15 15 z'
+              d: 'M 14 0 L 0 7 L 14 14 z'
             },
             '.link-tools .link-tool .tool-remove circle': {
               'class': 'diagram'
@@ -188,7 +188,6 @@
                 }else if(frame.hasClass("p_diagrams_text")){
                   $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
                 }
-                $('#popup-bg').hide();
                 $scope.popupHandler();
                 initPopupCloseEvent();
               });
@@ -266,45 +265,56 @@
 
       /* bulkRegister Btn */
       $(document).on('click', '#bulkRegister',  function() {
-        $scope.bulkRegist.open();
+        bulkRegister.open();
       });
 
       /* bulkRegister Event */
-      $scope.bulkRegist = {
+      var bulkRegister = {
         modalData: {},
         open: function() {
-          if(!$scope.branchType.key || $scope.branchType.key === "") return;
-          this._initProcess.start();
-          //this.convertSelection();
-          //popupEventOverlap.open(this.overlapHtml(),"p_diagram_bulk_register",);
-        },
-        _initProcess: {
-          start: function(){
-            this.modalData = this._initModalData();
-          },
-          _initModalData: function(){
-            switch($scope.branchType) {
-              case "1":
-              /* radiobutton */
-              return {
-                title: "",
-
-              };
-              case "2":
-              /* button */
-                break;
-            }
+          try {
+            this._createModal(this._getOverView($scope.branchType), this._getContent());
+          } catch (e) {
+            console.log(e + " ERROR DETECTED");
           }
         },
-        convertSelection: function() {
-          console.log("こんばーと");
+        _initPopupOverlapEvent: function() {
+          popupEventOverlap.closePopup = function() {
+            $scope.branchSelectionList = $("#bulk_textarea").val().split("\n");
+            popupEventOverlap.closeNoPopupOverlap();
+            $scope.$apply();
+            $timeout(function() {
+              popupEvent.resize();
+              $scope.popupFix();
+            })
+          }
         },
-        /*overlapHtml: '<div class="select-option-one-time-popup">\n' +
-            '    <p style="margin-top: -10px; width: 350px;">' + description + '</p>\n' +
-            '\n' +
-            '    <textarea name=""  id="bulk_textarea" style="overflow: hidden; resize: none; font-size: 13px;" cols="48" rows="3" placeholder="' +
-            placeholder + '">' + convertedOptions + '</textarea>\n' +
-            '</div>',*/
+        _createModal: function(overView, content) {
+          $scope.currentTop = $('#popup-frame').offset().top;
+          popupEventOverlap.initOverlap();
+          popupEventOverlap.open(content, overView.class, overView.title);
+          this._initPopupOverlapEvent();
+        },
+        _getOverView: function(type) {
+          switch(Number(type.key)) {
+            case 1:
+            case 2:
+              return {
+                title: "選択肢の一括登録",
+                class: "p_selection_bulk_register"
+              };
+            default:
+              throw "noType"
+          }
+        },
+        _getContent: function() {
+          return '<div class="select-option-one-time-popup">\n' +
+                 '    <p>選択肢として登録する内容を改行して設定してください。</p>\n' +
+                 '\n' +
+                 '    <textarea name=""  id="bulk_textarea" style="overflow: hidden; resize: none; font-size: 13px;" cols="48" rows="3" placeholder=' +
+                 '"男性&#10;女性">' + $scope.branchSelectionList.join("\n") + '</textarea>\n' +
+                 '</div>';
+        }
       };
 
 
@@ -413,7 +423,6 @@
               previewHandler.typeJump.editTargetName();
               popupEvent.closeNoPopup();
               $scope.addLineHeight();
-              console.log(graph.getCells());
               break;
             case 2:
               /* delete */
@@ -573,11 +582,7 @@
       }
 
       function convertTextForTitle(text, basicTitle) {
-        if (text) {
-          return basicTitle + ':' + text;
-        } else {
-          return basicTitle;
-        }
+        return text ? text : basicTitle;
       }
 
       function createBranchHtml(nodeData) {
@@ -660,8 +665,6 @@
           scroll: false,
           cancel: "#popup-main, #popup-button, .p-personal-update",
           stop: function(e, ui) {
-            console.log(e);
-            console.log(ui);
             /* restrict popup position */
             var popup = $('#popup-frame'),
                 newTop = popup.offset().top,
@@ -813,7 +816,7 @@
                 '.label': {
                   text: text,
                   'ref-width': '70%',
-                  'font-size': '12px',
+                  'font-size': '14px',
                   fill: '#000',
                   y: 12
                 },
@@ -897,10 +900,10 @@
               splitNum;
           var defaultValue = source.attr(".label/text");
           if(target.attr("nodeBasicInfo/nodeType") === "text") {
-            prefix = "テキスト発言";
+            prefix = "";
             splitNum = 3;
           } else {
-            prefix = "分岐";
+            prefix = "";
             splitNum = 6;
           }
           target.attr("actionParam/nodeName", defaultValue);
