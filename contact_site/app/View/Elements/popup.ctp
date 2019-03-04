@@ -725,6 +725,12 @@
   }(popupEvent, shortMessage);
 
 </script>
+<?php
+$ngParam = "";
+if(strcmp($this->request->url, "TChatbotDiagrams/add") == 0
+|| strcmp($this->request->url, "TChatbotDiagrams/edit") == 0) {
+  $ngParam = "ng-app='sincloApp' ng-controller='DiagramController'";
+}?>
 <div id="popup" class="popup-off" style="">
   <div id="popup-frame-base">
     <div id="popup-bg"></div>
@@ -745,7 +751,7 @@
           ?>
         </div>
         <div id="popup-title"></div>
-        <div id="popup-main"></div>
+        <div id="popup-main" <?=$ngParam?>></div>
         <div id="popup-button"></div>
         <div id="popup-warning" style="color: #FF7B7B; text-align:center;"></div>
       </div>
