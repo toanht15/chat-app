@@ -833,6 +833,7 @@ class TAutoMessagesController extends WidgetSettingController
     $this->TAutoMessage->begin();
     foreach($inputData['targetList'] as $index => $targetId) {
       $data = $this->TAutoMessage->find('first', array(
+        'fields' => array('id','name','active_flg'),
         'conditions' => array(
           'id' => $targetId
         )

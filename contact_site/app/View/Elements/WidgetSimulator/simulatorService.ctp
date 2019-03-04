@@ -137,6 +137,9 @@
       get re_text_size() {
         return Number(this._settings['re_text_size']);
       },
+      get re_text_color() {
+        return this._settings['re_text_color'];
+      },
       get radioButtonBeforeTop() {
         return Math.ceil((Number(this.re_text_size) / 2));
       },
@@ -532,7 +535,7 @@
        * @param String prefix ラジオボタンに付与するプレフィックス
        * @return String       変換したメッセージ
        */
-      createMessage: function(val, prefix, align) {
+      createMessage: function(val, prefix, align, nospan) {
         if (val === '') return　'';
         prefix = (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
         var isSmartphone = Number(this._showWidgetType) !== 1;
@@ -582,7 +585,9 @@
           //リンク、電話番号、imgタグ
           str = replaceVariable(str, isSmartphone, this._settings['widget_size_type']);
 
-          if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
+          if(nospan) {
+            content += '' + str;
+          } else if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
             content += '' + str + '\n';
           } else {
             if (isAddUnderline) {
@@ -792,14 +797,8 @@
         var index = $('#chatTalk > div:not([style*="display: none;"])').length;
         var pulldownName = prefix + 'sinclo-pulldown-' + index;
         var hasOldOptionValue = false;
-        /* ウィジェットサイズ小でアイコン表示だとプルダウンが見切れてしまう対策*/
-        var minWidth = '210';
-        if (this._needResizeCauseIcon()) {
-          minWidth = '183';
-        }
         // style
-
-        var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; min-width: ' + minWidth + 'px;';
+        var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; width: 100%; word-break: break-all;';
         style += 'background-color: ' + data.design.backgroundColor + ';';
         style += 'color: ' + data.design.textColor + ';';
         style += 'border-color: ' + data.design.borderColor + ';"';
@@ -892,7 +891,7 @@
         var separator = this.getCheckboxSeparator(data.settings.checkboxSeparator);
         var style = '<style>';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}';
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox #' + checkboxName +

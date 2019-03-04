@@ -211,14 +211,24 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 42:
         $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']['message']);
         break;
+      case 45:
       case 46:
+      case 49:
+      case 52:
+      case 55:
         $chatMessage = empty($chatLog['message']['message']) ? "（質問内容なし）" : $chatLog['message']['message'];
         $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatMessage);
         break;
+      case 43:
       case 47:
+      case 50:
+      case 53:
         $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 44:
       case 48:
+      case 51:
+      case 54:
         $message = $this->generateScenarioReInputHearingBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 81:
@@ -236,7 +246,8 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         $message = $this->generateOperatorLeavedBlockStr($chatLog['created'],$user['display_name']);
         break;
       default:
-        throw new InvalidArgumentException('不明なmessageType : ' . $chatLog);
+        //throw new InvalidArgumentException('不明なmessageType : ' . $chatLog);
+        break;
     }
     return $message;
   }

@@ -16,9 +16,9 @@ class TChatbotScenario extends AppModel {
         'allowEmpty' => false,
         'message' => '名称を５０文字以内で入力してください'
       ],
-      'isUnique' => [
-        'rule' => 'isUnique',
-        'message' => '既に同じ名称の設定が存在します。'
+      'isActiveNameUnique' => [
+        'rule' => 'isActiveNameUnique',
+        'message' => '既に同じ名称が有効設定に存在します。'
       ]
     ],
     'activity' => [
@@ -114,5 +114,24 @@ class TChatbotScenario extends AppModel {
     }
 
     return true;
+  }
+
+  public function isActiveNameUnique($param) {
+    $validations = array(
+      'conditions' => array(
+        'name' => $param['name'],
+        'm_companies_id' => $this->data['TChatbotScenario']['m_companies_id'],
+        'del_flg' => 0
+      )
+    );
+
+    if($this->data['TChatbotScenario']['id']) {
+      $validations['conditions']['NOT'] = array();
+      $validations['conditions']['NOT']['id'] = $this->data['TChatbotScenario']['id'];
+    }
+
+    $count = $this->find('count', $validations);
+
+    return $count === 0 ? true : false;
   }
 }
