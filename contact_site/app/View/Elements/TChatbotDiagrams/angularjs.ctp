@@ -126,6 +126,7 @@
           }
         }),
         validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+          //既に他ポートに接続しているout portは線を出さない
           if (cellViewS.model.attr('nodeBasicInfo/nextNodeId') && cellViewS.model.attr('nodeBasicInfo/nextNodeId') !==
               '') {
             linkView.model.remove();
@@ -141,9 +142,6 @@
           if (parents.length > 0 && parents[0].id === cellViewT.model.id) {
             return false;
           }
-          //既に他ポートに接続しているout portは線を出さない
-
-
           // outPortには入力させない
           return magnetT && magnetT.getAttribute('port-group') === 'in';
         },
@@ -180,12 +178,23 @@
               var modalData = processModalCreate(cellView);
               $compile(modalData.content)($scope);
               $timeout(function(){
+                $scope.currentTop = null;
                 modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
-                $('#popup-frame').addClass("diagram-ui");
+                var frame = $('#popup-frame');
+                frame.addClass("diagram-ui");
+                /* Bind node name if diagram is text or scenario */
+                if(frame.hasClass("p_diagrams_branch")){
+                  $scope.titleHandler($scope.branchTitle, "分岐");
+                }else if(frame.hasClass("p_diagrams_text")){
+                  $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
+                }
+                $('#popup-bg').hide();
                 $scope.popupHandler();
                 initPopupCloseEvent();
               });
             }
+
+            $scope.removeToolScale();
             wasMoved = false;
           });
 
@@ -231,6 +240,16 @@
       });
 
       /*paper関連ここまで*/
+
+      $scope.removeToolScale = function(){
+        var links = $('.link-tool');
+        for( var i = 0; i < links.length; i++ ){
+          var tmp = $(links[i]).attr("transform").indexOf(" scale");
+          if(tmp > -1){
+            $(links[i]).attr("transform", $(links[i]).attr("transform").substr(0, tmp));
+          }
+        }
+      };
 
       /* save Act */
       $('#submitBtn').on('click', function() {
@@ -364,7 +383,7 @@
 
       $scope.addLineHeight = function(){
         /* To override svg */
-        $("text:not('.label') > tspan:not(:first-child)").attr("dy", "1.5em");
+        $("text:not('.label') > tspan:not(:first-child)").attr("dy", "1.2em");
       };
 
       function deleteEditNode() {
@@ -522,7 +541,7 @@
         $scope.branchTitle = nodeData.nodeName;
         $scope.branchType.key = nodeData.btnType;
         $scope.branchText = nodeData.text;
-        return $('<branch_modal></branch_modal>');
+        return $('<branch-modal></branch-modal>');
       }
 
       function createTextHtml(nodeData) {
@@ -590,7 +609,10 @@
         popup.draggable({
           scroll: false,
           cancel: "#popup-main, #popup-button, .p-personal-update",
-          stop: function() {
+          stop: function(e, ui) {
+            /* restrict popup position */
+            console.log(e);
+            console.log(ui);
           }
         });
       };
@@ -758,6 +780,7 @@
       
       var textEditor = {
         textLineSeparate: function(text){
+          if(text == null) return;
           var self = textEditor;
           var originTextArray = text.split(/\r\n|\n/);
           var resultTextArray = [];
@@ -850,15 +873,35 @@
       });
 
       $scope.popupFix = function(){
-        var popup = $('#popup-frame')
+        var popup = $('#popup-frame');
         popup.offset({
           top: $scope.currentTop ? $scope.currentTop : 300,
           left: popup.offset().left
         });
-      }
+      };
 
+      $scope.$watch("speakTextTitle", function(){
+        $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
+      });
+
+      $scope.$watch("branchTitle", function(){
+        $scope.titleHandler($scope.branchTitle, "分岐");
+      });
+
+      $scope.titleHandler = function(target, prefix){
+        $('#popup-title').text(prefix + $scope.getConjunction(target) + target);
+      };
+
+      $scope.getConjunction = function(target){
+        var conjunction = "";
+        if(target && target !== ""){
+          conjunction = "："
+        }
+        return conjunction;
+      };
 
     }]);
+
   sincloApp.directive('branchModal', function(){
     return {
       restrict: 'E',

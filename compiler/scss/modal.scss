@@ -1584,8 +1584,16 @@
           font-weight: bold;
         }
       }
-      /* 設定個数が固定のモーダル */
 
+      &.diagram-ui {
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        #popup-title{
+          cursor: move;
+        }
+      }
+
+
+      /* 設定個数が固定のモーダル */
       &.p_const_diagrams {
         width: 400px;
         [id$=modal] {
