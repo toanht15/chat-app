@@ -1590,6 +1590,11 @@
         #popup-title{
           cursor: move;
         }
+        h3 {
+          margin: 20px 20px 0 20px;
+          border-bottom: 3px solid #C3D69B;
+          padding-bottom: 5px;
+        }
       }
 
 
@@ -1662,8 +1667,6 @@
         }
         #text_modal {
           display: flex;
-          justify-content: start;
-          align-items: center;
           border-bottom: 1px solid #909090;
           #text_modal_editor {
             width: 500px;
@@ -1711,7 +1714,7 @@
             }
           }
           #text_modal_preview {
-            width: 200px;
+            width: 370px;
           }
         }
         #popup-button {
@@ -1805,6 +1808,9 @@
               margin-top: 10px;
             }
           }
+        }
+        #branch_modal_preview {
+          width: 370px;
         }
         #popup-button {
           display:flex;
