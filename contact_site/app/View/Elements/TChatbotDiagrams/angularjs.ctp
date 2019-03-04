@@ -527,7 +527,7 @@
         scenario: {
           setView: function(){
             if($scope.selectedScenario.key !== ""){
-              $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 14));
+              $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 20));
             }
           },
           getData: function(){
@@ -539,7 +539,7 @@
         jump: {
           setView: function(){
             if($scope.jumpTarget.key !== ""){
-              $scope.currentEditCell.attr('text/text', convertTextLength($scope.jumpTarget.value, 14));
+              $scope.currentEditCell.attr('text/text', convertTextLength($scope.jumpTarget.value, 20));
             }
           },
           getData: function(){
