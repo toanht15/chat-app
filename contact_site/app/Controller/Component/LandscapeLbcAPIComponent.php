@@ -334,7 +334,7 @@ class LandscapeLbcAPIComponent extends LandscapeAPIComponent
         $conditions = array('ip_address' => $this->ip);
         break;
       case 'lbc_code':
-        $conditions = array('lbc_code' => $this->lbcCode);
+        $conditions = array('lbc_code' => (string)$this->lbcCode);
         break;
     }
     return $conditions;

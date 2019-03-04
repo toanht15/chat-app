@@ -360,13 +360,13 @@
           <!-- 状態 -->
           <li>
             <span class="require"><label>状態</label></span>
-            <label class="<?php if($this->data['disallowActiveChanging']) echo 'disabled '?>pointer"><?= $this->Form->input('active_flg', [
+            <label class="<?php if(array_key_exists('disallowActiveChanging', $this->data) && $this->data['disallowActiveChanging']) echo 'disabled '?>pointer"><?= $this->Form->input('active_flg', [
               'type' => 'radio',
               'options' => $outMessageAvailableType,
               'default' => C_STATUS_AVAILABLE,
-              'separator' => '</label>&nbsp;<label class="'.($this->data['disallowActiveChanging'] ? 'disabled commontooltip ' : '').'pointer" '.($this->data['disallowActiveChanging'] ? 'data-text="呼出先に設定されている場合は<br>無効に変更できません"' : '').'>',
+              'separator' => '</label>&nbsp;<label class="'.((array_key_exists('disallowActiveChanging', $this->data) && $this->data['disallowActiveChanging']) ? 'disabled commontooltip ' : '').'pointer" '.((array_key_exists('disallowActiveChanging', $this->data) && $this->data['disallowActiveChanging']) ? 'data-text="呼出先に設定されている場合は<br>無効に変更できません"' : '').'>',
               'error' => false,
-              'disabled' => $this->data['disallowActiveChanging']
+              'disabled' => array_key_exists('disallowActiveChanging', $this->data) ? $this->data['disallowActiveChanging'] : false
             ]); ?></label>
           </li>
           <!-- 状態 -->
@@ -393,7 +393,7 @@
           $class = "vHidden";
         }
         ?>
-        <?php if($this->data['disallowActiveChanging']): ?>
+        <?php if(array_key_exists('disallowActiveChanging', $this->data) && $this->data['disallowActiveChanging']): ?>
           <a class="grayBtn btn-shadow <?=$class?> commontooltip" data-text="呼出先に設定されている場合は<br>削除できません">削除</a>
         <?php else: ?>
           <a href="javascript:void(0)" onclick="removeAct(<?= $lastPage?>)" class="redBtn btn-shadow <?=$class?>">削除</a>
