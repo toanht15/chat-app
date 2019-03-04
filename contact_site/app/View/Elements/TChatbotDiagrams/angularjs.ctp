@@ -255,7 +255,14 @@
 
       /* save Act */
       $('#submitBtn').on('click', function() {
-        $('#TChatbotDiagramActivity').val(JSON.stringify(graph.toJSON()));
+        var graphJSON = graph.toJSON();
+        for(var i = 0; i < graphJSON.cells.length; i++) {
+          if(graphJSON.cells[i].attrs.nodeBasicInfo.nodeType === "start"){
+            graphJSON.cells[i].attrs.nodeBasicInfo.messageIntervalSec = $scope.messageIntervalTimeSec;
+            break;
+          }
+        }
+        $('#TChatbotDiagramActivity').val(JSON.stringify(graphJSON));
         $('#TChatbotDiagramsEntryForm').submit();
       });
       /* save Act */
@@ -385,7 +392,7 @@
 
       $scope.addLineHeight = function(){
         /* To override svg */
-        $("text:not('.label') > tspan:not(:first-child)").attr("dy", "1.2em");
+        $("text:not(.label) > tspan:not(:first-child)").attr("dy", "1.6em");
       };
 
       function deleteEditNode() {
@@ -612,9 +619,28 @@
           scroll: false,
           cancel: "#popup-main, #popup-button, .p-personal-update",
           stop: function(e, ui) {
-            /* restrict popup position */
             console.log(e);
             console.log(ui);
+            /* restrict popup position */
+            var popup = $('#popup-frame'),
+                newTop = popup.offset().top,
+                newLeft = popup.offset().left;
+            if(ui.offset.top < 60){
+              newTop = 60;
+            }
+            if(ui.offset.left < 80){
+              newLeft = 80;
+            }
+            if(ui.offset.top + e.target.offsetHeight > window.innerHeight){
+              newTop = window.innerHeight - e.target.offsetHeight;
+            }
+            if(ui.offset.left + e.target.offsetWidth > window.innerWidth){
+              newLeft = window.innerWidth - e.target.offsetWidth;
+            }
+            popup.offset({
+              top: newTop,
+              left: newLeft
+            });
           }
         });
       };
@@ -787,21 +813,24 @@
           var originTextArray = text.split(/\r\n|\n/);
           var resultTextArray = [];
           for( var i = 0; i < originTextArray.length; i++ ){
-            if( originTextArray[i].length > 14 ){
+            if( originTextArray[i].length > 12 ){
               Array.prototype.push.apply(resultTextArray, self.textLineCreate(originTextArray[i]));
             } else {
               resultTextArray.push(originTextArray[i]);
             }
+          }
+          if(resultTextArray.length > 3){
+            resultTextArray.splice(3, resultTextArray.length - 3);
           }
           return resultTextArray.join("\n");
         },
         textLineCreate: function(textLine){
           var currentText = textLine;
           var textArray = [];
-          var loopNum = currentText.length / 15;
+          var loopNum = currentText.length / 13;
           for( var i = 0; i < loopNum ; i++){
-            textArray.push(currentText.substr(0, 15));
-            currentText = currentText.substr(15);
+            textArray.push(currentText.substr(0, 13));
+            currentText = currentText.substr(13);
           }
           return textArray;
         }
@@ -910,6 +939,7 @@
       replace: true,
       template: '<div id=\'branch_modal\'>' +
           '<div id=\'branch_modal_editor\'>' +
+          '<h3>設定</h3>' +
           '<div id=\'branch_modal_head\'>' +
           '<label for=\'node_name\'>ノード名</label>' +
           '<input ng-model="branchTitle" id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
@@ -938,6 +968,7 @@
           '</div>' +
           '</div>' +
           '<div id=\'branch_modal_preview\'>' +
+          '<h3>プレビュー</h3>' +
           '</div>' +
           '</div>'
     }
@@ -947,6 +978,7 @@
       replace: true,
       template: '<div id=\'text_modal\'>' +
           '<div id=\'text_modal_editor\'>' +
+          '<h3>設定</h3>' +
           '<div id=\'text_modal_head\'>' +
           '<label for=\'node_name\'>ノード名</label>' +
           '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'ng-model="speakTextTitle"/>' +
@@ -963,6 +995,7 @@
           '</div>' +
           '</div>' +
           '<div id=\'text_modal_preview\'>' +
+          '<h3>プレビュー</h3>' +
           '</div>' +
           '</div>'
     }
