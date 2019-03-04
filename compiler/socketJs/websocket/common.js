@@ -5415,7 +5415,7 @@ var socket, // socket.io
     },
     isJSON: function(arg) {
       arg = (typeof arg === 'function') ? arg() : arg;
-      if (typeof arg !== 'string') {
+      if (!isNaN(Number(arg)) || typeof arg !== 'string') {
         return false;
       }
       try {

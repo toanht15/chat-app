@@ -1243,7 +1243,7 @@
               0) {
             angular.forEach(newObject.conditionList, function(condition, conditionIndex) {
               if (!condition.matchValuePattern) {
-                condition.matchValuePattern = '1';
+                condition.matchValuePattern = '2';
               }
               if (condition.actionType == '1' &&
                   document.getElementById('action' + index + '-' + conditionIndex + '_message')) {
