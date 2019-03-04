@@ -189,6 +189,7 @@
                   $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
                 }
                 $scope.popupHandler();
+                $scope.popupInit(frame);
                 initPopupCloseEvent();
               });
             }
@@ -494,7 +495,7 @@
         text: {
           setView: function() {
             $scope.currentEditCellParent.attr('.label/text',
-                convertTextForTitle(convertTextLength($scope.speakTextTitle, 3), 'テキスト発言'));
+                convertTextForTitle(convertTextLength($scope.speakTextTitle, 16), 'テキスト発言'));
             $scope.currentEditCell.attr('text/text', convertTextLength(
                 textEditor.textLineSeparate($scope.speakTextList.filter(Boolean)[0]), 46));
             $scope.currentEditCellParent.attr('actionParam/text', null);
@@ -508,10 +509,9 @@
         },
         branch: {
           setView: function(){
-            nodeEditHandler.typeBranch.branchPortController(
-                $scope.branchSelectionList.filter(Boolean), $scope.currentEditCellParent.attr("actionParam"));
+            nodeEditHandler.typeBranch.branchPortController($scope.branchSelectionList.filter(Boolean));
             $scope.currentEditCellParent.attr('.label/text',
-                convertTextForTitle(convertTextLength($scope.branchTitle, 6), '分岐'));
+                convertTextForTitle(convertTextLength($scope.branchTitle, 16), '分岐'));
             $scope.currentEditCellParent.attr('actionParam/selection', null);
             $scope.currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate($scope.branchText), 46));
           },
@@ -573,11 +573,36 @@
         }
       };
 
+      function getTextLength(str, limit) {
+        var result = 0;
+        var isMax = true;
+        for(var i=0;i<str.length;i++){
+          var chr = str.charCodeAt(i);
+          if(chr >= 0x00 && chr < 0x81
+          || chr === 0xf8f0
+          || chr >= 0xff61 && chr < 0xffa0
+          || chr >= 0xf8f1 && chr < 0xf8f4){
+            result += 1;
+          } else {
+            result += 2;
+          }
+          if (result > limit) {
+            isMax = false;
+            break;
+          }
+        }
+        return {
+          textNum: i,
+          isEnd: isMax
+        };
+      }
+
       function convertTextLength(text, regNum) {
-        if (text) {
-          return text.length > regNum ? (text).slice(0, regNum) + '...' : text;
-        } else {
+        var data = getTextLength(text, regNum);
+        if (data.isEnd) {
           return text;
+        } else {
+          return (text).slice(0, data.textNum) + "...";
         }
       }
 
@@ -669,18 +694,17 @@
             var popup = $('#popup-frame'),
                 newTop = popup.offset().top,
                 newLeft = popup.offset().left;
-            if(ui.offset.top < 60){
+            if(ui.offset.top < 60 || window.innerHeight < popup.height() + 60){
               newTop = 60;
-            }
-            if(ui.offset.left < 80){
-              newLeft = 80;
-            }
-            if(ui.offset.top + e.target.offsetHeight > window.innerHeight){
+            } else if( ui.offset.top + e.target.offsetHeight > window.innerHeight ){
               newTop = window.innerHeight - e.target.offsetHeight;
             }
-            if(ui.offset.left + e.target.offsetWidth > window.innerWidth){
+            if(ui.offset.left < 80 || window.innerWidth < popup.width() + 80){
+              newLeft = 80;
+            } else if(ui.offset.left + e.target.offsetWidth > window.innerWidth){
               newLeft = window.innerWidth - e.target.offsetWidth;
             }
+
             popup.offset({
               top: newTop,
               left: newLeft
@@ -708,6 +732,21 @@
           $scope.addBtnHide = false;
           $scope.deleteBtnHide = false;
         }
+      };
+
+      $scope.popupInit = function(popup) {
+        var newTop = popup.offset().top,
+            newLeft = popup.offset().left;
+        if(window.innerHeight < popup.height() + 60){
+          newTop = 60;
+        }
+        if(window.innerWidth < popup.width() + 80){
+          newLeft = 80;
+        }
+        popup.offset({
+          top: newTop,
+          left: newLeft
+        });
       };
 
       function resetNextNode(targetId) {
@@ -745,7 +784,7 @@
             for(var i = 0; i < newSelectionList.length; i++){
               /* Set rect height */
               self._resizeParentHeight(i);
-              var port = self.portCreator(self._getSelfPosition(i), newSelectionList[i], self._getCoverOpacity(i, newSelectionList.length));
+              var port = self.portCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i] ,22), self._getCoverOpacity(i, newSelectionList.length));
               $scope.currentEditCellParent.embed(port);
               initNodeEvent([port]);
               graph.addCell(port);
@@ -852,7 +891,7 @@
       
       var textEditor = {
         textLineSeparate: function(text){
-          if(text == null) return;
+          if(text == null) return "";
           var self = textEditor;
           var originTextArray = text.split(/\r\n|\n/);
           var resultTextArray = [];
@@ -901,10 +940,10 @@
           var defaultValue = source.attr(".label/text");
           if(target.attr("nodeBasicInfo/nodeType") === "text") {
             prefix = "";
-            splitNum = 3;
+            splitNum = 16;
           } else {
             prefix = "";
-            splitNum = 6;
+            splitNum = 16
           }
           target.attr("actionParam/nodeName", defaultValue);
           target.attr(".label/text",
