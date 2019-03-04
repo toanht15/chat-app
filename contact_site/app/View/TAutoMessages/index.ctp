@@ -223,13 +223,6 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               'detail' => $val['TChatbotDiagram']['name']
             ];
             $activity_detail = "<span class='actionValueSelectDiagramLabel'>チャットツリー</span><span class='actionValue'>" . h($val['TChatbotDiagram']['name']) . "</span>";
-            if (array_key_exists($val['TAutoMessage']['call_automessage_id'],$autoMessageList )) {
-              $allActionList[$id] = [
-                'type' => $val['TAutoMessage']['action_type'],
-                'detail' => $val['TChatbotScenario']['name']
-              ];
-              $activity_detail = "<span class='actionValueCallAutomessageLabel'>ジャンプ</span><span class='actionValue'>" . h($autoMessageList[$val['TAutoMessage']['call_automessage_id']]) . "</span>";
-            }
             break;
         }
         $conditionType = "";

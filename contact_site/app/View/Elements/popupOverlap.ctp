@@ -114,6 +114,16 @@ var popupEventOverlap = {
                 };
                 this.moveType = "moment";
                 break;
+              case 'p_selection_bulk_register':
+                var entryBtn = _button("設定");
+                entryBtn.onclick = function () {
+                  return popupEventOverlap.closePopup();
+                };
+                var closeBtn = _button("閉じる");
+                closeBtn.onclick = function () {
+                  return popupEventOverlap.closeNoPopupOverlap();
+                };
+                this.moveType = "moment";
             }
             function _button(text){
                 var a = document.createElement('a');
