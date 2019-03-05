@@ -1300,8 +1300,9 @@ io.sockets.on('connection', function(socket) {
         };
 
         // 担当者のいない消費者からのメッセージの場合
-        if (d.messageType === 1 &&
-            !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat')) {
+        if ((d.messageType === 1 &&
+            !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))
+        || (d.messageType === 301 && d.notifyToCompany && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))) {
           // 応対可能かチェック(対応できるのであれば trueが返る)
           chatApi.sendCheck(d, function(err, ret) {
             sendData.opFlg = ret.opFlg;
@@ -1430,9 +1431,7 @@ io.sockets.on('connection', function(socket) {
             ret: true,
             message: (d.isDiagramMessage) ? d.chatMessage.message : d.chatMessage,
             siteKey: d.siteKey,
-            notifyToCompany: (d.isScenarioMessage || d.isDiagramMessage) ?
-                false :
-                d.notifyToCompany
+            notifyToCompany: d.notifyToCompany
           };
 
           if (functionManager.isEnabled(d.siteKey,
