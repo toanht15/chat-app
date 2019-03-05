@@ -12501,6 +12501,12 @@
             case 'jump':
               self.jumpNode.doAction();
               break;
+            case 'cv':
+              self.pointCV.doAction();
+              break;
+            case 'link':
+              self.jumpLink.doAction();
+              break;
           }
         },
         setNext: function(did, nextNodeId) {
@@ -12598,6 +12604,7 @@
        */
       branch: {
         doAction: function() {
+          console.log("<><><><><> BRANCH <><><><><>");
           var self = sinclo.diagramApi;
           var currentNode = self.storage.get(self.storage._lKey.currentNode);
           var message = currentNode.attrs.actionParam.text;
@@ -12758,6 +12765,7 @@
       },
       speakText: {
         doAction: function() {
+          console.log("<><><><><> SPEAK TEXT <><><><><>");
           var self = sinclo.diagramApi;
           var currentNode = self.storage.getCurrentNode();
           var messages = currentNode.attrs.actionParam.text;
@@ -12804,6 +12812,7 @@
       },
       callScenario: {
         doAction: function() {
+          console.log("<><><><><> CALL SCENARIO <><><><><>");
           var self = sinclo.diagramApi;
           var currentNode = self.storage.getCurrentNode();
           var scenarioId = currentNode.attrs.actionParam.scenarioId;
@@ -12814,6 +12823,7 @@
       },
       jumpNode: {
         doAction: function() {
+          console.log("<><><><><> JUMP TO NODE <><><><><>");
           var self = sinclo.diagramApi;
           var currentNode = self.storage.getCurrentNode();
           var toNodeId = currentNode.attrs.actionParam.targetId;
@@ -12823,7 +12833,22 @@
       },
       jumpLink: {
         doAction: function() {
-          // FIXME
+          console.log("<><><><><> JUMP TO LINK <><><><><>");
+          var self = sinclo.diagramApi;
+          var currentNode = self.storage.getCurrentNode();
+          var url = currentNode.attrs.actionParam.link;
+          var jumpType = currentNode.attrs.actionParam.linkType;
+          switch(jumpType) {
+            case 'same':
+              window.location.href = url;
+              break;
+            case 'another':
+              window.open(url);
+              break;
+          }
+          var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+          self.executor.setNext(self.common.getDiagramId(), nextNodeId);
+          self.executor.execute();
         }
       },
       callOperator: {
@@ -12835,7 +12860,16 @@
       },
       pointCV: {
         doAction: function() {
-
+          console.log("<><><><><> POINT TO CV <><><><><>");
+          var self = sinclo.diagramApi;
+          setTimeout(function() {
+            emit('addLastMessageToConversionFlg',
+                {historyId: sinclo.chatApi.historyId});
+          }, 1000);
+          var currentNode = self.storage.getCurrentNode();
+          var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+          self.executor.setNext(self.common.getDiagramId(), nextNodeId);
+          self.executor.execute();
         }
       }
     },

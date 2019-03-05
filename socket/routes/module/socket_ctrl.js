@@ -4448,6 +4448,27 @@ io.sockets.on('connection', function(socket) {
         });
   });
 
+  socket.on('addLastMessageToConversionFlg', function(d) {
+    var obj = JSON.parse(d);
+    pool.query(
+        'select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? order by created desc limit 0,1;',
+        [companyList[obj.siteKey], obj.historyId],
+        function(err, row) {
+          if (err !== null && err !== '') {
+            console.log('UPDATE lastMessage to cv is failed. historyId : ' +
+                obj.historyId);
+            return;
+          }
+          if (row.length !== 0) {
+            pool.query(
+                'update t_history_chat_logs set achievement_flg=0 where id = ?',
+                [row[0].id], function() {
+
+                });
+          }
+        });
+  });
+
   // 都度：チャットデータ取得(オートメッセージのみ)
   socket.on('sendScenarioMessage', function(d, ack) {
     var obj = JSON.parse(d);
