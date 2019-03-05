@@ -3261,6 +3261,32 @@
         }
       }
 
+      /* ツリーエディタ選択肢一括登録 */
+      &.p_selection_bulk_register {
+        width: 410px;
+        #popup-main-overlap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-bottom: 0!important;
+          line-height: 0;
+          p {
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+          }
+        }
+        #popup-button-overlap {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          height: 70px!important;
+          .textBtn {
+            width: 75px;
+          }
+        }
+      }
+
       /* アイコンデフォルト変更時注意文 */
       &.p-seticontodefault-alert {
         width: 500px;
