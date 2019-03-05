@@ -3466,7 +3466,7 @@
           sinclo.chatApi.send(text.trim());
         });
 
-        $(document).on('click', '.sinclo-button-ui', function(e) {
+        $(document).on('click', '.sinclo-button-ui:not(.diagram-ui)', function(e) {
           if (sinclo.chatApi.isDisabledSlightly(this) ||
               $(e.target).hasClass('disabled')) {
             return false;
@@ -12375,7 +12375,7 @@
               storeObj = {
                 nodeId: nodeId,
                 type: type,
-                messageType: self.get(self._lKey.diagramMessageType),
+                messageType: self.storage.getDiagramMessageType(self.common.getDiagramId(), nodeId),
                 showTextarea: showTextArea,
                 message: message
               };
@@ -12540,6 +12540,7 @@
               then(function() {
                 self.branch.showMessage(currentNode, message, selections,
                     labels);
+                self.storage.saveShownMessage(currentNode, message, selections, labels);
               });
         },
         getSelectionMap: function(currentNode) {
@@ -12590,6 +12591,34 @@
 
           li.className = cs;
           li.innerHTML = messageHtml + buttonHtml;
+
+          if (Number(currentNode.attrs.actionParam.btnType) === 2) {
+            // ボタンの場合のイベントハンドラはここ
+            $(document).on('click', '.sinclo-button-ui.diagram-ui', function(e) {
+              if (sinclo.chatApi.isDisabledSlightly(this) ||
+                  $(e.target).hasClass('disabled')) {
+                return false;
+              }
+              sinclo.chatApi.disableAllButtonsSlightly();
+              e.stopPropagation();
+
+              var text = $(this).text();
+              $(this).
+                  parents('div').
+                  find('.sinclo-button-ui').
+                  removeClass('selected');
+              $(this).addClass('selected');
+
+               var sendData = {
+                 message: $(this).text(),
+                 did: $(e.target).data('did'),
+                 sourceNodeId: $(e.target).data('nid'),
+                 nextNodeId: $(e.target).data('nextNid')
+               };
+
+              sinclo.chatApi.send(sendData);
+            });
+          }
         },
         getHtml: function(currentNode, selectionMap, labels) {
           var self = sinclo.diagramApi;
@@ -12611,12 +12640,50 @@
                 html += '</sinclo-radio>';
                 break;
               case 2:
-                // FIXME
+                // ボタン
+                var name               = 'sinclo-buttonUI_' + nodeId;
+                var style              = self.branch.createButtonUIStyle('#' + name);
+                html += '<div id="' + name + '">';
+                html += style;
+                var timestamp = (new Date()).getTime();
+                html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui" data-did="' + self.common.getDiagramId() +
+                    '" data-nid="' + self.common.getCurrentNodeId() +
+                    '" data-next-nid="' + selectionMap[nodeId] + '">' + labels[nodeId] + '</button>';
+                html += '</div>';
                 break;
             }
           });
           return html;
-        }
+        },
+        createButtonUIStyle: function(id) {
+          var style = '<style>';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button {background-color: ' +
+              sincloInfo.widget.reTextColor + '}';
+          style += '#sincloBox ul#chatTalk ' + id + ' button {color: ' +
+              sincloInfo.widget.reBackgroundColor + '}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button:focus {outline: none}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button:active {background-color: ' +
+              sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) + '}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button.selected {background-color: ' +
+              sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) + ' !important;}';
+          style += '#sincloBox ul#chatTalk ' + id + ' button {width: ' +
+              sinclo.chatApi.getButtonUIWidth() + 'px;}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button {text-align: center}';
+          style += '</style>';
+
+          return style;
+        },
       },
       speakText: {
         doAction: function() {
@@ -12628,7 +12695,6 @@
             self.executor.setNext(nextNodeId);
             self.executor.wait(self.executor.getIntervalTimeSec()).then(function(){
               self.branch.showMessage(currentNode, message, selections, labels);
-
               self.executor.execute();
             });
           });
