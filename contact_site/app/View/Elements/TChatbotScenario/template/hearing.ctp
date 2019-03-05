@@ -858,7 +858,7 @@
                 </span>
               <label class="pointer" style="margin-left: 165px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.checkboxNoneBackground">枠線なしにする
+                       ng-model="hearingItem.settings.checkboxNoneBackground">背景色なしにする
               </label>
 
               <span class="checkbox-custom-items">
@@ -934,7 +934,7 @@
                 </span>
               <label class="pointer" style="margin-left: 165px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.radioNoneBackground">枠線なしにする
+                       ng-model="hearingItem.settings.radioNoneBackground">背景色なしにする
               </label>
 
               <span class="checkbox-custom-items">
