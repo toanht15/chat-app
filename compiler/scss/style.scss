@@ -7214,9 +7214,12 @@ ul.naviBtn {
               margin-left: 10px;
             }
           }
-          div {
+          div.input.text {
             margin-left: 20px;
-            min-width: 201px;
+            min-width: 244px;
+          }
+          div.input.number {
+            min-width: 120px;
           }
         }
       }

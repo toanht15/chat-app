@@ -16,6 +16,11 @@
   sincloApp.controller('DiagramController', [
     '$scope', '$timeout', 'SimulatorService', '$compile', function($scope, $timeout, SimulatorService, $compile) {
 
+      /* Set basic data */
+      $scope.widget = SimulatorService;
+      var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
+      $scope.widget.settings = widgetSettings;
+
 
       //メニューバーのアイコンにdraggableを付与
       $('#node_list > i ').each(function(index, target) {
@@ -33,7 +38,6 @@
         'jump',
         'link'
       ];
-
 
       /* Scenario List */
       $scope.scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
@@ -76,6 +80,15 @@
       $scope.branchText = "";
       $scope.branchSelectionList = [];
       $scope.oldSelectionList = [];
+
+      /* Model for branch Customize */
+      $scope.isCustomize = false;
+      $scope.bgColor = "";
+      $scope.btnColor = "";
+      $scope.textColor = "";
+      $scope.selectColor = "";
+      $scope.borderColor = "";
+      $scope.textPosition ="2";
 
       /* Cell data Storage  */
       $scope.currentEditCell = null;
@@ -193,6 +206,8 @@
                 $scope.popupHandler();
                 $scope.popupInit(frame);
                 initPopupCloseEvent();
+                /* Install jscolor after create modal */
+                $(window)[0].jscolor.installByClassName('jscolor');
               });
             }
 
@@ -623,6 +638,7 @@
         $scope.branchTitle = nodeData.nodeName;
         $scope.branchType.key = nodeData.btnType;
         $scope.branchText = nodeData.text;
+        $scope.initCustomizeColor(nodeData);
         return $('<branch-modal></branch-modal>');
       }
 
@@ -720,7 +736,7 @@
       }, true);
 
       $scope.$watch("branchSelectionList", function(){
-        $scope.btnHandler($scope.branchSelectionList.length, 1, 10);
+        $scope.btnHandler($scope.branchSelectionList.length, 1, 100);
       }, true);
 
       $scope.btnHandler = function(amount, min, max){
@@ -979,10 +995,6 @@
         }
       };
 
-      $scope.widget = SimulatorService;
-      var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
-      $scope.widget.settings = widgetSettings;
-
       $scope.$on('ngRepeatFinish', function(){
         popupEvent.resize();
         $scope.popupFix();
@@ -1004,6 +1016,22 @@
         $scope.titleHandler($scope.branchTitle, "分岐");
       });
 
+      $scope.$watch("isCustomize", function(){
+        $scope.currentTop = $('#popup-frame').offset().top;
+        $timeout(function(){
+          popupEvent.resize();
+          $scope.popupFix();
+        });
+      });
+
+      $scope.$watch("branchType.key", function(){
+        $scope.currentTop = $('#popup-frame').offset().top;
+        $timeout(function(){
+          popupEvent.resize();
+          $scope.popupFix();
+        });
+      });
+
       $scope.titleHandler = function(target, prefix){
         $('#popup-title').text(prefix + $scope.getConjunction(target) + target);
       };
@@ -1014,6 +1042,64 @@
           conjunction = "："
         }
         return conjunction;
+      };
+
+      $scope.initCustomizeColor = function(nodeData){
+        if(nodeData.customize == null){
+          $scope.setAllCustomizeToStandard();
+        } else {
+          $scope.isCustomize = nodeData.customize.isCustomize ? nodeData.customize.isCustomize : false;
+        }
+      };
+
+      $scope.setAllCustomizeToStandard = function(){
+      };
+
+      $scope.revertStandard = function(buttonType, colorType, elm){
+        var target = $(elm.target.parentNode).find('input');
+        console.log(elm.target);
+        switch(buttonType) {
+          case "radio":
+            $scope.radioCustomizeHandler(colorType, target);
+            break;
+          case "button":
+            break;
+        }
+        console.log(type + "の" + colorType + "を選択します!");
+      };
+
+      $scope.radioCustomizeHandler = function(colorType, target){
+        switch(colorType) {
+          case "bg":
+            $scope.bgColor = "#FFFFFF";
+            target.css("background-color", $scope.bgColor);
+            break;
+          case "button":
+            $scope.btnColor = $scope.widget.settings.main_color;
+            target.css("background-color", $scope.btnColor);
+            break;
+          case "border":
+            $scope.borderColor = $scope.widget.settings.main_color;
+            target.css("background-color", $scope.borderColor);
+            break;
+          default:
+            /* Do nothing */
+        }
+      };
+
+      $scope.buttonCustomizeHandler = function(target){
+        switch(target) {
+          case "bg":
+            break;
+          case "text":
+            break;
+          case "select":
+            break;
+          case "border":
+            break;
+          default:
+            /* Do nothing */
+        }
       };
 
     }]);
@@ -1037,9 +1123,12 @@
           '</div>' +
           '<div class=\'flex_row_box\'>' +
           '<label for=\'branch_button\'>表示形式</label>' +
-          '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
+          '<select name=\'branch_button\' id=\'branchBtnType\' ng-change="test()" ng-model="branchType" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
           '</select>' +
+          '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
+          '<radio-customize ng-show="branchType.key == \'1\'"></radio-customize>' +
+          '<button-customize ng-show="branchType.key == \'2\'"></button-customize>' +
           '</div>' +
           '<div class=\'branch_modal_setting_content\'>' +
           '<div class=\'setting_row\' ng-repeat="selection in branchSelectionList track by $index">' +
@@ -1048,7 +1137,6 @@
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index)">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
-          '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
           '</div>' +
           '</div>' +
@@ -1130,6 +1218,71 @@
       restrict: 'E',
       replace: true,
       template: '<p id="op_modal">このノードに到達した場合、オペレーターを呼び出します。</p>'
+    }
+  }).directive('radioCustomize', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      require: '^ngModel',
+      template: '<div class="customize_form">' +
+          '<label><input type="checkbox" ng-model="isCustomize">デザインをカスタマイズする</label>' +
+          '<div ng-show="isCustomize" class="customize_area radio_customize">' +
+          '<span class="customize_row">' +
+          '<label>ラジオボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="bgColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ラジオボタンの色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="btnColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","button",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ラジオボタン枠線色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="borderColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","border",$event)\' >標準に戻す</span>' +
+          '</span>' +
+          '</div>' +
+          '</div>'
+    }
+  }).directive('buttonCustomize', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      require: '^ngModel',
+      template: '<div class="customize_form">' +
+          '<label><input type="checkbox" ng-model="isCustomize">デザインをカスタマイズする</label>' +
+          '<div ng-show="isCustomize" class="customize_area button_customize">' +
+          '<span class="customize_row">' +
+          '<label>ボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="bgColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button"  ng-click=\'revertStandard("button","bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ボタン文字色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="textColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("button","text")\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ボタン文字位置</label>' +
+          '<div>' +
+          '<label><input type="radio" value="1" ng-model="textPosition">左寄せ</label>' +
+          '<label><input type="radio" value="2" ng-model="textPosition">中央寄せ</label>' +
+          '<label><input type="radio" value="3" ng-model="textPosition">右寄せ</label>' +
+          '</div>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ボタン選択色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="selectColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("button","select")\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ボタン枠線色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="borderColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("button","border")\'>標準に戻す</span>' +
+          '</span>' +
+          '</div>' +
+          '</div>'
     }
   });
 

@@ -1751,7 +1751,7 @@
           }
           #branch_modal_body {
             padding-left: 40px;
-            margin-top: 40px;
+            margin-top: 20px;
             textarea {
               height: 6em;
               resize: none;
@@ -1767,14 +1767,63 @@
                 select {
                   width: 226px;
                   margin-left: 20px;
+                  height: 30px;
+                  border: 1px solid #909090;
+                  border-radius: 4px;
                 }
                 p {
                   margin: 0;
                 }
+                label {
+                  display: flex;
+                  align-items: center;
+                }
+                #bulkRegister {
+                  margin-left: 15px;
+                }
+              }
+              div.customize_form {
+                margin-top: 15px;
+                input[type='checkbox'] {
+                  margin-left: 0;
+                }
+                .customize_area {
+                  display: flex;
+                  flex-direction: column;
+                  margin-left: 16px;
+                  margin-top: 6px;
+                  .customize_row {
+                    display: flex;
+                    align-items: center;
+                    padding: 5px 0;
+                    input[type='text']{
+                      width: 120px;
+                      height: 26px;
+                      padding-left: 4px;
+                    }
+                    span.revert-button {
+                      text-align: center;
+                      position: relative;
+                      width: 100px;
+                      left: 20px;
+                      padding: 4px;
+                    }
+                  }
+                  &.button_customize > .customize_row {
+                    label {
+                      flex-basis: 100px;
+                    }
+                  }
+                  &.radio_customize > .customize_row {
+                    label {
+                      flex-basis: 120px;
+                    }
+                  }
+                }
               }
             }
-            .branch_modal_setting_header > div:not(:first-child){
-              margin-top: 40px;
+            .branch_modal_setting_header > div.flex_row_box:not(:first-child){
+              margin-top: 20px;
             }
             .branch_modal_setting_content {
               margin-top: 20px;
@@ -1797,11 +1846,6 @@
                   width: 300px;
                   margin-left: 32px;
                 }
-              }
-              #bulkRegister {
-                position: absolute;
-                top: -50px;
-                right: 41px;
               }
             }
             .branch_modal_setting_content > div.setting_row:not(:first-child) {
