@@ -1817,6 +1817,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         } else {
           content += $scope.createTextOfMessage(chat, json.message);
         }
+        var radioContent = "";
+        if(type === chatApi.messageType.scenario.message.radio) {
+          for(var i=0; i < json.settings.options.length; i++) {
+            if(i === (json.settings.options.length - 1)) {
+              radioContent += '[] ' + json.settings.options[i];
+            } else {
+              radioContent += '[] ' + json.settings.options[i] + "\n";
+            }
+          }
+          content += $scope.createTextOfMessage(chat, radioContent);
+        }
       }
       else if ( type === chatApi.messageType.scenario.message.selection ) {
         cn = "sinclo_auto";
