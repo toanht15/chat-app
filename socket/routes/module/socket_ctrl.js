@@ -1292,7 +1292,7 @@ io.sockets.on('connection', function(socket) {
           messageType: d.messageType,
           created: insertData.created,
           ret: true,
-          chatMessage: (d.isDiagramMessage) ? d.chatMessage.message : d.chatMessage,
+          chatMessage: d.chatMessage,
           siteKey: d.siteKey,
           matchAutoSpeech: !d.notifyToCompany,
           isScenarioMessage: d.isScenarioMessage,
