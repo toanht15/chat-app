@@ -1357,7 +1357,7 @@
       for (var key in obj.chat.messages) {
         if (!obj.chat.messages.hasOwnProperty(key)) return false;
         var chat = obj.chat.messages[key], userName;
-        if (Number(chat.messageType) <= 90) {
+        if (Number(chat.messageType) <= 390) {
           var cn = 'sinclo_re';
           var isHearingAnswer = false;
           switch (Number(chat.messageType)) {
@@ -1398,6 +1398,11 @@
             case 90:
               cn = 'sinclo_se skip_input';
               isHearingAnswer = true;
+              break;
+            case 300:
+            case 301:
+            case 302:
+              cn = 'sinclo_re diagram_msg';
               break;
           }
 
@@ -1459,7 +1464,9 @@
               || Number(chat.messageType) === 45
               || Number(chat.messageType) === 55
               || Number(chat.messageType) === 81
-              || Number(chat.messageType) === 82) {
+              || Number(chat.messageType) === 82
+              || Number(chat.messageType) === 300
+              || Number(chat.messageType) === 302) {
             if (check.isset(window.sincloInfo.widget.showAutomessageName) &&
                 window.sincloInfo.widget.showAutomessageName === 2) {
               userName = '';
@@ -1642,6 +1649,18 @@
                 chat.chatId)) {
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
             }
+          } else if (Number(chat.messageType) === 300) {
+            var branches = chat.message;
+            var currentNode = {
+              diagramId: branches.did,
+              sourceNodeId: branches.sourceNodeId,
+              attrs: {
+                actionParam: {
+                  btnType: branches.type
+                }
+              }
+            };
+            sinclo.diagramApi.branch.showMessage(currentNode, branches.message, branches.selectionMap, branches.labels);
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true &&
@@ -2023,7 +2042,11 @@
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.selection
             || obj.messageType ===
-            sinclo.chatApi.messageType.scenario.message.receiveFile) {
+            sinclo.chatApi.messageType.scenario.message.receiveFile
+            || obj.messageType ===
+            sinclo.chatApi.messageType.diagram.message.branch
+            || obj.messageType ===
+            sinclo.chatApi.messageType.diagram.message.text) {
           if (obj.messageType !== sinclo.chatApi.messageType.auto &&
               storage.s.get('requestFlg') === 'true') {
             //自動返信を出した数
@@ -6848,6 +6871,7 @@
           } else if(value.did && value.sourceNodeId) {
             messageType = sinclo.diagramApi.storage.getSendCustomerMessageType(value.did, value.sourceNodeId);
             isDiagramMessage = true;
+            sinclo.diagramApi.common.changeAllowSaving();
           }
 
           if (sinclo.chatApi.isCustomerSendMessageType(messageType)
@@ -12305,7 +12329,8 @@
           branch: 301
         },
         message: {
-          branch: 300
+          branch: 300,
+          text: 302
         }
       },
       storage: {
@@ -12415,22 +12440,6 @@
           var self = sinclo.diagramApi.storage;
           storage.l.set(self._lKey.base, JSON.stringify(obj));
         },
-        saveShownMessage: function(currentNode, message, selectionMap, labels) {
-          var self = sinclo.diagramApi;
-          var obj = {
-            did: self.common.getDiagramId(),
-            message: message,
-            type: Number(currentNode.attrs.actionParam.btnType),
-            selections: []
-          };
-          Object.keys(labels).forEach(function(nodeId, idx, arr) {
-            obj.selections.push({
-              label: labels[nodeId],
-              nextNodeId: selectionMap[nodeId]
-            })
-          });
-          self.storage.putDiagramMessage(currentNode.id, currentNode.attrs.nodeBasicInfo.nodeType, obj, false);
-        },
         putDiagramMessage: function(
             nodeId, type, message, showTextArea) {
           var self = sinclo.diagramApi,
@@ -12442,21 +12451,21 @@
                 message: message
               };
           if (self.common.disallowSaveing()) {
-            self.storage._pushScenarioMessage(storeObj).then(function(){
-              self._saveMessage(data.data);
+            self.storage._pushDiagramMessage(storeObj).then(function(){
+              //self._saveMessage(data.data);
             });
           } else {
             return self.storage._storeMessageToDB([storeObj]);
           }
         },
-        _storeMessageToDB: function(array) {
+        _storeMessageToDB: function(obj) {
           var defer = $.Deferred();
-          emit('storeDiagramMessage', {messages: array}, function() {
+          emit('storeDiagramMessage', {message: obj}, function() {
             defer.resolve();
           });
           return defer.promise();
         },
-        _pushScenarioMessage: function(targetObj) {
+        _pushDiagramMessage: function(targetObj) {
           var defer = $.Deferred();
           emit('sendDiagramMessage', targetObj, function(){
             defer.resolve();
@@ -12594,6 +12603,10 @@
           var flg = self.storage.get(self.storage._lKey.allowSave);
           return flg == null || flg === 'false' || flg === false;
         },
+        changeAllowSaving: function() {
+          var self = sinclo.diagramApi;
+          self.storage.set(self.storage._lKey.allowSave, true);
+        },
         reset: function() {
           var self = sinclo.diagramApi;
           self.storage._unsetBaseObj();
@@ -12615,7 +12628,7 @@
               then(function() {
                 self.branch.showMessage(currentNode, message, selections,
                     labels);
-                self.storage.saveShownMessage(currentNode, message, selections, labels);
+                self.branch.saveShownMessage(currentNode, message, selections, labels);
               });
         },
         getSelectionMap: function(currentNode) {
@@ -12703,6 +12716,8 @@
           var html = '';
           Object.keys(labels).forEach(function(nodeId, idx, arr) {
             var timestamp = (new Date()).getTime();
+            var did = check.isset(currentNode.diagramId) ? currentNode.diagramId : self.common.getDiagramId();
+            var nid = check.isset(currentNode.sourceNodeId) ? currentNode.sourceNodeId : self.common.getCurrentNodeId();
             switch (Number(currentNode.attrs.actionParam.btnType)) {
               case 1:
                 // ラジオボタン
@@ -12762,6 +12777,18 @@
 
           return style;
         },
+        saveShownMessage: function(currentNode, message, selectionMap, labels) {
+          var self = sinclo.diagramApi;
+          var obj = {
+            nid: self.common.getCurrentNodeId(),
+            did: self.common.getDiagramId(),
+            message: message,
+            type: Number(currentNode.attrs.actionParam.btnType),
+            selectionMap: selectionMap,
+            labels: labels
+          };
+          self.storage.putDiagramMessage(currentNode.id, currentNode.attrs.nodeBasicInfo.nodeType, obj, false);
+        }
       },
       speakText: {
         doAction: function() {
@@ -12801,6 +12828,7 @@
                 li.className = cs;
 
                 li.innerHTML = showHtml;
+                self.speakText.saveShownMessage(currentNode, messages[index]);
                 if(index === messages.length - 1) {
                   defer.resolve();
                 }
@@ -12808,6 +12836,14 @@
             })(i, html);
           }
           return defer.promise();
+        },
+        saveShownMessage: function(currentNode, message) {
+          var self = sinclo.diagramApi;
+          var obj = {
+            did: self.common.getDiagramId(),
+            message: message
+          };
+          self.storage.putDiagramMessage(currentNode.id, currentNode.attrs.nodeBasicInfo.nodeType, obj, false);
         }
       },
       callScenario: {

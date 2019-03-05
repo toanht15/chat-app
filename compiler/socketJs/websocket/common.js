@@ -7166,7 +7166,7 @@ function emit(evName, data, callback) {
       'sendAutoChat' || evName === 'sendChat' ||
       evName === 'storeScenarioMessage' || evName === 'saveCustomerInfoValue' ||
       evName === 'beginBulkHearing' || evName === 'sendParseSignature'
-      || evName === 'hideScenarioMessages') {
+      || evName === 'hideScenarioMessages' || evName === 'storeDiagramMessage') {
     data.userId = userInfo.userId;
   }
   if (evName === 'connectSuccess' || evName === 'sendWindowInfo' || evName ===
