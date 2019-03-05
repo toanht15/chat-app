@@ -11010,9 +11010,8 @@
           sinclo.api.callFunction('sc',
               self._parent.get(self._parent._lKey.scenarioId));
           // 外部連携実装後に外す
-          emit('processSendMail', sendData, function(ev) {
-            self._parent.set(self._parent._lKey.isSentMail, true);
-          });
+          emit('processSendMail', sendData, function(ev) {});
+          self._parent.set(self._parent._lKey.isSentMail, true);
           if (self._parent._goToNextScenario()) {
             self._parent._process();
           }
