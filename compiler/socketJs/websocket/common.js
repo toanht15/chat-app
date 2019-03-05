@@ -3662,6 +3662,7 @@ var socket, // socket.io
           'margin-left: 0; ' +
           '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
           'margin-left: -25px; ' +
+          'margin-right: -25px; ' +
           '}';
     },
     //バナーを生成する関数
@@ -5428,7 +5429,7 @@ var socket, // socket.io
     },
     isJSON: function(arg) {
       arg = (typeof arg === 'function') ? arg() : arg;
-      if (typeof arg !== 'string') {
+      if (!isNaN(Number(arg)) || typeof arg !== 'string') {
         return false;
       }
       try {

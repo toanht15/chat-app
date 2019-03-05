@@ -247,6 +247,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox * { font-size: 12px; line-height: 1.4; }
         #sincloBox.middleSize  * { font-size: 13px; }
         #sincloBox.largeSize * { font-size: 13px; }
+        #sincloBox.customSize * { font-size: 13px; }
         #sincloBox .sinclo-hide { display:none!important; }
         #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
         #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 8px; }

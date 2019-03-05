@@ -2526,7 +2526,9 @@
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.receiveFile) {
+          sinclo.chatApi.messageType.scenario.message.receiveFile
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.radio) {
         if (obj.tabId === userInfo.tabId) {
           common.chatBotTypingCall(obj);
           this.chatApi.scDown();
@@ -4382,26 +4384,37 @@
             div.style.textAlign = 'right';
           }
         }
-        var isFreeBlock = false;
-        for (var i = 0; strings.length > i; i++) {
-          if (strings[i].match(/(<div class="free-block")/)) {
-            content += strings[i];
-            isFreeBlock = true;
-            continue;
-          } else if (strings[i].match(/(<\/div>)/)) {
-            isFreeBlock = false;
-            content += strings[i];
-            continue;
-          } else if (isFreeBlock) {
-            content += strings[i];
-            continue;
-          }
-          var str = check.escape_html(strings[i]);
-          var unEscapeStr = str.replace(/(&lt;)/g, '<').
-              replace(/(&gt;)/g, '>').
-              replace(/(&quot;)/g, '"').
-              replace(/(&#39;)/g, '\'').
-              replace(/(&amp;)/g, '&');
+
+        if (check.isJSON(obj.message) && obj.message.indexOf('separator') !== -1) {
+          // checkbox message
+          var checkboxData = JSON.parse(obj.message);
+          var array = checkboxData.message.split(checkboxData.separator);
+          content += '<ul style="margin-top: -7px">';
+          array.forEach(function(item) {
+            content += '<li style="list-style-type: disc; background-color: transparent; margin: 5px 0 0 15px; padding: 0;">' + item + '</li>';
+          });
+          content += '</ul>';
+        } else {
+          var isFreeBlock = false;
+          for (var i = 0; strings.length > i; i++) {
+            if (strings[i].match(/(<div class="free-block")/)) {
+              content += strings[i];
+              isFreeBlock = true;
+              continue;
+            } else if (strings[i].match(/(<\/div>)/)) {
+              isFreeBlock = false;
+              content += strings[i];
+              continue;
+            } else if (isFreeBlock) {
+              content += strings[i];
+              continue;
+            }
+            var str = check.escape_html(strings[i]);
+            var unEscapeStr = str.replace(/(&lt;)/g, '<').
+                replace(/(&gt;)/g, '>').
+                replace(/(&quot;)/g, '"').
+                replace(/(&#39;)/g, '\'').
+                replace(/(&amp;)/g, '&');
 
           if (obj.cn.indexOf('sinclo_re') !== -1) {
             // ラジオボタン
@@ -11584,7 +11597,14 @@
             }
 
             var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            var preg = new RegExp(word);
+            var preg;
+            if (!pattern || pattern === '2') {
+              // 部分一致
+              preg = new RegExp(word);
+            } else {
+              // 完全一致
+              preg = new RegExp('^' + word + '$');
+            }
             result = preg.test(val);
 
             if (result) { // いずれかを含む
