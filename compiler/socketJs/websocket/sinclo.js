@@ -12216,12 +12216,14 @@
         'd_processing': {},
         'd_waiting': false,
         'd_messages': [],
+        'd_messageInterval': 2,
         'd_allowSave': false,
-        'd_diagrams': [],
+        'd_diagrams': {},
         'd_length': 0,
         'd_currentNode': {},
         'd_sendCustomerMessageType': 1,
-        'd_diagramMessageType': 3
+        'd_diagramMessageType': 3,
+        'd_firstCalled': false
       },
       storage: {
         _lKey: {
@@ -12232,18 +12234,27 @@
           processing: 'd_processing',
           waitingInput: 'd_waiting',
           messages: 'd_messages',
+          messageInterval: 'd_messageInterval',
           allowSave: 'd_allowSave',
           diagramLength: 'd_length',
           currentNode: 'd_currentNode',
           sendCustomerMessageType: 'd_sendCustomerMessageType',
-          diagramMessageType: 'd_diagramMessageType'
+          diagramMessageType: 'd_diagramMessageType',
+          firstCalled: 'd_firstCalled'
         },
         set: function(key, data) {
           var self = sinclo.diagramApi.storage;
           var obj = {};
-          obj = self.getBaseObj();
-          obj[key] = data;
-          self.setBaseObj(obj);
+          if(key === self._lKey.diagrams) {
+            var id = self.get(self._lKey.diagramId);
+            obj = self.getBaseObj();
+            obj[key][id] = data;
+            self.setBaseObj(obj);
+          } else {
+            obj = self.getBaseObj();
+            obj[key] = data;
+            self.setBaseObj(obj);
+          }
         },
         setSendCustomerMessageType: function(messageType) {
           var self = sinclo.diagramApi.storage;
@@ -12266,6 +12277,10 @@
             } else {
               return obj;
             }
+          } else if (key === self.storage._lKey.diagrams) {
+            var id = self.storage.get(self.storage._lKey.diagramId);
+            obj = self.storage.getBaseObj();
+            return obj[key][id] ? obj[key][id] : {};
           } else {
             obj = self.storage.getBaseObj();
             return obj[key] ? obj[key] : self.defaultVal[key];
@@ -12381,16 +12396,39 @@
             result = true;
           }
           return result;
+        },
+        wait: function(second) {
+          var self = sinclo.diagramApi;
+          var defer = $.Deferred();
+          if(!self.executor.isFirstCalled()) {
+            second = 0;
+            self.storage.set(self.storage._lKey.firstCalled, true);
+          }
+          setTimeout(function() {
+            defer.resolve();
+          }, second * 1000);
+          return defer.promise();
+        },
+        isFirstCalled: function() {
+          var self = sinclo.diagramApi;
+          var result = self.storage.get(self.storage._lKey.firstCalled);
+          return result && (result === true || result === 'true');
+        },
+        getIntervalTimeSec: function() {
+          var self = sinclo.diagramApi;
+          var result = self.storage.get(self.storage._lKey.messageInterval);
+          return Number(result);
         }
       },
       common: {
         init: function(id, data) {
           var self = sinclo.diagramApi;
           self.storage.setBaseObj(self.defaultVal);
-          self.storage.set(self.storage._lKey.diagrams, data.cells);
           self.storage.set(self.storage._lKey.diagramId, id);
+          self.storage.set(self.storage._lKey.diagrams, data.cells);
           self.common._saveProcessingState(true);
           var beginNode = self.common.getStartNode(data.cells);
+          self.storage.set(self.storage._lKey.messageInterval, beginNode.attrs.nodeBasicInfo.messageIntervalSec);
           self.executor.setNext(beginNode.attrs.nodeBasicInfo.nextNodeId);
         },
         getStartNode: function(obj) {
@@ -12413,7 +12451,7 @@
         },
         getDiagramId: function() {
           var self = sinclo.diagramApi;
-          return self.storage.get(self.storage._lkey.diagramId);
+          return self.storage.get(self.storage._lKey.diagramId);
         },
         getCurrentNodeId: function() {
           var self = sinclo.diagramApi;
@@ -12440,7 +12478,9 @@
           var message = currentNode.attrs.actionParam.text;
           var selections = self.branch.getSelectionMap(currentNode);
           var labels = self.branch.getLabelMap(currentNode, Object.keys(selections));
-          self.branch.showMessage(currentNode, message, selections, labels);
+          self.executor.wait(self.executor.getIntervalTimeSec()).then(function(){
+            self.branch.showMessage(currentNode, message, selections, labels);
+          });
         },
         getSelectionMap: function(currentNode) {
           var self = sinclo.diagramApi;
