@@ -497,43 +497,50 @@
       };
 
       this.setDefaultColorHearing = function(target) {
-        target.settings.customDesign.textColor                    = $scope.widget.settings.description_text_color;
-        target.settings.customDesign.borderColor                  = $scope.widget.settings.main_color;
-        target.settings.customDesign.backgroundColor              = '#FFFFFF';
-        target.settings.customDesign.headerBackgroundColor        = $scope.widget.settings.main_color;
-        target.settings.customDesign.headerTextColor              = '#FFFFFF';
-        target.settings.customDesign.calendarTextColor            = $scope.widget.settings.description_text_color;
-        target.settings.customDesign.calendarBackgroundColor      = '#FFFFFF';
-        target.settings.customDesign.sundayColor                  = $scope.widget.settings.description_text_color;
-        target.settings.customDesign.saturdayColor                = $scope.widget.settings.description_text_color;
-        target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
-        target.settings.customDesign.titleColor                   = '#333333';
-        target.settings.customDesign.subTitleColor                = '#333333';
-        target.settings.customDesign.arrowColor                   = $scope.widget.settings.main_color;
-        target.settings.customDesign.outBorderColor               = '#E8E7E0';
-        target.settings.customDesign.inBorderColor                = '#E8E7E0';
-        target.settings.customDesign.titleFontSize                = parseInt($scope.widget.settings.re_text_size) + 1;
-        target.settings.customDesign.subTitleFontSize             = parseInt($scope.widget.settings.re_text_size);
-        target.settings.customDesign.messageAlign                 = '2';
-        target.settings.customDesign.buttonBackgroundColor        = $scope.widget.settings.re_background_color;
-        target.settings.customDesign.buttonTextColor              = '#007AFF';
-        target.settings.customDesign.buttonAlign                  = '2';
-        target.settings.customDesign.buttonActiveColor            = this.getRawColor($scope.widget.settings.main_color,
+        target.settings.customDesign.textColor                     = $scope.widget.settings.description_text_color;
+        target.settings.customDesign.borderColor                   = $scope.widget.settings.main_color;
+        target.settings.customDesign.backgroundColor               = '#FFFFFF';
+        target.settings.customDesign.headerBackgroundColor         = $scope.widget.settings.main_color;
+        target.settings.customDesign.headerTextColor               = '#FFFFFF';
+        target.settings.customDesign.calendarTextColor             = $scope.widget.settings.description_text_color;
+        target.settings.customDesign.calendarBackgroundColor       = '#FFFFFF';
+        target.settings.customDesign.sundayColor                   = $scope.widget.settings.description_text_color;
+        target.settings.customDesign.saturdayColor                 = $scope.widget.settings.description_text_color;
+        target.settings.customDesign.headerWeekdayBackgroundColor  = this.getRawColor(
+            $scope.widget.settings.main_color);
+        target.settings.customDesign.titleColor                    = '#333333';
+        target.settings.customDesign.subTitleColor                 = '#333333';
+        target.settings.customDesign.arrowColor                    = $scope.widget.settings.main_color;
+        target.settings.customDesign.outBorderColor                = '#E8E7E0';
+        target.settings.customDesign.inBorderColor                 = '#E8E7E0';
+        target.settings.customDesign.titleFontSize                 = parseInt($scope.widget.settings.re_text_size) + 1;
+        target.settings.customDesign.subTitleFontSize              = parseInt($scope.widget.settings.re_text_size);
+        target.settings.customDesign.messageAlign                  = '2';
+        target.settings.customDesign.buttonBackgroundColor         = $scope.widget.settings.re_background_color;
+        target.settings.customDesign.buttonTextColor               = '#007AFF';
+        target.settings.customDesign.buttonAlign                   = '2';
+        target.settings.customDesign.buttonActiveColor             = this.getRawColor($scope.widget.settings.main_color,
             0.5);
-        target.settings.customDesign.buttonBorderColor            = '#E3E3E3';
-        target.settings.customDesign.buttonUIBackgroundColor      = $scope.widget.settings.re_text_color;
-        target.settings.customDesign.buttonUITextColor            = $scope.widget.settings.re_background_color;
-        target.settings.customDesign.buttonUITextAlign            = '2';
-        target.settings.customDesign.buttonUIActiveColor          = this.getRawColor($scope.widget.settings.main_color,
+        target.settings.customDesign.buttonBorderColor             = '#E3E3E3';
+        target.settings.customDesign.buttonUIBackgroundColor       = $scope.widget.settings.re_text_color;
+        target.settings.customDesign.buttonUITextColor             = $scope.widget.settings.re_background_color;
+        target.settings.customDesign.buttonUITextAlign             = '2';
+        target.settings.customDesign.buttonUIActiveColor           = this.getRawColor($scope.widget.settings.main_color,
             0.5);
-        target.settings.customDesign.buttonUIBorderColor          = '#E3E3E3';
-        target.settings.customDesign.checkboxBackgroundColor      = '#FFFFFF';
-        target.settings.customDesign.checkboxActiveColor          = '#FFFFFF';
-        target.settings.customDesign.checkboxBorderColor          = $scope.widget.settings.main_color;
-        target.settings.customDesign.checkboxCheckmarkColor       = $scope.widget.settings.main_color;
-        target.settings.customDesign.radioBackgroundColor         = '#FFFFFF';
-        target.settings.customDesign.radioActiveColor             = $scope.widget.settings.main_color;
-        target.settings.customDesign.radioBorderColor             = '#999';
+        target.settings.customDesign.buttonUIBorderColor           = '#E3E3E3';
+        target.settings.customDesign.checkboxBackgroundColor       = '#FFFFFF';
+        target.settings.customDesign.checkboxEntireBackgroundColor = '#FFFFFF';
+        target.settings.customDesign.checkboxActiveColor           = '#FFFFFF';
+        target.settings.customDesign.checkboxEntireActiveColor     = '#FFFFFF';
+        target.settings.customDesign.checkboxSelectionDistance     = '4';
+        target.settings.customDesign.checkboxBorderColor           = $scope.widget.settings.main_color;
+        target.settings.customDesign.checkboxCheckmarkColor        = $scope.widget.settings.main_color;
+        target.settings.customDesign.radioBackgroundColor          = '#FFFFFF';
+        target.settings.customDesign.radioEntireBackgroundColor    = '#FFFFFF';
+        target.settings.customDesign.radioActiveColor              = $scope.widget.settings.main_color;
+        target.settings.customDesign.radioEntireActiveColor        = $scope.widget.settings.main_color;
+        target.settings.customDesign.radioBorderColor              = '#999';
+        target.settings.customDesign.radioSelectionDistance        = '4';
 
         return target;
       };
@@ -670,44 +677,71 @@
 
       this.revertCheckboxColor = function(actionIndex, hearingIndex, customDesignIndex) {
         var defaultColor = '#FFFFFF';
+        var target = $('#action' + actionIndex + '_button' + hearingIndex + '_' + customDesignIndex);
         switch (customDesignIndex) {
           case 'checkboxBackgroundColor':
             defaultColor = '#FFFFFF';
+            target.css('background-color', defaultColor);
+            break;
+          case 'checkboxEntireBackgroundColor':
+            defaultColor = '#FFFFFF';
+            target.css('background-color', defaultColor);
             break;
           case 'checkboxActiveColor':
             defaultColor = '#FFFFFF';
+            target.css('background-color', defaultColor);
+            break;
+          case 'checkboxEntireActiveColor':
+            defaultColor = '#FFFFFF';
+            target.css('background-color', defaultColor);
+            break;
+          case 'checkboxSelectionDistance':
+            defaultColor = 4;
             break;
           case 'checkboxCheckmarkColor':
-            defaultColor = $scope.widget.settings.main_color;;
+            defaultColor = $scope.widget.settings.main_color;
+            target.css('background-color', defaultColor);
             break;
           case 'checkboxBorderColor':
             defaultColor = $scope.widget.settings.main_color;
+            target.css('background-color', defaultColor);
             break;
         }
 
         $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
-        $('#action' + actionIndex + '_button' + hearingIndex + '_' + customDesignIndex).
-            css('background-color', defaultColor);
         jscolor.installByClassName('jscolor');
       };
 
       this.revertRadioButtonColor = function(actionIndex, hearingIndex, customDesignIndex) {
         var defaultColor = '#FFFFFF';
+        var target = $('#action' + actionIndex + '_button' + hearingIndex + '_' + customDesignIndex);
         switch (customDesignIndex) {
           case 'radioBackgroundColor':
             defaultColor = '#FFFFFF';
+            target.css('background-color', defaultColor);
+            break;
+          case 'radioEntireBackgroundColor':
+            defaultColor = '#FFFFFF';
+            target.css('background-color', defaultColor);
             break;
           case 'radioActiveColor':
             defaultColor = $scope.widget.settings.main_color;
+            target.css('background-color', defaultColor);
+            break;
+          case 'radioEntireActiveColor':
+            defaultColor = $scope.widget.settings.main_color;
+            target.css('background-color', defaultColor);
+            break;
+          case 'radioSelectionDistance':
+            defaultColor = 4;
             break;
           case 'radioBorderColor':
             defaultColor = '#999';
+            target.css('background-color', defaultColor);
             break;
         }
 
         $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
-        $('#action' + actionIndex + '_button' + hearingIndex + '_' + customDesignIndex).
-            css('background-color', defaultColor);
         jscolor.installByClassName('jscolor');
       };
 
@@ -878,8 +912,7 @@
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
               if(document.getElementById('action' + index + '-' + hearingIndex + '_message')) {
-                var addHtml = $scope.widget.createMessage(
-                    hearing.message, null, null, (hearing.uiType === '7'));
+                var addHtml = $scope.widget.createMessage(hearing.message, null, null, (hearing.uiType === '7'));
                 if(addHtml.length === 0 && (hearing.uiType === '8' || hearing.uiType === '9')) {
                   addHtml = '<span class="sinclo-text-line"></span>';
                 }
@@ -1175,6 +1208,31 @@
                 $timeout(function() {
                   $scope.$apply();
                 }).then(function() {
+                  var checkboxTarget = $('.action' + index + '_checkbox' + hearingIndex + ' input[type="checkbox"]');
+                  var checkboxLabelTarget = $('.action' + index + '_checkbox' + hearingIndex + ' .sinclo-checkbox');
+                  if (!hearing.settings.checkboxNoneBackground) {
+                    checkboxLabelTarget.css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
+                  } else {
+                    checkboxLabelTarget.css('background-color', 'transparent');
+                  }
+                  checkboxTarget.each(function() {
+                    if ($(this).prop('checked')) {
+                      $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
+                    }
+                  });
+                  checkboxTarget.on('change', function() {
+                    if ($(this).prop('checked')) {
+                      $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
+                    } else {
+                      if (hearing.settings.checkboxNoneBackground) {
+                        $(this).parent().css('background-color', 'transparent');
+                      } else {
+                        $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
+                        // $(this).parent().attr('style', 'background: ' + hearing.settings.customDesign.checkboxEntireBackgroundColor + ' !important;');
+                      }
+                    }
+                  });
+
                   if (hearing.settings.checkboxCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   } else {
