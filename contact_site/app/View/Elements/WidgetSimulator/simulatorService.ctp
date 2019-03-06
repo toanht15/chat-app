@@ -936,7 +936,6 @@
         }
         if (data.message) {
           style += '#sincloBox #' + checkboxName + ' {margin-top: 8px}';
-
         }
         style += '</style>';
 

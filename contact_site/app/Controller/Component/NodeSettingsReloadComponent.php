@@ -9,11 +9,11 @@
 App::uses('HttpSocket', 'Network/Http', 'Component');
 class NodeSettingsReloadComponent extends Component
 {
-  const WIDGET_SETTINGS_API = 'http://127.0.0.1:8080/settings/reload/widgetSettings';
-  const AUTO_MESSAGE_SETTINGS_API = 'http://127.0.0.1:8080/settings/reload/autoMessages';
-  const OPERATION_HOUR_SETTINGS_API = 'http://127.0.0.1:8080/settings/reload/operationHour';
-  const CHAT_SETTINGS_API = 'http://127.0.0.1:8080/settings/reload/chatSettings';
-  const CUSTOM_VARIABLE_SETTINGS_API = 'http://127.0.0.1:8080/settings/reload/customVariableSettings';
+  const WIDGET_SETTINGS_API = 'http://127.0.0.1:3001/settings/reload/widgetSettings';
+  const AUTO_MESSAGE_SETTINGS_API = 'http://127.0.0.1:3001/settings/reload/autoMessages';
+  const OPERATION_HOUR_SETTINGS_API = 'http://127.0.0.1:3001/settings/reload/operationHour';
+  const CHAT_SETTINGS_API = 'http://127.0.0.1:3001/settings/reload/chatSettings';
+  const CUSTOM_VARIABLE_SETTINGS_API = 'http://127.0.0.1:3001/settings/reload/customVariableSettings';
 
   public static function reloadWidgetSettings($companyKey) {
     self::callApi(self::WIDGET_SETTINGS_API, $companyKey);
