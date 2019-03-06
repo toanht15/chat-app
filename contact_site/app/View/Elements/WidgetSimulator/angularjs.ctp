@@ -852,22 +852,25 @@
         document.getElementById('chatTalk').appendChild(gridElm);
 
         var checkboxTarget = $('#' + checkboxData.checkboxName + ' input[type="checkbox"]');
-        checkboxTarget.each(function() {
-          if ($(this).prop('checked')) {
-            $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
-          }
-        });
-        checkboxTarget.on('change', function() {
-          if ($(this).prop('checked')) {
-            $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
-          } else {
-            if (data.settings.checkboxNoneBackground) {
-              $(this).parent().css('background-color', 'transparent');
-            } else {
-              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireBackgroundColor);
+        if (!data.settings.checkboxNoneBackground) {
+          checkboxTarget.each(function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
             }
-          }
-        });
+          });
+          checkboxTarget.on('change', function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+            } else {
+              if (data.settings.checkboxNoneBackground) {
+                $(this).parent().css('background-color', 'transparent');
+              } else {
+                $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireBackgroundColor);
+              }
+            }
+          });
+        }
+
         self.autoScroll();
       };
 

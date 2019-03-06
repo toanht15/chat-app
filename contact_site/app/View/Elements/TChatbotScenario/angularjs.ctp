@@ -1228,26 +1228,29 @@
                   var checkboxLabelTarget = $('.action' + index + '_checkbox' + hearingIndex + ' .sinclo-checkbox');
                   if (!hearing.settings.checkboxNoneBackground) {
                     checkboxLabelTarget.css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
+                    checkboxTarget.each(function() {
+                      if ($(this).prop('checked')) {
+                        $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
+                      }
+                    });
+                    checkboxTarget.on('change', function() {
+                      if ($(this).prop('checked')) {
+                        if (hearing.settings.checkboxNoneBackground) {
+                          $(this).parent().css('background-color', 'transparent');
+                        } else {
+                          $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
+                        }
+                      } else {
+                        if (hearing.settings.checkboxNoneBackground) {
+                          $(this).parent().css('background-color', 'transparent');
+                        } else {
+                          $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
+                        }
+                      }
+                    });
                   } else {
                     checkboxLabelTarget.css('background-color', 'transparent');
                   }
-                  checkboxTarget.each(function() {
-                    if ($(this).prop('checked')) {
-                      $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
-                    }
-                  });
-                  checkboxTarget.on('change', function() {
-                    if ($(this).prop('checked')) {
-                      $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
-                    } else {
-                      if (hearing.settings.checkboxNoneBackground) {
-                        $(this).parent().css('background-color', 'transparent');
-                      } else {
-                        $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
-                        // $(this).parent().attr('style', 'background: ' + hearing.settings.customDesign.checkboxEntireBackgroundColor + ' !important;');
-                      }
-                    }
-                  });
 
                   if (hearing.settings.checkboxCustomDesign) {
                     jscolor.installByClassName('jscolor');
