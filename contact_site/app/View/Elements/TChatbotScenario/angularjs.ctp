@@ -149,10 +149,6 @@
       var scenarioId = document.getElementById('TChatbotScenarioId').value || 'tmp';
       $scope.storageKey = 'scenario_' + scenarioId;
 
-      $scope.initActionType = function(num) {
-        return num ? Number(num) : 1;
-      };
-
       $scope.chatbotIconIsFontIcon = function(target) {
         return target.match(/^fa/) !== null;
       };
@@ -4122,7 +4118,7 @@
         var hearingIndex = numbers[1];
         self.handleReselectionInput(message, actionStep, hearingIndex);
       });
-      // button ui
+
       $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
         $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
         $(this).addClass('selected');

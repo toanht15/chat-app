@@ -1575,6 +1575,29 @@
       }
 
       /*チャットツリーエディタ用*/
+      &[class*="diagrams"] {
+        #popup-title {
+          background-color: #C3D69B;
+          border-bottom: none!important;
+          color: #FFFFFF!important;
+          font-size: 17px!important;
+          font-weight: bold;
+        }
+      }
+
+      &.diagram-ui {
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        #popup-title{
+          cursor: move;
+        }
+        h3 {
+          margin: 20px 20px 0 20px;
+          border-bottom: 3px solid #C3D69B;
+          padding-bottom: 5px;
+        }
+      }
+
+
       /* 設定個数が固定のモーダル */
       &.p_const_diagrams {
         width: 400px;
@@ -1638,17 +1661,15 @@
 
       /* テキスト発言のモーダル */
       &.p_diagrams_text {
-        width: 960px;
+        width: 870px;
         #popup-main {
           padding: 0!important;
         }
         #text_modal {
           display: flex;
-          justify-content: start;
-          align-items: center;
           border-bottom: 1px solid #909090;
           #text_modal_editor {
-            width: 585px;
+            width: 500px;
             display: flex;
             border-right: 1px solid #909090;
             flex-direction: column;
@@ -1657,15 +1678,12 @@
               width: 230px;
             }
             #text_modal_head {
-              padding: 20px 0 0 20px;
+              padding: 20px 0 0 40px;
               input[type='text'] {
-                width: 521px;
+                width: 349px;
                 margin-left: 21px;
                 margin-top: 10px;
               }
-            }
-            #text_modal_contents {
-              margin-left: 20px;
             }
 
             #text_modal_contents > div:not(:first-child) {
@@ -1673,9 +1691,8 @@
             }
             #text_modal_body {
               display: flex;
-              margin-top: 20px;
-              padding: 20px 0 20px 20px;
-              border-top: 1px solid;
+              margin-top: 40px;
+              padding: 0 0 20px 40px;
               p {
                 margin: 0;
               }
@@ -1687,16 +1704,17 @@
                   padding: 2px;
                 }
                 textarea {
-                  width: 425px;
+                  width: 301px;
                   height: 6em;
                   resize: none;
                   overflow: hidden;
+                  margin-left: 20px;
                 }
               }
             }
           }
           #text_modal_preview {
-            width: 200px;
+            width: 370px;
           }
         }
         #popup-button {
@@ -1712,7 +1730,7 @@
       }
       /* 分岐のモーダル */
       &.p_diagrams_branch {
-        width: 960px;
+        width: 870px;
         #popup-main {
           padding: 0!important;
         }
@@ -1720,22 +1738,20 @@
           display: flex;
         }
         #branch_modal_editor {
-          padding-bottom: 20px;
-          width: 585px;
+          padding-bottom: 40px;
+          width: 500px;
           border-right: 1px solid #909090;
           #branch_modal_head {
-            padding: 20px 0 0 20px;
+            padding: 20px 0 0 40px;
             input[type='text'] {
-              width: 521px;
+              width: 349px;
               margin-left: 21px;
               margin-top: 10px;
             }
           }
           #branch_modal_body {
-            padding-left: 20px;
-            padding-top: 20px;
-            border-top: 1px solid;
-            margin-top: 20px;
+            padding-left: 40px;
+            margin-top: 40px;
             textarea {
               height: 6em;
               resize: none;
@@ -1745,15 +1761,12 @@
               .flex_row_box {
                 display: flex;
                 textarea {
-                  width: 474px;
+                  width: 351px;
                   margin-left: 20px;
-                }
-                label {
-                  margin-left: 67px;
                 }
                 select {
                   width: 226px;
-                  margin-left: 30px;
+                  margin-left: 20px;
                 }
                 p {
                   margin: 0;
@@ -1761,10 +1774,9 @@
               }
             }
             .branch_modal_setting_header > div:not(:first-child){
-              margin-top: 20px;
+              margin-top: 40px;
             }
             .branch_modal_setting_content {
-              margin-left: 145px;
               margin-top: 20px;
               position: relative;
               .setting_row {
@@ -1782,20 +1794,23 @@
                   margin-left: 5px;
                 }
                 input[type='text'] {
-                  width: 164px;
-                  margin-left: 25px;
+                  width: 300px;
+                  margin-left: 32px;
                 }
               }
               #bulkRegister {
                 position: absolute;
-                top: -1px;
-                right: 22px;
+                top: -50px;
+                right: 41px;
               }
             }
             .branch_modal_setting_content > div.setting_row:not(:first-child) {
               margin-top: 10px;
             }
           }
+        }
+        #branch_modal_preview {
+          width: 370px;
         }
         #popup-button {
           display:flex;
@@ -3242,6 +3257,32 @@
           align-items: start;
           .textBtn {
             width: 80px
+          }
+        }
+      }
+
+      /* ツリーエディタ選択肢一括登録 */
+      &.p_selection_bulk_register {
+        width: 410px;
+        #popup-main-overlap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-bottom: 0!important;
+          line-height: 0;
+          p {
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+          }
+        }
+        #popup-button-overlap {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          height: 70px!important;
+          .textBtn {
+            width: 75px;
           }
         }
       }

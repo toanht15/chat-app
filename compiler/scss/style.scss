@@ -6121,7 +6121,10 @@ ul.naviBtn {
         background-color: #edbf35;
       }
       &.actionValueCallAutomessageLabel {
-        background-color: #d251c4;
+        background-color: #4e7fd2;
+      }
+      &.actionValueSelectDiagramLabel {
+        background-color: #E44EA1;
       }
     }
 
@@ -7206,12 +7209,14 @@ ul.naviBtn {
           label{
             display: flex;
             align-items: center;
+            min-width: 134px;
             span {
               margin-left: 10px;
             }
           }
           div {
             margin-left: 20px;
+            min-width: 201px;
           }
         }
       }
@@ -7233,8 +7238,8 @@ ul.naviBtn {
   #t_chatbot_diagrams_body {
     display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 150px 1fr;
-    grid-template-columns: 150px 1fr;
+    -ms-grid-columns: 125px 1fr;
+    grid-template-columns: 125px 1fr;
     height: calc(100vh - 225px);
     overflow-y: hidden;
     #diagrams_side_bar {
@@ -7244,7 +7249,9 @@ ul.naviBtn {
       z-index: 4;
       .form_subtitle {
         border-bottom: 3px solid #C3D69B;
-        padding-left: 5px;
+        padding-right: 3px;
+        text-align: center;
+        padding-bottom: 10px;
       }
       #node_list {
         display: flex;
@@ -7269,30 +7276,31 @@ ul.naviBtn {
           margin-top:2px;
         }
         .branch {
-          background-color: #fd9644;
+          background-color: #c73576;
         }
         .text {
-          background-color: #fed330;
+          background-color: #D48BB3;
         }
         .scenario {
-          background-color: #26de81;
+          background-color: #82c0cd;
         }
         .jump {
-          background-color: #2bcbba;
+          background-color: #c8d627;
         }
         .link {
-          background-color: #45aaf2;
+          background-color: #845d9e;
         }
         .operator {
-          background-color: #4b7bec;
+          background-color: #98B5E0;
         }
         .cv {
-          background-color: #a55eea;
+          background-color: #A2CCBA;
         }
       }
     }
     #canvas {
       -ms-grid-column: 2;
+      overflow: hidden;
       z-index: 1;
       svg {
         cursor: move;
@@ -7303,7 +7311,7 @@ ul.naviBtn {
 
 /* SVGの矢印用 */
 .joint-link.joint-theme-default .link-tools .tool-remove circle.diagram{
-  fill: #00B7FF;
+  fill: #D69B9B;
 }
 
 /* チャットボットシナリオ設定 */
@@ -9289,6 +9297,31 @@ ul.naviBtn {
       font-size: 12px !important;
       line-height: 12px;
       padding: 0.1em;
+    }
+  }
+}
+
+/* チャットツリー設定 */
+#TChatbotDiagram_idx {
+  .callerTypeLabel {
+    display: inline-block;
+    padding: 4px 2px;
+    margin-right: 8px;
+    border-radius: 5px;
+    width: 10em;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+
+    &.typeAutoMessage {
+      background-color: #B2D251;
+    }
+    &.typeScenario {
+      background-color: #EDBF35;
+    }
+
+    & + span {
+      line-height: 2;
     }
   }
 }

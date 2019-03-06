@@ -1,6 +1,9 @@
 <?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('TChatbotDiagrams/script'); ?>
-
+<?php
+  $params = $this->Paginator->params();
+  $prevCnt = ($params['page'] - 1) * $params['limit'];
+?>
 <div id='TChatbotDiagram_idx' class="card-shadow">
 
   <div id='TChatbotDiagram_title'>
@@ -106,9 +109,9 @@
           $id = $val['TChatbotDiagram']['id'];
         }
 
-//        // 呼び出し元情報
-//        $callerAutoMessage = count($val['callerInfo']['TAutoMessage']) > 0 ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
-//        $callerScenario = count($val['callerInfo']['TChatbotDiagram']) > 0 ? implode(', ', $val['callerInfo']['TChatbotDiagram']) : '';
+        // 呼び出し元情報
+        $callerAutoMessage = (array_key_exists('TAutoMessage', $val['callerInfo']) && count($val['callerInfo']['TAutoMessage']) > 0) ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
+        $callerScenario = (array_key_exists('TChatbotDiagram', $val['callerInfo']) && count($val['callerInfo']['TChatbotDiagram']) > 0) ? implode(', ', $val['callerInfo']['TChatbotDiagram']) : '';
 
         $no = $prevCnt + h($key+1);
         ?>
