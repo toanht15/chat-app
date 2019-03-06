@@ -839,8 +839,8 @@
         $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
-        var html = $scope.simulatorSettings.createCheckbox(data);
-        divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        var checkboxData = $scope.simulatorSettings.createCheckbox(data);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = checkboxData.html;
         divElm.style.display = "";
         if( $scope.needsIcon() ) {
           gridElm = $scope.addIconImage( gridElm );
@@ -850,6 +850,24 @@
 
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
+
+        var checkboxTarget = $('#' + checkboxData.checkboxName + ' input[type="checkbox"]');
+        checkboxTarget.each(function() {
+          if ($(this).prop('checked')) {
+            $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+          }
+        });
+        checkboxTarget.on('change', function() {
+          if ($(this).prop('checked')) {
+            $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+          } else {
+            if (data.settings.checkboxNoneBackground) {
+              $(this).parent().css('background-color', 'transparent');
+            } else {
+              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireBackgroundColor);
+            }
+          }
+        });
         self.autoScroll();
       };
 
