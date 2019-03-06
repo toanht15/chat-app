@@ -4846,7 +4846,7 @@ io.sockets.on('connection', function(socket) {
         else {
           messageDistinction = results[0].conversation_count;
         }
-        obj.messages.forEach(function(elm, index, arr) {
+        obj.message.forEach(function(elm, index, arr) {
           if (!isset(elm.created)) {
             elm.created = new Date();
             elm.sort = fullDateTime(elm.created);

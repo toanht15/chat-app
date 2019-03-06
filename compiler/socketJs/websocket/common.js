@@ -1613,6 +1613,9 @@ var socket, // socket.io
         /* flatpickr カスタム値の方が強いため基本important指定 */
         html += '#sincloBox #chatTalk li.sinclo_re div.flatpickr-calendar.disable { pointer-events: none!important; opacity: 0.5!important; }';
 
+        /* diagram - button */
+        html += '#sincloBox #chatTalk li.sinclo_re.diagram_msg button { border: 0; border-radius: 0; }';
+
         if (colorList['widgetInsideBorderNone'] === 1) {
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
         }

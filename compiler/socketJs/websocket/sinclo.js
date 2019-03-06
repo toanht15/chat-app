@@ -1400,9 +1400,11 @@
               isHearingAnswer = true;
               break;
             case 300:
-            case 301:
             case 302:
               cn = 'sinclo_re diagram_msg';
+              break;
+            case 301:
+              cn = 'sinclo_se diagram_msg';
               break;
           }
 
@@ -1650,7 +1652,7 @@
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
             }
           } else if (Number(chat.messageType) === 300) {
-            var branches = chat.message;
+            var branches = check.isJSON(chat.message) ? JSON.parse(chat.message) : chat.message;
             var currentNode = {
               diagramId: branches.did,
               sourceNodeId: branches.sourceNodeId,
@@ -1661,6 +1663,15 @@
               }
             };
             sinclo.diagramApi.branch.showMessage(currentNode, branches.message, branches.selectionMap, branches.labels);
+          } else if (Number(chat.messageType) === 302) {
+            var speakTextMessage = check.isJSON(chat.message) ? JSON.parse(chat.message) : chat.message;
+            var chatObj = check.isJSON(chat.message) ? JSON.parse(chat.message) : chat.message;
+            var currentNode = {
+              isRedraw: true,
+              diagramId: speakTextMessage.did,
+              message: [chatObj.message]
+            };
+            sinclo.diagramApi.speakText.showMessages(currentNode, currentNode.message);
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true &&
@@ -12791,27 +12802,15 @@
         }
       },
       speakText: {
-        doAction: function() {
-          console.log("<><><><><> SPEAK TEXT <><><><><>");
-          var self = sinclo.diagramApi;
-          var currentNode = self.storage.getCurrentNode();
-          var messages = currentNode.attrs.actionParam.text;
-          self.speakText.showMessages(currentNode, messages).then(function(){
-            sinclo.chatApi.scDown();
-            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
-            self.executor.setNext(self.common.getDiagramId(), nextNodeId);
-            self.executor.execute();
-          });
-        },
         showMessages: function(currentNode, messages) {
           var defer = $.Deferred();
           var self = sinclo.diagramApi;
-          common.chatBotTypingTimerClear();
-          common.chatBotTypingRemove();
           for(var i=0; i < messages.length; i++) {
             var html = sinclo.chatApi.createMessageHtml(messages[i]);
             (function(index, showHtml){
               setTimeout(function() {
+                common.chatBotTypingTimerClear();
+                common.chatBotTypingRemove();
                 var cs = 'diagram_msg sinclo_re';
                 var chatList = document.getElementsByTagName('sinclo-chat')[0];
                 var div = document.createElement('div');
@@ -12828,19 +12827,39 @@
                 li.className = cs;
 
                 li.innerHTML = showHtml;
-                self.speakText.saveShownMessage(currentNode, messages[index]);
+
+                if (!currentNode.isRedraw) {
+                  self.speakText.saveShownMessage(currentNode, messages[index]);
+                }
                 if(index === messages.length - 1) {
                   defer.resolve();
+                } else {
+                  common.chatBotTypingCall({});
                 }
               }, self.executor.getIntervalTimeSec() * 1000 * index);
             })(i, html);
           }
           return defer.promise();
         },
+        doAction: function() {
+          console.log("<><><><><> SPEAK TEXT <><><><><>");
+          var self = sinclo.diagramApi;
+          var currentNode = self.storage.getCurrentNode();
+          var messages = currentNode.attrs.actionParam.text;
+          common.chatBotTypingCall({});
+          self.executor.wait(self.executor.getIntervalTimeSec())
+          .then(self.speakText.showMessages(currentNode, messages))
+          .then(function(){
+            sinclo.chatApi.scDown();
+            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+            self.executor.setNext(self.common.getDiagramId(), nextNodeId);
+            self.executor.execute();
+          });
+        },
         saveShownMessage: function(currentNode, message) {
           var self = sinclo.diagramApi;
           var obj = {
-            did: self.common.getDiagramId(),
+            did: currentNode.diagramId ? currentNode.diagramId : self.common.getDiagramId(),
             message: message
           };
           self.storage.putDiagramMessage(currentNode.id, currentNode.attrs.nodeBasicInfo.nodeType, obj, false);
