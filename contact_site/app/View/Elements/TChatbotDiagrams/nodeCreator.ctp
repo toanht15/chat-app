@@ -18,14 +18,21 @@ var nodeSize = {};
 
 var actionParam = {};
 
+var iconParam = {};
+
+var defaultIcon = {
+  scale: "0.04",
+  translate: "150, 150"
+};
+
 var portSetting = {
-  inPortSize: 31,
-  outPortSize: 31
+  inPortSize: 33,
+  outPortSize: 33
 };
 
 var middleNode = {
   width: 200,
-  height: 115,
+  height: 90,
   inPortX: -30,
   inPortY: 30,
   outPortX: 200,
@@ -55,12 +62,17 @@ function NodeFactory() {
     var returnNode = null;
     nodeSize = middleNode;
     nodeType = type;
+    iconParam = defaultIcon;
     if(type === "branch") {
       inColor = "#c73576";
       outColor = "#DD82AB";
       bgColor = "#c73576";
       labelText = "分岐";
       iconSVG = "M592 0h-96c-26.51 0-48 21.49-48 48v32H192V48c0-26.51-21.49-48-48-48H48C21.49 0 0 21.49 0 48v96c0 26.51 21.49 48 48 48h94.86l88.76 150.21c-4.77 7.46-7.63 16.27-7.63 25.79v96c0 26.51 21.49 48 48 48h96c26.51 0 48-21.49 48-48v-96c0-26.51-21.49-48-48-48h-96c-5.2 0-10.11 1.04-14.8 2.57l-83.43-141.18C184.8 172.59 192 159.2 192 144v-32h256v32c0 26.51 21.49 48 48 48h96c26.51 0 48-21.49 48-48V48c0-26.51-21.49-48-48-48zM32 144V48c0-8.82 7.18-16 16-16h96c8.82 0 16 7.18 16 16v96c0 8.82-7.18 16-16 16H48c-8.82 0-16-7.18-16-16zm336 208c8.82 0 16 7.18 16 16v96c0 8.82-7.18 16-16 16h-96c-8.82 0-16-7.18-16-16v-96c0-8.82 7.18-16 16-16h96zm240-208c0 8.82-7.18 16-16 16h-96c-8.82 0-16-7.18-16-16V48c0-8.82 7.18-16 16-16h96c8.82 0 16 7.18 16 16v96z";
+      iconParam = {
+        scale: "0.035",
+        translate: "200, 250"
+      };
       childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
       actionParam = {
@@ -70,11 +82,15 @@ function NodeFactory() {
         selection: []
       };
     } else if (type === "text") {
-      inColor = "#845d9e";
-      outColor = "#B39CC3";
-      bgColor = "#845d9e";
+      inColor = "#D48BB3";
+      outColor = "#EFD6E4";
+      bgColor = "#D48BB3";
       labelText = "テキスト発言";
       iconSVG = "M448 0H64C28.7 0 0 28.7 0 64v288c0 35.3 28.7 64 64 64h96v84c0 7.1 5.8 12 12 12 2.4 0 4.9-.7 7.1-2.4L304 416h144c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zm32 352c0 17.6-14.4 32-32 32H293.3l-8.5 6.4L192 460v-76H64c-17.6 0-32-14.4-32-32V64c0-17.6 14.4-32 32-32h384c17.6 0 32 14.4 32 32v288z";
+      iconParam = {
+        scale: "0.035",
+        translate: "200, 250"
+      };
       childNode = contentViewNode;
       masterNode = constantNode;
       actionParam = {
@@ -104,9 +120,9 @@ function NodeFactory() {
         targetId: ""
       };
     } else if (type === "link") {
-      inColor = "#D48BB3";
-      outColor = "#EFD6E4";
-      bgColor = "#D48BB3";
+      inColor = "#845d9e";
+      outColor = "#B39CC3";
+      bgColor = "#845d9e";
       labelText = "リンク";
       iconSVG = "M301.148 394.702l-79.2 79.19c-50.778 50.799-133.037 50.824-183.84 0-50.799-50.778-50.824-133.037 0-183.84l79.19-79.2a132.833 132.833 0 0 1 3.532-3.403c7.55-7.005 19.795-2.004 20.208 8.286.193 4.807.598 9.607 1.216 14.384.481 3.717-.746 7.447-3.397 10.096-16.48 16.469-75.142 75.128-75.3 75.286-36.738 36.759-36.731 96.188 0 132.94 36.759 36.738 96.188 36.731 132.94 0l79.2-79.2.36-.36c36.301-36.672 36.14-96.07-.37-132.58-8.214-8.214-17.577-14.58-27.585-19.109-4.566-2.066-7.426-6.667-7.134-11.67a62.197 62.197 0 0 1 2.826-15.259c2.103-6.601 9.531-9.961 15.919-7.28 15.073 6.324 29.187 15.62 41.435 27.868 50.688 50.689 50.679 133.17 0 183.851zm-90.296-93.554c12.248 12.248 26.362 21.544 41.435 27.868 6.388 2.68 13.816-.68 15.919-7.28a62.197 62.197 0 0 0 2.826-15.259c.292-5.003-2.569-9.604-7.134-11.67-10.008-4.528-19.371-10.894-27.585-19.109-36.51-36.51-36.671-95.908-.37-132.58l.36-.36 79.2-79.2c36.752-36.731 96.181-36.738 132.94 0 36.731 36.752 36.738 96.181 0 132.94-.157.157-58.819 58.817-75.3 75.286-2.651 2.65-3.878 6.379-3.397 10.096a163.156 163.156 0 0 1 1.216 14.384c.413 10.291 12.659 15.291 20.208 8.286a131.324 131.324 0 0 0 3.532-3.403l79.19-79.2c50.824-50.803 50.799-133.062 0-183.84-50.802-50.824-133.062-50.799-183.84 0l-79.2 79.19c-50.679 50.682-50.688 133.163 0 183.851z";
       childNode = contentViewNode;
@@ -156,7 +172,7 @@ function NodeFactory() {
 function contentViewNode(posX, posY) {
   return new joint.shapes.basic.Rect({
     position: {x :posX + 5, y: posY + 35},
-    size: { width: 190, height: 75 },
+    size: { width: 190, height: 50 },
     attrs: {
       rect: {
         fill: "#FFFFFF",
@@ -277,7 +293,7 @@ function constantNodeOnlyInPort(posX, posY) {
         y: 12,
       },
       '.icon' : {
-        transform: "scale(0.04) translate(150, 150)"
+        transform: "scale("+iconParam.scale+") translate("+iconParam.translate+")",
       },
       '.body': {
         fill: bgColor,
@@ -370,7 +386,7 @@ function constantNode(posX, posY) {
         y: 12,
       },
       '.icon' : {
-        transform: "scale(0.04) translate(150, 150)",
+        transform: "scale("+iconParam.scale+") translate("+iconParam.translate+")",
       },
       '.body': {
         fill: bgColor,

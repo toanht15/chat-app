@@ -111,12 +111,12 @@
           attrs: {
             '.connection': {
               stroke: '#AAAAAA',
-              'stroke-width': 3
+              'stroke-width': 2,
             },
             '.marker-target': {
               stroke: '#AAAAAA',
               fill: '#AAAAAA',
-              d: 'M 15 0 L 0 6 L 0 9 L 15 15 z'
+              d: 'M 14 0 L 0 7 L 14 14 z'
             },
             '.link-tools .link-tool .tool-remove circle': {
               'class': 'diagram'
@@ -190,8 +190,8 @@
                 }else if(frame.hasClass("p_diagrams_text")){
                   $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
                 }
-                $('#popup-bg').hide();
                 $scope.popupHandler();
+                $scope.popupInit(frame);
                 initPopupCloseEvent();
               });
             }
@@ -265,7 +265,61 @@
         $('#TChatbotDiagramActivity').val(JSON.stringify(graphJSON));
         $('#TChatbotDiagramsEntryForm').submit();
       });
-      /* save Act */
+
+      /* bulkRegister Btn */
+      $(document).on('click', '#bulkRegister',  function() {
+        bulkRegister.open();
+      });
+
+      /* bulkRegister Event */
+      var bulkRegister = {
+        modalData: {},
+        open: function() {
+          try {
+            this._createModal(this._getOverView($scope.branchType), this._getContent());
+          } catch (e) {
+            console.log(e + " ERROR DETECTED");
+          }
+        },
+        _initPopupOverlapEvent: function() {
+          popupEventOverlap.closePopup = function() {
+            $scope.branchSelectionList = $("#bulk_textarea").val().split("\n");
+            popupEventOverlap.closeNoPopupOverlap();
+            $scope.$apply();
+            $timeout(function() {
+              popupEvent.resize();
+              $scope.popupFix();
+            })
+          }
+        },
+        _createModal: function(overView, content) {
+          $scope.currentTop = $('#popup-frame').offset().top;
+          popupEventOverlap.initOverlap();
+          popupEventOverlap.open(content, overView.class, overView.title);
+          this._initPopupOverlapEvent();
+        },
+        _getOverView: function(type) {
+          switch(Number(type.key)) {
+            case 1:
+            case 2:
+              return {
+                title: "選択肢の一括登録",
+                class: "p_selection_bulk_register"
+              };
+            default:
+              throw "noType"
+          }
+        },
+        _getContent: function() {
+          return '<div class="select-option-one-time-popup">\n' +
+                 '    <p>選択肢として登録する内容を改行して設定してください。</p>\n' +
+                 '\n' +
+                 '    <textarea name=""  id="bulk_textarea" style="overflow: hidden; resize: none; font-size: 13px;" cols="48" rows="3" placeholder=' +
+                 '"男性&#10;女性">' + $scope.branchSelectionList.join("\n") + '</textarea>\n' +
+                 '</div>';
+        }
+      };
+
 
       function initNodeEvent(node) {
         for (var i = 0; i < node.length; i++) {
@@ -372,7 +426,6 @@
               previewHandler.typeJump.editTargetName();
               popupEvent.closeNoPopup();
               $scope.addLineHeight();
-              console.log(graph.getCells());
               break;
             case 2:
               /* delete */
@@ -444,7 +497,7 @@
         text: {
           setView: function() {
             $scope.currentEditCellParent.attr('.label/text',
-                convertTextForTitle(convertTextLength($scope.speakTextTitle, 3), 'テキスト発言'));
+                convertTextForTitle(convertTextLength($scope.speakTextTitle, 16), 'テキスト発言'));
             $scope.currentEditCell.attr('text/text', convertTextLength(
                 textEditor.textLineSeparate($scope.speakTextList.filter(Boolean)[0]), 46));
             $scope.currentEditCellParent.attr('actionParam/text', null);
@@ -458,10 +511,9 @@
         },
         branch: {
           setView: function(){
-            nodeEditHandler.typeBranch.branchPortController(
-                $scope.branchSelectionList.filter(Boolean), $scope.currentEditCellParent.attr("actionParam"));
+            nodeEditHandler.typeBranch.branchPortController($scope.branchSelectionList.filter(Boolean));
             $scope.currentEditCellParent.attr('.label/text',
-                convertTextForTitle(convertTextLength($scope.branchTitle, 6), '分岐'));
+                convertTextForTitle(convertTextLength($scope.branchTitle, 16), '分岐'));
             $scope.currentEditCellParent.attr('actionParam/selection', null);
             $scope.currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate($scope.branchText), 46));
           },
@@ -477,7 +529,7 @@
         scenario: {
           setView: function(){
             if($scope.selectedScenario.key !== ""){
-              $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 14));
+              $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 20));
             }
           },
           getData: function(){
@@ -489,7 +541,7 @@
         jump: {
           setView: function(){
             if($scope.jumpTarget.key !== ""){
-              $scope.currentEditCell.attr('text/text', convertTextLength($scope.jumpTarget.value, 14));
+              $scope.currentEditCell.attr('text/text', convertTextLength($scope.jumpTarget.value, 20));
             }
           },
           getData: function(){
@@ -523,20 +575,41 @@
         }
       };
 
+      function getTextLength(str, limit) {
+        var result = 0;
+        var isMax = true;
+        for(var i=0;i<str.length;i++){
+          var chr = str.charCodeAt(i);
+          if(chr >= 0x00 && chr < 0x81
+          || chr === 0xf8f0
+          || chr >= 0xff61 && chr < 0xffa0
+          || chr >= 0xf8f1 && chr < 0xf8f4){
+            result += 1;
+          } else {
+            result += 2;
+          }
+          if (result > limit) {
+            isMax = false;
+            break;
+          }
+        }
+        return {
+          textNum: i,
+          isEnd: isMax
+        };
+      }
+
       function convertTextLength(text, regNum) {
-        if (text) {
-          return text.length > regNum ? (text).slice(0, regNum) + '...' : text;
-        } else {
+        var data = getTextLength(text, regNum);
+        if (data.isEnd) {
           return text;
+        } else {
+          return (text).slice(0, data.textNum) + "...";
         }
       }
 
       function convertTextForTitle(text, basicTitle) {
-        if (text) {
-          return basicTitle + ':' + text;
-        } else {
-          return basicTitle;
-        }
+        return text ? text : basicTitle;
       }
 
       function createBranchHtml(nodeData) {
@@ -619,24 +692,21 @@
           scroll: false,
           cancel: "#popup-main, #popup-button, .p-personal-update",
           stop: function(e, ui) {
-            console.log(e);
-            console.log(ui);
             /* restrict popup position */
             var popup = $('#popup-frame'),
                 newTop = popup.offset().top,
                 newLeft = popup.offset().left;
-            if(ui.offset.top < 60){
+            if(ui.offset.top < 60 || window.innerHeight < popup.height() + 60){
               newTop = 60;
-            }
-            if(ui.offset.left < 80){
-              newLeft = 80;
-            }
-            if(ui.offset.top + e.target.offsetHeight > window.innerHeight){
+            } else if( ui.offset.top + e.target.offsetHeight > window.innerHeight ){
               newTop = window.innerHeight - e.target.offsetHeight;
             }
-            if(ui.offset.left + e.target.offsetWidth > window.innerWidth){
+            if(ui.offset.left < 80 || window.innerWidth < popup.width() + 80){
+              newLeft = 80;
+            } else if(ui.offset.left + e.target.offsetWidth > window.innerWidth){
               newLeft = window.innerWidth - e.target.offsetWidth;
             }
+
             popup.offset({
               top: newTop,
               left: newLeft
@@ -664,6 +734,21 @@
           $scope.addBtnHide = false;
           $scope.deleteBtnHide = false;
         }
+      };
+
+      $scope.popupInit = function(popup) {
+        var newTop = popup.offset().top,
+            newLeft = popup.offset().left;
+        if(window.innerHeight < popup.height() + 60){
+          newTop = 60;
+        }
+        if(window.innerWidth < popup.width() + 80){
+          newLeft = 80;
+        }
+        popup.offset({
+          top: newTop,
+          left: newLeft
+        });
       };
 
       function resetNextNode(targetId) {
@@ -701,7 +786,7 @@
             for(var i = 0; i < newSelectionList.length; i++){
               /* Set rect height */
               self._resizeParentHeight(i);
-              var port = self.portCreator(self._getSelfPosition(i), newSelectionList[i], self._getCoverOpacity(i, newSelectionList.length));
+              var port = self.portCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i] ,22), self._getCoverOpacity(i, newSelectionList.length));
               $scope.currentEditCellParent.embed(port);
               initNodeEvent([port]);
               graph.addCell(port);
@@ -772,7 +857,7 @@
                 '.label': {
                   text: text,
                   'ref-width': '70%',
-                  'font-size': '12px',
+                  'font-size': '14px',
                   fill: '#000',
                   y: 12
                 },
@@ -808,7 +893,7 @@
 
       var textEditor = {
         textLineSeparate: function(text){
-          if(text == null) return;
+          if(text == null) return "";
           var self = textEditor;
           var originTextArray = text.split(/\r\n|\n/);
           var resultTextArray = [];
@@ -856,11 +941,11 @@
               splitNum;
           var defaultValue = source.attr(".label/text");
           if(target.attr("nodeBasicInfo/nodeType") === "text") {
-            prefix = "テキスト発言";
-            splitNum = 3;
+            prefix = "";
+            splitNum = 16;
           } else {
-            prefix = "分岐";
-            splitNum = 6;
+            prefix = "";
+            splitNum = 16
           }
           target.attr("actionParam/nodeName", defaultValue);
           target.attr(".label/text",
