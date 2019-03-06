@@ -51,7 +51,7 @@
   #tchatbotscenario_form_preview_body .chatTalk li span.cName { display: block; color: {{widget.settings['main_color']}}!important; font-weight: bold; font-size: {{widget.settings['re_text_size']}}px; margin: 0 0 5px 0; }
   #tchatbotscenario_form_preview_body .chatTalk li span.cName.details{ color: {{widget.settings['c_name_text_color']}}!important;}
 
-  #tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio { display: inline-block;}
+  #tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio { display: inline-block; margin-top: {{widget.settings['btw_button_margin']}}px;}
   #tchatbotscenario_form_preview_body .chatTalk li span.sinclo-text-line + span.sinclo-radio { margin-top: {{widget.settings['line_button_margin']}}px; }
   #tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
   #tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin: 0; padding: 0 0 0 {{widget.re_text_size+7}}px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; }
@@ -236,7 +236,7 @@
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox:hover input ~ .checkmark {background-color: {{hearings.settings.customDesign.checkboxActiveColor}};}
         li.action{{setActionId}}_checkbox{{index}} span.ok-button {width: 100px; height: 30px; cursor: pointer; margin:auto; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: {{widget.settings['chat_send_btn_background_color']}}; color: {{widget.settings['chat_send_btn_text_color']}};}
         li.action{{setActionId}}_checkbox{{index}} .hasText {margin-top: 5px;}
-        li.action{{setActionId}}_checkbox{{index}} .noneText {margin-top: -15px;}
+        li.action{{setActionId}}_checkbox{{index}} .noneText {margin-top: 0px;}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark.noneBorder {border: none;}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark.hasBorder {border: 1px solid {{hearings.settings.customDesign.checkboxBorderColor}};}
       </style>
@@ -247,8 +247,8 @@
 
       <style ng-if="hearings.uiType === '3' && hearings.settings.radioCustomDesign">
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label:before {background-color: {{hearings.settings.customDesign.radioBackgroundColor}} !important; border-color: {{hearings.settings.radioNoneBorder ? 'transparent' : hearings.settings.customDesign.radioBorderColor}} !important;}
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio:first-child {margin-top: {{widget.settings['btw_button_margin']}}px;}
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio {margin-top: {{hearings.settings.customDesign.radioSelectionDistance ? hearings.settings.customDesign.radioSelectionDistance : 4}}px;}
+        li.action{{setActionId}}_radio{{index}} span.sinclo-radio:first-child {margin-top: {{widget.settings['btw_button_margin']}}px !important;}
+        li.action{{setActionId}}_radio{{index}} span.sinclo-radio {margin-top: {{hearings.settings.customDesign.radioSelectionDistance ? hearings.settings.customDesign.radioSelectionDistance : 4}}px !important;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label.radio-zoom:before {background-color: {{hearings.settings.customDesign.radioBackgroundColor}} !important; border-color: {{hearings.settings.radioNoneBorder ? 'transparent' : hearings.settings.customDesign.radioBorderColor}} !important;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"]:checked + label:after {background: {{hearings.settings.customDesign.radioActiveColor}} !important;}
       </style>
