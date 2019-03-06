@@ -767,9 +767,13 @@
           if (data.settings.radioNoneBackground) {
             style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
           } else {
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important;}';
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {top: 13px !important; left: 12px !important;}';
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {top: 9px !important; left: 8px !important;}';
             style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: ' + data.settings.customDesign.radioEntireBackgroundColor + ';}';
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked ~ label {background-color: ' + data.settings.customDesign.radioEntireActiveColor + ';}';
           }
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked ~ label {background-color: ' + data.settings.customDesign.radioEntireActiveColor + ';}';
+
           style += '</style>';
           html += style;
         }
@@ -901,11 +905,11 @@
         var separator = this.getCheckboxSeparator(data.settings.checkboxSeparator);
         var style = '<style>';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox {display: block;position: relative;padding: 8px 8px 8px 28px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox .checkmark {position: absolute;top: 10px;left: 8px;height: ' + this.re_text_size + 'px;width: ' + this.re_text_size + 'px; background-color: ' +
+            ' .sinclo-checkbox .checkmark {position: absolute;top: 2px;left: 0px;height: ' + this.re_text_size + 'px;width: ' + this.re_text_size + 'px; background-color: ' +
             data.settings.customDesign.checkboxBackgroundColor + '}';
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (this.re_text_size - 10) + 'px;top: ' + (this.re_text_size - 13) + 'px;width: 3px;height: 6px;border: solid ' + data.settings.customDesign.checkboxCheckmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
@@ -927,6 +931,8 @@
         if (data.settings.checkboxNoneBackground) {
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {background-color: transparent;}';
         } else {
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {padding: 8px 8px 8px 28px;}';
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {top: 10px;left: 8px; }';
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {background-color: ' +
               data.settings.customDesign.checkboxEntireBackgroundColor + ';}';
         }

@@ -856,10 +856,6 @@
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxEntireBackgroundColor')">標準に戻す</span>
                 </span>
-              <label class="pointer" style="margin-left: 165px">
-                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.checkboxNoneBackground">背景色なしにする
-              </label>
 
               <span class="checkbox-custom-items">
                   <label>チェック時の背景色</label>
@@ -869,6 +865,11 @@
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxEntireActiveColor')">標準に戻す</span>
                 </span>
+
+              <label class="pointer" style="margin-left: 165px">
+                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
+                       ng-model="hearingItem.settings.checkboxNoneBackground">背景色なしにする
+              </label>
 
               <span class="checkbox-custom-items">
                   <label>選択肢の行間</label>
@@ -932,11 +933,6 @@
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioEntireBackgroundColor')">標準に戻す</span>
                 </span>
-              <label class="pointer" style="margin-left: 165px">
-                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.radioNoneBackground">背景色なしにする
-              </label>
-
               <span class="checkbox-custom-items">
                   <label>チェック時の背景色</label>
                   <input type="text" id="action{{setActionId}}_button{{listId}}_radioEntireActiveColor"
@@ -945,6 +941,11 @@
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioEntireActiveColor')">標準に戻す</span>
                 </span>
+
+              <label class="pointer" style="margin-left: 165px">
+                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
+                       ng-model="hearingItem.settings.radioNoneBackground">背景色なしにする
+              </label>
 
               <span class="checkbox-custom-items">
                   <label>選択肢の行間</label>
