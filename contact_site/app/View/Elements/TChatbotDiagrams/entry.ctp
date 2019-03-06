@@ -7,12 +7,13 @@
  */
 ?>
 <?php echo $this->element('TChatbotDiagrams/nodeCreator'); ?>
-<?php echo $this->element('TChatbotDiagrams/jointScript'); ?>
+<?php echo $this->element('TChatbotScenario/preview'); ?>
+<?php echo $this->element('WidgetSimulator/simulatorService'); ?>
 <div>
   <ul>
     <li>
       <label>チャットツリー名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットツリーに名称を設定します。">?</icon></span></label>
-      <?= $this->ngForm->input('TChatDiagram.name', array(
+      <?= $this->ngForm->input('TChatbotDiagram.name', array(
         'type' => 'text',
         'placeholder' => 'チャットツリー名称を入力',
         'maxlength' => 50,
@@ -24,7 +25,7 @@
     <!-- メッセージ間隔 -->
     <li>
       <label>メッセージ間隔<span class="questionBalloon"><icon class="questionBtn" data-tooltip="各メッセージを送信する間隔（秒数）を設定します。">?</icon></span></label>
-      <?= $this->ngForm->input('messageIntervalTimeSec', array(
+      <?= $this->ngForm->input('TChatbotDiagram.messageIntervalTimeSec', array(
         'type' => 'text',
         'class' => 'tRight',
         'maxlength' => 3,

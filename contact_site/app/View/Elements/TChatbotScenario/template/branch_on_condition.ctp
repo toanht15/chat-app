@@ -29,14 +29,14 @@
           </div>
         </li>
         <li class="styleFlexbox">
-          <span class="fb15em indentDown"><label class="require">条件</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数の値に入力した内容を完全一致で扱うか、部分一致で扱うかを選択します。">?</icon></span></span>
+          <span class="fb15em indentDown"><label class="require">条件</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="「参照する変数名」に指定した変数の値を設定します。複数の値を設定する場合はスペースで区切ってください。">?</icon></span></span>
           <label class="pointer" style="flex-grow: 0"><input type="radio" name="action{{setActionId}}_matchValuePattern{{listId}}" ng-model="condition.matchValuePattern" value="1">完全一致</label>
           <label class="pointer" style="margin-left: 40px"><input type="radio" name="action{{setActionId}}_matchValuePattern{{listId}}" ng-model="condition.matchValuePattern" value="2">部分一致</label>
         </li>
         <li class="styleFlexbox">
           <div class="fb15em indentDown"><label class="require">実行するアクション</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件を満たした場合に「テキスト発言」「シナリオ呼出」「リンク（URL）」「シナリオを終了」「次のアクションへ」のいずれかの処理を行うことができます。">?</icon></span></div>
           <div class="conditionTypeSelect">
-            <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = initActionType(condition.actionType)" ng-options="item.value as item.label for item in processActionTypeList"></select>
+            <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = (condition.actionType ? condition.actionType : '1')" ng-options="item.value as item.label for item in processActionTypeList"></select>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 1">
             <resize-textarea class="variable-suggest" maxlength="4000" ng-model="condition.action.message" placeholder="メッセージを入力してください"></resize-textarea>
@@ -70,7 +70,7 @@
         <ul class="condition else" ng-if="setItem.elseEnabled == true">
           <li class="styleFlexbox">
             <div class="conditionTypeSelect">
-              <select class="m10r" ng-model="setItem.elseAction.actionType" ng-init="setItem.elseAction.actionType = initActionType(setItem.elseAction.actionType)" ng-options="item.value as item.label for item in processElseActionTypeList"></select>
+              <select class="m10r" ng-model="setItem.elseAction.actionType" ng-init="setItem.elseAction.actionType = (setItem.elseAction.actionType ? setItem.elseAction.actionType : '1')" ng-options="item.value as item.label for item in processElseActionTypeList"></select>
             </div>
             <div class="conditionAction elseCondition" ng-if="setItem.elseAction.actionType == 1">
               <resize-textarea maxlength="4000" ng-model="setItem.elseAction.action.message" placeholder="メッセージを入力してください"></resize-textarea>

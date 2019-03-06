@@ -147,6 +147,26 @@
             </label>
           </li>
 
+          <!-- チャットツリーを呼び出す -->
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM ?>" class="bt0">
+            <span class="require"><label>チャットツリー</label></span>
+            <?php
+            $canSelectScenario = isset($coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO];
+            ?>
+            <label id="tautomessage_select_diagram" style="display: inline-block;" <?php echo $canSelectScenario ? '' : 'class="commontooltip" data-text="こちらの機能はオプションの加入が必要です。"' ?>>
+              <?= $this->Form->input('t_chatbot_diagram_id', [
+                'type' => 'select',
+                'options' => $this->data['chatbotDiagram'],
+                'empty' => 'チャットツリーを選択してください',
+                'disabled' => !$canSelectScenario,
+              ], [
+                'default' => (!empty($this->data['TAutoMessage']['t_chatbot_diagram_id'])) ? $this->data['TAutoMessage']['t_chatbot_diagram_id'] : ''
+              ]) ?>
+            </label>
+            <?php if (!empty($errors['t_chatbot_diagram_id'])) echo "<pre class='error-message'>" . h($errors['t_chatbot_diagram_id'][0]) . "</pre>"; ?>
+          </li>
+          <!-- チャットツリーを呼び出す -->
+
           <!-- ウィジェット -->
           <li class="bt0" ng-show="action_type != <?= C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE ?>">
             <span class="require"><label>ウィジェット</label></span>
