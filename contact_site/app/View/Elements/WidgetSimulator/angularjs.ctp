@@ -494,6 +494,9 @@
         divElm.id = data.prefix + '_question';
         var html = $scope.simulatorSettings.createRadioButton(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        if (data.settings.radioStyle === '1') {
+          divElm.querySelector('li').classList.add('widthCustom');
+        }
         divElm.style.display = "";
         if( $scope.needsIcon() ) {
           //チャットボットのアイコンを表示する場合は
@@ -841,6 +844,9 @@
         divElm.id = data.prefix + '_question';
         var checkboxData = $scope.simulatorSettings.createCheckbox(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = checkboxData.html;
+        if (data.settings.checkboxStyle === '1') {
+          divElm.querySelector('li').classList.add('widthCustom');
+        }
         divElm.style.display = "";
         if( $scope.needsIcon() ) {
           gridElm = $scope.addIconImage( gridElm );
