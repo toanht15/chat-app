@@ -851,8 +851,8 @@
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
 
-        var checkboxTarget = $('#' + checkboxData.checkboxName + ' input[type="checkbox"]');
-        if (!data.settings.checkboxNoneBackground) {
+        if (data.settings.checkboxStyle === '1') {
+          var checkboxTarget = $('#' + checkboxData.checkboxName + ' input[type="checkbox"]');
           checkboxTarget.each(function() {
             if ($(this).prop('checked')) {
               $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
@@ -862,7 +862,7 @@
             if ($(this).prop('checked')) {
               $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
             } else {
-              if (data.settings.checkboxNoneBackground) {
+              if (data.settings.checkboxStyle !== '1') {
                 $(this).parent().css('background-color', 'transparent');
               } else {
                 $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireBackgroundColor);
