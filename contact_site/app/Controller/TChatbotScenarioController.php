@@ -1985,6 +1985,7 @@ sinclo@medialink-ml.co.jp
     $radio['variableName'] = $data->selection->variableName;
     $radio['message'] = $data->message;
     $radio['uiType'] = '3'; // radio button type
+    $radio['settings']['radioStyle'] = '2';
     $radio["settings"]["options"] = [];
     foreach ($data->selection->options as $option) {
       array_push($radio["settings"]["options"], $option);

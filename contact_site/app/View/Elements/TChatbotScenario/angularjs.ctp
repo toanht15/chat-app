@@ -535,7 +535,7 @@
         target.settings.customDesign.checkboxCheckmarkColor        = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBackgroundColor          = '#FFFFFF';
         target.settings.customDesign.radioActiveColor              = $scope.widget.settings.main_color;
-        target.settings.customDesign.radioBorderColor              = '#999';
+        target.settings.customDesign.radioBorderColor              = $scope.widget.settings.main_color;
         target.settings.customDesign.radioSelectionDistance        = '4';
         if (!displayStyle) {
           target.settings.customDesign.checkboxEntireBackgroundColor = '#FFFFFF';
@@ -738,7 +738,7 @@
             defaultColor = 4;
             break;
           case 'radioBorderColor':
-            defaultColor = '#999';
+            defaultColor = $scope.widget.settings.main_color;
             target.css('background-color', defaultColor);
             break;
         }
@@ -1242,6 +1242,10 @@
                     checkboxLabelTarget.css('background-color', 'transparent');
                   }
 
+                  if (hearing.settings.checkboxStyle === '1') {
+                    jscolor.installByClassName('jscolor');
+                  }
+
                   if (hearing.settings.checkboxCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   } else {
@@ -1258,6 +1262,9 @@
                 $timeout(function() {
                   $scope.$apply();
                 }).then(function() {
+                  if (hearing.settings.radioStyle === '1') {
+                    jscolor.installByClassName('jscolor');
+                  }
                   if (hearing.settings.radioCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   } else {
@@ -2765,9 +2772,14 @@
           $scope.setActionList[actionIndex].hearings[hearingIndex].settings.checkboxSeparator = '1';
         }
         // set default for customize design
-        if (uiType === '5' || uiType === '4' || uiType === '6' || uiType === '7' || uiType === '8' || uiType === '9') {
+        if (uiType === '3' || uiType === '4' || uiType === '5' || uiType === '6' || uiType === '7' || uiType === '8' || uiType === '9') {
           $scope.setActionList[actionIndex].hearings[hearingIndex] = this.setDefaultColorHearing(
               $scope.setActionList[actionIndex].hearings[hearingIndex]);
+          $timeout(function() {
+            $scope.$apply();
+          }).then(function() {
+            jscolor.installByClassName('jscolor');
+          }, 0);
         }
         // controll selection view of radio and pulldown
         if (uiType === '3' || uiType === '4') {
@@ -2792,8 +2804,8 @@
             selectionTarget.css('color', '#909090');
           } else {
             selectionTarget.css('color', '#000000');
-            setting.customDesign.radioBorderColor = '#999';
-            selectionTarget.css('background-color', '#999');
+            setting.customDesign.radioBorderColor = $scope.widget.settings.main_color;
+            selectionTarget.css('background-color', $scope.widget.settings.main_color);
           }
         }
         // checkbox
