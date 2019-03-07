@@ -246,7 +246,7 @@
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {top: 10px;left: 8px;}
       </style>
 
-      <style ng-if="hearings.uiType === '3' && hearings.settings.radioCustomDesign">
+      <style ng-if="hearings.uiType === '3'">
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label:before {background-color: {{hearings.settings.customDesign.radioBackgroundColor}} !important; border-color: {{hearings.settings.radioNoneBorder ? 'transparent' : hearings.settings.customDesign.radioBorderColor}} !important;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio:first-child {margin-top: {{widget.settings['btw_button_margin']}}px !important;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio {margin-top: {{hearings.settings.customDesign.radioSelectionDistance ? hearings.settings.customDesign.radioSelectionDistance : 4}}px !important;}
