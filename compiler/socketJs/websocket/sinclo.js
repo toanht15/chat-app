@@ -5835,6 +5835,7 @@
         };
       },
       createCogmoAttendBotMessage: function(cs, val, cName, isFeedbackMsg) {
+        common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
