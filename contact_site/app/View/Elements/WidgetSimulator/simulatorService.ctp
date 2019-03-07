@@ -764,7 +764,7 @@
           } else {
             style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' + data.settings.customDesign.radioBorderColor + '!important;}';
           }
-          if (data.settings.radioNoneBackground) {
+          if (data.settings.radioStyle !== '1') {
             style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
           } else {
             style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important;}';
@@ -928,7 +928,7 @@
               data.settings.customDesign.checkboxBorderColor + ';}';
         }
 
-        if (data.settings.checkboxNoneBackground) {
+        if (data.settings.checkboxStyle !== '1') {
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {background-color: transparent;}';
         } else {
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {padding: 8px 8px 8px 28px;}';
