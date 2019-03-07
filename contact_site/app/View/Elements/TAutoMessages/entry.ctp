@@ -146,7 +146,6 @@
               )) ?>
             </label>
           </li>
-
           <!-- チャットツリーを呼び出す -->
           <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM ?>" class="bt0">
             <span class="require"><label>チャットツリー</label></span>

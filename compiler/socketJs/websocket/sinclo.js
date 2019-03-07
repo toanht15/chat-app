@@ -5179,35 +5179,25 @@
         var html = '';
         var storedValueIsFound = false;
         html += '<div id="' + name + '">';
-        var style = '<style>';
         if (settings.radioCustomDesign) {
-          style += '#sincloBox ul#chatTalk #' + name +
-              ' sinclo-radio [type="radio"] + label:before {background-color: ' +
-              settings.customDesign.radioBackgroundColor + ' !important;}';
-          style += '#sincloBox ul#chatTalk #' + name +
-              ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
-              settings.customDesign.radioActiveColor + ' !important;}';
+          var style = '<style>';
+          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {background-color: ' + settings.customDesign.radioBackgroundColor + ' !important;}';
+          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {background: ' + settings.customDesign.radioActiveColor + ' !important;}';
           if (settings.radioNoneBorder) {
-            style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
           } else {
-            style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"] + label:before {border-color: ' +
-                settings.customDesign.radioBorderColor + '!important;}';
+            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {border-color: ' + settings.customDesign.radioBorderColor + '!important;}';
           }
+          style += '</style>';
+          html += style;
         }
-        style += '</style>';
-        html += style;
         settings.options.forEach(function(option, index) {
           html += '<sinclo-radio style="display: block;">';
           if (storedValue === option) {
-            html += '<input type="radio" name="' + name + '" value="' + option +
-                '" id="' + name + index +
-                '" class="sinclo-chat-radio" checked="checked">';
+            html += '<input type="radio" name="' + name + '" value="' + option + '" id="' + name + index + '" class="sinclo-chat-radio" checked="checked">';
             storedValueIsFound = true;
           } else {
-            html += '<input type="radio" name="' + name + '" value="' + option +
-                '" id="' + name + index + '" class="sinclo-chat-radio">';
+            html += '<input type="radio" name="' + name + '" value="' + option + '" id="' + name + index + '" class="sinclo-chat-radio">';
           }
           html += '<label for="' + name + index + '">' + option + '</label>';
           html += '</sinclo-radio>';
@@ -5292,24 +5282,36 @@
         return html;
       },
       createCarouselHtml: function(settings, index, storedValue) {
-        var style = sinclo.chatApi.createCarouselStyle(settings, '#carousel-container' + index);
+        var style = sinclo.chatApi.createCarouselStyle(settings,
+            '#carousel-container' + index);
         var carouselSize = sinclo.chatApi.getCarouselSize(settings);
         var thumbnailWidth = carouselSize.width + 2;
         var containerWidth = carouselSize.containerWidth + 2;
-        var imgWidth = settings.outCarouselNoneBorder ? carouselSize.width + 2 : carouselSize.width;
+        var imgWidth = settings.outCarouselNoneBorder ?
+            carouselSize.width + 2 :
+            carouselSize.width;
         var name = 'sinclo-carousel' + index;
         var html = '';
 
         html += style;
-        html+= '<div class="carousel-container" id="carousel-container' + index + '" style="width: ' + containerWidth + 'px; margin-top: 6px;">';
+        html += '<div class="carousel-container" id="carousel-container' +
+            index + '" style="width: ' + containerWidth +
+            'px; margin-top: 6px;">';
 
         html += '<div class="single-item" id="' + name + '">';
         settings.images.forEach(function(image, key) {
           html += '<div style="width: ' + containerWidth + 'px">';
-          html+= '<div class="thumbnail" id="slide_' + name + '_image' + key + '" data-answer="' + image.answer + '" style="cursor: pointer; margin: auto; display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
-          html+= '<img id="img' + name + '_image' + key + '" alt="画像" data-answer="' + image.answer + '" style="cursor: pointer; height: ' + carouselSize.height + 'px; width: ' + imgWidth + 'px;" src="' + image.url + '" />';
+          html += '<div class="thumbnail" id="slide_' + name + '_image' + key +
+              '" data-answer="' + image.answer +
+              '" style="cursor: pointer; margin: auto; display: flex; flex-direction: column; background-color: #FFFFFF; width: ' +
+              thumbnailWidth + 'px;">';
+          html += '<img id="img' + name + '_image' + key +
+              '" alt="画像" data-answer="' + image.answer +
+              '" style="cursor: pointer; height: ' + carouselSize.height +
+              'px; width: ' + imgWidth + 'px;" src="' + image.url + '" />';
           html += '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
-          html+= '<div class="title"><strong style="font-weight: bold;">' + image.title + '</strong></div>';
+          html += '<div class="title"><strong style="font-weight: bold;">' +
+              image.title + '</strong></div>';
           html += '<p class="sub-title">' + image.subTitle + '</p>';
           html += '</div></div></div>';
         });
@@ -7622,7 +7624,6 @@
                     message.call_automessage_id,
                     false,
                     message.diagram_id);
-
                 sinclo.trigger.processing = false;
               }
             }, ret);
@@ -9447,6 +9448,9 @@
         params.message = self._replaceVariable(params.message);
         if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum),
             params.categoryNum)) {
+          var name = (sincloInfo.widget.showAutomessageName === 2 ?
+              '' :
+              sincloInfo.widget.subTitle);
           sinclo.chatApi.addRadioButton('sinclo_re', params.message, params.settings, params.storedValue);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum),
               params.categoryNum);
@@ -9550,6 +9554,24 @@
               params.categoryNum);
           sinclo.chatApi.scDown();
           self._putHearingButtonUI(params, callback);
+        } else {
+          callback();
+        }
+      },
+      _showCheckbox: function(params, callback) {
+        console.log(
+            '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW CHECKBOX <<<<<<<<<<<<<<<<<<<<<<<<<<<');
+        var self = sinclo.scenarioApi;
+        params.message = self._replaceVariable(params.message);
+        if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum),
+            params.categoryNum)) {
+          sinclo.chatApi.addCheckbox('sinclo_re', params.message,
+              params.settings, params.storedValue);
+          self._handleChatTextArea(params.type);
+          self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum),
+              params.categoryNum);
+          sinclo.chatApi.scDown();
+          self._putHearingCheckbox(params, callback);
         } else {
           callback();
         }
@@ -9782,62 +9804,6 @@
               categoryNum: data.categoryNum,
               showTextarea: data.showTextArea,
               message: JSON.stringify(buttonData)
-            };
-        if (self._disallowSaveing()) {
-          self._pushScenarioMessage(storeObj, function(item) {
-            self._saveMessage(item.data);
-            callback();
-          });
-        } else {
-          self._storeMessageToDB([storeObj], callback);
-        }
-      },
-      _putHearingButtonUI: function(data, callback) {
-        var buttonData = {
-          message: data.message,
-          settings: data.settings
-        };
-        var self = sinclo.scenarioApi,
-            storeObj = {
-              scenarioId: self.get(self._lKey.scenarioId),
-              type: data.type,
-              uiType: data.uiType,
-              messageType: self.get(self._lKey.scenarioMessageType),
-              sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
-              requireCv: self._bulkHearing.isInMode() ||
-                  (data.type === self._actionType.hearing &&
-                      self._hearing._cvIsEnable()),
-              categoryNum: data.categoryNum,
-              showTextarea: data.showTextArea,
-              message: JSON.stringify(buttonData)
-            };
-        if (self._disallowSaveing()) {
-          self._pushScenarioMessage(storeObj, function(item) {
-            self._saveMessage(item.data);
-            callback();
-          });
-        } else {
-          self._storeMessageToDB([storeObj], callback);
-        }
-      },
-      _putHearingCheckbox: function(data, callback) {
-        var checkboxData = {
-          message: data.message,
-          settings: data.settings
-        };
-        var self = sinclo.scenarioApi,
-            storeObj = {
-              scenarioId: self.get(self._lKey.scenarioId),
-              type: data.type,
-              uiType: data.uiType,
-              messageType: self.get(self._lKey.scenarioMessageType),
-              sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
-              requireCv: self._bulkHearing.isInMode() ||
-                  (data.type === self._actionType.hearing &&
-                      self._hearing._cvIsEnable()),
-              categoryNum: data.categoryNum,
-              showTextarea: data.showTextArea,
-              message: JSON.stringify(checkboxData)
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
@@ -10687,7 +10653,6 @@
             case '3': // ラジオボタン
               self._parent.set(self._parent._lKey.sendCustomerMessageType, 33);
               self._parent.set(self._parent._lKey.scenarioMessageType, 55);
-
               var params = {
                 type: '2',
                 uiType: uiType,
@@ -10780,6 +10745,22 @@
                     self._getCurrentHearingProcess().variableName);
               }
               self._parent._showButtonUI(params, callback);
+              break;
+            case '9': // チェックボックス
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 53);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 52);
+              var params = {
+                type: '2',
+                uiType: uiType,
+                message: message,
+                settings: settings,
+                categoryNum: self._getCurrentSeq()
+              };
+              if (self._parent._getCurrentScenario().restore) {
+                params.storedValue = self._parent._getSavedVariable(
+                    self._getCurrentHearingProcess().variableName);
+              }
+              self._parent._showCheckbox(params, callback);
               break;
             default:
               self._parent.set(self._parent._lKey.sendCustomerMessageType, 12);

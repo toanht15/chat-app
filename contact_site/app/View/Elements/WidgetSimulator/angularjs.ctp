@@ -498,6 +498,9 @@
         divElm.id = data.prefix + '_question';
         var html = $scope.simulatorSettings.createRadioButton(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        if (data.settings.radioStyle === '1') {
+          divElm.querySelector('li').classList.add('widthCustom');
+        }
         divElm.style.display = "";
         if( $scope.needsIcon() ) {
           //チャットボットのアイコンを表示する場合は
@@ -844,8 +847,11 @@
         $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
-        var html = $scope.simulatorSettings.createCheckbox(data);
-        divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        var checkboxData = $scope.simulatorSettings.createCheckbox(data);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = checkboxData.html;
+        if (data.settings.checkboxStyle === '1') {
+          divElm.querySelector('li').classList.add('widthCustom');
+        }
         divElm.style.display = "";
         if( $scope.needsIcon() ) {
           gridElm = $scope.addIconImage( gridElm );
@@ -855,6 +861,27 @@
 
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
+
+        if (data.settings.checkboxStyle === '1') {
+          var checkboxTarget = $('#' + checkboxData.checkboxName + ' input[type="checkbox"]');
+          checkboxTarget.each(function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+            }
+          });
+          checkboxTarget.on('change', function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+            } else {
+              if (data.settings.checkboxStyle !== '1') {
+                $(this).parent().css('background-color', 'transparent');
+              } else {
+                $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireBackgroundColor);
+              }
+            }
+          });
+        }
+
         self.autoScroll();
       };
 

@@ -585,7 +585,7 @@
                   echo "";
                 }
             ?></span>
-            <?php if( is_numeric($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count']) ): ?>
+            <?php if( !empty($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count']) ): ?>
               <a id = "moveHistory" class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($defaultHistoryList['THistory']['id'])?>')" >(移動履歴)</a>
             <?php endif; ?></dd>
           </li>

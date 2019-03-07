@@ -757,25 +757,37 @@
           var style = '<style>';
           style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' + data.settings.customDesign.radioBackgroundColor + ' !important;}';
           style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' + data.settings.customDesign.radioActiveColor + ' !important;}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio:first-of-type {margin-top: 4px !important}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio {margin-top: ' + data.settings.customDesign.radioSelectionDistance + 'px !important;}';
           if (data.settings.radioNoneBorder) {
             style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
           } else {
             style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' + data.settings.customDesign.radioBorderColor + '!important;}';
           }
+          if (data.settings.radioStyle !== '1') {
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
+          } else {
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important;}';
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {top: 13px !important; left: 12px !important;}';
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {top: 9px !important; left: 8px !important;}';
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: ' + data.settings.customDesign.radioEntireBackgroundColor + ';}';
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked ~ label {background-color: ' + data.settings.customDesign.radioEntireActiveColor + ';}';
+          }
+
           style += '</style>';
           html += style;
         }
         angular.forEach(data.options, function(option, key) {
           if (!option || option == '') return false;
           if (data.isRestore && option === data.oldValue) {
-            html += '<span class=\'sinclo-radio\'><input type=\'radio\' checked=\'checked\' name=\'' + radioName + '\' id=\'' +
+            html += '<span style="display: block;" class=\'sinclo-radio\'><input type=\'radio\' checked=\'checked\' name=\'' + radioName + '\' id=\'' +
                 radioName + '-' + key + '\' class=\'sinclo-chat-radio\' value=\'' + option + '\'>';
-            html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span><br>';
+            html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span>';
             hasOldOptionValue = true;
           } else {
-            html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
+            html += '<span style="display: block" class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
                 key + '\' class=\'sinclo-chat-radio\' value=\'' + option + '\'>';
-            html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span><br>';
+            html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span>';
           }
         });
         html += '</select>';
@@ -897,7 +909,7 @@
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox .checkmark {position: absolute;top: 2px;left: 0;height: ' + this.re_text_size + 'px;width: ' + this.re_text_size + 'px; background-color: ' +
+            ' .sinclo-checkbox .checkmark {position: absolute;top: 2px;left: 0px;height: ' + this.re_text_size + 'px;width: ' + this.re_text_size + 'px; background-color: ' +
             data.settings.customDesign.checkboxBackgroundColor + '}';
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (this.re_text_size - 10) + 'px;top: ' + (this.re_text_size - 13) + 'px;width: 3px;height: 6px;border: solid ' + data.settings.customDesign.checkboxCheckmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
@@ -907,7 +919,7 @@
         style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox input:hover ~ .checkmark {background-color: ' +
             data.settings.customDesign.checkboxActiveColor + '}';
         style += '#sincloBox #' + checkboxName +
-            ' span.ok-button {width: 100px; height: 30px; line-height: 30px; cursor: pointer; margin: auto; display: block; text-align: center; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + this._settings['chat_send_btn_background_color'] + '; color: ' + this._settings['chat_send_btn_text_color'] + ';}';
+            ' span.ok-button {width: 100px; height: 30px; line-height: 30px; cursor: pointer; margin: auto; margin-top: 10px; display: block; text-align: center; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + this._settings['chat_send_btn_background_color'] + '; color: ' + this._settings['chat_send_btn_text_color'] + ';}';
         style += '#sincloBox #' + checkboxName + '{display: table;}';
         if (data.settings.checkboxNoneBorder) {
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {border: none;}';
@@ -915,13 +927,21 @@
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {border: 1px solid ' +
               data.settings.customDesign.checkboxBorderColor + ';}';
         }
+
+        if (data.settings.checkboxStyle !== '1') {
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {background-color: transparent;}';
+        } else {
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {padding: 8px 8px 8px 28px;}';
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {top: 10px;left: 8px; }';
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {background-color: ' +
+              data.settings.customDesign.checkboxEntireBackgroundColor + ';}';
+        }
         if (data.message) {
           style += '#sincloBox #' + checkboxName + ' {margin-top: 8px}';
-
         }
         style += '</style>';
 
-        var html = '<div id="' + checkboxName + '" data-separator="' + data.settings.checkboxSeparator + '">';
+        var html = '<div id="' + checkboxName + '" style="display: block;" data-separator="' + data.settings.checkboxSeparator + '">';
         html += style;
         if (data.oldValue) {
           var oldMessages = data.oldValue.split(separator);
@@ -956,8 +976,10 @@
         }
         html += '</div>';
 
-
-        return messageHtml + html;
+        return {
+          html: messageHtml + html,
+          checkboxName: checkboxName
+        };
       },
 
       getCheckboxSeparator: function(separatorType) {
