@@ -188,7 +188,7 @@
       //ng-classが肥大化してるので対策
       $scope.classNameChecker = {
         resultClass: {},
-        checkMaster: function(className) {
+        checkMaster: function(className, widthCustomize) {
           // 初期化
           this.resultClass = {};
           var targetArray = className.split(',');
@@ -210,6 +210,11 @@
 
             }
           }
+
+          if (widthCustomize) {
+            this.resultClass['w95'] = true;
+          }
+
           return this.resultClass;
         },
         notNoneChecker: function() {
@@ -531,7 +536,7 @@
         target.settings.customDesign.checkboxCheckmarkColor        = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBackgroundColor          = '#FFFFFF';
         target.settings.customDesign.radioActiveColor              = $scope.widget.settings.main_color;
-        target.settings.customDesign.radioBorderColor              = '#999';
+        target.settings.customDesign.radioBorderColor              = $scope.widget.settings.main_color;
         target.settings.customDesign.radioSelectionDistance        = '4';
         if (!displayStyle) {
           target.settings.customDesign.checkboxEntireBackgroundColor = '#FFFFFF';
@@ -734,7 +739,7 @@
             defaultColor = 4;
             break;
           case 'radioBorderColor':
-            defaultColor = '#999';
+            defaultColor = $scope.widget.settings.main_color;
             target.css('background-color', defaultColor);
             break;
         }
@@ -805,29 +810,14 @@
       $scope.watchActionList = [];
       $scope.beginData = null;
       $scope.$watchCollection('setActionList', function(newObject, oldObject) {
-
-        // 編集されたことを検知する
-        if (!$scope.changeFlg && newObject !== oldObject) {
-          $scope.changeFlg = true;
-        } else if($scope.beginData === newObject) {
-          $scope.changeFlg = false;
-        }
-
-        try {
-          if(!$scope.beginData || Object.keys($scope.beginData).length > 0) {
-            $scope.beginData = newObject;
-          }
-        } catch(e) {
-          $scope.beginData = newObject;
-        }
-
-
         $timeout(function() {
           $scope.$apply();
         }).then(function() {
           angular.forEach($scope.setActionList, $scope.watchSetActionList);
         });
       });
+
+      $(document).on('keyup', "#tchatbotscenario_form_action_body input,#tchatbotscenario_form_action_body textarea", function(e) {$scope.changeFlg = true;});
 
       $scope.bulkHearingInputMap = {
         1: '会社名',
@@ -890,19 +880,7 @@
           });
           if (typeof newObject === 'undefined') return;
           // 編集されたことを検知する
-          if (!$scope.changeFlg && newObject !== oldObject) {
-            $scope.changeFlg = true;
-          } else if($scope.beginData === newObject) {
-            $scope.changeFlg = false;
-          }
 
-          try {
-            if(!$scope.beginData || Object.keys($scope.beginData).length > 0) {
-              $scope.beginData = newObject;
-            }
-          } catch(e) {
-            $scope.beginData = newObject;
-          }
 
           // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
           var variables = searchObj(newObject, /^variableName$/);
@@ -937,8 +915,16 @@
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
               if(document.getElementById('action' + index + '-' + hearingIndex + '_message')) {
-                document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = $scope.widget.createMessage(
+                var addHtml = $scope.widget.createMessage(
                     hearing.message, null, null, (hearing.uiType === '7'));
+                if(addHtml.length === 0 && (hearing.uiType === '8' || hearing.uiType === '9')) {
+                  addHtml = '<span class="sinclo-text-line"></span>';
+                }
+                document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = addHtml;
+              } else if (hearing.uiType === '7') {
+                var addHtml = $scope.widget.createMessage(
+                    hearing.message, null, hearing.settings.customDesign.messageAlign, (hearing.uiType === '7'));
+                $('.action' + index + '_button' + hearingIndex).find('.details').html(addHtml);
               }
               if (hearing.uiType === '3') {
                 $timeout(function() {
@@ -1258,6 +1244,10 @@
                     checkboxLabelTarget.css('background-color', 'transparent');
                   }
 
+                  if (hearing.settings.checkboxStyle === '1') {
+                    jscolor.installByClassName('jscolor');
+                  }
+
                   if (hearing.settings.checkboxCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   } else {
@@ -1274,6 +1264,9 @@
                 $timeout(function() {
                   $scope.$apply();
                 }).then(function() {
+                  if (hearing.settings.radioStyle === '1') {
+                    jscolor.installByClassName('jscolor');
+                  }
                   if (hearing.settings.radioCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   } else {
@@ -1324,7 +1317,7 @@
               0) {
             angular.forEach(newObject.conditionList, function(condition, conditionIndex) {
               if (!condition.matchValuePattern) {
-                condition.matchValuePattern = '1';
+                condition.matchValuePattern = '2';
               }
               if (condition.actionType == '1' &&
                   document.getElementById('action' + index + '-' + conditionIndex + '_message')) {
@@ -1723,13 +1716,13 @@
         var actionType = $scope.setActionList[actionStep].actionType;
 
         if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
-          var src = $scope.actionList[actionType].default.hearings[0];
+          var src = angular.copy($scope.actionList[actionType].default.hearings[0]);
           src = this.setDefaultColorHearing(src);
           var target = $scope.setActionList[actionStep].hearings;
           src.inputType = src.inputType.toString();
           src.uiType = src.uiType.toString();
           src.settings.options = [""];
-          target.splice(listIndex + 1, 0, angular.copy(src));
+          target.splice(listIndex + 1, 0, src);
           this.controllHearingSettingView(actionStep);
 
         } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
@@ -2781,9 +2774,14 @@
           $scope.setActionList[actionIndex].hearings[hearingIndex].settings.checkboxSeparator = '1';
         }
         // set default for customize design
-        if (uiType === '5' || uiType === '4' || uiType === '6' || uiType === '7' || uiType === '8' || uiType === '9') {
+        if (uiType === '3' || uiType === '4' || uiType === '5' || uiType === '6' || uiType === '7' || uiType === '8' || uiType === '9') {
           $scope.setActionList[actionIndex].hearings[hearingIndex] = this.setDefaultColorHearing(
               $scope.setActionList[actionIndex].hearings[hearingIndex]);
+          $timeout(function() {
+            $scope.$apply();
+          }).then(function() {
+            jscolor.installByClassName('jscolor');
+          }, 0);
         }
         // controll selection view of radio and pulldown
         if (uiType === '3' || uiType === '4') {
@@ -2808,8 +2806,8 @@
             selectionTarget.css('color', '#909090');
           } else {
             selectionTarget.css('color', '#000000');
-            setting.customDesign.radioBorderColor = '#999';
-            selectionTarget.css('background-color', '#999');
+            setting.customDesign.radioBorderColor = $scope.widget.settings.main_color;
+            selectionTarget.css('background-color', $scope.widget.settings.main_color);
           }
         }
         // checkbox
