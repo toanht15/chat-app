@@ -21,7 +21,7 @@
       <?= $this->Form->end(); ?>
     </div>
     <div id="diagrams_simulator_btn">
-      シミュレータを起動
+      <span class="btn-shadow blueBtn" ng-click="main.openSimulator()">シミュレーターを起動</span>
     </div>
   </div>
   <div id="canvas_scale_controller">

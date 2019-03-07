@@ -1567,7 +1567,44 @@
       };
 
       return extensions[extension] || extensions['file'];
-    }
+    },
+
+      /* ===============
+         diagram methods
+         =============== */
+
+      createBranchRadioMessage: function(nodeId, message, selection, labels) {
+        var messageHtml = this.createMessage(message, nodeId);
+        var prefix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
+        var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+        var radioName = prefix + 'sinclo-radio-' + index;
+        var hasOldOptionValue = false;
+        // style
+        var html = '<div id="' + radioName + '">';
+        if (false) {
+          var style = '<style>';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' + data.settings.customDesign.radioBackgroundColor + ' !important;}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' + data.settings.customDesign.radioActiveColor + ' !important;}';
+          if (data.settings.radioNoneBorder) {
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+          } else {
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' + data.settings.customDesign.radioBorderColor + '!important;}';
+          }
+          style += '</style>';
+          html += style;
+        }
+        angular.forEach(labels, function(option, key) {
+          if (!option || option == '') return false;
+          html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
+              key + '\' class=\'sinclo-chat-radio\' value=\'' + option + '\' data-nid=\'' + nodeId +
+                    '\' data-next-nid=\'' + selection[nodeId] + '\'>';
+          html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span><br>';
+        });
+        html += '</select>';
+        html += '</div>';
+
+        return messageHtml + html;
+      }
 
   };
 });
