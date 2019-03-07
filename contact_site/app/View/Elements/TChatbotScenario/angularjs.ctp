@@ -492,7 +492,7 @@
         }
       };
 
-      this.setDefaultColorHearing = function(target) {
+      this.setDefaultColorHearing = function(target, displayStyle) {
         target.settings.customDesign.textColor                     = $scope.widget.settings.description_text_color;
         target.settings.customDesign.borderColor                   = $scope.widget.settings.main_color;
         target.settings.customDesign.backgroundColor               = '#FFFFFF';
@@ -525,18 +525,20 @@
             0.5);
         target.settings.customDesign.buttonUIBorderColor           = '#E3E3E3';
         target.settings.customDesign.checkboxBackgroundColor       = '#FFFFFF';
-        target.settings.customDesign.checkboxEntireBackgroundColor = '#FFFFFF';
         target.settings.customDesign.checkboxActiveColor           = '#FFFFFF';
-        target.settings.customDesign.checkboxEntireActiveColor     = '#FFFFFF';
         target.settings.customDesign.checkboxSelectionDistance     = '4';
         target.settings.customDesign.checkboxBorderColor           = $scope.widget.settings.main_color;
         target.settings.customDesign.checkboxCheckmarkColor        = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBackgroundColor          = '#FFFFFF';
-        target.settings.customDesign.radioEntireBackgroundColor    = '#FFFFFF';
         target.settings.customDesign.radioActiveColor              = $scope.widget.settings.main_color;
-        target.settings.customDesign.radioEntireActiveColor        = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBorderColor              = '#999';
         target.settings.customDesign.radioSelectionDistance        = '4';
+        if (!displayStyle) {
+          target.settings.customDesign.checkboxEntireBackgroundColor = '#FFFFFF';
+          target.settings.customDesign.checkboxEntireActiveColor     = '#FFFFFF';
+          target.settings.customDesign.radioEntireBackgroundColor    = '#FFFFFF';
+          target.settings.customDesign.radioEntireActiveColor        = $scope.widget.settings.main_color;
+        }
 
         return target;
       };
@@ -1221,12 +1223,16 @@
               }
               // checkbox customize
               if (hearing.uiType === '9') {
+                if (!hearing.settings.checkboxStyle) {
+                  hearing.settings.checkboxStyle = '2';
+                }
+
                 $timeout(function() {
                   $scope.$apply();
                 }).then(function() {
                   var checkboxTarget = $('.action' + index + '_checkbox' + hearingIndex + ' input[type="checkbox"]');
                   var checkboxLabelTarget = $('.action' + index + '_checkbox' + hearingIndex + ' .sinclo-checkbox');
-                  if (!hearing.settings.checkboxNoneBackground) {
+                  if (hearing.settings.checkboxStyle === '1') {
                     checkboxLabelTarget.css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
                     checkboxTarget.each(function() {
                       if ($(this).prop('checked')) {
@@ -1235,13 +1241,13 @@
                     });
                     checkboxTarget.on('change', function() {
                       if ($(this).prop('checked')) {
-                        if (hearing.settings.checkboxNoneBackground) {
+                        if (hearing.settings.checkboxStyle !== '1') {
                           $(this).parent().css('background-color', 'transparent');
                         } else {
                           $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
                         }
                       } else {
-                        if (hearing.settings.checkboxNoneBackground) {
+                        if (hearing.settings.checkboxStyle !== '1') {
                           $(this).parent().css('background-color', 'transparent');
                         } else {
                           $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
@@ -1255,20 +1261,23 @@
                   if (hearing.settings.checkboxCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   } else {
-                    self.setDefaultColorHearing($scope.setActionList[index].hearings[hearingIndex]);
+                    self.setDefaultColorHearing($scope.setActionList[index].hearings[hearingIndex], true);
                   }
                 });
               }
 
               // radio button customize
               if (hearing.uiType === '3') {
+                if (!hearing.settings.radioStyle) {
+                  hearing.settings.radioStyle = '2';
+                }
                 $timeout(function() {
                   $scope.$apply();
                 }).then(function() {
                   if (hearing.settings.radioCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   } else {
-                    self.setDefaultColorHearing($scope.setActionList[index].hearings[hearingIndex]);
+                    self.setDefaultColorHearing($scope.setActionList[index].hearings[hearingIndex], true);
                   }
                 });
               }
@@ -2757,6 +2766,7 @@
         if (!$scope.setActionList[actionIndex].hearings[hearingIndex].inputType) {
           $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = '1';
         }
+
         // set default settings
         if (!$scope.setActionList[actionIndex].hearings[hearingIndex].settings || !$scope.setActionList[actionIndex].hearings[hearingIndex].settings.images) {
           $scope.setActionList[actionIndex].hearings[hearingIndex].settings = $scope.actionList[2].default.hearings[0].settings;
@@ -2785,6 +2795,87 @@
             self.controllListView(actionType, target, target);
           }, 0);
         }
+      };
+
+      this.handleNoneBorder = function(actionIndex, hearingIndex) {
+        var setting = $scope.setActionList[actionIndex].hearings[hearingIndex].settings;
+        // radio button
+        if ($scope.setActionList[actionIndex].hearings[hearingIndex].uiType === '3') {
+          var selectionTarget = $('#action' + actionIndex + '_button' + hearingIndex + '_radioBorderColor');
+          if (setting.radioNoneBorder) {
+            setting.customDesign.radioBorderColor = 'なし';
+            selectionTarget.css('background-color', '#FFFFFF');
+            selectionTarget.css('color', '#909090');
+          } else {
+            selectionTarget.css('color', '#000000');
+            setting.customDesign.radioBorderColor = '#999';
+            selectionTarget.css('background-color', '#999');
+          }
+        }
+        // checkbox
+        if ($scope.setActionList[actionIndex].hearings[hearingIndex].uiType === '9') {
+          var selectionTarget = $('#action' + actionIndex + '_button' + hearingIndex + '_checkboxBorderColor');
+          if (setting.checkboxNoneBorder) {
+            setting.customDesign.checkboxBorderColor = 'なし';
+            selectionTarget.css('background-color', '#FFFFFF');
+            selectionTarget.css('color', '#909090');
+          } else {
+            selectionTarget.css('color', '#000000');
+            setting.customDesign.checkboxBorderColor = $scope.widget.settings.main_color;
+            selectionTarget.css('background-color', $scope.widget.settings.main_color);
+          }
+        }
+        // button ui
+        if ($scope.setActionList[actionIndex].hearings[hearingIndex].uiType === '8') {
+          var selectionTarget = $('#action' + actionIndex + '_button' + hearingIndex + '_buttonUIBorderColor');
+          if (setting.outButtonUINoneBorder) {
+            setting.customDesign.buttonUIBorderColor = 'なし';
+            selectionTarget.css('background-color', '#FFFFFF');
+            selectionTarget.css('color', '#909090');
+          } else {
+            selectionTarget.css('color', '#000000');
+            setting.customDesign.buttonUIBorderColor = '#E3E3E3';
+            selectionTarget.css('background-color', '#E3E3E3');
+          }
+        }
+        // confirm
+        if ($scope.setActionList[actionIndex].hearings[hearingIndex].uiType === '7') {
+          var selectionTarget = $('#action' + actionIndex + '_button' + hearingIndex + '_buttonBorderColor');
+          if (setting.customDesign.outButtonNoneBorder) {
+            setting.customDesign.buttonBorderColor = 'なし';
+            selectionTarget.css('background-color', '#FFFFFF');
+            selectionTarget.css('color', '#909090');
+          } else {
+            selectionTarget.css('color', '#000000');
+            setting.customDesign.buttonBorderColor = '#E3E3E3';
+            selectionTarget.css('background-color', '#E3E3E3');
+          }
+        }
+        // carousel
+        if ($scope.setActionList[actionIndex].hearings[hearingIndex].uiType === '6') {
+          var outTarget = $('#action' + actionIndex + '_carousel' + hearingIndex + '_outBorderColor');
+          if (setting.outCarouselNoneBorder) {
+            setting.customDesign.outBorderColor = 'なし';
+            outTarget.css('background-color', '#FFFFFF');
+            outTarget.css('color', '#909090');
+          } else {
+            outTarget.css('color', '#000000');
+            setting.customDesign.outBorderColor = '#E8E7E0';
+            outTarget.css('background-color', '#E8E7E0');
+          }
+
+          var inTarget = $('#action' + actionIndex + '_carousel' + hearingIndex + '_inBorderColor');
+          if (setting.inCarouselNoneBorder) {
+            setting.customDesign.inBorderColor = 'なし';
+            inTarget.css('background-color', '#FFFFFF');
+            inTarget.css('color', '#909090');
+          } else {
+            inTarget.css('color', '#000000');
+            setting.customDesign.inBorderColor = '#E8E7E0';
+            inTarget.css('background-color', '#E8E7E0');
+          }
+        }
+
       };
 
       // controll hearing option view when page load
