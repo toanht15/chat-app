@@ -2310,7 +2310,7 @@
           this.chatApi.scDown(obj);
           return false;
         }
-
+        
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
           cn = 'sinclo_re';
           if (window.sincloInfo.widget.showAutomessageName === 2) {

@@ -1264,6 +1264,13 @@
                 if (!hearing.settings.radioStyle) {
                   hearing.settings.radioStyle = '2';
                 }
+
+                if (typeof hearing.settings.radioCustomDesign === 'undefined') {
+                  hearing.settings.radioCustomDesign = true;
+                  hearing.settings.customDesign.radioBorderColor = '#999';
+                  hearing.settings.customDesign.radioActiveColor = $scope.widget.settings.main_color;
+                }
+
                 $timeout(function() {
                   $scope.$apply();
                 }).then(function() {

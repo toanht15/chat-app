@@ -754,16 +754,19 @@
         // style
         var html = '<div id="' + radioName + '">';
         var style = '<style>';
-        if (data.settings.radioCustomDesign) {
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' + data.settings.customDesign.radioBackgroundColor + ' !important;}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' + data.settings.customDesign.radioActiveColor + ' !important;}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio:first-of-type {margin-top: 4px !important}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio {margin-top: ' + data.settings.customDesign.radioSelectionDistance + 'px !important;}';
-          if (data.settings.radioNoneBorder) {
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
-          } else {
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' + data.settings.customDesign.radioBorderColor + '!important;}';
-          }
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' +
+            data.settings.customDesign.radioBackgroundColor + ' !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' +
+            data.settings.customDesign.radioActiveColor + ' !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio:first-of-type {margin-top: 4px !important}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio {margin-top: ' +
+            data.settings.customDesign.radioSelectionDistance + 'px !important;}';
+        if (data.settings.radioNoneBorder) {
+          style += '#sincloBox #' + radioName +
+              ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+        } else {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' +
+              data.settings.customDesign.radioBorderColor + '!important;}';
         }
 
         if (data.settings.radioStyle !== '1') {

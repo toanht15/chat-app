@@ -922,6 +922,7 @@ $config['chatbotScenarioActionList'] = array(
               'radioBackgroundColor'          => '',
               'radioEntireBackgroundColor'    => '',
               'radioEntireActiveColor'        => '',
+              'radioActiveColor'              => '',
               'radioSelectionDistance'        => '4',
               'radioBorderColor'              => '',
             ),
