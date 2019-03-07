@@ -192,7 +192,7 @@
       //ng-classが肥大化してるので対策
       $scope.classNameChecker = {
         resultClass: {},
-        checkMaster: function(className) {
+        checkMaster: function(className, widthCustomize) {
           // 初期化
           this.resultClass = {};
           var targetArray = className.split(',');
@@ -214,6 +214,11 @@
 
             }
           }
+
+          if (widthCustomize) {
+            this.resultClass['w95'] = true;
+          }
+
           return this.resultClass;
         },
         notNoneChecker: function() {
