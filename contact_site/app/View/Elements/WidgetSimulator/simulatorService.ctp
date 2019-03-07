@@ -753,8 +753,8 @@
         var hasOldOptionValue = false;
         // style
         var html = '<div id="' + radioName + '">';
+        var style = '<style>';
         if (data.settings.radioCustomDesign) {
-          var style = '<style>';
           style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' + data.settings.customDesign.radioBackgroundColor + ' !important;}';
           style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' + data.settings.customDesign.radioActiveColor + ' !important;}';
           style += '#sincloBox #' + radioName + ' span.sinclo-radio:first-of-type {margin-top: 4px !important}';
@@ -764,19 +764,19 @@
           } else {
             style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' + data.settings.customDesign.radioBorderColor + '!important;}';
           }
-          if (data.settings.radioStyle !== '1') {
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
-          } else {
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important;}';
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {top: 13px !important; left: 12px !important;}';
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {top: 9px !important; left: 8px !important;}';
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: ' + data.settings.customDesign.radioEntireBackgroundColor + ';}';
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked ~ label {background-color: ' + data.settings.customDesign.radioEntireActiveColor + ';}';
-          }
-
-          style += '</style>';
-          html += style;
         }
+
+        if (data.settings.radioStyle !== '1') {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
+        } else {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important;}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {top: 13px !important; left: 12px !important;}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {top: 9px !important; left: 8px !important;}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: ' + data.settings.customDesign.radioEntireBackgroundColor + ';}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked ~ label {background-color: ' + data.settings.customDesign.radioEntireActiveColor + ';}';
+        }
+        style += '</style>';
+        html += style;
         angular.forEach(data.options, function(option, key) {
           if (!option || option == '') return false;
           if (data.isRestore && option === data.oldValue) {
