@@ -13,9 +13,9 @@ eventEmitter.setMaxListeners(50);
  * @type {module.CogmoAttendAPICaller}
  */
 module.exports = class CogmoAttendAPICaller extends APICaller {
-  constructor() {
+  constructor(systemUUID) {
     super();
-    this.systemUUID = 'c0d70609-e31e-4ba0-ac59-d26701f3402c';
+    this.systemUUID = systemUUID;
     super.url = 'https://attend.cogmo.jp/api/v2/conversation/' + this.systemUUID;
     super.method = 'post';
     this.messageType = {

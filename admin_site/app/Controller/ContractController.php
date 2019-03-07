@@ -385,6 +385,7 @@ class ContractController extends AppController
       $coreSetting = json_decode($companyEditData['MCompany']['core_settings'], TRUE);
       $saveData['MCompany']['options']['hideRealtimeMonitor'] = !empty($coreSetting['hideRealtimeMonitor']) ? $coreSetting['hideRealtimeMonitor'] : false;
       $saveData['MCompany']['options']['monitorPollingMode'] = !empty($coreSetting['monitorPollingMode']) ? $coreSetting['monitorPollingMode'] : false;
+      $saveData['MCompany']['options']['useCogmoAttendApi'] = !empty($coreSetting['useCogmoAttendApi']) ? $coreSetting['useCogmoAttendApi'] : false;
       $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']['options']);
       $this->MCompany->save($companySaveData, false);
       // 有効・無効でJSファイルの中身が変わるので書き換える
@@ -1192,7 +1193,11 @@ class ContractController extends AppController
     }
     $planObj = json_decode($plan, TRUE);
     foreach ($options as $key => $enabled) {
-      $planObj[$key] = strcmp($enabled, "1") === 0;
+      if(strcmp('useCogmoAttendApi', $key) === 0) {
+        $planObj[$key] = is_string($enabled) ? $enabled : false;
+      } else {
+        $planObj[$key] = strcmp($enabled, "1") === 0;
+      }
     }
     return json_encode($planObj);
   }
