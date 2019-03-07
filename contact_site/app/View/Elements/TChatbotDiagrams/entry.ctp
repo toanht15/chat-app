@@ -44,6 +44,7 @@
 <section>
   <?= $this->Form->hidden('TChatbotDiagram.id') ?>
   <?= $this->Form->hidden('TChatbotDiagram.activity') ?>
+  <?=$this->ngForm->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
   <div id="tchatbotscenario_actions" class="fotterBtnArea">
     <?=$this->Html->link('戻る','/TChatbotDiagrams/index/page:', ['class'=>'whiteBtn btn-shadow'])?>
     <a id="submitBtn" href="javascript:void(0)" class="greenBtn btn-shadow">保存</a>
@@ -67,3 +68,8 @@
       )) ?>
   </div>
 </section>
+
+<!-- シミュレーター -->
+<div ng-controller="DialogController as dialog" ng-cloack>
+  <?= $this->element('TChatbotDiagrams/simulator'); ?>
+</div>

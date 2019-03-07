@@ -104,6 +104,7 @@
       var obj = JSON.parse(dataForUpdate);
       graph.fromJSON(obj);
       setTimeout(function(){
+        debugger;
         graph.resetCells(obj.cells);
         initNodeEvent(graph.getCells());
       }, 500);

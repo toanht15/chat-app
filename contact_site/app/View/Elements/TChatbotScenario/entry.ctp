@@ -10,6 +10,7 @@
   <?=$this->Form->input('scenarioList', ['type' => 'hidden','value' => json_encode($this->data['scenarioList'])])?>
   <?=$this->Form->input('scenarioListForBranchOnCond', ['type' => 'hidden','value' => json_encode($this->data['scenarioListForBranchOnCond'])])?>
   <?=$this->Form->input('leadList', ['type' => 'hidden','value' => json_encode($this->data['leadList'])])?>
+  <?=$this->Form->input('chatbotDiagramList', ['type' => 'hidden','value' => json_encode($this->data['chatbotDiagramList'])])?>
   <section id="tchatbotscenario_form_basic_settings" class="p10x">
     <h3 class="tchatbotscenario_form_subtitle">基本設定</h3>
     <ul>

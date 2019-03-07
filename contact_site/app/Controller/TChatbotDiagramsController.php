@@ -64,6 +64,7 @@ class TChatbotDiagramsController extends WidgetSettingController
       ));
       $this->request->data = $data;
     }
+    $this->_viewElement();
   }
 
   public function save()
@@ -280,5 +281,11 @@ class TChatbotDiagramsController extends WidgetSettingController
     $callerInfo['TChatbotScenario'] = $matchScenarioNames;
 
     return $callerInfo;
+  }
+
+  private function _viewElement() {
+    // シミュレーター表示用ウィジェット設定の取得
+    $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
+    $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
   }
 }

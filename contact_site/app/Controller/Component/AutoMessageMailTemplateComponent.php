@@ -216,8 +216,9 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 49:
       case 52:
       case 55:
-        $chatMessage = empty($chatLog['message']['message']) ? "（質問内容なし）" : $chatLog['message']['message'];
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatMessage);
+        $obj = json_decode($chatLog['message'], TRUE);
+        $chatMessage = empty($obj['message']) ? "（質問内容なし）" : $obj['message'];
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'], $chatMessage);
         break;
       case 43:
       case 47:
