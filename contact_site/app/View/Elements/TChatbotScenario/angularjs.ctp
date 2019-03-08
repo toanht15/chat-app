@@ -535,13 +535,13 @@
         target.settings.customDesign.buttonUIBorderColor           = '#E3E3E3';
         target.settings.customDesign.checkboxBackgroundColor       = '#FFFFFF';
         target.settings.customDesign.checkboxActiveColor           = '#FFFFFF';
-        target.settings.customDesign.checkboxSelectionDistance     = '4';
+        target.settings.customDesign.checkboxSelectionDistance     = 4;
         target.settings.customDesign.checkboxBorderColor           = $scope.widget.settings.main_color;
         target.settings.customDesign.checkboxCheckmarkColor        = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBackgroundColor          = '#FFFFFF';
         target.settings.customDesign.radioActiveColor              = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBorderColor              = $scope.widget.settings.main_color;
-        target.settings.customDesign.radioSelectionDistance        = '4';
+        target.settings.customDesign.radioSelectionDistance        = 4;
         if (!displayStyle) {
           target.settings.customDesign.checkboxEntireBackgroundColor = this.getRawColor($scope.widget.settings.main_color,
               0.5);
@@ -1247,6 +1247,7 @@
                 if (typeof hearing.settings.customDesign.checkboxActiveTextColor === 'undefined') {
                   hearing.settings.customDesign.checkboxActiveTextColor = $scope.widget.settings.re_text_color;
                 }
+                hearing.settings.customDesign.checkboxSelectionDistance = Number(hearing.settings.customDesign.checkboxSelectionDistance);
 
                 $timeout(function() {
                   $scope.$apply();
@@ -1309,7 +1310,6 @@
                   hearing.settings.customDesign.radioActiveColor = $scope.widget.settings.main_color;
                   hearing.settings.customDesign.radioEntireBackgroundColor = this.getRawColor($scope.widget.settings.main_color, 0.5);
                   hearing.settings.customDesign.radioEntireActiveColor = $scope.widget.settings.main_color;
-
                 }
 
                 if (typeof hearing.settings.customDesign.radioTextColor === 'undefined') {
@@ -1319,6 +1319,8 @@
                 if (typeof hearing.settings.customDesign.radioActiveTextColor === 'undefined') {
                   hearing.settings.customDesign.radioActiveTextColor = $scope.widget.settings.re_text_color;
                 }
+
+                hearing.settings.customDesign.radioSelectionDistance = Number(hearing.settings.customDesign.radioSelectionDistance);
 
                 $timeout(function() {
                   $scope.$apply();
