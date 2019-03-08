@@ -772,11 +772,11 @@
         if (data.settings.radioStyle !== '1') {
           style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
         } else {
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important;}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important; color: ' + data.settings.customDesign.radioTextColor + ' !important;}';
           style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {top: 13px !important; left: 12px !important;}';
           style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {top: 9px !important; left: 8px !important;}';
           style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: ' + data.settings.customDesign.radioEntireBackgroundColor + ';}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked ~ label {background-color: ' + data.settings.customDesign.radioEntireActiveColor + ';}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked ~ label {background-color: ' + data.settings.customDesign.radioEntireActiveColor + '; color: ' + data.settings.customDesign.radioActiveTextColor + ' !important;}';
         }
         style += '</style>';
         html += style;
@@ -912,10 +912,10 @@
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox .checkmark {position: absolute;top: 2px;left: 0px;height: ' + this.re_text_size + 'px;width: ' + this.re_text_size + 'px; background-color: ' +
+            ' .sinclo-checkbox .checkmark {position: absolute;top: 1px;left: 0px;height: ' + (this.re_text_size + 2) + 'px;width: ' + (this.re_text_size + 2) + 'px; background-color: ' +
             data.settings.customDesign.checkboxBackgroundColor + '}';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (this.re_text_size - 10) + 'px;top: ' + (this.re_text_size - 13) + 'px;width: 3px;height: 6px;border: solid ' + data.settings.customDesign.checkboxCheckmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+            ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (this.re_text_size - 9) + 'px;top: ' + (this.re_text_size - 12) + 'px;width: 3px;height: 6px;border: solid ' + data.settings.customDesign.checkboxCheckmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
         style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox input:checked ~ .checkmark {background-color: ' +
             data.settings.customDesign.checkboxActiveColor + '}';
         style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox input:checked ~ .checkmark:after {display: block}';
@@ -935,9 +935,11 @@
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {background-color: transparent;}';
         } else {
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {padding: 8px 8px 8px 28px;}';
-          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {top: 10px;left: 8px; }';
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {top: 9px;left: 8px; }';
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {background-color: ' +
               data.settings.customDesign.checkboxEntireBackgroundColor + ';}';
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {color: ' +
+              data.settings.customDesign.checkboxTextColor + ';}';
         }
         if (data.message) {
           style += '#sincloBox #' + checkboxName + ' {margin-top: 8px}';

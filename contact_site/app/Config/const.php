@@ -919,12 +919,16 @@ $config['chatbotScenarioActionList'] = array(
               'checkboxActiveColor'           => '',
               'checkboxBorderColor'           => '',
               'checkboxCheckmarkColor'        => '',
+              'checkboxTextColor'             => '',
+              'checkboxActiveTextColor'       => '',
               'radioBackgroundColor'          => '',
               'radioEntireBackgroundColor'    => '',
               'radioEntireActiveColor'        => '',
               'radioActiveColor'              => '',
               'radioSelectionDistance'        => '4',
               'radioBorderColor'              => '',
+              'radioTextColor'                => '',
+              'radioActiveTextColor'          => '',
             ),
             'images' => array(
               array(
