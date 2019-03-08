@@ -539,11 +539,13 @@
         target.settings.customDesign.radioBorderColor              = $scope.widget.settings.main_color;
         target.settings.customDesign.radioSelectionDistance        = '4';
         if (!displayStyle) {
-          target.settings.customDesign.checkboxEntireBackgroundColor = '#FFFFFF';
-          target.settings.customDesign.checkboxEntireActiveColor     = '#FFFFFF';
+          target.settings.customDesign.checkboxEntireBackgroundColor = this.getRawColor($scope.widget.settings.main_color,
+              0.5);
+          target.settings.customDesign.checkboxEntireActiveColor     = $scope.widget.settings.main_color;
           target.settings.customDesign.checkboxTextColor             = $scope.widget.settings.re_text_color;
-          target.settings.customDesign.checkboxActiveTextColor       = $scope.widget.settings.main_color;
-          target.settings.customDesign.radioEntireBackgroundColor = '#FFFFFF';
+          target.settings.customDesign.checkboxActiveTextColor       = $scope.widget.settings.re_text_color;
+          target.settings.customDesign.radioEntireBackgroundColor = this.getRawColor($scope.widget.settings.main_color,
+              0.5);
           target.settings.customDesign.radioEntireActiveColor     = $scope.widget.settings.main_color;
           target.settings.customDesign.radioTextColor             = $scope.widget.settings.re_text_color;
           target.settings.customDesign.radioActiveTextColor       = $scope.widget.settings.re_text_color;
@@ -691,11 +693,12 @@
             target.css('background-color', defaultColor);
             break;
           case 'checkboxEntireBackgroundColor':
-            defaultColor = '#FFFFFF';
+            defaultColor = this.getRawColor($scope.widget.settings.main_color,
+                0.5);
             target.css('background-color', defaultColor);
             break;
           case 'checkboxActiveColor':
-            defaultColor = '#FFFFFF';
+            defaultColor = defaultColor = $scope.widget.settings.main_color;
             target.css('background-color', defaultColor);
             break;
           case 'checkboxEntireActiveColor':
@@ -718,7 +721,7 @@
             target.css('background-color', defaultColor);
             break;
           case 'checkboxActiveTextColor':
-            defaultColor = $scope.widget.settings.main_color;
+            defaultColor = $scope.widget.settings.re_text_color;
             target.css('background-color', defaultColor);
             break;
         }
@@ -736,7 +739,8 @@
             target.css('background-color', defaultColor);
             break;
           case 'radioEntireBackgroundColor':
-            defaultColor = '#FFFFFF';
+            defaultColor = this.getRawColor($scope.widget.settings.main_color,
+                0.5);
             target.css('background-color', defaultColor);
             break;
           case 'radioActiveColor':
@@ -1238,7 +1242,7 @@
                 }
 
                 if (typeof hearing.settings.customDesign.checkboxActiveTextColor === 'undefined') {
-                  hearing.settings.customDesign.checkboxActiveTextColor = $scope.widget.settings.main_color;
+                  hearing.settings.customDesign.checkboxActiveTextColor = $scope.widget.settings.re_text_color;
                 }
 
                 $timeout(function() {
@@ -1252,6 +1256,8 @@
                       if ($(this).prop('checked')) {
                         $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
                         $(this).parent().css('color', hearing.settings.customDesign.checkboxActiveTextColor);
+                      } else {
+                        $(this).parent().css('color', hearing.settings.customDesign.checkboxTextColor);
                       }
                     });
                     checkboxTarget.on('change', function() {
@@ -1298,6 +1304,9 @@
                   hearing.settings.radioCustomDesign = true;
                   hearing.settings.customDesign.radioBorderColor = '#999';
                   hearing.settings.customDesign.radioActiveColor = $scope.widget.settings.main_color;
+                  hearing.settings.customDesign.radioEntireBackgroundColor = this.getRawColor($scope.widget.settings.main_color, 0.5);
+                  hearing.settings.customDesign.radioEntireActiveColor = $scope.widget.settings.main_color;
+
                 }
 
                 if (typeof hearing.settings.customDesign.radioTextColor === 'undefined') {

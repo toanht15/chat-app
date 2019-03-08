@@ -1993,7 +1993,7 @@ sinclo@medialink-ml.co.jp
     $radio['settings']['customDesign']['radioBorderColor'] = '#999';
     $radio['settings']['customDesign']['radioActiveColor'] = $widget['main_color'];
     $radio['settings']['customDesign']['radioEntireActiveColor'] = $widget['main_color'];
-    $radio['settings']['customDesign']['radioEntireBackgroundColor'] = '#FFFFFF';
+    $radio['settings']['customDesign']['radioEntireBackgroundColor'] = $widget['main_color'];
     $radio['settings']['customDesign']['radioTextColor'] = $widget['re_text_color'];
     $radio['settings']['customDesign']['radioActiveTextColor'] = $widget['re_text_color'];
     $radio['settings']['customDesign']['radioBackgroundColor'] = '#FFFFFF';
