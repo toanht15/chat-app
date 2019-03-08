@@ -580,7 +580,7 @@
                 popupEvent.close();
               } else {
                 popupEventOverlap.initOverlap();
-                popupEventOverlap.open("内容が保存されていません。閉じますか？", "p_confirm_diagram_change", "確認してください");
+                popupEventOverlap.open("内容が保存されていません。編集を終了しますか？", "p_confirm_diagram_change", "確認してください");
                 popupEventOverlap.closePopup = function(){
                   popupEventOverlap.closeNoPopupOverlap();
                   popupEvent.closeNoPopup();
