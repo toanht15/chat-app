@@ -126,11 +126,11 @@ var popupEventOverlap = {
                 this.moveType = "moment";
                 break;
               case 'p_confirm_diagram_change':
-                var entryBtn = _button("キャンセル");
+                var entryBtn = _button("いいえ");
                 entryBtn.onclick = function () {
                   return popupEventOverlap.closeNoPopupOverlap();
                 };
-                var closeBtn = _button("閉じる");
+                var closeBtn = _button("はい");
                 closeBtn.onclick = function () {
                   return popupEventOverlap.closePopup();
                 };

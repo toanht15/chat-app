@@ -144,10 +144,13 @@
 
       /* Model for tooltip */
       $scope.toolTipElement = null;
+      $scope.moveX = 0;
+      $scope.moveY = 0;
 
       /* Cell data Storage  */
       $scope.currentEditCell = null;
       $scope.currentEditCellParent = null;
+
 
       var nodeMaster = function(type, posX, posY) {
         var node = nodeFactory.createNode(type, posX, posY);
@@ -350,9 +353,11 @@
 
       $(canvas).mousemove(function(e) {
         if (dragReferencePosition) {
+          $scope.moveX = e.offsetX - dragReferencePosition.x;
+          $scope.moveY = e.offsetY - dragReferencePosition.y
           paper.translate(
-              e.offsetX - dragReferencePosition.x,
-              e.offsetY - dragReferencePosition.y
+              $scope.moveX,
+              $scope.moveY
           );
         }
       });
@@ -380,8 +385,8 @@
         $scope.toolTipElement = $("<ul class='diagram_tooltip'><li></li></ul>");
         $scope.toolTipElement.find("li").text(text);
         $scope.toolTipElement.offset({
-          top: (position.y  + height) * paper.scale().sy + 185,
-          left: position.x * paper.scale().sx + 220
+          top: (position.y  + height) * paper.scale().sy + 185 + $scope.moveY,
+          left: position.x * paper.scale().sx + 220 + $scope.moveX
         });
         $("#t_chatbot_diagrams_idx").append($scope.toolTipElement);
       };
@@ -580,7 +585,7 @@
                 popupEvent.close();
               } else {
                 popupEventOverlap.initOverlap();
-                popupEventOverlap.open("内容が保存されていません。閉じますか？", "p_confirm_diagram_change", "確認してください");
+                popupEventOverlap.open("内容が保存されていません。編集を終了しますか？", "p_confirm_diagram_change", "確認してください");
                 popupEventOverlap.closePopup = function(){
                   popupEventOverlap.closeNoPopupOverlap();
                   popupEvent.closeNoPopup();
@@ -621,17 +626,18 @@
       }
 
       function setViewElement(target) {
-        //親エレメント直下の子エレメントを設定
+        //親エレメント配下のエレメントを設定
         var viewNode = target.model;
         var childList = viewNode.getEmbeddedCells();
-        if (childList.length > 0) {
-          //一番上のViewを基準にする
-          //親の場合は、直下の子供
-          viewNode = childList[0];
-        } else {
-          //一番上のViewを基準にする
-          //子供の場合は、親を取得して子供に再設定する。
-          viewNode = viewNode.getAncestors()[0].getEmbeddedCells()[0];
+        if (childList.length === 0) {
+          //子供がいない→自分が子供なので、親を取得し再度子供を全員取得
+          childList = viewNode.getAncestors()[0].getEmbeddedCells();
+        }
+        for( var i = 0; i < childList.length; i++ ){
+          if(childList[i].attr("nodeBasicInfo/nodeType") === "childViewNode") {
+            viewNode = childList[i];
+            break;
+          }
         }
         return viewNode;
       }
@@ -1047,7 +1053,8 @@
                       bottomOpacity = 1;
                   if(number === 0){
                     topOpacity = 0;
-                  } else if(number === targetList.length - 1){
+                  }
+                  if(number === targetList.length - 1){
                     bottomOpacity = 0;
                   }
                   childList[i].attr(".cover_top/fill-opacity", topOpacity)
