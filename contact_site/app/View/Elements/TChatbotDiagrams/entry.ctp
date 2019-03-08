@@ -68,8 +68,3 @@
       )) ?>
   </div>
 </section>
-
-<!-- シミュレーター -->
-<div ng-controller="DialogController as dialog" ng-cloack>
-  <?= $this->element('TChatbotDiagrams/simulator'); ?>
-</div>

@@ -88,8 +88,12 @@
         $scope.addCheckbox(data);
       });
 
-      $scope.$on('addReBranchMessage', function(event, nodeId, buttonType, message, selection, labels) {
-        $scope.addReBranchMessage(nodeId, buttonType, message, selection, labels);
+      $scope.$on('addReDiagramBranchMessage', function(event, nodeId, buttonType, message, selection, labels) {
+        $scope.addReDiagramBranchMessage(nodeId, buttonType, message, selection, labels);
+      });
+
+      $scope.$on('addReDiagramTextMessage', function(event, nodeId, messages, nextNodeId, intervalSec) {
+        $scope.addReDiagramTextMessage(nodeId, messages, nextNodeId, intervalSec);
       });
 
       $scope.$on('disableHearingInputFlg', function(event) {
@@ -885,7 +889,7 @@
         self.autoScroll();
       };
 
-      $scope.addReBranchMessage = function(nodeId, buttonType, message, selection, labels) {
+      $scope.addReDiagramBranchMessage = function(nodeId, buttonType, message, selection, labels) {
         var gridElm = document.createElement("div");
         $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
@@ -907,6 +911,44 @@
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
         self.autoScroll();
+      };
+
+      $scope.addReDiagramTextMessage = function(nodeId, messages, nextNodeId, intervalSec) {
+        for(var i=0; i < messages.length; i++) {
+          (function(idx) {
+              $timeout(function(){
+              chatBotTypingRemove();
+              // ベースとなる要素をクローンし、メッセージを挿入する
+              var prefix = 'text_' + (new Date()).getTime();
+              var gridElm = document.createElement("div");
+              $(gridElm).addClass("grid_balloon");
+
+              var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+               divElm.id = prefix + '_text';
+
+              var formattedMessage = $scope.simulatorSettings.createMessage(messages[idx], prefix);
+              divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
+              divElm.classList.add('diagram_msg');
+
+              // 要素を追加する
+              divElm.style.display = "";
+              if ($scope.needsIcon()) {
+                //チャットボットのアイコンを表示する場合は
+                //アイコンを含む要素を作成する。
+                gridElm = $scope.addIconImage(gridElm);
+              }
+
+              gridElm.appendChild(divElm);
+              document.getElementById('chatTalk').appendChild(gridElm);
+              self.autoScroll();
+              if(idx === messages.length - 1) {
+                $scope.$emit('finishAddTextMessage');
+              } else {
+                chatBotTyping();
+              }
+            }, intervalSec * 1000);
+          })(i);
+        }
       };
 
       /**

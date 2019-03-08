@@ -9,7 +9,6 @@
 <?php echo $this->element('TChatbotDiagrams/angularjs'); ?>
 <div id="t_chatbot_diagrams_idx" class="card-shadow entry-wrapper" ng-app="sincloApp"
      ng-controller="DiagramController as main" ng-cloak>
-
   <div id="t_chatbot_diagramas_add_title">
     <div class="fLeft"><i class="fal fa-sitemap fa-rotate-270 fa-2x"></i></div>
     <h1>チャットツリー設定登録</h1>
@@ -29,5 +28,10 @@
   </div>
   <div id="t_chatbot_diagrams_body">
     <?= $this->element('TChatbotDiagrams/editor'); ?>
+  </div>
+  <!-- シミュレーター -->
+  <div ng-controller="DialogController as dialog" ng-cloak>
+    <?php echo $this->element('WidgetSimulator/simulatorService'); ?>
+    <?= $this->element('TChatbotDiagrams/simulator'); ?>
   </div>
 </div>

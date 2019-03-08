@@ -1380,6 +1380,7 @@
                 $scope.doBranchAction(actionNode);
                 break;
               case 'text': // テキスト発言
+                $scope.doTextAction(actionNode);
                 break;
               case 'scenario': // シナリオ呼び出し
                 break;
@@ -1549,8 +1550,21 @@
         var message = node.attrs.actionParam.text;
         var selections = $scope.getBranchSelection(node);
         var labels = $scope.getBranchLabels(node, Object.keys(selections));
-        $scope.$broadcast('addReBranchMessage', nodeId, buttonType, message, selections, labels);
+        $scope.$broadcast('addReDiagramBranchMessage', nodeId, buttonType, message, selections, labels);
       };
+
+      $scope.doTextAction = function(node) {
+        chatBotTypingRemove();
+        var nodeId = node.id;
+        var messages = node.attrs.actionParam.text;
+        var nextNodeId = node.attrs.nodeBasicInfo.nextNodeId;
+        var intervalSec = 2;
+        $scope.$broadcast('addReDiagramTextMessage', nodeId, messages, nextNodeId, intervalSec);
+      };
+
+      $scope.$on('finishAddTextMessage', function(node){
+
+      });
 
       $scope.getBranchSelection = function(node) {
         var itemIds = node.embeds;
@@ -1913,26 +1927,33 @@
       };
 
       // handle radio button click
-      $(document).on('change', '#chatTalk input[type="radio"]', function() {
+      $(document).on('change', '#chatTalk input[type="radio"]', function(e) {
         var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
         var message = $(this).val().replace(/^\s/, '');
-        var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
-        var name = $(this).attr('name');
-
-        var numbers = prefix.match(/\d+/g).map(Number);
-        var actionStep = numbers[0];
-        var hearingIndex = numbers[1];
-        if (isConfirm) {
-          // confirm message
-          $scope.addVisitorHearingMessage(message);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
-              'action' + actionStep + '_hearing_confirm');
-          $('input[name=' + name + '][type="radio"]').prop('disabled', true);
-          // ラジオボタンを非活性にする
-          self.disableHearingInput($scope.actionStep);
-          $('[id^="action' + actionStep + '_hearing"][id$="_question"]').removeAttr('id');
+        if($(e.target).data('nid') && $(e.target).data('nextNid')) {
+          self.handleDiagramReselectionInput(message, 'branch', $(e.target).data('nid'));
+          var nextNode = $scope.findNodeById($(e.target).data('nextNid'));
+          $scope.currentNodeId = nextNode.id;
+          $scope.doAction();
         } else {
-          self.handleReselectionInput(message, actionStep, hearingIndex);
+          var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
+          var name = $(this).attr('name');
+
+          var numbers = prefix.match(/\d+/g).map(Number);
+          var actionStep = numbers[0];
+          var hearingIndex = numbers[1];
+          if (isConfirm) {
+            // confirm message
+            $scope.addVisitorHearingMessage(message);
+            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
+                'action' + actionStep + '_hearing_confirm');
+            $('input[name=' + name + '][type="radio"]').prop('disabled', true);
+            // ラジオボタンを非活性にする
+            self.disableHearingInput($scope.actionStep);
+            $('[id^="action' + actionStep + '_hearing"][id$="_question"]').removeAttr('id');
+          } else {
+            self.handleReselectionInput(message, actionStep, hearingIndex);
+          }
         }
       });
 

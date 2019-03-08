@@ -1600,7 +1600,6 @@
         var prefix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
         var index = $('#chatTalk > div:not([style*="display: none;"])').length;
         var radioName = prefix + 'sinclo-radio-' + index;
-        var hasOldOptionValue = false;
         // style
         var html = '<div id="' + radioName + '">';
         if (false) {
@@ -1619,7 +1618,7 @@
           if (!option || option == '') return false;
           html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
               key + '\' class=\'sinclo-chat-radio\' value=\'' + option + '\' data-nid=\'' + nodeId +
-                    '\' data-next-nid=\'' + selection[nodeId] + '\'>';
+                    '\' data-next-nid=\'' + selection[key] + '\'>';
           html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span><br>';
         });
         html += '</select>';
