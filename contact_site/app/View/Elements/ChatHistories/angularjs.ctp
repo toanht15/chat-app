@@ -862,6 +862,17 @@
             } else {
               textOfMessage = $scope.createTextOfMessage(chat, messageContent.message);
             }
+            if(type === chatApi.messageType.scenario.message.radio) {
+              textOfMessage = messageContent.message + "\n";
+              for(var i=0; i < messageContent.settings.options.length; i++) {
+                if(i === (messageContent.settings.options.length - 1)) {
+                  textOfMessage += '[] ' + messageContent.settings.options[i];
+                } else {
+                  textOfMessage += '[] ' + messageContent.settings.options[i] + "\n";
+                }
+              }
+              textOfMessage = $scope.createTextOfMessage(chat, textOfMessage);
+            }
             content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+ textOfMessage +"</span>";
           }
         } else if (type === chatApi.messageType.scenario.message.selection) {

@@ -137,6 +137,9 @@
       get re_text_size() {
         return Number(this._settings['re_text_size']);
       },
+      get re_text_color() {
+        return this._settings['re_text_color'];
+      },
       get radioButtonBeforeTop() {
         return Math.ceil((Number(this.re_text_size) / 2));
       },
@@ -530,10 +533,12 @@
        * 表示用HTMLへの変換
        * @param String val    変換したいメッセージ
        * @param String prefix ラジオボタンに付与するプレフィックス
+       * @param String align 文字寄せを指定したい場合に使う。'2': 中央寄せ、'3': 右寄せ
+       * @param boolean nospan 出力するHTMLにspanのラップを付けるかどうか
        * @return String       変換したメッセージ
        */
-      createMessage: function(val, prefix, align) {
-        if (val === '') return　'';
+      createMessage: function(val, prefix, align, nospan) {
+        if (val === '') return '';
         prefix = (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
         var isSmartphone = Number(this._showWidgetType) !== 1;
         var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
@@ -556,10 +561,12 @@
         }
 
         var isFreeBlock = false;
+        var hasFreeBlock = false;
         for (var i = 0; strings.length > i; i++) {
           if(strings[i].match(/(<div class="free-block")/)) {
             content += strings[i];
             isFreeBlock = true;
+            hasFreeBlock = true;
             continue;
           } else if(strings[i].match(/(<\/div>)/)) {
             isFreeBlock = false;
@@ -886,7 +893,7 @@
         var separator = this.getCheckboxSeparator(data.settings.checkboxSeparator);
         var style = '<style>';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}';
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox #' + checkboxName +

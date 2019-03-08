@@ -773,29 +773,14 @@
       $scope.watchActionList = [];
       $scope.beginData = null;
       $scope.$watchCollection('setActionList', function(newObject, oldObject) {
-
-        // 編集されたことを検知する
-        if (!$scope.changeFlg && newObject !== oldObject) {
-          $scope.changeFlg = true;
-        } else if($scope.beginData === newObject) {
-          $scope.changeFlg = false;
-        }
-
-        try {
-          if(!$scope.beginData || Object.keys($scope.beginData).length > 0) {
-            $scope.beginData = newObject;
-          }
-        } catch(e) {
-          $scope.beginData = newObject;
-        }
-
-
         $timeout(function() {
           $scope.$apply();
         }).then(function() {
           angular.forEach($scope.setActionList, $scope.watchSetActionList);
         });
       });
+
+      $(document).on('keyup', "#tchatbotscenario_form_action_body input,#tchatbotscenario_form_action_body textarea", function(e) {$scope.changeFlg = true;});
 
       $scope.bulkHearingInputMap = {
         1: '会社名',
@@ -858,9 +843,7 @@
           });
           if (typeof newObject === 'undefined') return;
           // 編集されたことを検知する
-          if (!$scope.changeFlg && newObject !== oldObject) {
-            $scope.changeFlg = true;
-          }
+
 
           // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
           var variables = searchObj(newObject, /^variableName$/);
@@ -894,6 +877,18 @@
           // hearings
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
+              if(document.getElementById('action' + index + '-' + hearingIndex + '_message')) {
+                var addHtml = $scope.widget.createMessage(
+                    hearing.message, null, null, (hearing.uiType === '7'));
+                if(addHtml.length === 0 && (hearing.uiType === '8' || hearing.uiType === '9')) {
+                  addHtml = '<span class="sinclo-text-line"></span>';
+                }
+                document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = addHtml;
+              } else if (hearing.uiType === '7') {
+                var addHtml = $scope.widget.createMessage(
+                    hearing.message, null, hearing.settings.customDesign.messageAlign, (hearing.uiType === '7'));
+                $('.action' + index + '_button' + hearingIndex).find('.details').html(addHtml);
+              }
               if (hearing.uiType === '3') {
                 $timeout(function() {
                   $scope.$apply();
@@ -1243,7 +1238,7 @@
               0) {
             angular.forEach(newObject.conditionList, function(condition, conditionIndex) {
               if (!condition.matchValuePattern) {
-                condition.matchValuePattern = '1';
+                condition.matchValuePattern = '2';
               }
               if (condition.actionType == '1' &&
                   document.getElementById('action' + index + '-' + conditionIndex + '_message')) {
@@ -1642,12 +1637,13 @@
         var actionType = $scope.setActionList[actionStep].actionType;
 
         if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
-          var src = $scope.actionList[actionType].default.hearings[0];
+          var src = angular.copy($scope.actionList[actionType].default.hearings[0]);
           src = this.setDefaultColorHearing(src);
           var target = $scope.setActionList[actionStep].hearings;
           src.inputType = src.inputType.toString();
           src.uiType = src.uiType.toString();
-          target.splice(listIndex + 1, 0, angular.copy(src));
+          src.settings.options = [""];
+          target.splice(listIndex + 1, 0, src);
           this.controllHearingSettingView(actionStep);
 
         } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
@@ -3566,7 +3562,6 @@
 
           if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CALENDAR ?>) {
             var data = {};
-            console.log(hearingDetail.settings);
             data.settings = hearingDetail.settings;
             data.design = hearingDetail.settings.customDesign;
             data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
