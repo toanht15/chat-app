@@ -247,6 +247,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox * { font-size: 12px; line-height: 1.4; }
         #sincloBox.middleSize  * { font-size: 13px; }
         #sincloBox.largeSize * { font-size: 13px; }
+        #sincloBox.customSize * { font-size: 13px; }
         #sincloBox .sinclo-hide { display:none!important; }
         #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
         #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 8px; }
@@ -668,9 +669,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.sinclo-text-line + span.sinclo-radio { margin-top: {{widget.settings['line_button_margin']}}px; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin: 0; padding: 0 0 0 {{widget.re_text_size+7}}px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: 2px; left: 0px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label.radio-zoom:before { content: ""; vertical-align: middle; position: absolute; top: 2px; left: 0px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: 6px; left: {{widget.radioButtonAfterLeft}}px; width: {{widget.re_text_size-7}}px; height: {{widget.re_text_size-7}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: 2px; left: 0px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: 6px; left: {{widget.radioButtonAfterLeft}}px; width: {{widget.re_text_size-6}}px; height: {{widget.re_text_size-6}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:disabled + label { opacity: 0.5;}
         #sincloBox ul#chatTalk li.sinclo_re select:disabled { opacity: 0.5;}
         #sincloBox ul#chatTalk li .disabledArea {pointer-events: none; opacity: 0.5;}
@@ -817,6 +817,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
         #sincloBox section#chatTab .grid_balloon .iconDiv i { border-radius: 50%; color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}}}
         #sincloBox section#chatTab .grid_balloon .iconDiv i.icon_border { border: 1px solid {{widget.settings['string_color']}};}
+        #sincloBox section#chatTab .widthCustom {width: 95%}
         <?php endif; ?>
       <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
         #sincloBox section#callTab{height: 296.5px;}

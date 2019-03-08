@@ -88,6 +88,10 @@
         $scope.addCheckbox(data);
       });
 
+      $scope.$on('addReBranchMessage', function(event, nodeId, buttonType, message, selection, labels) {
+        $scope.addReBranchMessage(nodeId, buttonType, message, selection, labels);
+      });
+
       $scope.$on('disableHearingInputFlg', function(event) {
         $scope.isHearingInput = false;
       });
@@ -494,6 +498,9 @@
         divElm.id = data.prefix + '_question';
         var html = $scope.simulatorSettings.createRadioButton(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        if (data.settings.radioStyle === '1') {
+          divElm.querySelector('li').classList.add('widthCustom');
+        }
         divElm.style.display = "";
         if( $scope.needsIcon() ) {
           //チャットボットのアイコンを表示する場合は
@@ -661,6 +668,7 @@
         document.getElementById('chatTalk').appendChild(gridElm);
         if (data.settings.carouselPattern === '2') {
           $('#' + divElm.id).find('.sinclo-text-line').css('margin-left', '-25px');
+          $('#' + divElm.id).find('.sinclo-text-line').css('margin-right', '-25px');
         }
         $('#chatTalk > div:last-child').show();
         var prevIconClass = '';
@@ -839,7 +847,58 @@
         $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
-        var html = $scope.simulatorSettings.createCheckbox(data);
+        var checkboxData = $scope.simulatorSettings.createCheckbox(data);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = checkboxData.html;
+        if (data.settings.checkboxStyle === '1') {
+          divElm.querySelector('li').classList.add('widthCustom');
+        }
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
+
+        if (data.settings.checkboxStyle === '1') {
+          var checkboxTarget = $('#' + checkboxData.checkboxName + ' input[type="checkbox"]');
+          checkboxTarget.each(function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+              $(this).parent().css('color', data.settings.customDesign.checkboxActiveTextColor);
+            }
+          });
+          checkboxTarget.on('change', function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+              $(this).parent().css('color', data.settings.customDesign.checkboxActiveTextColor);
+            } else {
+              if (data.settings.checkboxStyle !== '1') {
+                $(this).parent().css('background-color', 'transparent');
+              } else {
+                $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireBackgroundColor);
+                $(this).parent().css('color', data.settings.customDesign.checkboxTextColor);
+              }
+            }
+          });
+        }
+
+        self.autoScroll();
+      };
+
+      $scope.addReBranchMessage = function(nodeId, buttonType, message, selection, labels) {
+        var gridElm = document.createElement("div");
+        $(gridElm).addClass("grid_balloon");
+        var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+        divElm.id = 'branch_question_' + (new Date()).getTime();
+        var html = '';
+        if(buttonType === '1') {
+          html = $scope.simulatorSettings.createBranchRadioMessage(nodeId, message, selection, labels);
+        } else {
+
+        }
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
         divElm.style.display = "";
         if( $scope.needsIcon() ) {

@@ -1613,6 +1613,9 @@ var socket, // socket.io
         /* flatpickr カスタム値の方が強いため基本important指定 */
         html += '#sincloBox #chatTalk li.sinclo_re div.flatpickr-calendar.disable { pointer-events: none!important; opacity: 0.5!important; }';
 
+        /* diagram - button */
+        html += '#sincloBox #chatTalk li.sinclo_re.diagram_msg button { border: 0; border-radius: 0; }';
+
         if (colorList['widgetInsideBorderNone'] === 1) {
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
         }
@@ -3662,6 +3665,7 @@ var socket, // socket.io
           'margin-left: 0; ' +
           '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
           'margin-left: -25px; ' +
+          'margin-right: -25px; ' +
           '}';
     },
     //バナーを生成する関数
@@ -5068,6 +5072,10 @@ var socket, // socket.io
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.carousel
           || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.buttonUI
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.checkbox
+          || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.button) {
@@ -5428,7 +5436,7 @@ var socket, // socket.io
     },
     isJSON: function(arg) {
       arg = (typeof arg === 'function') ? arg() : arg;
-      if (typeof arg !== 'string') {
+      if (!isNaN(Number(arg)) || typeof arg !== 'string') {
         return false;
       }
       try {
@@ -7165,7 +7173,7 @@ function emit(evName, data, callback) {
       'sendAutoChat' || evName === 'sendChat' ||
       evName === 'storeScenarioMessage' || evName === 'saveCustomerInfoValue' ||
       evName === 'beginBulkHearing' || evName === 'sendParseSignature'
-      || evName === 'hideScenarioMessages') {
+      || evName === 'hideScenarioMessages' || evName === 'storeDiagramMessage') {
     data.userId = userInfo.userId;
   }
   if (evName === 'connectSuccess' || evName === 'sendWindowInfo' || evName ===
