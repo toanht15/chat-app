@@ -2323,7 +2323,6 @@
         }
 
         // diagram
-        debugger;
         if (obj.chatMessage.did && obj.chatMessage.nextNodeId) {
           var nextNodeId = obj.chatMessage.nextNodeId;
           sinclo.chatApi.createMessageUnread({
