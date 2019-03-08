@@ -867,16 +867,19 @@
           checkboxTarget.each(function() {
             if ($(this).prop('checked')) {
               $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+              $(this).parent().css('color', data.settings.customDesign.checkboxActiveTextColor);
             }
           });
           checkboxTarget.on('change', function() {
             if ($(this).prop('checked')) {
               $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+              $(this).parent().css('color', data.settings.customDesign.checkboxActiveTextColor);
             } else {
               if (data.settings.checkboxStyle !== '1') {
                 $(this).parent().css('background-color', 'transparent');
               } else {
                 $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireBackgroundColor);
+                $(this).parent().css('color', data.settings.customDesign.checkboxTextColor);
               }
             }
           });

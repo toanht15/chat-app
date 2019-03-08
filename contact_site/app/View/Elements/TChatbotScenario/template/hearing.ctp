@@ -165,6 +165,22 @@
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioEntireActiveColor')">標準に戻す</span>
                 </span>
+              <span class="radio-custom-items">
+                  <label>文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_radioTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.radioTextColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioTextColor')">標準に戻す</span>
+                </span>
+              <span class="radio-custom-items">
+                  <label>選択時の文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_radioActiveTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.radioActiveTextColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioActiveTextColor')">標準に戻す</span>
+                </span>
             </div>
 
             <div ng-if="hearingItem.uiType === '9' && hearingItem.settings.checkboxStyle === '1'"
@@ -179,12 +195,30 @@
                 </span>
 
               <span class="checkbox-custom-items">
-                  <label>選択時時のボタン背景色</label>
+                  <label>選択時のボタン背景色</label>
                   <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxEntireActiveColor"
                          class="jscolor{hash:true} ignore-click-event"
                          ng-model="hearingItem.settings.customDesign.checkboxEntireActiveColor">
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxEntireActiveColor')">標準に戻す</span>
+                </span>
+
+              <span class="checkbox-custom-items">
+                  <label>文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.checkboxTextColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxTextColor')">標準に戻す</span>
+                </span>
+
+              <span class="checkbox-custom-items">
+                  <label>選択時の文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxActiveTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.checkboxActiveTextColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxActiveTextColor')">標準に戻す</span>
                 </span>
 
             </div>
