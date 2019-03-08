@@ -27,13 +27,11 @@
       <label>メッセージ間隔<span class="questionBalloon"><icon class="questionBtn" data-tooltip="各メッセージを送信する間隔（秒数）を設定します。">?</icon></span></label>
       <?= $this->ngForm->input('TChatbotDiagram.messageIntervalTimeSec', array(
         'type' => 'number',
-        'class' => 'tRight',
         'max' => 99,
         'min' => 0,
         'ng-model' => 'messageIntervalTimeSec',
         'after' => '秒',
         'label' => false,
-        'ng-blur' => "wanwan()"
       )) ?>
       <?php if (!empty($errors['messageIntervalTimeSec'])) echo "<li class='error-message'>" . h($errors['messageIntervalTimeSec'][0]) . "</li>"; ?>
     </li>

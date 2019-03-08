@@ -1595,6 +1595,22 @@
           border-bottom: 3px solid #C3D69B;
           padding-bottom: 5px;
         }
+        .diagram_valid:not(.ng-hide) {
+          display: block;
+          height: 0;
+          margin-top: 5px;
+          color: #b71b65;
+          animation-name: diagram_validation;
+          animation-duration: 400ms;
+          animation-timing-function: linear;
+          animation-fill-mode: both;
+        }
+
+        @keyframes diagram_validation {
+          0% {height: 0; opacity: 0}
+          90% {height: 10px; opacity: 0}
+          100% {height: 10px; opacity: 1}
+        }
       }
 
 
@@ -1609,7 +1625,11 @@
           label {
             margin-top: 6px;
           }
+          #callTargetScenario {
+            max-width: 200px;
+          }
         }
+
         #jump_modal {
           select#jumpTargetNode {
             width: 200px;
@@ -1626,6 +1646,18 @@
           display: flex;
           justify-content: space-between;
           margin: 10px 65px 0 65px;
+        }
+
+        .scenario_valid_margin {
+          margin-left: 131px;
+        }
+
+        .jump_valid_margin {
+          margin-left: 119px;
+        }
+
+        .link_valid_margin {
+          margin-left: 107px;
         }
 
 
@@ -1686,6 +1718,10 @@
               }
             }
 
+            .node_name_valid_margin {
+              margin-left: 108px;
+            }
+
             #text_modal_contents > div:not(:first-child) {
               margin-top: 15px;
             }
@@ -1693,8 +1729,14 @@
               display: flex;
               margin-top: 40px;
               padding: 0 0 20px 40px;
+              max-height: 180px;
+              overflow-y: auto;
               p {
                 margin: 0;
+                position: absolute;
+              }
+              #text_modal_contents {
+                margin-left: 48px;
               }
               .text_modal_setting {
                 display: flex;
@@ -1704,10 +1746,8 @@
                   padding: 2px;
                 }
                 textarea {
-                  width: 301px;
-                  height: 6em;
+                  width: 300px;
                   resize: none;
-                  overflow: hidden;
                   margin-left: 20px;
                 }
               }
@@ -1749,6 +1789,9 @@
               margin-top: 10px;
             }
           }
+          .node_name_valid_margin {
+            margin-left: 108px;
+          }
           #branch_modal_body {
             padding-left: 40px;
             margin-top: 20px;
@@ -1758,6 +1801,12 @@
               overflow: hidden;
             }
             .branch_modal_setting_header {
+              .m40 {
+                margin-top: 40px;
+              }
+              .btn_valid_margin {
+                margin-left: 66px;
+              }
               .flex_row_box {
                 display: flex;
                 textarea {
@@ -1828,6 +1877,8 @@
             .branch_modal_setting_content {
               margin-top: 20px;
               position: relative;
+              overflow-y: auto;
+              max-height: 100px;
               .setting_row {
                 display: flex;
                 align-items: center;
@@ -3327,6 +3378,32 @@
           height: 70px!important;
           .textBtn {
             width: 75px;
+          }
+        }
+      }
+
+      /* ツリーエディタ閉じるボタン確認 */
+      &.p_confirm_diagram_change {
+        width: 380px;
+        #popup-main-overlap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-bottom: 0!important;
+          line-height: 0;
+          p {
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+          }
+        }
+        #popup-button-overlap {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          height: 70px!important;
+          .textBtn {
+            width: 100px;
           }
         }
       }
