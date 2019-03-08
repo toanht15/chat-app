@@ -124,6 +124,18 @@ var popupEventOverlap = {
                   return popupEventOverlap.closeNoPopupOverlap();
                 };
                 this.moveType = "moment";
+                break;
+              case 'p_confirm_diagram_change':
+                var entryBtn = _button("キャンセル");
+                entryBtn.onclick = function () {
+                  return popupEventOverlap.closeNoPopupOverlap();
+                };
+                var closeBtn = _button("閉じる");
+                closeBtn.onclick = function () {
+                  return popupEventOverlap.closePopup();
+                };
+                this.moveType = "moment";
+                break;
             }
             function _button(text){
                 var a = document.createElement('a');

@@ -440,7 +440,7 @@
           };
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
-            return popupEvent.closeNoPopup();
+            return popupEvent.closePopup(3);
           };
 
           var deleteBtn = _button("削除");
@@ -469,7 +469,7 @@
           };
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
-            return popupEvent.closeNoPopup();
+            return popupEvent.closePopup(3);
           };
 
           var deleteBtn = _button("削除");
@@ -485,7 +485,7 @@
           };
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
-            return popupEvent.closeNoPopup();
+            return popupEvent.closePopup(3);
           };
 
           var deleteBtn = _button("削除");

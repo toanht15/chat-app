@@ -31,22 +31,22 @@ var portSetting = {
 };
 
 var middleNode = {
-  width: 200,
-  height: 90,
+  width: 250,
+  height: 110,
   inPortX: -30,
-  inPortY: 30,
-  outPortX: 200,
-  outPortY: 30,
+  inPortY: 40,
+  outPortX: 250,
+  outPortY: 40,
   labelX: .3,
   labelY: .1,
   nodeType: "text"
 };
 var smallNode = {
-  width: 140,
+  width: 100,
   height: 50,
   inPortX: -30,
   inPortY: 10,
-  outPortX: 130,
+  outPortX: 100,
   outPortY: 10,
   labelX: .5,
   labelY: .4,
@@ -172,7 +172,7 @@ function NodeFactory() {
 function contentViewNode(posX, posY) {
   return new joint.shapes.basic.Rect({
     position: {x :posX + 5, y: posY + 35},
-    size: { width: 190, height: 50 },
+    size: { width: 240, height: 70 },
     attrs: {
       rect: {
         fill: "#FFFFFF",
@@ -183,8 +183,7 @@ function contentViewNode(posX, posY) {
       text: {
         text: "",
         'font-size': "14px",
-        'line-height': "2em",
-        y: "-0.6em"
+        y: 0
       },
       nodeBasicInfo: {
         nodeType: "childViewNode"
@@ -205,7 +204,7 @@ function startNode() {
             '.port-body': {
               fill: "#BDC6CF",
               height: portSetting.outPortSize,
-              width: portSetting.outPortSize + 10,
+              width: portSetting.outPortSize,
               stroke: false,
               rx: 5,
               ry: 5
@@ -235,17 +234,25 @@ function startNode() {
         fill: '#FFF',
         y: 19,
       },
-      rect: {
+      '.body': {
         fill: '#8395a7',
         stroke: false,
         rx: 5,
         ry: 5
+      },
+      '.inCover': {
+        fill: '#BDC6CF',
+        height: portSetting.inPortSize,
+        width: 6,
+        x: 100,
+        y: 10
       },
       nodeBasicInfo: {
         nodeType: 'start',
         nextNode: ''
       }
     },
+    markup: '<rect class="body"/><rect class="inCover"/><text class="label"/>'
   });
 }
 
@@ -306,7 +313,7 @@ function constantNodeOnlyInPort(posX, posY) {
         height: portSetting.inPortSize,
         width: 6,
         x: -6,
-        y: 30
+        y: 40
       },
       nodeBasicInfo: {
         nodeType: nodeType
@@ -400,15 +407,15 @@ function constantNode(posX, posY) {
         height: portSetting.inPortSize,
         width: 6,
         x: -6,
-        y: 30
+        y: 40
       },
       '.outCover': {
         fill: outColor,
         stroke: false,
         height: portSetting.outPortSize,
         width: 6,
-        x: 200,
-        y: 30
+        x: 250,
+        y: 40
       },
       actionParam: actionParam,
       nodeBasicInfo: {
