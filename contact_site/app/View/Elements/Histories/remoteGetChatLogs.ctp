@@ -419,6 +419,16 @@ $(function(){
           } else {
             $textOfMessage = $json['message'];
           }
+          if(intval($val['THistoryChatLog']['message_type']) === 55) {
+            $textOfMessage = $json['message'] . "\n";
+            foreach($json['settings']['options'] as $idx => $option) {
+              if($idx === (count($json['settings']['options']) - 1)) {
+                $textOfMessage .= '[] '.$option;
+              } else {
+                $textOfMessage .= '[] '.$option."\n";
+              }
+            }
+          }
           echo $this->htmlEx->makeChatView($textOfMessage, $isSendFile, $isRecieveFile, $imgTag);
         }
         else {

@@ -1411,7 +1411,7 @@ var socket, // socket.io
             ' width: ' +
             (Number(chatPosition.re.textSize)) + 'px; height: ' +
             (Number(chatPosition.re.textSize)) +
-            'px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; } ';
+            'px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; margin-top: 0; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: ' +
             Math.ceil((Number(chatPosition.re.textSize) / 2)) + 'px; left: ' +
             ((chatPosition.re.textSize / 2 -
@@ -3645,6 +3645,7 @@ var socket, // socket.io
           'margin-left: 0; ' +
           '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
           'margin-left: -25px; ' +
+          'margin-right: -25px; ' +
           '}';
     },
     //バナーを生成する関数
@@ -5415,7 +5416,7 @@ var socket, // socket.io
     },
     isJSON: function(arg) {
       arg = (typeof arg === 'function') ? arg() : arg;
-      if (typeof arg !== 'string') {
+      if (!isNaN(Number(arg)) || typeof arg !== 'string') {
         return false;
       }
       try {

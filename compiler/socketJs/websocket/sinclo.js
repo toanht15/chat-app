@@ -2525,7 +2525,9 @@
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.receiveFile) {
+          sinclo.chatApi.messageType.scenario.message.receiveFile
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.radio) {
         if (obj.tabId === userInfo.tabId) {
           common.chatBotTypingCall(obj);
           this.chatApi.scDown();
@@ -4371,7 +4373,7 @@
           }
         }
 
-        if (check.isJSON(obj.message)) {
+        if (check.isJSON(obj.message) && obj.message.indexOf('separator') !== -1) {
           // checkbox message
           var checkboxData = JSON.parse(obj.message);
           var array = checkboxData.message.split(checkboxData.separator);
@@ -11636,12 +11638,12 @@
 
             var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             var preg;
-            if (!pattern || pattern === '1') {
-              // 完全一致
-              preg = new RegExp('^' + word + '$');
-            } else {
+            if (!pattern || pattern === '2') {
               // 部分一致
               preg = new RegExp(word);
+            } else {
+              // 完全一致
+              preg = new RegExp('^' + word + '$');
             }
             result = preg.test(val);
 
