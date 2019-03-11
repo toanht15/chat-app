@@ -1365,11 +1365,18 @@
        */
       $scope.receiveFileEventListener = null;
       $scope.firstActionFlg = true;
-      $scope.doAction = function(setTime) {
+      $scope.doAction = function() {
         if (true) {
           // メッセージ間隔
-          var time = parseInt(2, 10) * 1000;
           var actionNode = $scope.findNodeById($scope.currentNodeId);
+
+          var time = 2;
+          if(actionNode.attrs.nodeBasicInfo.nodeType === 'jump'
+            || actionNode.attrs.nodeBasicInfo.nodeType === 'link'
+            || actionNode.attrs.nodeBasicInfo.nodeType === 'operator'
+            || actionNode.attrs.nodeBasicInfo.nodeType === 'cv') {
+            time = 0;
+          }
 
           chatBotTyping();
 
@@ -1385,12 +1392,21 @@
               case 'scenario': // シナリオ呼び出し
                 break;
               case 'jump': // ジャンプ
+                var nextNode = $scope.findNodeById(actionNode.attrs.actionParam.targetId);
+                $scope.currentNodeId = nextNode.id;
+                $scope.doAction();
                 break;
               case 'link': // リンク
+                var nextNode = $scope.findNodeById(actionNode.attrs.nodeBasicInfo.nextNodeId);
+                $scope.currentNodeId = nextNode.id;
+                $scope.doAction();
                 break;
               case 'operator': // オペレータ呼び出し
                 break;
               case 'cv': //CVポイント
+                var nextNode = $scope.findNodeById(actionNode.attrs.nodeBasicInfo.nextNodeId);
+                $scope.currentNodeId = nextNode.id;
+                $scope.doAction();
                 break;
             }
           }, time);
@@ -1544,16 +1560,18 @@
        * @param Object actionDetail アクションの詳細
        */
       $scope.doBranchAction = function(node) {
-        chatBotTypingRemove();
-        var nodeId = node.id;
-        var buttonType = node.attrs.actionParam.btnType;
-        var message = node.attrs.actionParam.text;
-        var selections = $scope.getBranchSelection(node);
-        var labels = $scope.getBranchLabels(node, Object.keys(selections));
-        $scope.$broadcast('addReDiagramBranchMessage', nodeId, buttonType, message, selections, labels);
+        $timeout(function() {
+          var nodeId = node.id;
+          var buttonType = node.attrs.actionParam.btnType;
+          var message = node.attrs.actionParam.text;
+          var selections = $scope.getBranchSelection(node);
+          var labels = $scope.getBranchLabels(node, Object.keys(selections));
+          $scope.$broadcast('addReDiagramBranchMessage', nodeId, buttonType, message, selections, labels);
+        }, 2000);
       };
 
       $scope.doTextAction = function(node) {
+        clearChatbotTypingTimer();
         chatBotTypingRemove();
         var nodeId = node.id;
         var messages = node.attrs.actionParam.text;
@@ -1562,8 +1580,10 @@
         $scope.$broadcast('addReDiagramTextMessage', nodeId, messages, nextNodeId, intervalSec);
       };
 
-      $scope.$on('finishAddTextMessage', function(node){
-
+      $scope.$on('finishAddTextMessage', function(event, nextNodeId){
+        var nextNode = $scope.findNodeById(nextNodeId);
+        $scope.currentNodeId = nextNode.id;
+        $scope.doAction();
       });
 
       $scope.getBranchSelection = function(node) {

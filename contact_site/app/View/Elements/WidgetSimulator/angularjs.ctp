@@ -890,6 +890,8 @@
       };
 
       $scope.addReDiagramBranchMessage = function(nodeId, buttonType, message, selection, labels) {
+        clearChatbotTypingTimer();
+        chatBotTypingRemove();
         var gridElm = document.createElement("div");
         $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
@@ -942,11 +944,11 @@
               document.getElementById('chatTalk').appendChild(gridElm);
               self.autoScroll();
               if(idx === messages.length - 1) {
-                $scope.$emit('finishAddTextMessage');
+                $scope.$emit('finishAddTextMessage',nextNodeId);
               } else {
                 chatBotTyping();
               }
-            }, intervalSec * 1000);
+            }, (idx + 1) * intervalSec * 1000);
           })(i);
         }
       };
@@ -1983,6 +1985,8 @@
 
   var waitAnimationAddFlg = true;
 
+  var chatbotTimer = null;
+
   function chatBotTyping() {
     if (!waitAnimationAddFlg) return;
     waitAnimationAddFlg = false;
@@ -2027,7 +2031,7 @@
     }
     html += '  </li>';
     html += '</div>';
-    setTimeout(function() {
+    chatbotTimer = setTimeout(function() {
       $('#chatTalk').append(html);
     }, 800);
     return;
@@ -2036,6 +2040,13 @@
   function chatBotTypingRemove() {
     waitAnimationAddFlg = true;
     $('div.botNowDiv').remove();
+  }
+
+  function clearChatbotTypingTimer() {
+    if(chatbotTimer) {
+      clearTimeout(chatbotTimer);
+      chatbotTimer = null;
+    }
   }
 
 </script>
