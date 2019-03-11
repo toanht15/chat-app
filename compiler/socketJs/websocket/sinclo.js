@@ -5181,7 +5181,7 @@
         } else {
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important; color: ' + settings.customDesign.radioTextColor + ' !important;}';
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {top: 15px !important; left: 12px !important;}';
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {top: 15px !important; left: 8px !important;}';
+          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {top: 8px !important; left: 8px !important;}';
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {background-color: ' + settings.customDesign.radioEntireBackgroundColor + ';}';
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked ~ label {background-color: ' + settings.customDesign.radioEntireActiveColor + '; color: ' + settings.customDesign.radioActiveTextColor + ' !important;}';
         }
