@@ -817,6 +817,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
         #sincloBox section#chatTab .grid_balloon .iconDiv i { border-radius: 50%; color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}}}
         #sincloBox section#chatTab .grid_balloon .iconDiv i.icon_border { border: 1px solid {{widget.settings['string_color']}};}
+        #sincloBox section#chatTab .widthCustom {width: 95%}
         <?php endif; ?>
       <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
         #sincloBox section#callTab{height: 296.5px;}
