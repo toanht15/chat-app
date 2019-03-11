@@ -7273,7 +7273,7 @@ ul.naviBtn {
   #t_chatbot_diagrams_body {
     display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 125px 1fr;
+    -ms-grid-columns: 120px 1fr;
     grid-template-columns: 125px 1fr;
     height: calc(100vh - 225px);
     overflow-y: hidden;
@@ -7282,11 +7282,13 @@ ul.naviBtn {
       border-right: 1px solid #8B8B8B;
       padding: 10px;
       z-index: 4;
+      overflow-y: auto;
       .form_subtitle {
         border-bottom: 3px solid #C3D69B;
         padding-right: 3px;
         text-align: center;
         padding-bottom: 10px;
+        font-size: 13px;
       }
       #node_list {
         display: flex;
@@ -7300,14 +7302,15 @@ ul.naviBtn {
           justify-content: center;
           align-items: center;
           color: #ffffff;
-          font-size: 25px;
+          font-size: 22px;
           background-color: #99cc66;
-          width: 50px;
-          height: 50px;
+          width: 45px;
+          height: 45px;
           border-radius: 25%;
           cursor: pointer;
         }
         >p{
+          font-size: 12px;
           margin-top:2px;
         }
         .branch {

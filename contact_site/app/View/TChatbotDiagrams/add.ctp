@@ -7,6 +7,7 @@
  */
 ?>
 <?php echo $this->element('TChatbotDiagrams/angularjs'); ?>
+<?php echo $this->element('TChatbotDiagrams/preview'); ?>
 <?php echo $this->Html->script('jscolor.min.js'); ?>
 <div id="t_chatbot_diagrams_idx" class="card-shadow entry-wrapper" ng-app="sincloApp"
      ng-controller="DiagramController as main" ng-cloak>
