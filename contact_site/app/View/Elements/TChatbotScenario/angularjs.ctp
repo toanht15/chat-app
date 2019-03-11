@@ -702,11 +702,11 @@
             target.css('background-color', defaultColor);
             break;
           case 'checkboxActiveColor':
-            defaultColor = defaultColor = $scope.widget.settings.main_color;
+            defaultColor = $scope.widget.settings.main_color;
             target.css('background-color', defaultColor);
             break;
           case 'checkboxEntireActiveColor':
-            defaultColor = '#FFFFFF';
+            defaultColor = $scope.widget.settings.main_color;
             target.css('background-color', defaultColor);
             break;
           case 'checkboxSelectionDistance':
@@ -3836,38 +3836,6 @@
             data.backgroundColor = $scope.widget.settings.re_text_color;
 
             $scope.$broadcast('addReCarousel', data);
-            $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
-                hearingDetail.required);
-          }
-
-          if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_BUTTON_UI ?>) {
-            var data       = {};
-            data.settings  = hearingDetail.settings;
-            data.options   = hearingDetail.settings.options;
-            data.prefix    = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
-            data.message   = $scope.replaceVariable(message);
-            data.isRestore = isRestore;
-            data.oldValue  = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
-            data.textColor = $scope.widget.settings.re_background_color;
-            data.backgroundColor = $scope.widget.settings.re_text_color;
-
-            $scope.$broadcast('addReButtonUI', data);
-            $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
-                hearingDetail.required);
-          }
-
-          if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CHECKBOX ?>) {
-            var data       = {};
-            data.settings  = hearingDetail.settings;
-            data.options   = hearingDetail.settings.options;
-            data.prefix    = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
-            data.message   = $scope.replaceVariable(message);
-            data.isRestore = isRestore;
-            data.oldValue  = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
-            data.textColor = $scope.widget.settings.re_background_color;
-            data.backgroundColor = $scope.widget.settings.re_text_color;
-
-            $scope.$broadcast('addReCheckbox', data);
             $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
                 hearingDetail.required);
           }
