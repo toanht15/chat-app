@@ -1645,35 +1645,35 @@
         var buttonUIName = prefix + 'sinclo-buttonUI-' + index;
         var hasOldOptionValue = false;
         var style = '<style>';
-        style += '#sincloBox #' + buttonUIName + ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
-        style += '#sincloBox #' + buttonUIName + ' button {background-color: ' + settings.customDesign.buttonUIBackgroundColor + '}';
-        style += '#sincloBox #' + buttonUIName + ' button {width: ' + this.getButtonUIWidth() + 'px;}';
-        style += '#sincloBox #' + buttonUIName + ' button {color: ' + settings.customDesign.buttonUITextColor + '}';
-        style += '#sincloBox #' + buttonUIName + ' button:focus {outline: none}';
-        style += '#sincloBox #' + buttonUIName + ' button:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
-        style += '#sincloBox #' + buttonUIName + ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
-        style += '#sincloBox #' + buttonUIName + ' button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
-        style += '#sincloBox #' + buttonUIName + ' button.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
+        style += ' #sincloBox #' + buttonUIName + ' .sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {background-color: ' + settings.customDesign.buttonUIBackgroundColor + '}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {width: ' + this.getButtonUIWidth() + 'px;}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {color: ' + settings.customDesign.buttonUITextColor + '}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:focus {outline: none}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
         if (message) {
-          style += '#sincloBox #' + buttonUIName + ' {margin-top: 8px}';
+          style += ' #sincloBox #' + buttonUIName + ' {margin-top: 8px}';
         }
         if (settings.outButtonUINoneBorder) {
-          style += '#sincloBox #' + buttonUIName + ' button {border: none}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: none}';
         } else {
-          style += '#sincloBox #' + buttonUIName + ' button {border: 1px solid ' + settings.customDesign.buttonUIBorderColor +' }';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: 1px solid ' + settings.customDesign.buttonUIBorderColor +' }';
         }
         switch (Number(settings.customDesign.buttonUITextAlign)) {
           case 1:
-            style += '#sincloBox #' + buttonUIName + ' button {text-align: left}';
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: left}';
             break;
           case 2:
-            style += '#sincloBox #' + buttonUIName + ' button {text-align: center}';
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: center}';
             break;
           case 3:
-            style += '#sincloBox #' + buttonUIName + ' button {text-align: right}';
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: right}';
             break;
           default:
-            style += '#sincloBox #' + buttonUIName + ' button {text-align: center}';
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: center}';
             break;
         }
         style += '</style>';

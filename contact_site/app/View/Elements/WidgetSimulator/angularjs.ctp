@@ -916,6 +916,9 @@
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
         self.autoScroll();
+        $timeout(function() {
+          $scope.$apply();
+        });
       };
 
       $scope.addReDiagramTextMessage = function(nodeId, messages, nextNodeId, intervalSec) {
