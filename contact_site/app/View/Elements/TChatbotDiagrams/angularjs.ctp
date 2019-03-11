@@ -1177,7 +1177,7 @@
                   'out': {
                     attrs: {
                       '.port-body': {
-                        fill: "#DD82AB",
+                        fill: "#C0C0C0",
                         'fill-opacity': "0.9",
                         height: 30,
                         width: 30,
@@ -1187,7 +1187,8 @@
                       },
                       '.port-label': {
                         'font-size': 0
-                      }
+                      },
+                      type: "branch"
                     },
                     position: {
                       name: 'absolute',
