@@ -4540,12 +4540,13 @@
             var radioList = li.querySelectorAll(
                 'input[name^=\'sinclo-radio\']');
             for (var i = 0; typeof radioList[i] !== "undefined"; i++) {
-              radioList[i].disabled = true;
+              radioList[i].disabled                    = true;
               radioList[i].parentElement.style.opacity = 0.5;
             }
           } else {
 
           }
+        }
       },
       createMessageHtml: function(message, align) {
         if (!message || message.length === 0) {
