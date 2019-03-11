@@ -343,7 +343,6 @@
         } catch (e) {
           console.log('unexpected connect');
         }
-        console.log(linkView);
         $scope.colorizePort(linkView);
       });
       
@@ -412,13 +411,17 @@
       };
 
       $scope.grayColorizePort = function(link) {
-        var source = graph.getCell(link.get("source").id);
-        source.portProp("out", "attrs/.port-body/fill", "#C0C0C0");
-        var target = graph.getCell(link.get("target").id);
-        console.log(target);
-        if(Object.keys(target.graph._in[target.id]).length === 0) {
-          target.portProp("in", "attrs/.port-body/fill", "#C0C0C0");
+        try{
+          var source = graph.getCell(link.get("source").id);
+          source.portProp("out", "attrs/.port-body/fill", "#C0C0C0");
+          var target = graph.getCell(link.get("target").id);
+          if(Object.keys(target.graph._in[target.id]).length === 0) {
+            target.portProp("in", "attrs/.port-body/fill", "#C0C0C0");
+          }
+        } catch (e) {
+          console.log(e + "ERROR DETECTED!");
         }
+
       };
       
       $scope.colorizePort = function(linkView) {
@@ -1295,18 +1298,6 @@
       };
 
       var previewHandler = {
-        typeText: {
-          addBalloon: function(index){
-            var newBalloon = $('#text_modal_preview > div.chatTalk:first-child').clone();
-            console.log(newBalloon.find('span').text());
-            newBalloon.find('span').text("");
-            console.log($($('#text_modal_preview')[index]));
-            $($('#text_modal_preview')[index]).after(newBalloon);
-          },
-          removeBalloon: function(){
-
-          }
-        },
         setDefaultNodeName: function(source, target){
           //既に情報が入っている場合はreturnさせる
           if(target.attr("actionParam/nodeName") !== "") return;
@@ -1339,7 +1330,6 @@
           },
           deleteTargetName: function(targetCell){
             var allCells = graph.getCells();
-            console.log(targetCell);
             for(var i = 0; i < allCells.length; i++) {
               if(allCells[i].isElement()
                   && allCells[i].attr("nodeBasicInfo/nodeType") === "jump"
