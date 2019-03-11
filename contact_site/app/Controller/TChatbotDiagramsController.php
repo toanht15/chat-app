@@ -40,12 +40,11 @@ class TChatbotDiagramsController extends AppController
 
   public function add($id)
   {
-    $scenarioData = $this->_getScenarioList();
-    $this->set('scenarioList', $scenarioData);
     if (empty($id)) {
-
+      $scenarioData = $this->_getScenarioList();
+      $this->set('scenarioList', $scenarioData);
     } else {
-      $data = $this->TChatbotDiagram->find('first', array(
+      $data = $this->TChatbotDiagram->find('all', array(
         'conditions' => array(
           'id' => $id,
           'm_companies_id' => $this->userInfo['MCompany']['id']
@@ -209,7 +208,7 @@ class TChatbotDiagramsController extends AppController
    */
   private function _getScenarioList()
   {
-    return $this->TChatbotScenario->coFind('list', [
+    return $this->TChatbotScenario->coFind('all', [
       'fields' => ['TChatbotScenario.id', 'TChatbotScenario.name'],
       'order' => [
         'TChatbotScenario.sort' => 'asc',
