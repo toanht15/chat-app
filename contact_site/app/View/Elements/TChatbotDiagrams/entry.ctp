@@ -38,31 +38,3 @@
 
   </ul>
 </div>
-
-<!-- フッター -->
-<!-- 超暫定対応なので戻るとか保存とかも実装しておく必要がある -->
-<section>
-  <?=$this->Form->hidden('id')?>
-  <div id="tchatbotscenario_actions" class="fotterBtnArea">
-    <?=$this->Html->link('戻る','/TChatbotDiagrams/index/page:', ['class'=>'whiteBtn btn-shadow'])?>
-    <a id="submitBtn" href="javascript:void(0)" onclick="exportJSON()" class="greenBtn btn-shadow">保存</a>
-    <?php
-    $class = "";
-    if ( empty($this->data['TChatbotScenario']['id']) ) {
-      $class = "redBtn vHidden";
-    } else
-      if (count($this->data['callerInfo']['TAutoMessage']) >= 1 || count($this->data['callerInfo']['TChatbotScenario']) >= 1) {
-        $class = "disOffgrayBtn disabled commontooltip";
-      } else {
-        $class = "redBtn";
-      }
-    ?>
-    <?= $this->Html->link(
-      '削除',
-      'javascript:void(0)',
-      array('escape' => false,
-        'class' => 'btn-shadow redBtn',
-        'id' => 'tchatbotscenario_edit_remove_btn',
-      )) ?>
-  </div>
-</section>

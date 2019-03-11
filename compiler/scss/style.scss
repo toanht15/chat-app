@@ -7218,10 +7218,6 @@ ul.naviBtn {
       ul li:not(:first-child) {
         margin-left: 50px;
       }
-      .fotterBtnArea {
-        padding: 6px 0;
-        z-index: 5;
-      }
     }
   }
   #canvas_scale_controller {
@@ -7269,22 +7265,22 @@ ul.naviBtn {
           margin-top:2px;
         }
         .branch {
-          background-color: #fd9644;
+          background-color: #cc6666;
         }
         .text {
-          background-color: #fed330;
+          background-color: #cc9966;
         }
         .scenario {
-          background-color: #26de81;
+          background-color: #cccc66;
         }
         .jump {
-          background-color: #2bcbba;
+          background-color: #99cc66;
         }
         .link {
-          background-color: #45aaf2;
+          background-color: #66cc66;
         }
         .operator {
-          background-color: #4b7bec;
+          background-color: #66cc99;
         }
         .cv {
           background-color: #66cccc;
@@ -7294,16 +7290,8 @@ ul.naviBtn {
     #canvas {
       -ms-grid-column: 2;
       z-index: 1;
-      svg {
-        cursor: move;
-      }
     }
   }
-}
-
-/* SVGの矢印用 */
-.joint-link.joint-theme-default .link-tools .tool-remove circle.diagram{
-  fill: #00B7FF;
 }
 
 /* チャットボットシナリオ設定 */

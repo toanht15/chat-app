@@ -18,27 +18,27 @@ var nodeSize = {};
 var actionParam = {};
 
 var portSetting = {
-  inPortSize: 31,
+  inPortSize: 30,
   outPortSize: 30
 };
 
 var middleNode = {
-  width: 180,
+  width: 150,
   height: 70,
   inPortX: -30,
   inPortY: 20,
-  outPortX: 180,
+  outPortX: 150,
   outPortY: 20,
   labelX: .3,
   labelY: .1,
   nodeType: "text"
 };
 var smallNode = {
-  width: 180,
+  width: 150,
   height: 50,
   inPortX: -30,
   inPortY: 10,
-  outPortX: 180,
+  outPortX: 150,
   outPortY: 10,
   labelX: .5,
   labelY: .4,
@@ -55,9 +55,9 @@ function NodeFactory() {
     nodeSize = middleNode;
     nodeType = type;
     if(type === "branch") {
-      inColor = "#fd9644";
-      outColor = "#FDCBA4";
-      bgColor = "#fd9644";
+      inColor = "#993333";
+      outColor = "#E6B3B3";
+      bgColor = "#CC6666";
       labelText = "分岐";
       childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
@@ -68,9 +68,9 @@ function NodeFactory() {
         selection: []
       };
     } else if (type === "text") {
-      inColor = "#fed330";
-      outColor = "#FEE794";
-      bgColor = "#fed330";
+      inColor = "#996633";
+      outColor = "#E6CCB3";
+      bgColor = "#CC9966";
       labelText = "テキスト発言";
       childNode = contentViewNode;
       masterNode = constantNode;
@@ -79,19 +79,19 @@ function NodeFactory() {
         text:[],
       };
     } else if (type === "scenario") {
-      inColor = "#26de81";
-      outColor = "#7AEAB0";
-      bgColor = "#26de81";
-      labelText = "シナリオ呼出";
+      inColor = "#999933";
+      outColor = "#E6E6B3";
+      bgColor = "#CCCC66";
+      labelText = "シナリオ";
       childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
       actionParam = {
         scenarioId: ""
       };
     } else if (type === "jump") {
-      inColor = "#2bcbba";
-      outColor = "#78E2D6";
-      bgColor = "#2bcbba";
+      inColor = "#669933";
+      outColor = "#CCE6B3";
+      bgColor = "#99CC66";
       labelText = "ジャンプ";
       childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
@@ -99,9 +99,9 @@ function NodeFactory() {
         targetId: ""
       };
     } else if (type === "link") {
-      inColor = "#45aaf2";
-      outColor = "#A0D4F7";
-      bgColor = "#45aaf2";
+      inColor = "#339933";
+      outColor = "#B3E6B3";
+      bgColor = "#66CC66";
       labelText = "リンク";
       childNode = contentViewNode;
       masterNode = constantNode;
@@ -110,18 +110,18 @@ function NodeFactory() {
         linkType: "same"
       }
     } else if (type === "operator") {
-      inColor = "#4b7bec";
-      outColor = "#A3BBF4";
-      bgColor = "#4b7bec";
+      inColor = "#339966";
+      outColor = "#B3E6CC";
+      bgColor = "#66CC99";
       labelText = "オペレータ呼出";
       nodeSize = smallNode;
       masterNode = constantNodeOnlyInPort;
       actionParam = {};
     } else if (type === "cv") {
       console.log("CVポイント");
-      inColor = "#a55eea";
-      outColor = "#D6B7F5";
-      bgColor = "#a55eea";
+      inColor = "#339999";
+      outColor = "#B3E6E6";
+      bgColor = "#66CCCC";
       labelText = "CVポイント";
       nodeSize = smallNode;
       masterNode = constantNode;
@@ -148,19 +148,16 @@ function NodeFactory() {
 function contentViewNode(posX, posY) {
   return new joint.shapes.basic.Rect({
     position: {x :posX + 5, y: posY + 25},
-    size: { width: 170, height: 40 },
+    size: { width: 140, height: 40 },
     attrs: {
       rect: {
         fill: "#FFFFFF",
         stroke: false
       },
       text: {
-        text: "",
-        'font-size': "12px"
+        text: ""
       },
-      nodeBasicInfo: {
-        nodeType: "childViewNode"
-      }
+      nodeType: "childViewNode"
     }
   });
 }
@@ -212,9 +209,7 @@ function constantNodeOnlyInPort(posX, posY) {
         refX: '-25%',
         refY: '-25%'
       },
-      nodeBasicInfo: {
-        nodeType: nodeType
-      },
+      nodeType: nodeType,
       actionParam: actionParam
     },
   });
@@ -278,12 +273,9 @@ function constantNode(posX, posY) {
         text: labelText,
         'text-anchor': 'middle',
         'font-size': "12px",
-        fill: '#fff',
+        fill: '#fff'
       },
-      rect: {
-        fill: bgColor,
-        stroke: false,
-      },
+      rect: { fill: bgColor, stroke: false },
       button: {
         cursor: 'pointer',
         ref: 'buttonLabel',
@@ -292,11 +284,8 @@ function constantNode(posX, posY) {
         refX: '-25%',
         refY: '-25%'
       },
-      actionParam: actionParam,
-      nodeBasicInfo: {
-        nodeType: nodeType,
-        nextNodeId: ""
-      }
+      nodeType: nodeType,
+      actionParam: actionParam
     }
   });
 }

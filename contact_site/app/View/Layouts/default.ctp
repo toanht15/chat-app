@@ -164,12 +164,10 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
   if (strcmp($this->name,'TChatbotDiagrams') === 0) {
     echo $this->Html->css('https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css"');
     echo $this->Html->css('jquery-ui.css');
-    echo $this->Html->css('joint.ui.halo.css');
     echo $this->Html->script("https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js");
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js");
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js");
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js");
-    echo $this->Html->script("joint.ui.halo.js");
   }
  ?>
 
