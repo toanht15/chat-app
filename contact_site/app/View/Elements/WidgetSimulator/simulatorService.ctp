@@ -75,6 +75,12 @@
       get chatbotIconPath() {
         return this._settings['chatbot_icon'];
       },
+      get isBotIconImg() {
+        return this._settings['chatbot_icon'].match(/^fa/) === null;
+      },
+      get isBotIconIcon() {
+        return this._settings['chatbot_icon'].match(/^fa/) !== null;
+      },
       get operatorIconToggle() {
         return this._settings['show_operator_icon'];
       },
