@@ -1832,17 +1832,20 @@
        */
       $scope.receiveFileEventListener = null;
       $scope.firstActionFlg = true;
+      $scope.callFirst = true;
       $scope.doAction = function() {
         if (true) {
           // メッセージ間隔
           var actionNode = $scope.findNodeById($scope.currentNodeId);
 
           var time = 2;
-          if(actionNode.attrs.nodeBasicInfo.nodeType === 'jump'
-            || actionNode.attrs.nodeBasicInfo.nodeType === 'link'
-            || actionNode.attrs.nodeBasicInfo.nodeType === 'operator'
-            || actionNode.attrs.nodeBasicInfo.nodeType === 'cv') {
+          if($scope.callFirst
+              || actionNode.attrs.nodeBasicInfo.nodeType === 'jump'
+              || actionNode.attrs.nodeBasicInfo.nodeType === 'link'
+              || actionNode.attrs.nodeBasicInfo.nodeType === 'operator'
+              || actionNode.attrs.nodeBasicInfo.nodeType === 'cv') {
             time = 0;
+            $scope.callFirst = false;
           }
 
           chatBotTyping();
@@ -1876,7 +1879,7 @@
                 $scope.doAction();
                 break;
             }
-          }, time);
+          }, time * 1000);
         } else {
           setTimeout(chatBotTypingRemove, 801);
           $scope.actionStop();
@@ -2027,14 +2030,12 @@
        * @param Object actionDetail アクションの詳細
        */
       $scope.doBranchAction = function(node) {
-        $timeout(function() {
-          var nodeId = node.id;
-          var buttonType = node.attrs.actionParam.btnType;
-          var message = node.attrs.actionParam.text;
-          var selections = $scope.getBranchSelection(node);
-          var labels = $scope.getBranchLabels(node, Object.keys(selections));
-          $scope.$broadcast('addReDiagramBranchMessage', nodeId, buttonType, message, selections, labels);
-        }, 2000);
+        var nodeId = node.id;
+        var buttonType = node.attrs.actionParam.btnType;
+        var message = node.attrs.actionParam.text;
+        var selections = $scope.getBranchSelection(node);
+        var labels = $scope.getBranchLabels(node, Object.keys(selections));
+        $scope.$broadcast('addReDiagramBranchMessage', nodeId, buttonType, message, selections, labels);
       };
 
       $scope.doTextAction = function(node) {

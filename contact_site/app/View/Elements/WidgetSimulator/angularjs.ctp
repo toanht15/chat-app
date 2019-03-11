@@ -951,7 +951,7 @@
               } else {
                 chatBotTyping();
               }
-            }, (idx + 1) * intervalSec * 1000);
+            }, (idx) * intervalSec * 1000);
           })(i);
         }
       };
