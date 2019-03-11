@@ -16,6 +16,57 @@
   sincloApp.controller('DiagramController', [
     '$scope', '$timeout', 'SimulatorService', '$compile', function($scope, $timeout, SimulatorService, $compile) {
 
+      /* Set basic data */
+      $scope.widget = SimulatorService;
+      var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
+      $scope.widget.settings = widgetSettings;
+
+
+      $scope.valueDiffChecker = {
+        branch: function(target){
+          return $scope.branchTitle === target.attr("actionParam/nodeName")
+              && $scope.branchText === target.attr("actionParam/text")
+              && $scope.branchType.key === target.attr("actionParam/btnType")
+              && $scope.compareArray($scope.branchSelectionList, target.attr("actionParam/selection"));
+        },
+        text: function(target){
+          return $scope.speakTextTitle === target.attr("actionParam/nodeName")
+              && $scope.compareArray($scope.speakTextList, target.attr("actionParam/text"));
+        },
+        scenario: function(target){
+          return $scope.selectedScenario.key === target.attr("actionParam/scenarioId");
+        },
+        jump: function(target){
+          return $scope.jumpTarget.key === target.attr("actionParam/targetId");
+        },
+        link: function(target){
+          return $scope.linkUrl === target.attr("actionParam/link")
+              && $scope.linkType === target.attr("actionParam/linkType");
+        },
+        operator: function(){
+          return true;
+        },
+        cv: function(){
+          return true;
+        }
+      };
+
+      $scope.compareArray = function(source, target){
+        var t1, t2;
+        var arr1 = source.filter(Boolean).concat();
+        var arr2 = target.filter(Boolean).concat();
+        if(arr1.length !== arr2.length) return false;
+        for(var i = 0; i < arr2.length; i++) {
+          t1 = arr1[i] == null ? "" : arr1[i];
+          t2 = arr2[i] == null ? "" : arr2[i];
+          if (t1 !== t2) return false;
+        }
+        return true;
+      };
+
+
+
+
 
       //メニューバーのアイコンにdraggableを付与
       $('#node_list > i ').each(function(index, target) {
@@ -33,7 +84,6 @@
         'jump',
         'link'
       ];
-
 
       /* Scenario List */
       $scope.scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
@@ -77,9 +127,30 @@
       $scope.branchSelectionList = [];
       $scope.oldSelectionList = [];
 
+      /* Model for branch customize */
+      $scope.isCustomize = false;
+      $scope.radioBackgroundColor = "";
+      $scope.radioActiveColor = "";
+      $scope.radioBorderColor = "";
+      $scope.radioNoneBorder = false;
+      $scope.buttonUIBackgroundColor = "";
+      $scope.buttonUITextColor = "";
+      $scope.buttonUITextAlign ="2";
+      $scope.buttonUIActiveColor = "";
+      $scope.buttonUIBorderColor = "";
+      $scope.outButtonUINoneBorder = false;
+
+      /* Model for validation */
+
+      /* Model for tooltip */
+      $scope.toolTipElement = null;
+      $scope.moveX = 0;
+      $scope.moveY = 0;
+
       /* Cell data Storage  */
       $scope.currentEditCell = null;
       $scope.currentEditCellParent = null;
+
 
       var nodeMaster = function(type, posX, posY) {
         var node = nodeFactory.createNode(type, posX, posY);
@@ -150,6 +221,7 @@
         }
       });
 
+      paper.scale(0.7);
       graph.addCell(startNode());
 
       var dragReferencePosition = null;
@@ -158,7 +230,6 @@
       if (dataForUpdate !== null && dataForUpdate !== '') {
         graph.fromJSON(JSON.parse(dataForUpdate));
         setTimeout(function(){
-          debugger;
           dataForUpdate = JSON.parse(dataForUpdate);
           graph.resetCells(dataForUpdate.cells);
           initNodeEvent(graph.getCells());
@@ -173,26 +244,47 @@
           function(cellView, evt, x, y) {
             /* init current cell to null */
             $scope.currentEditCell = null;
+            $scope.currentEditCellParent = null;
+            if(cellView.model.attr("nodeBasicInfo/nodeType") === "childViewNode"
+                || cellView.model.attr("nodeBasicInfo/nodeType") === "childPortNode") {
+              if($scope.checkTextEnd(cellView.model.attr("text/text"))) {
+                $scope.createToolTip(cellView.model);
+              }
+            }
             /* when edit cell */
             if (!wasMoved && isNeedModalOpen(cellView)) {
               $scope.currentEditCell = setViewElement(cellView);
               $scope.currentEditCellParent = $scope.currentEditCell.getAncestors()[0];
               var modalData = processModalCreate(cellView);
+              $scope.initValidation();
               $compile(modalData.content)($scope);
               $timeout(function(){
                 $scope.currentTop = null;
                 modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
                 var frame = $('#popup-frame');
+                var background = $('#popup-bg');
+                background.append(frame);
+                background.css("overflow","auto");
+                $('#shortMessage').remove();
                 frame.addClass("diagram-ui");
+
                 /* Bind node name if diagram is text or scenario */
                 if(frame.hasClass("p_diagrams_branch")){
                   $scope.titleHandler($scope.branchTitle, "分岐");
+                  $scope.autoResize($("textarea"), true);
                 }else if(frame.hasClass("p_diagrams_text")){
                   $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
+                  var elements = $("textarea");
+                  for(var i = 0; i < elements.length; i++){
+                    $scope.autoResize($(elements[i]), true);
+                  }
                 }
+
                 $scope.popupHandler();
                 $scope.popupInit(frame);
                 initPopupCloseEvent();
+                /* Install jscolor after create modal */
+                $(window)[0].jscolor.installByClassName('jscolor');
               });
             }
 
@@ -203,6 +295,33 @@
       paper.on('blank:pointerdown', function(e, x, y) {
         dragReferencePosition = {x: x * paper.scale().sx, y: y * paper.scale().sy};
       });
+
+      paper.on('cell:mouseenter', function(e) {
+        if(e.model.attr("nodeBasicInfo/nodeType") === "childViewNode"
+        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode") {
+          if($scope.checkTextEnd(e.model.attr("text/text"))) {
+            $scope.createToolTip(e.model);
+          }
+        }
+      });
+
+      paper.on('cell:mouseleave', function(e) {
+        $scope.removeTooltip(e);
+      });
+
+      paper.on('cell:pointerdown', function(e) {
+        $scope.removeTooltip(e);
+      });
+
+      $scope.removeTooltip = function(e){
+        if(e.model.attr("nodeBasicInfo/nodeType") === "childViewNode"
+        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode") {
+          var tooltips = $('.diagram_tooltip');
+          for( var i = 0; i < tooltips.length; i++ ){
+            $('#t_chatbot_diagrams_idx')[0].removeChild(tooltips[i]);
+          }
+        }
+      };
 
       paper.on('blank:pointerup', function() {
         dragReferencePosition = null;
@@ -229,14 +348,16 @@
       });
 
       $('input[type=range]').on('input', function(e) {
-        paper.scale(e.target.value / 5);
+        paper.scale((e.target.value - 1.5) / 5);
       });
 
       $(canvas).mousemove(function(e) {
         if (dragReferencePosition) {
+          $scope.moveX = e.offsetX - dragReferencePosition.x;
+          $scope.moveY = e.offsetY - dragReferencePosition.y
           paper.translate(
-              e.offsetX - dragReferencePosition.x,
-              e.offsetY - dragReferencePosition.y
+              $scope.moveX,
+              $scope.moveY
           );
         }
       });
@@ -250,6 +371,30 @@
           if(tmp > -1){
             $(links[i]).attr("transform", $(links[i]).attr("transform").substr(0, tmp));
           }
+        }
+      };
+
+      $scope.checkTextEnd = function(text){
+        return text.slice(-3) === "...";
+      };
+
+      $scope.createToolTip = function(cell){
+        var text = cell.attr("nodeBasicInfo/tooltip");
+        var position = cell.get("position");
+        var height = cell.get("size").height;
+        $scope.toolTipElement = $("<ul class='diagram_tooltip'><li></li></ul>");
+        $scope.toolTipElement.find("li").text(text);
+        $scope.toolTipElement.offset({
+          top: (position.y  + height) * paper.scale().sy + 185 + $scope.moveY,
+          left: position.x * paper.scale().sx + 220 + $scope.moveX
+        });
+        $("#t_chatbot_diagrams_idx").append($scope.toolTipElement);
+        if(window.innerHeight < $scope.toolTipElement.outerHeight() + $scope.toolTipElement.offset().top) {
+          console.log("おおきい");
+          $scope.toolTipElement.offset({
+            top: position.y* paper.scale().sy -$scope.toolTipElement.outerHeight() + 140 + $scope.moveY,
+            left: position.x * paper.scale().sx + 220 + $scope.moveX
+          });
         }
       };
 
@@ -307,7 +452,10 @@
                 class: "p_selection_bulk_register"
               };
             default:
-              throw "noType"
+              return {
+                title: "選択肢の一括登録",
+                class: "p_selection_bulk_register"
+              };
           }
         },
         _getContent: function() {
@@ -422,10 +570,11 @@
           switch (type) {
             case 1:
               /* save */
-              saveEditNode();
-              previewHandler.typeJump.editTargetName();
-              popupEvent.closeNoPopup();
-              $scope.addLineHeight();
+              saveEditNode( function(){
+                previewHandler.typeJump.editTargetName();
+                popupEvent.closeNoPopup(true);
+                $scope.addLineHeight();
+              });
               break;
             case 2:
               /* delete */
@@ -433,9 +582,22 @@
                 previewHandler.typeJump.deleteTargetName($scope.currentEditCell);
                 deleteEditNode();
                 popupEventOverlap.closeNoPopupOverlap();
-                popupEvent.closeNoPopup()
+                popupEvent.closeNoPopup(true);
               };
               popupEventOverlap.open('現在のノードを削除します。よろしいですか？',"p_diagram_delete_alert" ,"削除の確認");
+              break;
+            case 3:
+              var notChange = $scope.valueDiffChecker[$scope.currentEditCellParent.attr("nodeBasicInfo/nodeType")]($scope.currentEditCellParent);
+              if(notChange == null || notChange){
+                popupEvent.close();
+              } else {
+                popupEventOverlap.initOverlap();
+                popupEventOverlap.open("内容が保存されていません。編集を終了しますか？", "p_confirm_diagram_change", "確認してください");
+                popupEventOverlap.closePopup = function(){
+                  popupEventOverlap.closeNoPopupOverlap();
+                  popupEvent.closeNoPopup();
+                }
+              }
               break;
             default:
               break;
@@ -445,7 +607,7 @@
 
       $scope.addLineHeight = function(){
         /* To override svg */
-        $("text:not(.label) > tspan:not(:first-child)").attr("dy", "1.6em");
+        $("text:not(.label) > tspan:not(:first-child)").attr("dy", "20px");
       };
 
       function deleteEditNode() {
@@ -460,9 +622,9 @@
         $scope.currentEditCellParent = null;
       }
 
-      function saveEditNode() {
+      function saveEditNode( callback ) {
         if ($scope.currentEditCell && $scope.currentEditCellParent) {
-          bindSingleView($scope.currentEditCellParent.attr('nodeBasicInfo/nodeType'));
+          bindSingleView($scope.currentEditCellParent.attr('nodeBasicInfo/nodeType'), callback);
         }
       }
 
@@ -471,35 +633,45 @@
       }
 
       function setViewElement(target) {
-        //親エレメント直下の子エレメントを設定
+        //親エレメント配下のエレメントを設定
         var viewNode = target.model;
         var childList = viewNode.getEmbeddedCells();
-        if (childList.length > 0) {
-          //一番上のViewを基準にする
-          //親の場合は、直下の子供
-          viewNode = childList[0];
-        } else {
-          //一番上のViewを基準にする
-          //子供の場合は、親を取得して子供に再設定する。
-          viewNode = viewNode.getAncestors()[0].getEmbeddedCells()[0];
+        if (childList.length === 0) {
+          //子供がいない→自分が子供なので、親を取得し再度子供を全員取得
+          childList = viewNode.getAncestors()[0].getEmbeddedCells();
+        }
+        for( var i = 0; i < childList.length; i++ ){
+          if(childList[i].attr("nodeBasicInfo/nodeType") === "childViewNode") {
+            viewNode = childList[i];
+            break;
+          }
         }
         return viewNode;
       }
 
-      function bindSingleView(type) {
+      function bindSingleView(type, callback) {
+        if($scope.saveProcess[type].validation()){
+          $scope.$apply();
+          $timeout(function(){
+            $scope.popupPositionAdjustment();
+          }, 370);
+          return;
+        }
         $scope.saveProcess[type].setView();
         $timeout(function(){
           $scope.currentEditCellParent.attr('actionParam', $scope.saveProcess[type].getData());
+          callback();
         });
       }
 
       $scope.saveProcess = {
         text: {
           setView: function() {
+            var text = $scope.speakTextList.filter(Boolean)[0];
             $scope.currentEditCellParent.attr('.label/text',
-                convertTextForTitle(convertTextLength($scope.speakTextTitle, 16), 'テキスト発言'));
-            $scope.currentEditCell.attr('text/text', convertTextLength(
-                textEditor.textLineSeparate($scope.speakTextList.filter(Boolean)[0]), 46));
+                convertTextForTitle(convertTextLength($scope.speakTextTitle, 22), 'テキスト発言'));
+            $scope.currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate(text), 96));
+            $scope.currentEditCell.attr('nodeBasicInfo/tooltip', text);
             $scope.currentEditCellParent.attr('actionParam/text', null);
           },
           getData: function() {
@@ -507,87 +679,167 @@
               nodeName: $scope.speakTextTitle,
               text: $scope.speakTextList.filter(Boolean)
             };
+          },
+          validation: function(){
+            $scope.nodeNameIsEmpty = $scope.speakTextTitle === "";
+            return $scope.nodeNameIsEmpty;
           }
         },
         branch: {
           setView: function(){
             nodeEditHandler.typeBranch.branchPortController($scope.branchSelectionList.filter(Boolean));
             $scope.currentEditCellParent.attr('.label/text',
-                convertTextForTitle(convertTextLength($scope.branchTitle, 16), '分岐'));
+                convertTextForTitle(convertTextLength($scope.branchTitle, 22), '分岐'));
+            $scope.currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate($scope.branchText), 96));
+            $scope.currentEditCell.attr('nodeBasicInfo/tooltip', $scope.branchText);
             $scope.currentEditCellParent.attr('actionParam/selection', null);
-            $scope.currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate($scope.branchText), 46));
           },
           getData: function(){
             return {
               nodeName: $scope.branchTitle,
               text: $scope.branchText,
               btnType: $scope.branchType.key,
-              selection: $scope.branchSelectionList.filter(Boolean)
+              selection: $scope.branchSelectionList.filter(Boolean),
+              customizeDesign: $scope.selectCustomizeDesign()
             };
+          },
+          validation: function(){
+            $scope.nodeNameIsEmpty = $scope.branchTitle === "";
+            $scope.btnTypeIsEmpty = $scope.branchType.key === "";
+            return $scope.nodeNameIsEmpty || $scope.btnTypeIsEmpty;
           }
         },
         scenario: {
           setView: function(){
             if($scope.selectedScenario.key !== ""){
-              $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 20));
+              $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 30));
+              $scope.currentEditCell.attr('nodeBasicInfo/tooltip', $scope.selectedScenario.value);
             }
           },
           getData: function(){
             return {
               scenarioId: $scope.selectedScenario.key
             };
+          },
+          validation: function(){
+            $scope.scenarioIsEmpty = $scope.selectedScenario.key === "";
+            return $scope.scenarioIsEmpty;
           }
         },
         jump: {
           setView: function(){
             if($scope.jumpTarget.key !== ""){
-              $scope.currentEditCell.attr('text/text', convertTextLength($scope.jumpTarget.value, 20));
+              $scope.currentEditCell.attr('text/text', convertTextLength($scope.jumpTarget.value, 30));
+              $scope.currentEditCell.attr('nodeBasicInfo/tooltip', $scope.jumpTarget.value);
             }
           },
           getData: function(){
             return {
               targetId: $scope.jumpTarget.key
             }
+          },
+          validation: function(){
+            $scope.jumpTargetIsEmpty = $scope.jumpTarget.key === "";
+            return $scope.jumpTargetIsEmpty;
           }
         },
         link: {
           setView: function(){
-            $scope.currentEditCell.attr('text/text', convertTextLength($scope.linkUrl, 28));
+            $scope.currentEditCell.attr('text/text', convertTextLength($scope.linkUrl, 32));
+            $scope.currentEditCell.attr('nodeBasicInfo/tooltip', $scope.linkUrl);
           },
           getData: function(){
             return {
               link: $scope.linkUrl,
               linkType: $scope.linkType
             }
+          },
+          validation: function(){
+            $scope.linkIsEmpty = $scope.linkUrl === "";
+            return $scope.linkIsEmpty;
           }
         },
         operator: {
           setView: function(){
           },
           getData: function(){
+          },
+          validation: function(){
           }
         },
         cv: {
           setView: function(){
           },
           getData: function(){
+          },
+          validation: function(){
           }
         }
       };
+
+      $scope.initValidation = function() {
+        $scope.nodeNameIsEmpty = false;
+        $scope.btnTypeIsEmpty = false;
+        $scope.jumpTargetIsEmpty = false;
+        $scope.scenarioIsEmpty = false;
+        $scope.linkIsEmpty = false;
+      };
+
+      $scope.selectCustomizeDesign = function() {
+        var design;
+        switch (Number($scope.branchType.key)) {
+          case 1:
+            design = $scope.getRadioCustomizeDesign;
+            break;
+          case 2:
+            design = $scope.getButtonUICustomizeDesign;
+            break;
+          default:
+            return {};
+        }
+        return design();
+      };
+
+      $scope.getRadioCustomizeDesign = function(){
+        return {
+          isCustomize: $scope.isCustomize,
+          radioBackgroundColor: $scope.radioBackgroundColor,
+          radioActiveColor: $scope.radioActiveColor,
+          radioBorderColor: $scope.radioBorderColor,
+          radioNoneBorder: $scope.radioNoneBorder
+        }
+      };
+
+      $scope.getButtonUICustomizeDesign = function(){
+        return {
+          isCustomize: $scope.isCustomize,
+          buttonUIBackgroundColor: $scope.buttonUIBackgroundColor,
+          buttonUITextColor: $scope.buttonUITextColor,
+          buttonUITextAlign: $scope.buttonUITextAlign,
+          buttonUIActiveColor: $scope.buttonUIActiveColor,
+          buttonUIBorderColor: $scope.buttonUIBorderColor,
+          outButtonUINoneBorder: $scope.outButtonUINoneBorder
+        }
+      };
+
 
       function getTextLength(str, limit) {
         var result = 0;
         var isMax = true;
         for(var i=0;i<str.length;i++){
           var chr = str.charCodeAt(i);
-          if(chr >= 0x00 && chr < 0x81
-          || chr === 0xf8f0
-          || chr >= 0xff61 && chr < 0xffa0
-          || chr >= 0xf8f1 && chr < 0xf8f4){
+          if(chr === 10){
+            result = 0;
+            limit -= 33;
+          } else if(chr >= 0x00 && chr < 0x81
+              || chr === 0xf8f0
+              || chr >= 0xff61 && chr < 0xffa0
+              || chr >= 0xf8f1 && chr < 0xf8f4){
             result += 1;
           } else {
             result += 2;
           }
+
           if (result > limit) {
             isMax = false;
             break;
@@ -614,7 +866,7 @@
 
       function createBranchHtml(nodeData) {
         if(nodeData.selection.length > 0){
-          $scope.branchSelectionList = nodeData.selection
+          $scope.branchSelectionList = nodeData.selection.concat();
         } else {
           $scope.branchSelectionList.length = 0;
           $scope.branchSelectionList.push("");
@@ -623,12 +875,13 @@
         $scope.branchTitle = nodeData.nodeName;
         $scope.branchType.key = nodeData.btnType;
         $scope.branchText = nodeData.text;
+        $scope.initCustomizeColor(nodeData);
         return $('<branch-modal></branch-modal>');
       }
 
       function createTextHtml(nodeData) {
         if(nodeData.text.length > 0){
-          $scope.speakTextList = nodeData.text;
+          $scope.speakTextList = nodeData.text.concat();
         } else {
           $scope.speakTextList.length = 0;
           $scope.speakTextList.push("");
@@ -685,8 +938,8 @@
         popup.css({
           "margin": "0",
           "position": "absolute",
-          "top": (window.innerHeight / 2 - popup.height() / 2 - $('#color-bar').height()),
-          "left": (window.innerWidth  / 2 - popup.width() / 2 - $('#sidebar-main').width())
+          "top": (window.innerHeight / 2 - popup.height() / 2),
+          "left": (window.innerWidth  / 2 - popup.width() / 2)
         });
         popup.draggable({
           scroll: false,
@@ -696,15 +949,15 @@
             var popup = $('#popup-frame'),
                 newTop = popup.offset().top,
                 newLeft = popup.offset().left;
-            if(ui.offset.top < 60 || window.innerHeight < popup.height() + 60){
-              newTop = 60;
-            } else if( ui.offset.top + e.target.offsetHeight > window.innerHeight ){
-              newTop = window.innerHeight - e.target.offsetHeight;
+            if(ui.offset.top < 0 ){
+              newTop = 0;
+            } else if( ui.offset.top + 100 > window.innerHeight ){
+              newTop = window.innerHeight - 100;
             }
-            if(ui.offset.left < 80 || window.innerWidth < popup.width() + 80){
-              newLeft = 80;
-            } else if(ui.offset.left + e.target.offsetWidth > window.innerWidth){
-              newLeft = window.innerWidth - e.target.offsetWidth;
+            if(ui.offset.left < 0 ){
+              newLeft = 0;
+            } else if(ui.offset.left + 100 > window.innerWidth){
+              newLeft = window.innerWidth - 100;
             }
 
             popup.offset({
@@ -720,7 +973,7 @@
       }, true);
 
       $scope.$watch("branchSelectionList", function(){
-        $scope.btnHandler($scope.branchSelectionList.length, 1, 10);
+        $scope.btnHandler($scope.branchSelectionList.length, 1, 100);
       }, true);
 
       $scope.btnHandler = function(amount, min, max){
@@ -739,11 +992,11 @@
       $scope.popupInit = function(popup) {
         var newTop = popup.offset().top,
             newLeft = popup.offset().left;
-        if(window.innerHeight < popup.height() + 60){
-          newTop = 60;
+        if(window.innerHeight < popup.height() || newTop < 0){
+          newTop = 0;
         }
-        if(window.innerWidth < popup.width() + 80){
-          newLeft = 80;
+        if(window.innerWidth < popup.width() || newLeft < 0){
+          newLeft = 0;
         }
         popup.offset({
           top: newTop,
@@ -783,35 +1036,74 @@
         typeBranch: {
           branchPortController: function(newSelectionList) {
             var self = nodeEditHandler.typeBranch;
+            self._checkCurrentPortListFromPast(newSelectionList);
             for(var i = 0; i < newSelectionList.length; i++){
               /* Set rect height */
               self._resizeParentHeight(i);
-              var port = self.portCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i] ,22), self._getCoverOpacity(i, newSelectionList.length));
+              var port = self.portCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i] ,22), newSelectionList[i], self._getCoverOpacity(i, newSelectionList.length));
+              self._checkPastPortListFromCurrent(newSelectionList, i, port);
+            }
+          },
+          _checkPastPortListFromCurrent: function(targetList, number, port) {
+            if($scope.oldSelectionList.indexOf(targetList[number]) === -1 ){
+              /* add port */
               $scope.currentEditCellParent.embed(port);
               initNodeEvent([port]);
               graph.addCell(port);
-            }
-          },
-          _checkPastPortListFromCurrent: function(target) {
-            if($scope.oldSelectionList.indexOf(target) === -1 ){
-              /* Port is Added */
-            }
-          },
-          _checkCurrentPortListFromPast: function(targetList) {
-            for( var i = 0; i < $scope.oldSelectionList; i++ ){
-              if(targetList.indexOf($scope.oldSelectionList[i]) === -1){
-                /* Port is deleted */
+            } else {
+              /* edit port */
+              var childList = this._getCurrentPortList();
+              for( var i = 0; i < childList.length; i++ ){
+                if( childList[i].attr(".label/text") === targetList[number] ){
+                  this._setSelfPosition(childList[i], this._getSelfPosition(number));
+                  var topOpacity = 1,
+                      bottomOpacity = 1;
+                  if(number === 0){
+                    topOpacity = 0;
+                  }
+                  if(number === targetList.length - 1){
+                    bottomOpacity = 0;
+                  }
+                  childList[i].attr(".cover_top/fill-opacity", topOpacity)
+                  .attr(".cover_bottom/fill-opacity", bottomOpacity);
+                }
               }
             }
           },
-          _getSelfPosition :function(index) {
+          _checkCurrentPortListFromPast: function(targetList) {
+            var childList = this._getCurrentPortList();
+            for( var i = 0; i < childList.length; i++ ){
+              if(targetList.indexOf(childList[i].attr("nodeBasicInfo/tooltip")) === -1){
+                /* delete port */
+                childList[i].remove();
+              }
+            }
+          },
+          _getCurrentPortList: function() {
+            var list = $scope.currentEditCellParent.getEmbeddedCells();
+            var targetList = [];
+            for(var i = 0; i < list.length; i++){
+              try{
+                if(list[i].attr("nodeBasicInfo/nodeType") === "childPortNode") {
+                  targetList.push(list[i]);
+                }
+              } catch (e) {
+                console.log("undefined Port!!")
+              }
+            }
+            return targetList;
+          },
+          _setSelfPosition: function(elm, position) {
+            elm.set("position",position);
+          },
+          _getSelfPosition: function(index) {
             return {
-              x: $scope.currentEditCellParent.get('position').x,
-              y: $scope.currentEditCellParent.get('position').y + 95 + index * 40
+              x: $scope.currentEditCellParent.get('position').x + 5,
+              y: $scope.currentEditCellParent.get('position').y + 115 + index * 40
             }
           },
           _resizeParentHeight: function(index) {
-            $scope.currentEditCellParent.get('size').height = 140 + index * 40;
+            $scope.currentEditCellParent.get('size').height = 160 + index * 40;
           },
           _getCoverOpacity: function(index, maxLength){
             return {
@@ -819,10 +1111,10 @@
               bot : index === maxLength - 1 ? "0" : "1"
             }
           },
-          portCreator: function(position, text, opacity) {
+          portCreator: function(position, text, originalText, opacity) {
             return new joint.shapes.devs.Model({
-              position: {x: position.x + 5, y: position.y},
-              size: {width: 190, height: 36},
+              position: {x: position.x , y: position.y},
+              size: {width: 240, height: 36},
               outPorts: ['out'],
               ports: {
                 groups: {
@@ -844,7 +1136,7 @@
                     position: {
                       name: 'absolute',
                       args: {
-                        x: 185,
+                        x: 235,
                         y: 3
                       }
                     },
@@ -854,6 +1146,13 @@
                 }
               },
               attrs: {
+                text: {
+                  text: text,
+                  'ref-width': '70%',
+                  'font-size': '14px',
+                  fill: '#000',
+                  y: 12
+                },
                 '.label': {
                   text: text,
                   'ref-width': '70%',
@@ -869,17 +1168,18 @@
                 },
                 nodeBasicInfo: {
                   nodeType: 'childPortNode',
-                  nextNode: ''
+                  nextNode: '',
+                  tooltip: originalText
                 },
                 '.cover_top': {
                   fill: '#FFFFFF',
-                  width: 190,
+                  width: 240,
                   height: 10,
                   'fill-opacity': opacity.top
                 },
                 '.cover_bottom': {
                   fill: '#FFFFFF',
-                  width: 190,
+                  width: 240,
                   height: 10,
                   transform: "translate(0 26)",
                   'fill-opacity': opacity.bot
@@ -892,18 +1192,20 @@
       };
 
       var textEditor = {
+        lineCounter: 1,
         textLineSeparate: function(text){
           if(text == null) return "";
           var self = textEditor;
           var originTextArray = text.split(/\r\n|\n/);
           var resultTextArray = [];
           for( var i = 0; i < originTextArray.length; i++ ){
-            if( originTextArray[i].length > 12 ){
+            if( originTextArray[i].length > 15 ){
               Array.prototype.push.apply(resultTextArray, self.textLineCreate(originTextArray[i]));
             } else {
               resultTextArray.push(originTextArray[i]);
             }
           }
+          textEditor.lineCounter = resultTextArray.length > 3 ? resultTextArray.length : 3;
           if(resultTextArray.length > 3){
             resultTextArray.splice(3, resultTextArray.length - 3);
           }
@@ -912,12 +1214,30 @@
         textLineCreate: function(textLine){
           var currentText = textLine;
           var textArray = [];
-          var loopNum = currentText.length / 13;
+          var loopNum = currentText.length / 16;
           for( var i = 0; i < loopNum ; i++){
-            textArray.push(currentText.substr(0, 13));
-            currentText = currentText.substr(13);
+            textArray.push(currentText.substr(0, 16));
+            currentText = currentText.substr(16);
           }
           return textArray;
+        },
+        textLineHeightCoordinate: function(){
+          var matrix = "matrix(1,0,0,1,0,0)" ;
+          switch (textEditor.lineCounter) {
+            case 1:
+              /* Do nothing */
+              break;
+            case 2:
+              matrix = "matrix(1,0,0,1,0,0)";
+              break;
+            case 3:
+              matrix = "matrix(1,0,0,1,0,0)";
+              break;
+            default:
+              /* Do nothing */
+              break;
+          }
+          return matrix;
         }
       };
 
@@ -979,10 +1299,6 @@
         }
       };
 
-      $scope.widget = SimulatorService;
-      var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
-      $scope.widget.settings = widgetSettings;
-
       $scope.$on('ngRepeatFinish', function(){
         popupEvent.resize();
         $scope.popupFix();
@@ -991,7 +1307,7 @@
       $scope.popupFix = function(){
         var popup = $('#popup-frame');
         popup.offset({
-          top: $scope.currentTop ? $scope.currentTop : 300,
+          top: $scope.currentTop ? $scope.currentTop : window.innerHeight / 2 - popup.height() / 2,
           left: popup.offset().left
         });
       };
@@ -1004,6 +1320,22 @@
         $scope.titleHandler($scope.branchTitle, "分岐");
       });
 
+      $scope.$watch("isCustomize", function(){
+        $scope.popupPositionAdjustment();
+      });
+
+      $scope.$watch("branchType.key", function(){
+        $scope.popupPositionAdjustment();
+      });
+
+      $scope.popupPositionAdjustment = function(){
+        $scope.currentTop = $('#popup-frame').offset().top;
+        $timeout(function(){
+          popupEvent.resize();
+          $scope.popupFix();
+        });
+      };
+
       $scope.titleHandler = function(target, prefix){
         $('#popup-title').text(prefix + $scope.getConjunction(target) + target);
       };
@@ -1014,6 +1346,141 @@
           conjunction = "："
         }
         return conjunction;
+      };
+
+      $scope.initCustomizeColor = function(nodeData){
+        if(nodeData.customizeDesign == null){
+          /* Set object to process init function */
+          nodeData.customizeDesign = {};
+        }
+        $scope.setAllCustomizeToData(nodeData.customizeDesign);
+      };
+
+      $scope.setAllCustomizeToData = function(custom){
+        $scope.isCustomize = custom.isCustomize ? custom.isCustomize : false;
+        $scope.radioBackgroundColor = custom.radioBackgroundColor ? custom.radioBackgroundColor : "#FFFFFF";
+        $scope.radioActiveColor = custom.radioActiveColor ? custom.radioActiveColor : $scope.widget.settings.main_color;
+        $scope.radioBorderColor = custom.radioBorderColor ? custom.radioBorderColor : $scope.widget.settings.main_color;
+        $scope.radioNoneBorder = custom.radioNoneBorder ? custom.radioNoneBorder : false;
+        $scope.buttonUIBackgroundColor = custom.buttonUIBackgroundColor ? custom.buttonUIBackgroundColor : $scope.widget.settings.re_text_color;
+        $scope.buttonUITextColor = custom.buttonUITextColor ? custom.buttonUITextColor : $scope.widget.settings.re_background_color;
+        $scope.buttonUITextAlign = custom.buttonUITextAlign ? custom.buttonUITextAlign : "2";
+        $scope.buttonUIActiveColor = custom.buttonUIActiveColor ? custom.buttonUIActiveColor : $scope.getRawColor($scope.widget.settings.main_color, 0.5);
+        $scope.buttonUIBorderColor = custom.buttonUIBorderColor ? custom.buttonUIBorderColor : "#E3E3E3";
+        $scope.outButtonUINoneBorder = custom.outButtonUINoneBorder ? custom.outButtonUINoneBorder : false;
+      };
+
+      $scope.revertStandard = function(buttonType, colorType, elm){
+        var target = $(elm.target.parentNode).find('input'),
+            handler;
+        switch(buttonType) {
+          case "radio":
+            handler = $scope.radioCustomizeHandler;
+            break;
+          case "button":
+            handler = $scope.buttonUICustomizeHandler;
+            break;
+          default:
+            return;
+        }
+        handler(colorType, target);
+      };
+
+      $scope.radioCustomizeHandler = function(colorType, target){
+        var targetValue;
+        switch(colorType) {
+          case "bg":
+            targetValue = $scope.radioBackgroundColor = "#FFFFFF";
+            break;
+          case "button":
+            targetValue = $scope.radioActiveColor = $scope.widget.settings.main_color;
+            break;
+          case "border":
+            targetValue = $scope.radioBorderColor = $scope.widget.settings.main_color;
+            break;
+          default:
+            /* Do nothing */
+        }
+        target.css("background-color", targetValue);
+      };
+
+      $scope.buttonUICustomizeHandler = function(colorType, target){
+        var targetValue;
+        switch(colorType) {
+          case "bg":
+            targetValue = $scope.buttonUIBackgroundColor = $scope.widget.settings.re_text_color;
+            break;
+          case "text":
+            targetValue = $scope.buttonUITextColor = $scope.widget.settings.re_background_color;
+            break;
+          case "select":
+            targetValue = $scope.buttonUIActiveColor = $scope.getRawColor($scope.widget.settings.main_color, 0.5);
+            break;
+          case "border":
+            targetValue = $scope.buttonUIBorderColor = "#E3E3E3";
+            break;
+          default:
+            /* Do nothing */
+        }
+        target.css("background-color", targetValue);
+      };
+
+      $scope.getRawColor = function(hex, opacity) {
+        if (!opacity) {
+          opacity = 0.1;
+        }
+        var code = hex.substr(1), r, g, b;
+        if (code.length === 3) {
+          r = String(code.substr(0, 1)) + String(code.substr(0, 1));
+          g = String(code.substr(1, 1)) + String(code.substr(1, 1));
+          b = String(code.substr(2)) + String(code.substr(2));
+        } else {
+          r = String(code.substr(0, 2));
+          g = String(code.substr(2, 2));
+          b = String(code.substr(4));
+        }
+
+        var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * opacity));
+        var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * opacity));
+        var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * opacity));
+        var codeR = parseInt(balloonR).toString(16);
+        var codeG = parseInt(balloonG).toString(16);
+        var codeB = parseInt(balloonB).toString(16);
+
+        return ('#' + codeR + codeG + codeB).toUpperCase();
+      };
+
+
+      $scope.autoResize = function(e, forceProcess){
+        if(e == null && !forceProcess) return;
+        var elm = e.target ? e.target : e[0];
+        var maxRow = elm.dataset.maxRow || 10;
+        var fontSize = parseFloat(elm.style.fontSize, 10);
+        var borderSize = parseFloat(elm.style.borderWidth, 10) * 2;  // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
+        var paddingSize = parseFloat(elm.style.padding, 10) * 2;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
+        var lineHeight = parseFloat(elm.style.lineHeight, 10);
+        // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
+        var areaWidth = elm.getBoundingClientRect().width - borderSize - paddingSize;
+
+        // フォントサイズとテキストエリアのサイズを基に、行数を計算する
+        var textRow = 0;
+        elm.value.split('\n').forEach(function(string) {
+          var stringWidth = string.length * fontSize;
+          textRow += Math.max(Math.ceil(stringWidth / areaWidth), 1);
+        });
+
+        // 表示する行数に応じて、テキストエリアの高さを調整する
+        if (textRow > maxRow) {
+          elm.style.height = (maxRow * (fontSize * lineHeight)) + paddingSize + 'px';
+          elm.style.overflow = 'auto';
+        } else {
+          elm.style.height = (textRow * (fontSize * lineHeight)) + paddingSize + 'px';
+          elm.style.overflow = 'hidden';
+        }
+        $scope.popupPositionAdjustment();
+        console.log($scope.widget);
+        console.log($scope.widget.settings);
+        console.log($scope.widget.chatbotIconToggle);
       };
 
       /** ==========================
@@ -2188,17 +2655,28 @@
           '<label for=\'node_name\'>ノード名</label>' +
           '<input ng-model="branchTitle" id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
           '</div>' +
+          '<div class="node_name_valid_margin">' +
+          '<span class="diagram_valid" ng-show="nodeNameIsEmpty">ノード名を入力して下さい</span>' +
+          '</div>' +
           '<div id=\'branch_modal_body\'>' +
           '<div class=\'branch_modal_setting_header\'>' +
           '<div class=\'flex_row_box\'>' +
           '<p>発言内容</p>' +
-          '<textarea class="node_branch" ng-model="branchText"></textarea>' +
+          '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="branchText"></resize-textarea>' +
           '</div>' +
+          '<div class="m40">' +
           '<div class=\'flex_row_box\'>' +
           '<label for=\'branch_button\'>表示形式</label>' +
           '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
           '</select>' +
+          '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
+          '<div class="btn_valid_margin">' +
+          '<span class="diagram_valid" ng-show="btnTypeIsEmpty">表示形式を選択してください</span>' +
+          '</div>' +
+          '</div>' +
+          '<radio-customize ng-show="branchType.key == \'1\'"></radio-customize>' +
+          '<button-customize ng-show="branchType.key == \'2\'"></button-customize>' +
           '</div>' +
           '<div class=\'branch_modal_setting_content\'>' +
           '<div class=\'setting_row\' ng-repeat="selection in branchSelectionList track by $index">' +
@@ -2207,7 +2685,6 @@
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index)">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
-          '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
           '</div>' +
           '</div>' +
@@ -2227,11 +2704,12 @@
           '<label for=\'node_name\'>ノード名</label>' +
           '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'ng-model="speakTextTitle"/>' +
           '</div>' +
+          '<span class="diagram_valid node_name_valid_margin" ng-show="nodeNameIsEmpty">ノード名を入力して下さい</span>' +
           '<div id=\'text_modal_body\'>' +
           '<p>発言内容</p>' +
           '<div id="text_modal_contents" >' +
           '<div class=\'text_modal_setting\' ng-repeat="speakText in speakTextList track by $index" finisher>' +
-          '<textarea class="node_text" ng-model="speakTextList[$index]"></textarea>' +
+          '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="speakTextList[$index]"></resize-textarea>' +
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index)">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', speakTextList, $index)">' +
           '</div>' +
@@ -2240,6 +2718,8 @@
           '</div>' +
           '<div id=\'text_modal_preview\'>' +
           '<h3>プレビュー</h3>' +
+          '<preview-text ng-repeat="text in speakTextList" ng-model="textPreview">' +
+          '</preview-text>' +
           '</div>' +
           '</div>'
     }
@@ -2252,6 +2732,9 @@
           '<label for=\'link\'>遷移先URL</label>' +
           '<input id=\'linkTarget\' name=\'link\' type=\'text\' ng-model="linkUrl" placeholder=\'URLを入力して下さい\'/>' +
           '</div>' +
+          '<div class="link_valid_margin">' +
+          '<span class="diagram_valid" ng-show="linkIsEmpty">URLを入力して下さい</span>' +
+          '</div>' +
           '<div id=\'link_type_area\'>' +
           '<label><input type=\'radio\' ng-model="linkType" name=\'link_type\' value=\'same\'>ページ遷移する</label>' +
           '<label><input type=\'radio\' ng-model="linkType" name=\'link_type\' value=\'another\'>別タブで開く</label>' +
@@ -2262,20 +2745,30 @@
     return {
       restrict: 'E',
       replace: true,
-      template: '<div id=\'scenario_modal\'>' +
+      template: '<div>' +
+          '<div id=\'scenario_modal\'>' +
           '<label for=\'scenario\'>シナリオ名</label>' +
           '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key">' +
           '</select>' +
+          '</div>' +
+          '<div class="scenario_valid_margin">' +
+          '<span class="diagram_valid" ng-show="scenarioIsEmpty">シナリオを選択してください</span>' +
+          '</div>' +
           '</div>'
     }
   }).directive('jumpModal', function(){
     return {
       restrict: 'E',
       replace: true,
-      template: '<div id=\'jump_modal\'>' +
+      template: '<div>' +
+          '<div id=\'jump_modal\'>' +
           '<label for=\'jump\'>ノード名</label>' +
           '<select ng-model="jumpTarget" name=\'jump\' id=\'jumpTargetNode\' ng-options="jump.value for jump in jumpTargetList track by jump.key">' +
           '<select>' +
+          '</div>' +
+          '<div  class="jump_valid_margin">' +
+          '<span class="diagram_valid" ng-show="jumpTargetIsEmpty">ジャンプ先を選択してください</span>' +
+          '</div>' +
           '</div>'
     }
   }).directive('cvModal', function(){
@@ -2290,6 +2783,80 @@
       replace: true,
       template: '<p id="op_modal">このノードに到達した場合、オペレーターを呼び出します。</p>'
     }
+  }).directive('radioCustomize', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      require: '^ngModel',
+      template: '<div class="customize_form">' +
+          '<label><input type="checkbox" ng-model="isCustomize">デザインをカスタマイズする</label>' +
+          '<div ng-show="isCustomize" class="customize_area radio_customize">' +
+          '<span class="customize_row">' +
+          '<label>ラジオボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioBackgroundColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ラジオボタンの色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioActiveColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","button",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ラジオボタン枠線色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioBorderColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","border",$event)\' >標準に戻す</span>' +
+          '</span>' +
+          '</div>' +
+          '</div>'
+    }
+  }).directive('buttonCustomize', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      require: '^ngModel',
+      template: '<div class="customize_form">' +
+          '<label><input type="checkbox" ng-model="isCustomize">デザインをカスタマイズする</label>' +
+          '<div ng-show="isCustomize" class="customize_area button_customize">' +
+          '<span class="customize_row">' +
+          '<label>ボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="buttonUIBackgroundColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button"  ng-click=\'revertStandard("button","bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ボタン文字色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="buttonUITextColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("button","text",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ボタン文字位置</label>' +
+          '<div>' +
+          '<label><input type="radio" value="1" ng-model="buttonUITextAlign">左寄せ</label>' +
+          '<label><input type="radio" value="2" ng-model="buttonUITextAlign">中央寄せ</label>' +
+          '<label><input type="radio" value="3" ng-model="buttonUITextAlign">右寄せ</label>' +
+          '</div>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ボタン選択色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="buttonUIActiveColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("button","select",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>ボタン枠線色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="buttonUIBorderColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("button","border",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '</div>' +
+          '</div>'
+    }
+  }).directive('resizeTextarea', function() {
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<textarea class="resize" style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea>',
+      link: function(scope, element, attr){
+        scope.autoResize(element, false);
+      }
+    };
   });
 
   // ng-repeat完了後にControllerへ通知
@@ -2304,7 +2871,7 @@
         }
       }
     }
-  })
+  });
 
   /**
    * ウィジェット設定取得

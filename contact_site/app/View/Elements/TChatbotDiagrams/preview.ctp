@@ -21,15 +21,23 @@
   .chatTalk li.all-round { border-radius: 12px!important; }
 </style>
 <script>
-  //クローン元の要素を作成
-  //ng-class等はここで付与する
-</script>
-<div style="display:none">
-  <div class="chatTalk">
-    <li class="preview_moc">
-      <span class="detail">
+  //ここでプレビュー用ディレクティブを定義
+  sincloApp.directive('previewText', function() {
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<div ng-show="text" ng-class="{grid_preview : widget.chatbotIconToggle == 1}">' +
+          '<div>' +
+          '<div ng-if="widget.isBotIconImg" class="img_wrapper">' +
+          '<img ng-src="{{widget.settings[\'chatbot_icon\']}}" alt="無人対応アイコンに設定している画像">' +
+          '</div>' +
+          '<i ng-if="widget.isBotIconIcon"></i>' +
+          '</div>' +
+          '<li class="sinclo_re"><span>{{text}}</span></li>' +
+          '</div>'
+    }
 
-      </span>
-    </li>
-  </div>
-</div>
+  });
+
+</script>
+

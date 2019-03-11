@@ -229,9 +229,9 @@
       <style ng-if="hearings.uiType === '9'">
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox {display: block;position: relative;padding-left: 20px; margin-bottom: {{hearings.settings.customDesign.checkboxSelectionDistance ? hearings.settings.customDesign.checkboxSelectionDistance : 4}}px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: {{widget.settings['re_text_color']}};}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}
-        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {position: absolute;top: 2px;left: 0px;height: {{widget.re_text_size}}px; width: {{widget.re_text_size}}px;}
+        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {position: absolute;top: 1px;left: 0px;height: {{widget.re_text_size + 2}}px; width: {{widget.re_text_size + 2}}px;}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {background-color: {{hearings.settings.customDesign.checkboxBackgroundColor}};}
-        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: {{widget.re_text_size - 10}}px;top: {{widget.re_text_size - 13}}px;width: 3px;height: 6px;border: solid {{hearings.settings.customDesign.checkboxCheckmarkColor}};border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}
+        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: {{widget.re_text_size - 9}}px;top: {{widget.re_text_size - 12}}px;width: 3px;height: 6px;border: solid {{hearings.settings.customDesign.checkboxCheckmarkColor}};border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox input:checked ~ .checkmark {background-color: {{hearings.settings.customDesign.checkboxActiveColor}};}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox input:checked ~ .checkmark:after {display: block;}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox:hover input ~ .checkmark {background-color: {{hearings.settings.customDesign.checkboxActiveColor}};}
@@ -243,10 +243,11 @@
       </style>
       <style ng-if="hearings.uiType === '9' && hearings.settings.checkboxStyle === '1'" >
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox {padding: 8px 8px 8px 28px;}
-        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {top: 10px;left: 8px;}
+        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {top: 9px;left: 8px;}
+        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox {color: {{hearings.settings.customDesign.checkboxTextColor}};}
       </style>
 
-      <style ng-if="hearings.uiType === '3' && hearings.settings.radioCustomDesign">
+      <style ng-if="hearings.uiType === '3'">
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label:before {background-color: {{hearings.settings.customDesign.radioBackgroundColor}} !important; border-color: {{hearings.settings.radioNoneBorder ? 'transparent' : hearings.settings.customDesign.radioBorderColor}} !important;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio:first-child {margin-top: {{widget.settings['btw_button_margin']}}px !important;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio {margin-top: {{hearings.settings.customDesign.radioSelectionDistance ? hearings.settings.customDesign.radioSelectionDistance : 4}}px !important;}
@@ -254,12 +255,12 @@
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"]:checked + label:after {background: {{hearings.settings.customDesign.radioActiveColor}} !important;}
       </style>
       <style ng-if="hearings.uiType === '3' && hearings.settings.radioStyle === '1'">
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px {{widget.re_text_size+15}}px !important;}
+        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px {{widget.re_text_size+15}}px !important; color: {{hearings.settings.customDesign.radioTextColor}} !important;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"]:checked + label:after {top: 13px !important; left: 12px !important;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label:before {top: 9px !important; left: 8px !important;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label.noneBackground {background-color: transparent;}
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label.hasBackground {background-color: {{hearings.settings.customDesign.radioEntireBackgroundColor}};}
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"]:checked ~ label {background-color: {{hearings.settings.customDesign.radioEntireActiveColor}};}
+        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"]:checked ~ label {background-color: {{hearings.settings.customDesign.radioEntireActiveColor}}; color: {{hearings.settings.customDesign.radioActiveTextColor}} !important;}
       </style>
       <div ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1,arrowUp: widget.settings['chat_message_design_type'] == 1 && widget.settings['chat_message_arrow_position'] == 1, arrowBottom: widget.settings['chat_message_design_type'] != 1 || widget.settings['chat_message_arrow_position'] == 2 }">
         <div ng-if="canShowChatbotIcon(hearings, widget.settings['show_chatbot_icon'])" class="iconDiv" ng-class="{arrowUp: widget.settings['chat_message_design_type'] == 1 && widget.settings['chat_message_arrow_position'] == 1, arrowBottom: widget.settings['chat_message_design_type'] != 1 || widget.settings['chat_message_arrow_position'] == 2}">

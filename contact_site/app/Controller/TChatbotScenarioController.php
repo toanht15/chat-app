@@ -1983,11 +1983,21 @@ sinclo@medialink-ml.co.jp
    */
   private function convertHearingRadioButton($data)
   {
+    $widget = $this->_getWidgetSettings();
     $radio = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default']['hearings'][0];
     $radio['variableName'] = $data->selection->variableName;
     $radio['message'] = $data->message;
     $radio['uiType'] = '3'; // radio button type
     $radio['settings']['radioStyle'] = '2';
+    $radio['settings']['radioCustomDesign'] = true;
+    $radio['settings']['customDesign']['radioBorderColor'] = '#999';
+    $radio['settings']['customDesign']['radioActiveColor'] = $widget['main_color'];
+    $radio['settings']['customDesign']['radioEntireActiveColor'] = $widget['main_color'];
+    $radio['settings']['customDesign']['radioEntireBackgroundColor'] = $widget['main_color'];
+    $radio['settings']['customDesign']['radioTextColor'] = $widget['re_text_color'];
+    $radio['settings']['customDesign']['radioActiveTextColor'] = $widget['re_text_color'];
+    $radio['settings']['customDesign']['radioBackgroundColor'] = '#FFFFFF';
+
     $radio["settings"]["options"] = [];
     foreach ($data->selection->options as $option) {
       array_push($radio["settings"]["options"], $option);

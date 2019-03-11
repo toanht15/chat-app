@@ -539,10 +539,16 @@
         target.settings.customDesign.radioBorderColor              = $scope.widget.settings.main_color;
         target.settings.customDesign.radioSelectionDistance        = '4';
         if (!displayStyle) {
-          target.settings.customDesign.checkboxEntireBackgroundColor = '#FFFFFF';
-          target.settings.customDesign.checkboxEntireActiveColor     = '#FFFFFF';
-          target.settings.customDesign.radioEntireBackgroundColor    = '#FFFFFF';
-          target.settings.customDesign.radioEntireActiveColor        = $scope.widget.settings.main_color;
+          target.settings.customDesign.checkboxEntireBackgroundColor = this.getRawColor($scope.widget.settings.main_color,
+              0.5);
+          target.settings.customDesign.checkboxEntireActiveColor     = $scope.widget.settings.main_color;
+          target.settings.customDesign.checkboxTextColor             = $scope.widget.settings.re_text_color;
+          target.settings.customDesign.checkboxActiveTextColor       = $scope.widget.settings.re_text_color;
+          target.settings.customDesign.radioEntireBackgroundColor = this.getRawColor($scope.widget.settings.main_color,
+              0.5);
+          target.settings.customDesign.radioEntireActiveColor     = $scope.widget.settings.main_color;
+          target.settings.customDesign.radioTextColor             = $scope.widget.settings.re_text_color;
+          target.settings.customDesign.radioActiveTextColor       = $scope.widget.settings.re_text_color;
         }
 
         return target;
@@ -687,11 +693,12 @@
             target.css('background-color', defaultColor);
             break;
           case 'checkboxEntireBackgroundColor':
-            defaultColor = '#FFFFFF';
+            defaultColor = this.getRawColor($scope.widget.settings.main_color,
+                0.5);
             target.css('background-color', defaultColor);
             break;
           case 'checkboxActiveColor':
-            defaultColor = '#FFFFFF';
+            defaultColor = defaultColor = $scope.widget.settings.main_color;
             target.css('background-color', defaultColor);
             break;
           case 'checkboxEntireActiveColor':
@@ -709,6 +716,14 @@
             defaultColor = $scope.widget.settings.main_color;
             target.css('background-color', defaultColor);
             break;
+          case 'checkboxTextColor':
+            defaultColor = $scope.widget.settings.re_text_color;
+            target.css('background-color', defaultColor);
+            break;
+          case 'checkboxActiveTextColor':
+            defaultColor = $scope.widget.settings.re_text_color;
+            target.css('background-color', defaultColor);
+            break;
         }
 
         $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
@@ -724,7 +739,8 @@
             target.css('background-color', defaultColor);
             break;
           case 'radioEntireBackgroundColor':
-            defaultColor = '#FFFFFF';
+            defaultColor = this.getRawColor($scope.widget.settings.main_color,
+                0.5);
             target.css('background-color', defaultColor);
             break;
           case 'radioActiveColor':
@@ -740,6 +756,14 @@
             break;
           case 'radioBorderColor':
             defaultColor = $scope.widget.settings.main_color;
+            target.css('background-color', defaultColor);
+            break;
+          case 'radioTextColor':
+            defaultColor = $scope.widget.settings.re_text_color;
+            target.css('background-color', defaultColor);
+            break;
+          case 'radioActiveTextColor':
+            defaultColor = $scope.widget.settings.re_text_color;
             target.css('background-color', defaultColor);
             break;
         }
@@ -1207,6 +1231,14 @@
                   hearing.settings.checkboxStyle = '2';
                 }
 
+                if (typeof hearing.settings.customDesign.checkboxTextColor === 'undefined') {
+                  hearing.settings.customDesign.checkboxTextColor = $scope.widget.settings.re_text_color;
+                }
+
+                if (typeof hearing.settings.customDesign.checkboxActiveTextColor === 'undefined') {
+                  hearing.settings.customDesign.checkboxActiveTextColor = $scope.widget.settings.re_text_color;
+                }
+
                 $timeout(function() {
                   self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
@@ -1218,6 +1250,9 @@
                     checkboxTarget.each(function() {
                       if ($(this).prop('checked')) {
                         $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
+                        $(this).parent().css('color', hearing.settings.customDesign.checkboxActiveTextColor);
+                      } else {
+                        $(this).parent().css('color', hearing.settings.customDesign.checkboxTextColor);
                       }
                     });
                     checkboxTarget.on('change', function() {
@@ -1226,17 +1261,20 @@
                           $(this).parent().css('background-color', 'transparent');
                         } else {
                           $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
+                          $(this).parent().css('color', hearing.settings.customDesign.checkboxActiveTextColor);
                         }
                       } else {
                         if (hearing.settings.checkboxStyle !== '1') {
                           $(this).parent().css('background-color', 'transparent');
                         } else {
                           $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
+                          $(this).parent().css('color', hearing.settings.customDesign.checkboxTextColor);
                         }
                       }
                     });
                   } else {
                     checkboxLabelTarget.css('background-color', 'transparent');
+                    checkboxLabelTarget.css('color', $scope.widget.settings.re_text_color);
                   }
 
                   if (hearing.settings.checkboxStyle === '1') {
@@ -1256,6 +1294,24 @@
                 if (!hearing.settings.radioStyle) {
                   hearing.settings.radioStyle = '2';
                 }
+
+                if (typeof hearing.settings.radioCustomDesign === 'undefined') {
+                  hearing.settings.radioCustomDesign = true;
+                  hearing.settings.customDesign.radioBorderColor = '#999';
+                  hearing.settings.customDesign.radioActiveColor = $scope.widget.settings.main_color;
+                  hearing.settings.customDesign.radioEntireBackgroundColor = this.getRawColor($scope.widget.settings.main_color, 0.5);
+                  hearing.settings.customDesign.radioEntireActiveColor = $scope.widget.settings.main_color;
+
+                }
+
+                if (typeof hearing.settings.customDesign.radioTextColor === 'undefined') {
+                  hearing.settings.customDesign.radioTextColor = $scope.widget.settings.re_text_color;
+                }
+
+                if (typeof hearing.settings.customDesign.radioActiveTextColor === 'undefined') {
+                  hearing.settings.customDesign.radioActiveTextColor = $scope.widget.settings.re_text_color;
+                }
+
                 $timeout(function() {
                   self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
