@@ -43,7 +43,8 @@
 
     graph = new joint.dia.Graph;
 
-    if (!!$('#TChatbotDiagramActivity').val()) {
+    debugger;
+    if ($('#TChatbotDiagramActivity').val() !== null) {
       graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
     }
 
@@ -98,6 +99,7 @@
             return false;
           }
         }
+        console.log(cellViewS);
 
         // outPortには入力させない
         return magnetT && magnetT.getAttribute('port-group') === 'in';
@@ -122,7 +124,6 @@
           initPopupCloseEvent();
           btnViewHandler.switcher();
           $(document).trigger('diagram.openModal');
-          $(document).trigger('diagram.clicker');
         }
         wasMoved = false;
       });
@@ -142,7 +143,6 @@
     paper.on('link:connect', function(linkView, e) {
       try {
         linkView.sourceView.model.attr('nodeBasicInfo/nextNodeId', linkView.targetView.model.attributes.id);
-        console.log("合体しました");
       } catch (e) {
         console.log('unexpected connect');
       }
@@ -306,12 +306,12 @@
           break;
         case 2:
           //削除処理
-            popupEventOverlap.closePopup = function() {
-              deleteEditNode();
-              popupEventOverlap.closeNoPopupOverlap();
-              popupEvent.closeNoPopup()
-            };
-            popupEventOverlap.open('現在のノードを削除します。よろしいですか？',"p_diagram_delete_alert" ,"削除の確認");
+          if (confirm('現在のノードを削除します。よろしいですか？')) {
+            deleteEditNode();
+            popupEvent.closeNoPopup();
+          } else {
+            //キャンセルの場合はモーダルを閉じない
+          }
           break;
         default:
           //一応保存処理にしておく
@@ -489,11 +489,10 @@
       '<div class=\'branch_modal_setting_content\'>' +
       '<div class=\'setting_row\'>' +
       '<p>選択肢</p>' +
-      '<input type="text"/>' +
+      '<textarea></textarea>' +
       '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
       '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
       '</div>' +
-      '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
       '</div>' +
       '</div>' +
       '</div>' +
@@ -515,7 +514,7 @@
       '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
       '</div>' +
       '<p>発言内容</p>' +
-      '<div id=\'text_modal_body\' ng-app="sincloApp" ng-controller="ModalController" >' +
+      '<div id=\'text_modal_body\'>' +
       '<div class=\'text_modal_setting\'>' +
       '<resize-textarea></resize-textarea>' +
       '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
@@ -549,10 +548,11 @@
     var html = $('<div id=\'scenario_modal\'>' +
       '<label for=\'scenario\'>シナリオ名</label>' +
       '<select name=\'scenario\' id=\'callTargetScenario\'>' +
-      '<option value="">シナリオを選択してください</option>' +
+      '<option>シナリオを選択してください</option>' +
+      '<option>資料請求</option>' +
+      '<option>メインメニュー</option>' +
       '<select>' +
       '</div>');
-    html = nodeEditHandler.typeScenario.createContents(html);
     html.find('select').val(nodeData.scenarioId);
     return html;
   }
@@ -564,6 +564,7 @@
       '<option value=\'\'>ノード名を選択してください</option>' +
       '<select>' +
       '</div>');
+    html.find('select').val(nodeData.targetId);
     html = nodeEditHandler.typeJump.createContents(html);
     html.find('select').val(nodeData.targetId);
     return html;
@@ -580,7 +581,6 @@
   function addTextBox(e) {
     var cloneElm = $(e.parentNode).clone();
     cloneElm.children('textarea').val('');
-    cloneElm.children('input[type=text]').val('');
     $(e.parentNode).after(cloneElm);
     btnViewHandler.switcher();
     popupEvent.resize();
@@ -651,18 +651,6 @@
         return html;
       }
     },
-    typeScenario: {
-      createContents: function(html) {
-        var keyList = Object.keys(scenarioList);
-        for (var i = 0; i < keyList.length; i++) {
-          var newOption = $('<option></option>');
-          newOption.val(keyList[i]);
-          newOption.text(scenarioList[keyList[i]]);
-          html.children('select').append(newOption);
-        }
-        return html;
-      }
-    },
     typeText: {
       convertContents: function(originContents) {
         return nodeEditHandler.textAreaToArray(originContents);
@@ -687,11 +675,10 @@
       },
       createContents: function(html, nodeData) {
         if (nodeData.selection.length > 0) {
-          html.find('.setting_row > input[type=text]').val(nodeData.selection[0]);
+          html.find('.setting_row > textarea').val(nodeData.selection[0]);
           for (var i = 1; i < nodeData.selection.length; i++) {
-            tmpClone = html.find('.setting_row').last().clone();
-            tmpClone.find('input[type=text]').val(nodeData.selection[i]);
-            console.log(tmpClone);
+            tmpClone = html.find('.setting_row:last-child').clone();
+            tmpClone.find('textarea').val(nodeData.selection[i]);
             html.find('.branch_modal_setting_content').append(tmpClone);
           }
         } else {
@@ -744,7 +731,7 @@
               'out': {
                 attrs: {
                   '.port-body': {
-                    fill: "#FDCBA4",
+                    fill: '#E6B3B3',
                     height: 30,
                     width: 30,
                     stroke: false
@@ -794,8 +781,8 @@
     textAreaToArray: function(contents) {
       var contentArray = [];
       for (var i = 0; i < contents.length; i++) {
-        if ($(contents[i]).children('input[type=text]').val()) {
-          contentArray.push($(contents[i]).children('input[type=text]').val());
+        if ($(contents[i]).children('textarea').val()) {
+          contentArray.push($(contents[i]).children('textarea').val());
         }
       }
       return contentArray;

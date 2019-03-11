@@ -10,11 +10,9 @@
   'use strict';
 
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
-  sincloApp.config(function($controllerProvider){
-    sincloApp.controllerProvider = $controllerProvider;
-  });
   sincloApp.controller('DiagramController', [
     '$scope', '$timeout', function($scope, $timeout) {
+    $scope.msg = 'Hello AngularJS!';
 
       // 保存ボタン
       $('#submitBtn').on('click', function(e) {
@@ -23,20 +21,12 @@
         $('#TChatbotDiagramsEntryForm').submit();
       });
 
-    }]).controller('ProvideController', [ function() {
-      $(document).on('diagram.clicker', function(e) {
-        sincloApp.controllerProvider.register('ModalController', [
-          '$scope', '$timeout', function($dialogScope, $timeout) {
-            var takasi = function(){
-              console.log(takasi);
-            };
-            $(document).on('diagram.openModal', function(e) {
-              $timeout(function() {
-                $dialogScope.$apply();
-              });
-            });
-          }
-        ]);
+    }]).controller('ModalController', [
+    '$scope', '$timeout', function($dialogScope, $timeout) {
+      $(document).on('diagram.openModal', function(e) {
+        $timeout(function() {
+          $dialogScope.$apply();
+        });
       });
     }]).directive('resizeTextarea', function() {
     return {

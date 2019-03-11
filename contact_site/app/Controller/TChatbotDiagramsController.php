@@ -38,7 +38,7 @@ class TChatbotDiagramsController extends AppController
     $this->set('settingList', $data);
   }
 
-  public function add($id = null)
+  public function add($id)
   {
     $scenarioData = $this->_getScenarioList();
     $this->set('scenarioList', $scenarioData);

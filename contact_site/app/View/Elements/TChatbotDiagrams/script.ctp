@@ -40,13 +40,7 @@ function createUrl(index, id) {
 
 
 function openAdd(){
-  if(!document.getElementById("sort").checked) {
-    var index = Number("<?= $this->Paginator->params()["page"] ?>");
-    location.href = createUrl(index);
-  }
-  else {
-    return false;
-  }
+
 }
 
 
