@@ -7852,7 +7852,63 @@ ul.naviBtn {
                       margin-left: 16px;
                       height: 35px;
                       display: flex;
-                      width: 32em;
+                      width: 35em;
+                      padding: 2px 0;
+                      align-items: center;
+
+                      input[type="text"] {
+                        width: 120px;
+                        height: 26px;
+                        font-size: 12px;
+                        padding-left: 4px;
+                        position: relative;
+                        border: none !important;
+                        border-bottom: 1px solid #909090 !important;
+                        border-radius: 0 !important;
+                      }
+
+                      label {
+                        flex-basis: 210px;
+                      }
+
+                      .radio-buttons {
+                        display: flex;
+                        align-items: center;
+                        flex-basis: 265px;
+                        label {
+                          margin-top: 0px;
+                          &.text3 {
+
+                          }
+                          &.text4 {
+                            margin-right: 20px;
+                          }
+                        }
+                      }
+
+                      .revert-button {
+                        position: relative;
+                        left: 10px;
+                        padding: 4px;
+                        bottom: 0px;
+                      }
+                    }
+
+                    .noneBorderCheckbox {
+                      margin-left: 213px;
+                    }
+                  }
+
+                  .radio-design-custom-area {
+                    input[type="checkbox"], input[type="radio"] {
+                      margin-top: 0px;
+                    }
+
+                    .radio-custom-items {
+                      margin-left: 16px;
+                      height: 32px;
+                      display: flex;
+                      width: 35em;
                       padding: 2px 0;
                       align-items: center;
 
@@ -7892,6 +7948,10 @@ ul.naviBtn {
                         padding: 4px;
                         bottom: 0px;
                       }
+                    }
+
+                    .noneBorderCheckbox {
+                      margin-left: 213px;
                     }
                   }
                 }
