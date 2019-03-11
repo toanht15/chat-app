@@ -30,7 +30,7 @@ var portSetting = {
   outPortSize: 33
 };
 
-var middleNode = {
+var largeNode = {
   width: 250,
   height: 110,
   inPortX: -30,
@@ -39,8 +39,22 @@ var middleNode = {
   outPortY: 40,
   labelX: .3,
   labelY: .1,
-  nodeType: "text"
+  nodeType: "text",
 };
+
+var middleNode = {
+  width: 250,
+  height: 76,
+  inPortX: -30,
+  inPortY: 23,
+  outPortX: 250,
+  outPortY: 23,
+  labelX: .3,
+  labelY: .1,
+  nodeType: "text",
+};
+
+
 var smallNode = {
   width: 100,
   height: 50,
@@ -60,7 +74,7 @@ function NodeFactory() {
     var masterNode = null;
     var childNode = null;
     var returnNode = null;
-    nodeSize = middleNode;
+    nodeSize = largeNode;
     nodeType = type;
     iconParam = defaultIcon;
     if(type === "branch") {
@@ -108,6 +122,7 @@ function NodeFactory() {
       actionParam = {
         scenarioId: ""
       };
+      nodeSize = middleNode;
     } else if (type === "jump") {
       inColor = "#c8d627";
       outColor = "#DFE679";
@@ -119,6 +134,7 @@ function NodeFactory() {
       actionParam = {
         targetId: ""
       };
+      nodeSize = middleNode;
     } else if (type === "link") {
       inColor = "#845d9e";
       outColor = "#B39CC3";
@@ -130,7 +146,8 @@ function NodeFactory() {
       actionParam = {
         link: "",
         linkType: "same"
-      }
+      };
+      nodeSize = middleNode;
     } else if (type === "operator") {
       inColor = "#98B5E0";
       outColor = "#E7EEF7";
@@ -140,6 +157,7 @@ function NodeFactory() {
       childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
       actionParam = {};
+      nodeSize = middleNode;
     } else if (type === "cv") {
       console.log("CVポイント");
       inColor = "#A2CCBA";
@@ -150,6 +168,7 @@ function NodeFactory() {
       childNode = contentViewNode;
       masterNode = constantNode;
       actionParam = {};
+      nodeSize = middleNode;
     }
 
     if ( masterNode === null ){
@@ -172,7 +191,7 @@ function NodeFactory() {
 function contentViewNode(posX, posY) {
   return new joint.shapes.basic.Rect({
     position: {x :posX + 5, y: posY + 35},
-    size: { width: 240, height: 70 },
+    size: { width: nodeSize.width - 10 , height: nodeSize.height - 40 },
     attrs: {
       rect: {
         fill: "#FFFFFF",
@@ -313,7 +332,7 @@ function constantNodeOnlyInPort(posX, posY) {
         height: portSetting.inPortSize,
         width: 6,
         x: -6,
-        y: 40
+        y: nodeSize.inPortY
       },
       nodeBasicInfo: {
         nodeType: nodeType
@@ -407,7 +426,7 @@ function constantNode(posX, posY) {
         height: portSetting.inPortSize,
         width: 6,
         x: -6,
-        y: 40
+        y: nodeSize.inPortY
       },
       '.outCover': {
         fill: outColor,
@@ -415,7 +434,7 @@ function constantNode(posX, posY) {
         height: portSetting.outPortSize,
         width: 6,
         x: 250,
-        y: 40
+        y: nodeSize.outPortY
       },
       actionParam: actionParam,
       nodeBasicInfo: {

@@ -221,7 +221,7 @@
         }
       });
 
-      paper.scale(0.9);
+      paper.scale(0.7);
       graph.addCell(startNode());
 
       var dragReferencePosition = null;
@@ -348,7 +348,7 @@
       });
 
       $('input[type=range]').on('input', function(e) {
-        paper.scale((e.target.value - 0.5) / 5);
+        paper.scale((e.target.value - 1.5) / 5);
       });
 
       $(canvas).mousemove(function(e) {
@@ -389,6 +389,13 @@
           left: position.x * paper.scale().sx + 220 + $scope.moveX
         });
         $("#t_chatbot_diagrams_idx").append($scope.toolTipElement);
+        if(window.innerHeight < $scope.toolTipElement.outerHeight() + $scope.toolTipElement.offset().top) {
+          console.log("おおきい");
+          $scope.toolTipElement.offset({
+            top: position.y* paper.scale().sy -$scope.toolTipElement.outerHeight() + 140 + $scope.moveY,
+            left: position.x * paper.scale().sx + 220 + $scope.moveX
+          });
+        }
       };
 
       /* save Act */
@@ -1471,6 +1478,9 @@
           elm.style.overflow = 'hidden';
         }
         $scope.popupPositionAdjustment();
+        console.log($scope.widget);
+        console.log($scope.widget.settings);
+        console.log($scope.widget.chatbotIconToggle);
       };
 
       /** ==========================
@@ -2667,6 +2677,8 @@
           '</div>' +
           '<div id=\'text_modal_preview\'>' +
           '<h3>プレビュー</h3>' +
+          '<preview-text ng-repeat="text in speakTextList" ng-model="textPreview">' +
+          '</preview-text>' +
           '</div>' +
           '</div>'
     }
@@ -2818,7 +2830,7 @@
         }
       }
     }
-  })
+  });
 
   /**
    * ウィジェット設定取得
