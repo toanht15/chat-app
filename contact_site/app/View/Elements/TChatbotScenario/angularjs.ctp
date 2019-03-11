@@ -942,19 +942,9 @@
           // hearings
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
-              if(document.getElementById('action' + index + '-' + hearingIndex + '_message')) {
-                var addHtml = $scope.widget.createMessage(hearing.message, null, null, (hearing.uiType === '7'));
-                if(addHtml.length === 0 && (hearing.uiType === '8' || hearing.uiType === '9')) {
-                  addHtml = '<span class="sinclo-text-line"></span>';
-                }
-                document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = addHtml;
-              } else if (hearing.uiType === '7') {
-                var addHtml = $scope.widget.createMessage(
-                    hearing.message, null, hearing.settings.customDesign.messageAlign, (hearing.uiType === '7'));
-                $('.action' + index + '_button' + hearingIndex).find('.details').html(addHtml);
-              }
               if (hearing.uiType === '3') {
                 $timeout(function() {
+                  self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
                 }).then(function() {
                   handleBrowserZoom();
@@ -963,6 +953,7 @@
               // pulldown customize
               if (hearing.uiType === '4') {
                 $timeout(function() {
+                  self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
                 }).then(function() {
                   if (hearing.settings.pulldownCustomDesign) {
@@ -1072,6 +1063,7 @@
                 }
 
                 $timeout(function() {
+                  self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
                 }).then(function() {
                   // add first picker for first input
@@ -1176,6 +1168,7 @@
                 };
 
                 $timeout(function() {
+                  self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply(function() {
                     hearing.settings.dataLoaded = true;
 
@@ -1199,6 +1192,7 @@
               // button customize
               if (hearing.uiType === '7') {
                 $timeout(function() {
+                  self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
                 }).then(function() {
                   if (hearing.settings.customDesign) {
@@ -1225,6 +1219,7 @@
               // button ui customize
               if (hearing.uiType === '8') {
                 $timeout(function() {
+                  self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
                 }).then(function() {
                   if (hearing.settings.buttonUICustomDesign) {
@@ -1250,6 +1245,7 @@
                 hearing.settings.customDesign.checkboxSelectionDistance = Number(hearing.settings.customDesign.checkboxSelectionDistance);
 
                 $timeout(function() {
+                  self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
                 }).then(function() {
                   var checkboxTarget = $('.action' + index + '_checkbox' + hearingIndex + ' input[type="checkbox"]');
@@ -1323,6 +1319,7 @@
                 hearing.settings.customDesign.radioSelectionDistance = Number(hearing.settings.customDesign.radioSelectionDistance);
 
                 $timeout(function() {
+                  self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
                 }).then(function() {
                   if (hearing.settings.radioStyle === '1') {
@@ -1333,6 +1330,14 @@
                   } else {
                     self.setDefaultColorHearing($scope.setActionList[index].hearings[hearingIndex], true);
                   }
+                });
+              }
+
+              // re-render text message
+              if (hearing.uiType === '1' || hearing.uiType === '2') {
+                $timeout(function(){
+                  self.renderMessage(index, hearingIndex, hearing);
+                  $scope.$apply();
                 });
               }
             });
@@ -1416,6 +1421,21 @@
             });
           }
         }, true);
+      };
+
+      this.renderMessage = function(index, hearingIndex, hearing) {
+        if(document.getElementById('action' + index + '-' + hearingIndex + '_message')) {
+          var addHtml = $scope.widget.createMessage(
+              hearing.message, null, null, (hearing.uiType === '7'));
+          if(addHtml.length === 0 && (hearing.uiType === '8' || hearing.uiType === '9')) {
+            addHtml = '<span class="sinclo-text-line"></span>';
+          }
+          document.getElementById('action' + index + '-' + hearingIndex + '_message').innerHTML = addHtml;
+        } else if (hearing.uiType === '7') {
+          var addHtml = $scope.widget.createMessage(
+              hearing.message, null, hearing.settings.customDesign.messageAlign, (hearing.uiType === '7'));
+          $('.action' + index + '_button' + hearingIndex).find('.details').html(addHtml);
+        }
       };
 
       this.customCalendarTextColor = function(calendarTarget, design) {
