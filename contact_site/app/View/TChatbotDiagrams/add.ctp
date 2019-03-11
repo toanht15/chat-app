@@ -29,9 +29,4 @@
   <div id="t_chatbot_diagrams_body">
     <?= $this->element('TChatbotDiagrams/editor'); ?>
   </div>
-  <!-- シミュレーター -->
-  <div ng-controller="DialogController as dialog" ng-cloak>
-    <?php echo $this->element('WidgetSimulator/simulatorService'); ?>
-    <?= $this->element('TChatbotDiagrams/simulator'); ?>
-  </div>
 </div>

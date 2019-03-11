@@ -7200,7 +7200,7 @@ ul.naviBtn {
     grid-template-columns: 1fr 200px;
     border-bottom: 1px solid #8B8B8B;
     #t_chatbot_diagrams_entry {
-      ul {
+      ul:not(#chatTalk) {
         display: flex;
         justify-content: start;
         align-items: center;
