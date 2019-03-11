@@ -8,6 +8,7 @@
 ?>
 <?php echo $this->element('TChatbotDiagrams/nodeCreator'); ?>
 <?php echo $this->element('TChatbotDiagrams/jointScript'); ?>
+<?php echo $this->element('TChatbotDiagrams/angularjs');?>
 <div>
   <ul>
     <li>
@@ -41,8 +42,7 @@
 <!-- フッター -->
 <!-- 超暫定対応なので戻るとか保存とかも実装しておく必要がある -->
 <section>
-  <?= $this->Form->hidden('TChatbotDiagram.id') ?>
-  <?= $this->Form->hidden('TChatbotDiagram.activity') ?>
+  <?=$this->Form->hidden('id')?>
   <div id="tchatbotscenario_actions" class="fotterBtnArea">
     <?=$this->Html->link('戻る','/TChatbotDiagrams/index/page:', ['class'=>'whiteBtn btn-shadow'])?>
     <a id="submitBtn" href="javascript:void(0)" onclick="exportJSON()" class="greenBtn btn-shadow">保存</a>

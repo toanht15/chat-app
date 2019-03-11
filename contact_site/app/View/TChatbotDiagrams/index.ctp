@@ -1,21 +1,21 @@
 <?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('TChatbotDiagrams/script'); ?>
 
-<div id='TChatbotDiagram_idx' class="card-shadow">
+<div id='tchatbotscenario_idx' class="card-shadow">
 
-  <div id='TChatbotDiagram_title'>
+  <div id='tchatbotscenario_title'>
     <div class="fLeft"><i class="fal fa-sitemap fa-rotate-270 fa-2x"></i></div>
     <h1>チャットツリー設定</h1>
   </div>
 
-  <div id='TChatbotDiagram_menu' class="p20trl">
+  <div id='tchatbotscenario_menu' class="p20trl">
     <div class="fLeft ctrlBtnArea" >
       <div class="btnSet">
         <span>
           <a>
             <?= $this->Html->image('add.png', array(
               'alt' => '登録',
-              'id' => 'TChatbotDiagram_add_btn',
+              'id'=>'tchatbotscenario_add_btn',
               'class' => 'btn-shadow disOffgreenBtn commontooltip',
               'data-text' => '新規追加',
               'data-balloon-position' => '36',
@@ -29,7 +29,7 @@
           <a>
             <?= $this->Html->image('copy.png', array(
               'alt' => 'コピー',
-              'id' => 'TChatbotDiagram_copy_btn',
+              'id'=>'tchatbotscenario_copy_btn',
               'class' => 'btn-shadow disOffgrayBtn commontooltip',
               'data-text' => 'コピー（複製）',
               'data-balloon-position' => '41',
@@ -42,7 +42,7 @@
           <a>
             <?= $this->Html->image('dustbox.png', array(
               'alt' => '削除',
-              'id' => 'TChatbotDiagram_dustbox_btn',
+              'id'=>'tchatbotscenario_dustbox_btn',
               'class' => 'btn-shadow disOffgrayBtn commontooltip',
               'data-text' => '削除する',
               'data-balloon-position' => '36',
@@ -83,7 +83,7 @@
     -->
   </div>
 
-  <div id='TChatbotDiagram_list' class="p20x">
+  <div id='tchatbotscenario_list' class="p20x">
     <table style="table-layout: fixed;">
       <thead>
       <tr>
@@ -102,24 +102,23 @@
       <?php foreach((array)$settingList as $key => $val): ?>
         <?php
         $id = "";
-        if ($val['TChatbotDiagram']['id']) {
-          $id = $val['TChatbotDiagram']['id'];
+        if ($val['TChatbotScenario']['id']) {
+          $id = $val['TChatbotScenario']['id'];
         }
 
-//        // 呼び出し元情報
-//        $callerAutoMessage = count($val['callerInfo']['TAutoMessage']) > 0 ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
-//        $callerScenario = count($val['callerInfo']['TChatbotDiagram']) > 0 ? implode(', ', $val['callerInfo']['TChatbotDiagram']) : '';
+        // 呼び出し元情報
+        $callerAutoMessage = count($val['callerInfo']['TAutoMessage']) > 0 ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
+        $callerScenario = count($val['callerInfo']['TChatbotScenario']) > 0 ? implode(', ', $val['callerInfo']['TChatbotScenario']) : '';
 
         $no = $prevCnt + h($key+1);
         ?>
-        <tr class="pointer" data-sort="<?= $val['TChatbotDiagram']['sort'] ?>" data-id="<?= h($id) ?>"
-            onclick="openEdit(<?= $id ?>)">
+        <tr class="pointer" data-sort="<?=$val['TChatbotScenario']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
           <td class="tCenter" onclick="event.stopPropagation();" width=" 5%">
             <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
             <label for="selectTab<?=h($id)?>"></label>
           </td>
           <td class="tCenter" width=" 5%"><?=$no?></td>
-          <td class="tCenter scenarioTitle" width="25%"><?= $val['TChatbotDiagram']['name']; ?></td>
+          <td class="tCenter scenarioTitle" width="25%"><?= $val['TChatbotScenario']['name']; ?></td>
           <td class="p10x" width="75%">
             <?php if ($callerAutoMessage === '' && $callerScenario === ''): ?>
               <p>（未設定）</p>
