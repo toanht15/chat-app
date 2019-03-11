@@ -151,6 +151,9 @@
       $scope.currentEditCell = null;
       $scope.currentEditCellParent = null;
 
+      /* Valid connection flag */
+      $scope.isValidConnection = null;
+
 
       var nodeMaster = function(type, posX, posY) {
         var node = nodeFactory.createNode(type, posX, posY);
@@ -200,6 +203,7 @@
           //既に他ポートに接続しているout portは線を出さない
           if (cellViewS.model.attr('nodeBasicInfo/nextNodeId') && cellViewS.model.attr('nodeBasicInfo/nextNodeId') !==
               '') {
+            $scope.isValidConnection = true;
             linkView.model.remove();
             return false;
           }
@@ -339,12 +343,21 @@
         } catch (e) {
           console.log('unexpected connect');
         }
+        $scope.colorizePort(linkView);
       });
+      
 
       graph.on('remove', function(deleteView, b) {
         if (deleteView.isLink() && deleteView.attributes.target.id) {
           resetNextNode(deleteView.attributes.source.id);
         }
+
+        if( deleteView.isLink() && !$scope.isValidConnection ){
+          $scope.grayColorizePort(deleteView);
+        }
+
+        $scope.isValidConnection = false;
+
       });
 
       $('input[type=range]').on('input', function(e) {
@@ -390,11 +403,54 @@
         });
         $("#t_chatbot_diagrams_idx").append($scope.toolTipElement);
         if(window.innerHeight < $scope.toolTipElement.outerHeight() + $scope.toolTipElement.offset().top) {
-          console.log("おおきい");
           $scope.toolTipElement.offset({
             top: position.y* paper.scale().sy -$scope.toolTipElement.outerHeight() + 140 + $scope.moveY,
             left: position.x * paper.scale().sx + 220 + $scope.moveX
           });
+        }
+      };
+
+      $scope.grayColorizePort = function(link) {
+        try{
+          var source = graph.getCell(link.get("source").id);
+          source.portProp("out", "attrs/.port-body/fill", "#C0C0C0");
+          var target = graph.getCell(link.get("target").id);
+          if(Object.keys(target.graph._in[target.id]).length === 0) {
+            target.portProp("in", "attrs/.port-body/fill", "#C0C0C0");
+          }
+        } catch (e) {
+          console.log(e + "ERROR DETECTED!");
+        }
+
+      };
+      
+      $scope.colorizePort = function(linkView) {
+        var source = linkView.sourceView.model;
+        var typeS = source.attributes.ports.groups.out.attrs.type;
+        source.portProp("out", "attrs/.port-body/fill", $scope.getPortColor(typeS, "out"));
+        var target = linkView.targetView.model;
+        var typeT = target.attributes.ports.groups.in.attrs.type;
+        target.portProp("in", "attrs/.port-body/fill", $scope.getPortColor(typeT, "in"));
+      };
+      
+      $scope.getPortColor = function(type, cond){
+        switch(type) {
+          case "text":
+            return cond === "in" ? "#D48BB3" : "#EFD6E4";
+          case "branch":
+            return cond === "in" ? "#c73576" : "#DD82AB";
+          case "scenario":
+            return cond === "in" ? "#82c0cd" : "#C8E3E8";
+          case "jump":
+            return cond === "in" ? "#c8d627" : "#DFE679";
+          case "link":
+            return cond === "in" ? "#845d9e" : "#B39CC3";
+          case "operator":
+            return cond === "in" ? "#98B5E0" : "#E7EEF7";
+          case "cv":
+            return cond === "in" ? "#A2CCBA" : "#E4F0EB";
+          default:
+            return "#BDC6CF";
         }
       };
 
@@ -969,11 +1025,11 @@
       };
 
       $scope.$watch("speakTextList", function(){
-        $scope.btnHandler($scope.speakTextList.length, 1, 5);
+        $scope.btnHandler($scope.speakTextList.length, 1, 1000);
       }, true);
 
       $scope.$watch("branchSelectionList", function(){
-        $scope.btnHandler($scope.branchSelectionList.length, 1, 100);
+        $scope.btnHandler($scope.branchSelectionList.length, 1, 1000);
       }, true);
 
       $scope.btnHandler = function(amount, min, max){
@@ -1121,7 +1177,7 @@
                   'out': {
                     attrs: {
                       '.port-body': {
-                        fill: "#DD82AB",
+                        fill: "#C0C0C0",
                         'fill-opacity': "0.9",
                         height: 30,
                         width: 30,
@@ -1131,7 +1187,8 @@
                       },
                       '.port-label': {
                         'font-size': 0
-                      }
+                      },
+                      type: "branch"
                     },
                     position: {
                       name: 'absolute',
@@ -1242,18 +1299,6 @@
       };
 
       var previewHandler = {
-        typeText: {
-          addBalloon: function(index){
-            var newBalloon = $('#text_modal_preview > div.chatTalk:first-child').clone();
-            console.log(newBalloon.find('span').text());
-            newBalloon.find('span').text("");
-            console.log($($('#text_modal_preview')[index]));
-            $($('#text_modal_preview')[index]).after(newBalloon);
-          },
-          removeBalloon: function(){
-
-          }
-        },
         setDefaultNodeName: function(source, target){
           //既に情報が入っている場合はreturnさせる
           if(target.attr("actionParam/nodeName") !== "") return;
@@ -1286,7 +1331,6 @@
           },
           deleteTargetName: function(targetCell){
             var allCells = graph.getCells();
-            console.log(targetCell);
             for(var i = 0; i < allCells.length; i++) {
               if(allCells[i].isElement()
                   && allCells[i].attr("nodeBasicInfo/nodeType") === "jump"
@@ -1478,9 +1522,6 @@
           elm.style.overflow = 'hidden';
         }
         $scope.popupPositionAdjustment();
-        console.log($scope.widget);
-        console.log($scope.widget.settings);
-        console.log($scope.widget.chatbotIconToggle);
       };
 
       /** ==========================
@@ -2649,6 +2690,7 @@
           '</div>' +
           '<div id=\'branch_modal_preview\'>' +
           '<h3>プレビュー</h3>' +
+          '<div class="diagram_preview_area">' +
           '</div>' +
           '</div>'
     }
@@ -2677,8 +2719,10 @@
           '</div>' +
           '<div id=\'text_modal_preview\'>' +
           '<h3>プレビュー</h3>' +
+          '<div class="diagram_preview_area">' +
           '<preview-text ng-repeat="text in speakTextList" ng-model="textPreview">' +
           '</preview-text>' +
+          '</div>' +
           '</div>' +
           '</div>'
     }
