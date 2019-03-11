@@ -88,8 +88,8 @@
         $scope.addCheckbox(data);
       });
 
-      $scope.$on('addReDiagramBranchMessage', function(event, nodeId, buttonType, message, selection, labels) {
-        $scope.addReDiagramBranchMessage(nodeId, buttonType, message, selection, labels);
+      $scope.$on('addReDiagramBranchMessage', function(event, nodeId, buttonType, message, selection, labels, customDesign) {
+        $scope.addReDiagramBranchMessage(nodeId, buttonType, message, selection, labels, customDesign);
       });
 
       $scope.$on('addReDiagramTextMessage', function(event, nodeId, messages, nextNodeId, intervalSec) {
@@ -892,7 +892,7 @@
         self.autoScroll();
       };
 
-      $scope.addReDiagramBranchMessage = function(nodeId, buttonType, message, selection, labels) {
+      $scope.addReDiagramBranchMessage = function(nodeId, buttonType, message, selection, labels, customDesign) {
         clearChatbotTypingTimer();
         chatBotTypingRemove();
         var gridElm = document.createElement("div");
@@ -901,9 +901,9 @@
         divElm.id = 'branch_question_' + (new Date()).getTime();
         var html = '';
         if(buttonType === '1') {
-          html = $scope.simulatorSettings.createBranchRadioMessage(nodeId, message, selection, labels);
+          html = $scope.simulatorSettings.createBranchRadioMessage(nodeId, message, selection, labels, {customDesign: customDesign});
         } else {
-
+          html = $scope.simulatorSettings.createBranchButtonMessage(nodeId, message, selection, labels, {customDesign: customDesign});
         }
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
         divElm.style.display = "";

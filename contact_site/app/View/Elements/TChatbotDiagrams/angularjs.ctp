@@ -2035,7 +2035,8 @@
         var message = node.attrs.actionParam.text;
         var selections = $scope.getBranchSelection(node);
         var labels = $scope.getBranchLabels(node, Object.keys(selections));
-        $scope.$broadcast('addReDiagramBranchMessage', nodeId, buttonType, message, selections, labels);
+        var customDesign = node.attrs.actionParam.customizeDesign;
+        $scope.$broadcast('addReDiagramBranchMessage', nodeId, buttonType, message, selections, labels, customDesign);
       };
 
       $scope.doTextAction = function(node) {
@@ -2489,38 +2490,29 @@
         var prefix = $(this).parents('div.sinclo-button-wrap').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
         var message = $(this).text().replace(/^\s/, '');
 
-        if($(this).data('nid') && (this).data('nextNid')) {
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
 
+      $(document).on('click', '#chatTalk .sinclo-button-ui', function(e) {
+        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
+        $(this).addClass('selected');
+        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
+        var message = $(this).text().replace(/^\s/, '');
+
+        if($(e.target).data('nid') && $(e.target).data('nextNid')) {
+          self.handleDiagramReselectionInput(message, 'branch', $(e.target).data('nid'));
+          var nextNode = $scope.findNodeById($(e.target).data('nextNid'));
+          $scope.currentNodeId = nextNode.id;
+          $scope.doAction();
         } else {
           var numbers = prefix.match(/\d+/g).map(Number);
           var actionStep = numbers[0];
           var hearingIndex = numbers[1];
           self.handleReselectionInput(message, actionStep, hearingIndex);
         }
-      });
-
-      $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
-        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
-        $(this).addClass('selected');
-        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
-        var message = $(this).text().replace(/^\s/, '');
-
-        var numbers = prefix.match(/\d+/g).map(Number);
-        var actionStep = numbers[0];
-        var hearingIndex = numbers[1];
-        self.handleReselectionInput(message, actionStep, hearingIndex);
-      });
-      // button ui
-      $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
-        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
-        $(this).addClass('selected');
-        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
-        var message = $(this).text().replace(/^\s/, '');
-
-        var numbers = prefix.match(/\d+/g).map(Number);
-        var actionStep = numbers[0];
-        var hearingIndex = numbers[1];
-        self.handleReselectionInput(message, actionStep, hearingIndex);
       });
 
       $(document).on('click', '#chatTalk .checkbox-submit-btn', function() {
