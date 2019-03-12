@@ -33,9 +33,9 @@ var portSetting = {
 var largeNode = {
   width: 250,
   height: 110,
-  inPortX: -30,
+  inPortX: -31,
   inPortY: 40,
-  outPortX: 250,
+  outPortX: 248,
   outPortY: 40,
   labelX: .3,
   labelY: .1,
@@ -45,9 +45,9 @@ var largeNode = {
 var middleNode = {
   width: 250,
   height: 76,
-  inPortX: -30,
+  inPortX: -31,
   inPortY: 23,
-  outPortX: 250,
+  outPortX: 248,
   outPortY: 23,
   labelX: .3,
   labelY: .1,
@@ -58,9 +58,9 @@ var middleNode = {
 var smallNode = {
   width: 100,
   height: 50,
-  inPortX: -30,
+  inPortX: -31,
   inPortY: 10,
-  outPortX: 100,
+  outPortX: 98,
   outPortY: 10,
   labelX: .5,
   labelY: .4,
@@ -228,7 +228,8 @@ function startNode() {
               width: portSetting.outPortSize,
               stroke: false,
               rx: 5,
-              ry: 5
+              ry: 5,
+              'fill-opacity': "0.9"
             },
             '.port-label': {
               'font-size': 0
@@ -273,7 +274,7 @@ function startNode() {
         nextNode: ''
       }
     },
-    markup: '<rect class="body"/><rect class="inCover"/><text class="label"/>'
+    markup: '<rect class="body"/><text class="label"/>'
   });
 }
 
@@ -294,6 +295,7 @@ function constantNodeOnlyInPort(posX, posY) {
               stroke: false,
               rx: 5,
               ry: 5,
+              'fill-opacity': "0.9"
             },
             '.port-label': {
               'font-size': 0
@@ -342,7 +344,7 @@ function constantNodeOnlyInPort(posX, posY) {
       },
       actionParam: actionParam
     },
-    markup: '<rect class="body"/><rect class="inCover"/><path class="icon" d="' + iconSVG + '"></path><text class="label"/>'
+    markup: '<rect class="body"/><path class="icon" d="' + iconSVG + '"></path><text class="label"/>'
   });
 }
 
@@ -364,6 +366,7 @@ function constantNode(posX, posY) {
               stroke: false,
               rx: 5,
               ry: 5,
+              'fill-opacity': "0.9"
             },
             '.port-label': {
               'font-size': 0
@@ -389,6 +392,7 @@ function constantNode(posX, posY) {
               stroke: false,
               rx: 5,
               ry: 5,
+              'fill-opacity': "0.9"
             },
             '.port-label': {
               'font-size': 0
@@ -447,7 +451,7 @@ function constantNode(posX, posY) {
         nextNodeId: ""
       }
     },
-    markup: '<rect class="body"/><rect class="inCover"/><rect class="outCover"/><path class="icon" d="' + iconSVG + '"></path><text class="label"/>'
+    markup: '<rect class="body"/><path class="icon" d="' + iconSVG + '"></path><text class="label"/>'
   });
 }
 </script>

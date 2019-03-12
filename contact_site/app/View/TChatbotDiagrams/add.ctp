@@ -7,11 +7,10 @@
  */
 ?>
 <?php echo $this->element('TChatbotDiagrams/angularjs'); ?>
-<?php echo $this->element('TChatbotDiagrams/preview'); ?>
 <?php echo $this->Html->script('jscolor.min.js'); ?>
 <div id="t_chatbot_diagrams_idx" class="card-shadow entry-wrapper" ng-app="sincloApp"
      ng-controller="DiagramController as main" ng-cloak>
-
+  <?= $this->element('TChatbotDiagrams/preview'); ?>
   <div id="t_chatbot_diagramas_add_title">
     <div class="fLeft"><i class="fal fa-sitemap fa-rotate-270 fa-2x"></i></div>
     <h1>チャットツリー設定登録</h1>

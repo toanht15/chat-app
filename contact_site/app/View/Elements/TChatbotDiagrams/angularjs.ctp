@@ -21,6 +21,8 @@
       var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
       $scope.widget.settings = widgetSettings;
 
+      console.log(widgetSettings);
+
 
       $scope.valueDiffChecker = {
         branch: function(target){
@@ -738,7 +740,8 @@
           },
           validation: function(){
             $scope.nodeNameIsEmpty = $scope.speakTextTitle === "";
-            return $scope.nodeNameIsEmpty;
+            $scope.nodeNameIsNotUnique = $scope.isNotUniqueName($scope.speakTextTitle);
+            return $scope.nodeNameIsEmpty || $scope.nodeNameIsNotUnique;
           }
         },
         branch: {
@@ -762,7 +765,8 @@
           validation: function(){
             $scope.nodeNameIsEmpty = $scope.branchTitle === "";
             $scope.btnTypeIsEmpty = $scope.branchType.key === "";
-            return $scope.nodeNameIsEmpty || $scope.btnTypeIsEmpty;
+            $scope.nodeNameIsNotUnique = $scope.isNotUniqueName($scope.branchTitle);
+            return $scope.nodeNameIsEmpty || $scope.btnTypeIsEmpty || $scope.nodeNameIsNotUnique;
           }
         },
         scenario: {
@@ -833,8 +837,21 @@
         }
       };
 
+      $scope.isNotUniqueName = function(nodeName) {
+        var cells = graph.getCells();
+        for( var i = 0; i < cells.length; i++ ) {
+          if( cells[i].attr("actionParam/nodeName") != null && cells[i] != $scope.currentEditCellParent ){
+            if( nodeName !== "" && nodeName === cells[i].attr("actionParam/nodeName") ){
+              return true;
+            }
+          }
+        }
+        return false;
+      };
+
       $scope.initValidation = function() {
         $scope.nodeNameIsEmpty = false;
+        $scope.nodeNameIsNotUnique = false;
         $scope.btnTypeIsEmpty = false;
         $scope.jumpTargetIsEmpty = false;
         $scope.scenarioIsEmpty = false;
@@ -1304,6 +1321,7 @@
           if(target.attr("actionParam/nodeName") !== "") return;
           var prefix,
               splitNum;
+          if($scope.isNotUniqueName(source.attr("nodeBasicInfo/tooltip"))) return;
           var defaultValue = source.attr(".label/text");
           if(target.attr("nodeBasicInfo/nodeType") === "text") {
             prefix = "";
@@ -1522,6 +1540,87 @@
           elm.style.overflow = 'hidden';
         }
         $scope.popupPositionAdjustment();
+      };
+
+      /** ==========================
+       * Preview Methods
+       * =========================== */
+      $scope.checkClass = {
+        resultClass: {},
+        handler: function(className){
+          var cnArray = className.split(",");
+          for( var i=0; i < cnArray.length; i++ ){
+            switch (cnArray[i]) {
+              case 'notNone':
+                this.notNoneChecker();
+                break;
+              case 'boxType':
+              case 'balloonType':
+                this.balloonTypeChecker();
+                break;
+              case 'middleSize':
+              case 'largeSize':
+              case 'customSize':
+                this.widgetSizeChecker();
+                break;
+              case 'arrowUp':
+              case 'arrowBottom':
+                this.allowPositionChecker();
+                break;
+              case 'grid_preview':
+                this.iconChecker();
+                break;
+              case 'tal':
+              case 'tac':
+              case 'tar':
+                this.textAlignChecker();
+                break;
+              case 'noneBorder':
+              case 'hasBorder':
+                this.borderChecker();
+                break;
+              default:
+            }
+          }
+          return this.resultClass;
+        },
+        notNoneChecker: function() {
+          this.resultClass['notNone'] = $scope.widget.re_border_none === '' || $scope.widget.re_border_none === false;
+        },
+        balloonTypeChecker: function() {
+          var type = Number($scope.widget.settings['chat_message_design_type']);
+          this.resultClass['boxType'] = type === 1;
+          this.resultClass['balloonType'] = type === 2;
+        },
+        widgetSizeChecker: function() {
+          var type = Number($scope.widget.settings['widget_size_type']);
+          this.resultClass['smallSize'] = type === 1;
+          this.resultClass['middleSize'] = type === 2;
+          this.resultClass['largeSize'] = type === 3 || type ===4;
+          this.resultClass['customSize'] = type === 5;
+        },
+        allowPositionChecker: function() {
+          var type = Number($scope.widget.settings['chat_message_design_type']);
+          var position = Number($scope.widget.settings['chat_message_arrow_position']);
+          this.resultClass['arrowUp'] = type === 1 && position === 1;
+          this.resultClass['arrowBottom'] = type === 2 || position === 2;
+        },
+        iconChecker: function() {
+          this.resultClass['grid_preview'] = Number($scope.widget.chatbotIconToggle) === 1;
+        },
+        textAlignChecker: function() {
+          if(Number($scope.branchType) === 2 && $scope.isCustomize){
+            this.resultClass['tal'] = Number($scope.buttonUITextAlign) === 1;
+            this.resultClass['tac'] = Number($scope.buttonUITextAlign) === 2;
+            this.resultClass['tar'] = Number($scope.buttonUITextAlign) === 3;
+          }
+        },
+        borderChecker: function() {
+          if(Number($scope.branchType) === 2 && $scope.isCustomize){
+            this.resultClass['noneBorder'] = $scope.outButtonUINoneBorder;
+            this.resultClass['hasBorder'] = !$scope.outButtonUINoneBorder
+          }
+        }
       };
 
       /** ==========================
@@ -2657,6 +2756,7 @@
           '</div>' +
           '<div class="node_name_valid_margin">' +
           '<span class="diagram_valid" ng-show="nodeNameIsEmpty">ノード名を入力して下さい</span>' +
+          '<span class="diagram_valid" ng-show="nodeNameIsNotUnique">ノード名「{{branchTitle}}」は既に使用されています</span>' +
           '</div>' +
           '<div id=\'branch_modal_body\'>' +
           '<div class=\'branch_modal_setting_header\'>' +
@@ -2691,6 +2791,8 @@
           '<div id=\'branch_modal_preview\'>' +
           '<h3>プレビュー</h3>' +
           '<div class="diagram_preview_area">' +
+          '<preview-branch>' +
+          '</preview-branch' +
           '</div>' +
           '</div>'
     }
@@ -2706,6 +2808,7 @@
           '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'ng-model="speakTextTitle"/>' +
           '</div>' +
           '<span class="diagram_valid node_name_valid_margin" ng-show="nodeNameIsEmpty">ノード名を入力して下さい</span>' +
+          '<span class="diagram_valid" ng-show="nodeNameIsNotUnique">ノード名「{{speakTextTitle}}」は既に使用されています</span>' +
           '<div id=\'text_modal_body\'>' +
           '<p>発言内容</p>' +
           '<div id="text_modal_contents" >' +
@@ -2720,7 +2823,7 @@
           '<div id=\'text_modal_preview\'>' +
           '<h3>プレビュー</h3>' +
           '<div class="diagram_preview_area">' +
-          '<preview-text ng-repeat="text in speakTextList" ng-model="textPreview">' +
+          '<preview-text ng-repeat="text in speakTextList track by $index">' +
           '</preview-text>' +
           '</div>' +
           '</div>' +
