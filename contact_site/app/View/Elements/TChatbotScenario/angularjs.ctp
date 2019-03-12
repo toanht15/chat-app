@@ -1242,19 +1242,23 @@
                 if (typeof hearing.settings.customDesign.checkboxActiveTextColor === 'undefined') {
                   hearing.settings.customDesign.checkboxActiveTextColor = $scope.widget.settings.re_text_color;
                 }
-                hearing.settings.customDesign.checkboxSelectionDistance = Number(hearing.settings.customDesign.checkboxSelectionDistance);
+                hearing.settings.customDesign.checkboxSelectionDistance = Number(
+                    hearing.settings.customDesign.checkboxSelectionDistance);
 
                 $timeout(function() {
                   self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
                 }).then(function() {
-                  var checkboxTarget = $('.action' + index + '_checkbox' + hearingIndex + ' input[type="checkbox"]');
+                  var checkboxTarget      = $('.action' + index + '_checkbox' + hearingIndex + ' input[type="checkbox"]');
                   var checkboxLabelTarget = $('.action' + index + '_checkbox' + hearingIndex + ' .sinclo-checkbox');
                   if (hearing.settings.checkboxStyle === '1') {
-                    checkboxLabelTarget.css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
+                    checkboxLabelTarget.css('background-color',
+                        hearing.settings.customDesign.checkboxEntireBackgroundColor);
                     checkboxTarget.each(function() {
                       if ($(this).prop('checked')) {
-                        $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
+                        $(this).
+                            parent().
+                            css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
                         $(this).parent().css('color', hearing.settings.customDesign.checkboxActiveTextColor);
                       } else {
                         $(this).parent().css('color', hearing.settings.customDesign.checkboxTextColor);
@@ -1265,14 +1269,18 @@
                         if (hearing.settings.checkboxStyle !== '1') {
                           $(this).parent().css('background-color', 'transparent');
                         } else {
-                          $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
+                          $(this).
+                              parent().
+                              css('background-color', hearing.settings.customDesign.checkboxEntireActiveColor);
                           $(this).parent().css('color', hearing.settings.customDesign.checkboxActiveTextColor);
                         }
                       } else {
                         if (hearing.settings.checkboxStyle !== '1') {
                           $(this).parent().css('background-color', 'transparent');
                         } else {
-                          $(this).parent().css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
+                          $(this).
+                              parent().
+                              css('background-color', hearing.settings.customDesign.checkboxEntireBackgroundColor);
                           $(this).parent().css('color', hearing.settings.customDesign.checkboxTextColor);
                         }
                       }
@@ -1301,11 +1309,12 @@
                 }
 
                 if (typeof hearing.settings.radioCustomDesign === 'undefined') {
-                  hearing.settings.radioCustomDesign = true;
-                  hearing.settings.customDesign.radioBorderColor = '#999';
-                  hearing.settings.customDesign.radioActiveColor = $scope.widget.settings.main_color;
-                  hearing.settings.customDesign.radioEntireBackgroundColor = this.getRawColor($scope.widget.settings.main_color, 0.5);
-                  hearing.settings.customDesign.radioEntireActiveColor = $scope.widget.settings.main_color;
+                  hearing.settings.radioCustomDesign                       = true;
+                  hearing.settings.customDesign.radioBorderColor           = '#999';
+                  hearing.settings.customDesign.radioActiveColor           = $scope.widget.settings.main_color;
+                  hearing.settings.customDesign.radioEntireBackgroundColor = self.getRawColor(
+                      $scope.widget.settings.main_color, 0.5);
+                  hearing.settings.customDesign.radioEntireActiveColor     = $scope.widget.settings.main_color;
                 }
 
                 if (typeof hearing.settings.customDesign.radioTextColor === 'undefined') {
@@ -1316,7 +1325,8 @@
                   hearing.settings.customDesign.radioActiveTextColor = $scope.widget.settings.re_text_color;
                 }
 
-                hearing.settings.customDesign.radioSelectionDistance = Number(hearing.settings.customDesign.radioSelectionDistance);
+                hearing.settings.customDesign.radioSelectionDistance = Number(
+                    hearing.settings.customDesign.radioSelectionDistance);
 
                 $timeout(function() {
                   self.renderMessage(index, hearingIndex, hearing);
