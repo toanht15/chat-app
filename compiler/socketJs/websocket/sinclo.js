@@ -5163,7 +5163,7 @@
         if (settings.radioStyle !== '1') {
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
         } else {
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important; color: ' + settings.customDesign.radioTextColor + ' !important;}';
+          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {display: inline-block !important; font-size: ' + sincloInfo.widget.reTextSize + 'px !important; padding: 8px 8px 8px 28px !important; color: ' + settings.customDesign.radioTextColor + ' !important;}';
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {top: 15px !important; left: 12px !important;}';
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {top: 8px !important; left: 8px !important;}';
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {background-color: ' + settings.customDesign.radioEntireBackgroundColor + ';}';
@@ -5394,7 +5394,7 @@
         var selectionDistance = settings.customDesign.checkboxSelectionDistance ? settings.customDesign.checkboxSelectionDistance : 4;
         var style = '<style>';
         style += '#sincloBox ' + id +
-            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' + selectionDistance + 'px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + sincloInfo.widget.reTextColor + ';}';
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' + selectionDistance + 'px;cursor: pointer;font-size: ' + sincloInfo.widget.reTextSize + 'px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + sincloInfo.widget.reTextColor + ';}';
         style += '#sincloBox ' + id +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox ' + id +
