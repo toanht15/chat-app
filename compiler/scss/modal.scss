@@ -1755,6 +1755,9 @@
           }
           #text_modal_preview {
             width: 370px;
+            .diagram_preview_area {
+              max-height: 256px;
+            }
           }
         }
         #popup-button {
@@ -1782,7 +1785,7 @@
           width: 500px;
           border-right: 1px solid #909090;
           #branch_modal_head {
-            padding: 20px 0 0 40px;
+            padding: 0 0 0 40px;
             input[type='text'] {
               width: 349px;
               margin-left: 21px;
@@ -1927,6 +1930,9 @@
         }
         #branch_modal_preview {
           width: 370px;
+          .diagram_preview_area {
+            max-height: 859px;
+          }
         }
         #popup-button {
           display:flex;

@@ -31,7 +31,7 @@
   #popup #popup-frame-base #popup-frame.p_diagrams_branch #branch_modal #branch_modal_preview {width: {{widget.settings['widget_custom_width']}}px}
 </style>
 <style>
-  .diagram_preview_area { width: 100%; list-style-type: none; margin: 0; max-height: 275px; overflow-y: auto;}
+  .diagram_preview_area { width: 100%; list-style-type: none; margin: 0; overflow-y: auto;}
   .diagram_preview_area { background-color: {{widget.settings['chat_talk_background_color']}}; height: calc(100% - 66px)}
   .diagram_preview_area .iconDiv {display: flex}
   .diagram_preview_area .iconDiv.arrowBottom { align-items: flex-end;}
@@ -103,6 +103,37 @@
   .diagram_preview_area .grid_preview li.smallSize select { min-width: 183px;}
   .diagram_preview_area .grid_preview {display: grid; grid-template-columns: minmax(max-content, max-content) 1fr; margin-bottom: 5px; }
 
+  /* icon css */
+  .diagram_preview_area .img_wrapper {display: inline-block; width: 40px; height: 40px; padding: 0; text-align: center; border-radius: 50%; overflow: hidden; position: relative;}
+  .diagram_preview_area .img_wrapper img {position: absolute; max-width: 40px; left: -100%; right: -100%; margin: auto; }
+</style>
+
+
+<style ng-if="!isCustomize">
+  /* Default selection UI */
+  .diagram_preview_area li button {width: 188px; background-color: {{widget.settings.re_text_color}};  color: {{widget.settings.re_background_color}}; cursor: pointer;  min-height: 35px; margin-bottom: 1px;  padding: 10px 15px; border: 1px solid #E3E3E3; text-align: center; }
+  .diagram_preview_area li.middleSize button { width: 240px;}
+  .diagram_preview_area li.largeSize button { width: 280px;}
+  .diagram_preview_area li button:first-child {border-top-left-radius: 8px; border-top-right-radius: 8px}
+  .diagram_preview_area li button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
+  .diagram_preview_area li button:active{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
+  .diagram_preview_area li button:focus{outline: none}
+  .diagram_preview_area li button:hover{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
+  .diagram_preview_area li div.hasText {margin-top: 8px}
+
+</style>
+
+<style ng-if="radioStyle == 1">
+  /* custom radio (type button) design */
+  .diagram_preview_area li span.sinclo-radio [type="radio"] + label.hasBackground {background-color: {{radioEntireBackgroundColor}}; padding: 8px 8px 8px 28px; color: {{radioTextColor}}}
+  .diagram_preview_area li span.sinclo-radio [type="radio"]:checked ~ label {background-color:{{radioEntireActiveColor}}; color:{{radioActiveTextColor}};}
+  .diagram_preview_area li span.sinclo-radio [type="radio"] + label:before {top: 9px!important; left: 8px!important;}
+  .diagram_preview_area li span.sinclo-radio [type="radio"] + label:after {top: 13px!important; left: 12px!important;}
+
+</style>
+<style ng-if="isCustomize">
+  /* Custom selection UI */
+
   /* button UI */
   .diagram_preview_area li button {background-color: {{buttonUIBackgroundColor}};  color: {{buttonUITextColor}};  cursor: pointer;  min-height: 35px;  margin-bottom: 1px;  padding: 10px 15px;  }
   .diagram_preview_area li button {width: 188px;}
@@ -115,22 +146,17 @@
   .diagram_preview_area li button:hover{background-color: {{buttonUIActiveColor}};}
   .diagram_preview_area li button.noneBorder {border: none;}
   .diagram_preview_area li button.hasBorder {border: 1px solid {{buttonUIBorderColor}};}
-  .diagram_preview_area li div.hasText {margin-top: 8px}
   .diagram_preview_area li button.tal {text-align: left;}
   .diagram_preview_area li button.tac {text-align: center;}
   .diagram_preview_area li button.tar {text-align: right;}
+  .diagram_preview_area li div.hasText {margin-top: 8px}
 
   /* radio button UI */
-  .diagram_preview_area li span.sinclo-radio [type="radio"] + label.hasBackground {background-color: {{}}; padding: 8px 8px 8px 28px; color: {{}}}
-  .diagram_preview_area li {}
-  .diagram_preview_area li {}
-  .diagram_preview_area li {}
-  .diagram_preview_area li {}
-  .diagram_preview_area li {}
+  .diagram_preview_area li span.sinclo-radio [type="radio"] + label:before { background-color: {{radioBackgroundColor}}!important; border-color: {{radioNoneBorder ? 'transparent' : radioBorderColor}}!important}
+  .diagram_preview_area li span.sinclo-radio [type="radio"] + label:after { background-color: {{radioActiveColor}}!important}
+  .diagram_preview_area li span.sinclo-radio {margin-top: {{radioSelectionDistance}}px}
+  .diagram_preview_area li span.sinclo-radio:first-child {margin-top: 4px;}
 
-  /* icon css */
-  .diagram_preview_area .img_wrapper {display: inline-block; width: 40px; height: 40px; padding: 0; text-align: center; border-radius: 50%; overflow: hidden; position: relative;}
-  .diagram_preview_area .img_wrapper img {position: absolute; max-width: 40px; left: -100%; right: -100%; margin: auto; }
 </style>
 <script>
   //ここでプレビュー用ディレクティブを定義
@@ -202,11 +228,11 @@
           '<div ng-if="branchType.key == 1">' +
           '' +
           '<div>' +
-          '<span ng-repeat="value in branchSelectionList track by $index" class="sinclo-radio" style="display: block" ng-if="value">' +
-          '<input name="radio_button" id="radio_{{$index}}" type="radio" value="{{value}}" ng-model="radioStyle">' +
+          '<span ng-repeat="value in branchSelectionList track by $index" class="sinclo-radio" style="display: block" ng-if="value" finisher>' +
+          '<input name="radio_button" id="radio_{{$index}}" type="radio" value="{{value}}">' +
           '<label for="radio_{{$index}}" ng-class="{' +
-          'noneBackground: radioStyle != 1,' +
-          'hasBackground: radioStyle == 1' +
+          'noneBackground: radioStyle === \'2\',' +
+          'hasBackground: radioStyle === \'1\'' +
           '}">{{value}}</label>' +
           '</span>' +
           '</div>' +

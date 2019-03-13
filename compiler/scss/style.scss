@@ -9467,6 +9467,14 @@ ul.naviBtn {
 
 /* チャットツリー設定 */
 #TChatbotDiagram_idx {
+  #TChatbotDiagram_menu {
+    height: 85px;
+    .pointer {
+      position: absolute;
+      top: 138px;
+      left: 31px;
+    }
+  }
   .callerTypeLabel {
     display: inline-block;
     padding: 4px 2px;
@@ -9486,6 +9494,54 @@ ul.naviBtn {
 
     & + span {
       line-height: 2;
+    }
+  }
+  #TChatbotDiagram_list {
+    input[type='checkbox'] {
+      display: none;
+    }
+    input[type='checkbox'] + label {
+      width: 20px;
+      height: 20px;
+      display: block;
+      margin: 0 auto;
+      background-color: #FFF;
+      padding: 1px;
+      border: 1px solid #828282;
+      cursor: pointer;
+    }
+    input[type='checkbox']:checked + label {
+      background-color: #C3D69B;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid #FFF;
+    }
+
+    input[type='checkbox']:checked + label:after {
+      content: "";
+      font-weight: bold;
+      border-right: 4px solid #FFF;
+      border-bottom: 4px solid #FFF;
+      width: 6px;
+      height: 10px;
+      position: absolute;
+      top: 0;
+      right: 4px;
+      transform: rotate(45deg);
+    }
+  }
+  .questionBalloon {
+    display: inline-block;
+    margin-left: 6px;
+    text-align: center;
+
+    .questionBtn {
+      border-radius: 20px;
+      width: 1.3em;
+      height: 1.3em;
+      font-size: 12px !important;
+      line-height: 12px;
+      padding: 0.1em;
     }
   }
 }

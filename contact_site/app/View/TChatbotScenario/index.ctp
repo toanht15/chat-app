@@ -54,13 +54,13 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </a>
         </span>
       </div>
-      <!-- オートメッセージ設定の並び替えモード -->
+      <!-- 設定の並び替えモード -->
       <div class="tabpointer">
         <label class="pointer">
           <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText"> 並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; float: right; position: relative; top: 0px; left: 0px;">（！）並び替え中（保存する場合はチェックを外してください）</span>
         </label>
       </div>
-      <!-- オートメッセージ設定の並び替えモード -->
+      <!-- 設定の並び替えモード -->
     </div>
     <!-- 検索窓 -->
     <div id="paging" class="fRight">
