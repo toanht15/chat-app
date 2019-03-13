@@ -1606,22 +1606,21 @@
          diagram methods
          =============== */
 
-      createBranchRadioMessage: function(nodeId, message, selection, labels) {
+      createBranchRadioMessage: function(nodeId, message, selection, labels, settings) {
         var messageHtml = this.createMessage(message, nodeId);
         var prefix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
         var index = $('#chatTalk > div:not([style*="display: none;"])').length;
         var radioName = prefix + 'sinclo-radio-' + index;
-        var hasOldOptionValue = false;
         // style
         var html = '<div id="' + radioName + '">';
-        if (false) {
+        if (settings && settings.customDesign && settings.customDesign.isCustomize) {
           var style = '<style>';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' + data.settings.customDesign.radioBackgroundColor + ' !important;}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' + data.settings.customDesign.radioActiveColor + ' !important;}';
-          if (data.settings.radioNoneBorder) {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' + settings.customDesign.radioBackgroundColor + ' !important;}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' + settings.customDesign.radioActiveColor + ' !important;}';
+          if (settings.radioNoneBorder) {
             style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
           } else {
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' + data.settings.customDesign.radioBorderColor + '!important;}';
+            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' + settings.customDesign.radioBorderColor + '!important;}';
           }
           style += '</style>';
           html += style;
@@ -1630,10 +1629,62 @@
           if (!option || option == '') return false;
           html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
               key + '\' class=\'sinclo-chat-radio\' value=\'' + option + '\' data-nid=\'' + nodeId +
-                    '\' data-next-nid=\'' + selection[nodeId] + '\'>';
+                    '\' data-next-nid=\'' + selection[key] + '\'>';
           html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span><br>';
         });
         html += '</select>';
+        html += '</div>';
+
+        return messageHtml + html;
+      },
+
+      createBranchButtonMessage: function(nodeId, message, selection, labels, settings) {
+        var messageHtml = this.createMessage(message, nodeId);
+        var prefix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
+        var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+        var buttonUIName = prefix + 'sinclo-buttonUI-' + index;
+        var hasOldOptionValue = false;
+        var style = '<style>';
+        style += ' #sincloBox #' + buttonUIName + ' .sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {background-color: ' + settings.customDesign.buttonUIBackgroundColor + '}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {width: ' + this.getButtonUIWidth() + 'px;}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {color: ' + settings.customDesign.buttonUITextColor + '}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:focus {outline: none}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
+        if (message) {
+          style += ' #sincloBox #' + buttonUIName + ' {margin-top: 8px}';
+        }
+        if (settings.outButtonUINoneBorder) {
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: none}';
+        } else {
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: 1px solid ' + settings.customDesign.buttonUIBorderColor +' }';
+        }
+        switch (Number(settings.customDesign.buttonUITextAlign)) {
+          case 1:
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: left}';
+            break;
+          case 2:
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: center}';
+            break;
+          case 3:
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: right}';
+            break;
+          default:
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: center}';
+            break;
+        }
+        style += '</style>';
+
+        var html = '<div id="' + buttonUIName + '">';
+        html += style;
+        angular.forEach(labels, function(option, key) {
+          if (!option || option === '') return false;
+          html += '<button onclick="return false;" class="sinclo-button-ui" data-nid=\'' + nodeId +
+                    '\' data-next-nid=\'' + selection[key] + '\'>' + option + '</button>';
+        });
         html += '</div>';
 
         return messageHtml + html;

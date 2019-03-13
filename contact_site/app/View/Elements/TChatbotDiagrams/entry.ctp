@@ -66,9 +66,9 @@
         'id' => 'tchatbotscenario_edit_remove_btn',
       )) ?>
   </div>
+  <!-- シミュレーター -->
+  <div ng-controller="DialogController as dialog" ng-cloak>
+    <?php echo $this->element('WidgetSimulator/simulatorService'); ?>
+    <?= $this->element('TChatbotDiagrams/simulator'); ?>
+  </div>
 </section>
-
-<!-- シミュレーター -->
-<div ng-controller="DialogController as dialog" ng-cloack>
-  <?= $this->element('TChatbotDiagrams/simulator'); ?>
-</div>

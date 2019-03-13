@@ -4102,7 +4102,9 @@ io.sockets.on('connection', function(socket) {
             (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller) ||
                 !sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isSwitchingOperator())) {
           if (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller)) {
-            sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller();
+            // functionManager.isEnabledでCogmoAttendAPIのsystemUUIDが返却される
+            sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller(functionManager.isEnabled(obj.siteKey,
+                functionManager.keyList.useCogmoAttendApi));
             sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.init(
                 sincloCore[obj.siteKey][obj.tabId].historyId, obj,
                 fullDateTime(), emit).then(() => {

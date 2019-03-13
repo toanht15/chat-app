@@ -5979,6 +5979,7 @@
         };
       },
       createCogmoAttendBotMessage: function(cs, val, cName, isFeedbackMsg) {
+        common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
@@ -12650,11 +12651,12 @@
           var selections = self.branch.getSelectionMap(currentNode);
           var labels = self.branch.getLabelMap(currentNode,
               Object.keys(selections));
+          var customizeDesign = currentNode.attrs.actionParam.customizeDesign;
           self.executor.wait(self.executor.getIntervalTimeSec()).
               then(function() {
                 self.branch.showMessage(currentNode, message, selections,
-                    labels);
-                self.branch.saveShownMessage(currentNode, message, selections, labels);
+                    labels, customizeDesign);
+                self.branch.saveShownMessage(currentNode, message, selections, labels, customizeDesign);
               });
         },
         getSelectionMap: function(currentNode) {
@@ -12683,7 +12685,7 @@
           }
           return map;
         },
-        showMessage: function(currentNode, message, selectionMap, labels) {
+        showMessage: function(currentNode, message, selectionMap, labels, customizeDesign) {
           var self = sinclo.diagramApi;
           common.chatBotTypingTimerClear();
           common.chatBotTypingRemove();
@@ -12698,7 +12700,7 @@
 
           var messageHtml = sinclo.chatApi.createMessageHtml(message);
           var buttonHtml = self.branch.getHtml(currentNode, selectionMap,
-              labels);
+              labels, customizeDesign);
           div.style.textAlign = 'left';
           cs += ' effect_left';
           cs += ' diagram_msg';
@@ -12737,7 +12739,7 @@
             });
           }
         },
-        getHtml: function(currentNode, selectionMap, labels) {
+        getHtml: function(currentNode, selectionMap, labels, customizeDesign) {
           var self = sinclo.diagramApi;
           var html = '';
           Object.keys(labels).forEach(function(nodeId, idx, arr) {
@@ -12747,11 +12749,14 @@
             switch (Number(currentNode.attrs.actionParam.btnType)) {
               case 1:
                 // ラジオボタン
+                var name               = 'sinclo-radio-' + timestamp;
+                var style              = self.branch.createRadioButtonStyle(customizeDesign, '#' + name);
+                html += style;
                 html += '<sinclo-radio>';
                 html += '<input type="radio" name="sinclo-radio-' + timestamp +
                     '" id="sinclo-radio-' + timestamp +
                     '" class="sinclo-chat-radio" value="' + labels[nodeId] +
-                    '"data-did="' + self.common.getDiagramId() +
+                    '" data-did="' + self.common.getDiagramId() +
                     '" data-nid="' + self.common.getCurrentNodeId() +
                     '" data-next-nid="' + selectionMap[nodeId] + '">';
                 html += '<label for="sinclo-radio-' + timestamp + '">' +
@@ -12761,7 +12766,7 @@
               case 2:
                 // ボタン
                 var name               = 'sinclo-buttonUI_' + nodeId;
-                var style              = self.branch.createButtonUIStyle('#' + name);
+                var style              = self.branch.createButtonUIStyle(customizeDesign, '#' + name);
                 html += '<div id="' + name + '">';
                 html += style;
                 var timestamp = (new Date()).getTime();
@@ -12774,31 +12779,65 @@
           });
           return html;
         },
-        createButtonUIStyle: function(id) {
+        createRadioButtonStyle: function(settings, name) {
+          var style = "";
+          if (settings.radioCustomDesign) {
+            style = '<style>';
+            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {background-color: ' + settings.customDesign.radioBackgroundColor + ' !important;}';
+            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {background: ' + settings.customDesign.radioActiveColor + ' !important;}';
+            if (settings.radioNoneBorder) {
+              style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+            } else {
+              style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {border-color: ' + settings.customDesign.radioBorderColor + '!important;}';
+            }
+            style += '</style>';
+          }
+          return style;
+        },
+        createButtonUIStyle: function(settings, id) {
           var style = '<style>';
           style += '#sincloBox ul#chatTalk ' + id +
-              ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button {background-color: ' +
-              sincloInfo.widget.reTextColor + '}';
-          style += '#sincloBox ul#chatTalk ' + id + ' button {color: ' +
-              sincloInfo.widget.reBackgroundColor + '}';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button:focus {outline: none}';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button:active {background-color: ' +
-              sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) + '}';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button.selected {background-color: ' +
-              sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) + ' !important;}';
-          style += '#sincloBox ul#chatTalk ' + id + ' button {width: ' +
-              sinclo.chatApi.getButtonUIWidth() + 'px;}';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button {text-align: center}';
+              ' button.sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+          if (settings.buttonUICustomDesign) {
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui {background-color: ' +
+                settings.customDesign.buttonUIBackgroundColor + '}';
+            style += '#sincloBox ul#chatTalk ' + id + ' button.sinclo-button-ui {color: ' +
+                settings.customDesign.buttonUITextColor + '}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:focus {outline: none}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:active {background-color: ' +
+                settings.customDesign.buttonUIActiveColor + '}';
+
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui.selected {background-color: ' +
+                settings.customDesign.buttonUIActiveColor + ' !important;}';
+          } else {
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui {background-color: ' +
+                sincloInfo.widget.reTextColor + '}';
+            style += '#sincloBox ul#chatTalk ' + id + ' button.sinclo-button-ui {color: ' +
+                sincloInfo.widget.reBackgroundColor + '}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:focus {outline: none}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:active {background-color: ' +
+                sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
+                '}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui.selected {background-color: ' +
+                sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
+                ' !important;}';
+            style += '#sincloBox ul#chatTalk ' + id + ' button.sinclo-button-ui {width: ' +
+                sinclo.chatApi.getButtonUIWidth() + 'px;}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui {text-align: center}';
+          }
           style += '</style>';
 
           return style;
