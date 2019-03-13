@@ -1277,7 +1277,7 @@ io.sockets.on('connection', function(socket) {
               insertData.message_read_flg = 1;
               insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
               insertData.message_distinction = d.messageDistinction;
-            } else if ((Number(insertData.message_type) === 1 &&
+            } else if ((Number(insertData.message_type) === 1 || Number(insertData.message_type) === 303) &&
                 d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) ||
                 Number(insertData.message_type) === 12 ||
                 Number(insertData.message_type) === 13) {

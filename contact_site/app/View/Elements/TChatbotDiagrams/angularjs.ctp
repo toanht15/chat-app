@@ -14,10 +14,11 @@
     sincloApp.controllerProvider = $controllerProvider;
   });
   sincloApp.controller('DiagramController', [
-    '$scope', '$timeout', 'SimulatorService', '$compile', function($scope, $timeout, SimulatorService, $compile) {
+    '$scope', '$timeout', 'SimulatorService', 'DiagramSimulatorService', '$compile', function($scope, $timeout, SimulatorService, DiagramSimulatorService, $compile) {
 
       /* Set basic data */
       $scope.widget = SimulatorService;
+      $scope.diagramSimulatorService = DiagramSimulatorService;
       var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
       $scope.widget.settings = widgetSettings;
 
@@ -347,7 +348,7 @@
         }
         $scope.colorizePort(linkView);
       });
-      
+
 
       graph.on('remove', function(deleteView, b) {
         if (deleteView.isLink() && deleteView.attributes.target.id) {
@@ -425,7 +426,7 @@
         }
 
       };
-      
+
       $scope.colorizePort = function(linkView) {
         var source = linkView.sourceView.model;
         var typeS = source.attributes.ports.groups.out.attrs.type;
@@ -434,7 +435,7 @@
         var typeT = target.attributes.ports.groups.in.attrs.type;
         target.portProp("in", "attrs/.port-body/fill", $scope.getPortColor(typeT, "in"));
       };
-      
+
       $scope.getPortColor = function(type, cond){
         switch(type) {
           case "text":
@@ -1547,8 +1548,8 @@
        * =========================== */
       // シミュレーターの起動
       this.openSimulator = function() {
-        $scope.actionListOrigin = graph.toJSON();
-        $scope.$broadcast('openSimulator', $scope.actionListOrigin);
+        $scope.diagramSimulatorService.actionListOrigin = graph.toJSON();
+        $scope.$broadcast('openSimulator', $scope.diagramSimulatorService.actionListOrigin);
         // シミュレータ起動時、強制的に自由入力エリアを有効の状態で表示する
         $scope.$broadcast('switchSimulatorChatTextArea', true);
       };
@@ -1560,11 +1561,13 @@
     '$scope',
     '$timeout',
     'SimulatorService',
-    function($scope, $timeout, SimulatorService) {
+    'DiagramSimulatorService',
+    function($scope, $timeout, SimulatorService, DiagramSimulatorService) {
       //thisを変数にいれておく
       var self = this;
       $scope.setActionList = [];
       $scope.widget = SimulatorService;
+      $scope.diagramSimulatorService = DiagramSimulatorService;
 
       /**
        * シミュレーションの起動(ダイアログ表示)
@@ -1572,7 +1575,7 @@
        */
       $scope.$on('openSimulator', function(event, activity) {
         var diagrams = activity;
-        $scope.setActionList = diagrams;
+        $scope.diagramSimulatorService.setActionList = diagrams;
         var defaultHeight = 101;
         if (document.getElementById('maximum_description') != null) {
           defaultHeight += 40;
@@ -1585,7 +1588,8 @@
             width: $('#sincloBox').outerWidth() + 28 + 'px',
             height: $('#sincloBox').outerHeight() + defaultHeight + 'px'
           });
-          $scope.actionInit();
+          $scope.diagramSimulatorService.actionInit();
+          $scope.diagramSimulatorService.doAction();
         }, 0);
       });
 
@@ -1847,22 +1851,9 @@
 
       // アクションの開始
       $scope.actionInit = function() {
-        $scope.beginNodeId = '';
-        $scope.currentNodeId = '';
-
-        for(var i=0; i < $scope.setActionList.cells.length; i++) {
-          if($scope.setActionList.cells[i].type !== 'devs.Model') continue;
-          var node = $scope.setActionList.cells[i];
-          if(node.attrs.nodeBasicInfo.nodeType === 'start') {
-            $scope.beginNodeId = node.id;
-            $scope.currentNodeId = node.attrs.nodeBasicInfo.nextNodeId;
-          }
-          break;
-        }
-
-        // シミュレーション上のメッセージをクリアする
-        $scope.$broadcast('removeMessage');
-        $scope.doAction();
+        $scope.diagramSimulatorService.actionInit();
+        debugger;
+        $scope.diagramSimulatorService.doAction();
       };
 
       $scope.$watch('actionStep', function() {
@@ -1885,263 +1876,7 @@
         $scope.setActionList = $scope.actionListOrigin;
       };
 
-      /**
-       * アクションの実行
-       * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
-       */
-      $scope.receiveFileEventListener = null;
-      $scope.firstActionFlg = true;
-      $scope.callFirst = true;
-      $scope.doAction = function() {
-        if (true) {
-          // メッセージ間隔
-          var actionNode = $scope.findNodeById($scope.currentNodeId);
 
-          var time = 2;
-          if($scope.callFirst
-              || actionNode.attrs.nodeBasicInfo.nodeType === 'jump'
-              || actionNode.attrs.nodeBasicInfo.nodeType === 'link'
-              || actionNode.attrs.nodeBasicInfo.nodeType === 'operator'
-              || actionNode.attrs.nodeBasicInfo.nodeType === 'cv') {
-            time = 0;
-            $scope.callFirst = false;
-          }
-
-          chatBotTyping();
-
-          $timeout.cancel($scope.actionTimer);
-          $scope.actionTimer = $timeout(function() {
-            switch(actionNode.attrs.nodeBasicInfo.nodeType) {
-              case 'branch': // 分岐
-                $scope.doBranchAction(actionNode);
-                break;
-              case 'text': // テキスト発言
-                $scope.doTextAction(actionNode);
-                break;
-              case 'scenario': // シナリオ呼び出し
-                break;
-              case 'jump': // ジャンプ
-                var nextNode = $scope.findNodeById(actionNode.attrs.actionParam.targetId);
-                $scope.currentNodeId = nextNode.id;
-                $scope.doAction();
-                break;
-              case 'link': // リンク
-                var nextNode = $scope.findNodeById(actionNode.attrs.nodeBasicInfo.nextNodeId);
-                $scope.currentNodeId = nextNode.id;
-                $scope.doAction();
-                break;
-              case 'operator': // オペレータ呼び出し
-                break;
-              case 'cv': //CVポイント
-                var nextNode = $scope.findNodeById(actionNode.attrs.nodeBasicInfo.nextNodeId);
-                $scope.currentNodeId = nextNode.id;
-                $scope.doAction();
-                break;
-            }
-          }, time * 1000);
-        } else {
-          setTimeout(chatBotTypingRemove, 801);
-          $scope.actionStop();
-        }
-      };
-
-      $scope.findNodeById = function(nodeId) {
-        var targetNode = {};
-        Object.keys($scope.setActionList.cells).some(function(idx, arrIdx, arr){
-          var node = $scope.setActionList.cells[idx];
-          if(node.id.indexOf(nodeId) !== -1) {
-            targetNode = node;
-            return true;
-          }
-        });
-        return targetNode;
-      };
-
-      $scope.isMatch = function(targetValue, condition) {
-        switch (Number(condition.matchValueType)) {
-          case 1: // いずれかを含む場合
-            return $scope.matchCaseInclude(targetValue, $scope.splitMatchValue(condition.matchValue), condition.matchValuePattern);
-          case 2: // いずれも含まない場合
-            return $scope.matchCaseExclude(targetValue, $scope.splitMatchValue(condition.matchValue), condition.matchValuePattern);
-          default:
-            return false;
-        }
-      };
-
-      $scope.doBranchOnCondAction = function(condition, callback) {
-        switch (Number(condition.actionType)) {
-          case 1:
-            $scope.$broadcast('addReMessage', $scope.replaceVariable(condition.action.message),
-                'action' + $scope.actionStep);
-            $scope.actionStep++;
-            $scope.doAction();
-            break;
-          case 2:
-            // シナリオ呼び出し
-            var targetScenarioId = condition.action.callScenarioId;
-            console.log('targetScenarioId : %s', targetScenarioId);
-            if (targetScenarioId === 'self') {
-              var activity = {};
-              activity.scenarios = $scope.actionListOrigin;
-              $scope.setActionList = $scope.setCalledScenario(activity, condition.action.executeNextAction == 1);
-              $scope.doAction();
-            } else {
-              self.getScenarioDetail(targetScenarioId, condition.action.executeNextAction == 1);
-            }
-            break;
-          case 3:
-            $scope.actionStop();
-            // シナリオ終了
-            break;
-          case 4:
-            $scope.actionStep++;
-            $scope.doAction();
-            // 何もしない（次のアクションへ）
-            break;
-        }
-      };
-
-      $scope.splitMatchValue = function(val) {
-        var splitedArray = [];
-        val.split('"').forEach(function(currentValue, index, array) {
-          if (array.length > 1) {
-            if (index !== 0 && index % 2 === 1) {
-              // 偶数個：そのまま文字列で扱う
-              if (currentValue !== '') {
-                splitedArray.push(currentValue);
-              }
-            } else {
-              if (currentValue) {
-                var trimValue = currentValue.trim(),
-                    splitValue = trimValue.replace(/　/g, ' ').split(' ');
-                splitedArray = splitedArray.concat($.grep(splitValue, function(e) {
-                  return e !== '';
-                }));
-              }
-            }
-          } else {
-            var trimValue = currentValue.trim(),
-                splitValue = trimValue.replace(/　/g, ' ').split(' ');
-            splitedArray = splitedArray.concat($.grep(splitValue, function(e) {
-              return e !== '';
-            }));
-          }
-        });
-        return splitedArray;
-      };
-
-      $scope.matchCaseInclude = function(val, words, pattern) {
-        console.log('_matchCaseInclude : %s <=> %s', words, val);
-        var result = false;
-        for (var i = 0; i < words.length; i++) {
-          if (words[i] === '') {
-            continue;
-          }
-          var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-          var preg;
-          if (!pattern || pattern === '1') {
-            // 完全一致
-            preg = new RegExp('^' + word + '$');
-          } else {
-            // 部分一致
-            preg = new RegExp(word);
-          }
-
-          result = preg.test(val);
-
-          if (result) { // いずれかを含む
-            break;
-          }
-        }
-        return result;
-      };
-
-      $scope.matchCaseExclude = function(val, words, pattern) {
-        for (var i = 0; i < words.length; i++) {
-          if (words[i] === '') {
-            if (words.length > 1 && i === words.length - 1) {
-              break;
-            }
-            continue;
-          } else {
-            var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            var preg;
-            if (!pattern || pattern === '1') {
-              // 完全一致
-              preg = new RegExp('^' + word + '$');
-            } else {
-              // 部分一致
-              preg = new RegExp(word);
-            }
-            var exclusionResult = preg.test(val);
-            if (exclusionResult) {
-              // 含んでいる場合はNG
-              return false;
-            }
-          }
-        }
-        //最後まで含んでいなかったらOK
-        return true;
-      };
-
-      /**
-       * ヒアリングアクションの実行
-       * @param Object actionDetail アクションの詳細
-       */
-      $scope.doBranchAction = function(node) {
-        var nodeId = node.id;
-        var buttonType = node.attrs.actionParam.btnType;
-        var message = node.attrs.actionParam.text;
-        var selections = $scope.getBranchSelection(node);
-        var labels = $scope.getBranchLabels(node, Object.keys(selections));
-        var customDesign = node.attrs.actionParam.customizeDesign;
-        $scope.$broadcast('addReDiagramBranchMessage', nodeId, buttonType, message, selections, labels, customDesign);
-      };
-
-      $scope.doTextAction = function(node) {
-        clearChatbotTypingTimer();
-        chatBotTypingRemove();
-        var nodeId = node.id;
-        var messages = node.attrs.actionParam.text;
-        var nextNodeId = node.attrs.nodeBasicInfo.nextNodeId;
-        var intervalSec = 2;
-        $scope.$broadcast('addReDiagramTextMessage', nodeId, messages, nextNodeId, intervalSec);
-      };
-
-      $scope.$on('finishAddTextMessage', function(event, nextNodeId){
-        var nextNode = $scope.findNodeById(nextNodeId);
-        $scope.currentNodeId = nextNode.id;
-        $scope.doAction();
-      });
-
-      $scope.getBranchSelection = function(node) {
-        var itemIds = node.embeds;
-        var map = {};
-        var baseData = $scope.setActionList.cells;
-        for (var i = 0; i < itemIds.length; i++) {
-          for (var nodeIndex = 0; nodeIndex <
-          baseData.length; nodeIndex++) {
-            if(baseData[nodeIndex]['type'] !== 'devs.Model') continue;
-            console.log('baseData.id:%s itemId:%s baseData.attrs.nodeBasicInfo.nodeType: %s', baseData[nodeIndex]['id'], itemIds[i], baseData[nodeIndex]['attrs']['nodeBasicInfo']['nodeType']);
-            if (baseData[nodeIndex]['id'] === itemIds[i] &&
-                baseData[nodeIndex]['attrs']['nodeBasicInfo'] &&
-                'childPortNode'.indexOf(baseData[nodeIndex]['attrs']['nodeBasicInfo']['nodeType']) !== -1 &&
-                baseData[nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId']) {
-              map[itemIds[i]] = baseData[nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'];
-            }
-          }
-        }
-        return map;
-      };
-
-      $scope.getBranchLabels = function(node, idKeys) {
-        var labels = node.attrs.actionParam.selection;
-        var map = {};
-        for (var i = 0; i < labels.length; i++) {
-          map[idKeys[i]] = labels[i];
-        }
-        return map;
-      };
 
       $scope.doBulkHearingAction = function(actionDetail) {
         if (actionDetail.multipleHearings) {
@@ -2468,42 +2203,6 @@
           }
         }
       };
-
-      this.handleDiagramReselectionInput = function(message, type, nodeId) {
-        $scope.$broadcast('addSeMessage', message,
-            'anwer_' + type * '_' + nodeId);
-      };
-
-      // handle radio button click
-      $(document).on('change', '#chatTalk input[type="radio"]', function(e) {
-        var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
-        var message = $(this).val().replace(/^\s/, '');
-        if($(e.target).data('nid') && $(e.target).data('nextNid')) {
-          self.handleDiagramReselectionInput(message, 'branch', $(e.target).data('nid'));
-          var nextNode = $scope.findNodeById($(e.target).data('nextNid'));
-          $scope.currentNodeId = nextNode.id;
-          $scope.doAction();
-        } else {
-          var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
-          var name = $(this).attr('name');
-
-          var numbers = prefix.match(/\d+/g).map(Number);
-          var actionStep = numbers[0];
-          var hearingIndex = numbers[1];
-          if (isConfirm) {
-            // confirm message
-            $scope.addVisitorHearingMessage(message);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
-                'action' + actionStep + '_hearing_confirm');
-            $('input[name=' + name + '][type="radio"]').prop('disabled', true);
-            // ラジオボタンを非活性にする
-            self.disableHearingInput($scope.actionStep);
-            $('[id^="action' + actionStep + '_hearing"][id$="_question"]').removeAttr('id');
-          } else {
-            self.handleReselectionInput(message, actionStep, hearingIndex);
-          }
-        }
-      });
 
       // プルダウンの選択
       $(document).on('change', '#chatTalk select', function() {

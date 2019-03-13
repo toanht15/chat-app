@@ -1655,7 +1655,7 @@
             var branches = check.isJSON(chat.message) ? JSON.parse(chat.message) : chat.message;
             var currentNode = {
               diagramId: branches.did,
-              sourceNodeId: branches.sourceNodeId,
+              sourceNodeId: branches.nid,
               attrs: {
                 actionParam: {
                   btnType: branches.type
@@ -1666,6 +1666,8 @@
           } else if (Number(chat.messageType) === 302) {
             var chatObj = check.isJSON(chat.message) ? JSON.parse(chat.message) : chat.message;
             sinclo.diagramApi.speakText.showMessageProcess(chatObj.message);
+          } else if (Number(chat.messageType) === 303) {
+            // 何も表示しない
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true &&
@@ -2318,6 +2320,7 @@
 
         // diagram
         if (obj.chatMessage.did && obj.chatMessage.nextNodeId) {
+          if(obj.chatMessage.nextNodeId === 'callOperator') return false;
           var nextNodeId = obj.chatMessage.nextNodeId;
           sinclo.chatApi.createMessageUnread({
             cn: cn,
@@ -6900,10 +6903,12 @@
               sinclo.scenarioApi.isProcessing() +
               ' sinclo.scenarioApi.isWaitingInput() : ' +
               sinclo.scenarioApi.isWaitingInput());
+
           if (sinclo.scenarioApi.isProcessing() &&
               sinclo.scenarioApi.isWaitingInput()
               && (!check.isset(storage.s.get('operatorEntered')) ||
                   storage.s.get('operatorEntered') === 'false')) {
+
             sinclo.scenarioApi._hearing._setPrevSeqNum();
             messageType = sinclo.scenarioApi.getCustomerMessageType();
             if (sinclo.scenarioApi._hearing._forceRadioTypeFlg) {
@@ -12349,7 +12354,8 @@
       },
       messageType: {
         customer: {
-          branch: 301
+          branch: 301,
+          operator: 303
         },
         message: {
           branch: 300,
@@ -12539,6 +12545,9 @@
             case 'link':
               self.jumpLink.doAction();
               break;
+            case 'operator':
+              self.callOperator.doAction();
+              break;
           }
         },
         setNext: function(did, nextNodeId) {
@@ -12617,7 +12626,7 @@
         getDiagramId: function() {
           var self = sinclo.diagramApi;
           var value = self.storage.get(self.storage._lKey.diagramId);
-          console.log('getDiagramId ==> $s', value);
+          console.log('getDiagramId ==> %s', value);
           return value;
         },
         getCurrentNodeId: function() {
@@ -12772,8 +12781,8 @@
                 html += '<input type="radio" name="sinclo-radio-' + timestamp +
                     '" id="sinclo-radio-' + timestamp +
                     '" class="sinclo-chat-radio" value="' + labels[nodeId] +
-                    '" data-did="' + self.common.getDiagramId() +
-                    '" data-nid="' + self.common.getCurrentNodeId() +
+                    '" data-did="' + did +
+                    '" data-nid="' + nid +
                     '" data-next-nid="' + selectionMap[nodeId] + '">';
                 html += '<label for="sinclo-radio-' + timestamp + '">' +
                     labels[nodeId] + '</label>';
@@ -12788,8 +12797,8 @@
                   html += '<div id="' + name + '">';
                   html += style;
                 }
-                html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui" data-did="' + self.common.getDiagramId() +
-                    '" data-nid="' + self.common.getCurrentNodeId() +
+                html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui" data-did="' + did +
+                    '" data-nid="' + nid +
                     '" data-next-nid="' + selectionMap[nodeId] + '">' + labels[nodeId] + '</button>';
                 if(idx === arr.length - 1) {
                   html += '</div>';
@@ -12917,7 +12926,6 @@
 
           li.className = cs;
           li.innerHTML = sinclo.chatApi.createMessageHtml(message);
-
         },
         doAction: function() {
           console.log("<><><><><> SPEAK TEXT <><><><><>");
@@ -12984,10 +12992,20 @@
         }
       },
       callOperator: {
-        isNodeIdCallOperatorAction: function(nodeId) {
+        doAction: function() {
+          console.log("<><><><><> CALL OPERATOR <><><><><>");
           var self = sinclo.diagramApi;
-          var currentNode = self.storage.getNodeById(self.common.getDiagramId(), nodeId);
-          return currentNode && currentNode.attrs.nodeBasicInfo.nodeType && currentNode.attrs.nodeBasicInfo.nodeType.indexOf("operator") !== -1;
+          var currentNode = self.storage.getCurrentNode();
+          // ここから先のnodeIdは設定不可のため無視する
+          sinclo.chatApi.send({
+            message: '',
+            did: self.common.getDiagramId(),
+            sourceNodeId: currentNode.id,
+            nextNodeId: 'callOperator'
+          });
+        },
+        isNodeIdCallOperatorAction: function(nodeId) {
+          return nodeId === 'callOperator';
         }
       },
       pointCV: {
