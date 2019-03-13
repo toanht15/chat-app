@@ -255,12 +255,7 @@
         li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"]:checked + label:after {background: {{hearings.settings.customDesign.radioActiveColor}} !important;}
       </style>
       <style ng-if="hearings.uiType === '3' && hearings.settings.radioStyle === '1'">
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px {{widget.re_text_size+15}}px !important; color: {{hearings.settings.customDesign.radioTextColor}} !important;}
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"]:checked + label:after {top: 13px !important; left: 12px !important;}
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label:before {top: 9px !important; left: 8px !important;}
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label.noneBackground {background-color: transparent;}
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"] + label.hasBackground {background-color: {{hearings.settings.customDesign.radioEntireBackgroundColor}};}
-        li.action{{setActionId}}_radio{{index}} span.sinclo-radio [type="radio"]:checked ~ label {background-color: {{hearings.settings.customDesign.radioEntireActiveColor}}; color: {{hearings.settings.customDesign.radioActiveTextColor}} !important;}
+        li.action{{setActionId}}_radio{{index}} span.sinclo-radio  {padding: 8px !important; color: {{hearings.settings.customDesign.radioTextColor}};}
       </style>
       <div ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1,arrowUp: widget.settings['chat_message_design_type'] == 1 && widget.settings['chat_message_arrow_position'] == 1, arrowBottom: widget.settings['chat_message_design_type'] != 1 || widget.settings['chat_message_arrow_position'] == 2 }">
         <div ng-if="canShowChatbotIcon(hearings, widget.settings['show_chatbot_icon'])" class="iconDiv" ng-class="{arrowUp: widget.settings['chat_message_design_type'] == 1 && widget.settings['chat_message_arrow_position'] == 1, arrowBottom: widget.settings['chat_message_design_type'] != 1 || widget.settings['chat_message_arrow_position'] == 2}">
