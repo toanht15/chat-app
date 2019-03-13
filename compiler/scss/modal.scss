@@ -1778,7 +1778,7 @@
           display: flex;
         }
         #branch_modal_editor {
-          padding-bottom: 40px;
+          padding-bottom: 25px;
           width: 500px;
           border-right: 1px solid #909090;
           #branch_modal_head {
@@ -1801,8 +1801,17 @@
               overflow: hidden;
             }
             .branch_modal_setting_header {
-              .m40 {
-                margin-top: 40px;
+              .radio_type {
+                margin-top: 20px;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                p {
+                  margin: 0;
+                }
+              }
+              .mt20 {
+                margin-top: 20px;
               }
               .btn_valid_margin {
                 margin-left: 66px;
@@ -1815,13 +1824,14 @@
                 }
                 select {
                   width: 226px;
-                  margin-left: 20px;
+                  margin-left: 32px;
                   height: 30px;
                   border: 1px solid #909090;
                   border-radius: 4px;
                 }
                 p {
                   margin: 0;
+                  align-self: center;
                 }
                 label {
                   display: flex;
@@ -1831,46 +1841,49 @@
                   margin-left: 15px;
                 }
               }
-              div.customize_form {
-                margin-top: 15px;
-                input[type='checkbox'] {
-                  margin-left: 0;
-                }
-                .customize_area {
+            }
+
+            div.customize_form {
+              margin-top: 15px;
+              input[type='checkbox'] {
+                margin-left: 0;
+              }
+              .customize_area {
+                display: flex;
+                flex-direction: column;
+                margin-left: 16px;
+                margin-top: 6px;
+                .customize_row {
                   display: flex;
-                  flex-direction: column;
-                  margin-left: 16px;
-                  margin-top: 6px;
-                  .customize_row {
-                    display: flex;
-                    align-items: center;
-                    padding: 5px 0;
-                    input[type='text']{
-                      width: 120px;
-                      height: 26px;
-                      padding-left: 4px;
-                    }
-                    span.revert-button {
-                      text-align: center;
-                      position: relative;
-                      width: 100px;
-                      left: 20px;
-                      padding: 4px;
-                    }
+                  align-items: center;
+                  padding: 5px 0;
+                  input[type='text']{
+                    width: 120px;
+                    height: 26px;
+                    padding-left: 4px;
                   }
-                  &.button_customize > .customize_row {
-                    label {
-                      flex-basis: 100px;
-                    }
+                  span.revert-button {
+                    text-align: center;
+                    position: relative;
+                    width: 100px;
+                    left: 20px;
+                    padding: 4px;
                   }
-                  &.radio_customize > .customize_row {
-                    label {
-                      flex-basis: 120px;
-                    }
+                }
+                &.button_customize > .customize_row {
+                  label {
+                    flex-basis: 100px;
+                  }
+                }
+                &.radio_customize > .customize_row {
+                  label {
+                    flex-basis: 120px;
                   }
                 }
               }
             }
+
+
             .branch_modal_setting_header > div.flex_row_box:not(:first-child){
               margin-top: 20px;
             }

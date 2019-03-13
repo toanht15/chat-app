@@ -195,7 +195,7 @@
           '' +
           '<div>' +
           '<span ng-repeat="value in branchSelectionList track by $index" class="sinclo-radio" style="display: block" ng-if="value">' +
-          '<input name="{{value}}_{{$index}}" id="radio_{{$index}}" type="radio" value="{{value}}">' +
+          '<input name="radio_button" id="radio_{{$index}}" type="radio" value="{{value}}">' +
           '<label for="radio_{{$index}}" ng-class="{noneBackground: hearings.settings.radioStyle !== \'1\', hasBackground: hearings.settings.radioStyle === \'1\'}">{{value}}</label>' +
           '</span>' +
           '</div>' +

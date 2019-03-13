@@ -120,7 +120,7 @@
       /* Model for branch node */
       $scope.branchTitle = "";
       $scope.branchTypeList = [
-        {"key": "", "value": "表示形式を選択して下さい"},
+        {"key": "", "value": "タイプを選択して下さい"},
         {"key": "1", "value": "ラジオボタン"},
         {"key": "2", "value": "ボタン"}
       ];
@@ -131,6 +131,7 @@
 
       /* Model for branch customize */
       $scope.isCustomize = false;
+      $scope.radioStyle = 2;
       $scope.radioBackgroundColor = "";
       $scope.radioActiveColor = "";
       $scope.radioBorderColor = "";
@@ -2717,19 +2718,24 @@
           '<p>発言内容</p>' +
           '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="branchText"></resize-textarea>' +
           '</div>' +
-          '<div class="m40">' +
+          '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
-          '<label for=\'branch_button\'>表示形式</label>' +
+          '<label for=\'branch_button\'>タイプ</label>' +
           '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
           '</select>' +
           '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
+          '<div class="radio_type" ng-show="branchType.key == 1">' +
+          '<p>表示形式</p>' +
+          '<div style="margin-left: 14px;">' +
+          '<label class="pointer"><input type="radio" value="1" ng-model="radioStyle">ボタン型</label>' +
+          '<label class="pointer"><input type="radio" value="2" ng-model="radioStyle">ラベル型</label>' +
+          '</div>' +
+          '</div>' +
           '<div class="btn_valid_margin">' +
-          '<span class="diagram_valid" ng-show="btnTypeIsEmpty">表示形式を選択してください</span>' +
+          '<span class="diagram_valid" ng-show="btnTypeIsEmpty">タイプを選択してください</span>' +
           '</div>' +
           '</div>' +
-          '<radio-customize ng-show="branchType.key == \'1\'"></radio-customize>' +
-          '<button-customize ng-show="branchType.key == \'2\'"></button-customize>' +
           '</div>' +
           '<div class=\'branch_modal_setting_content\'>' +
           '<div class=\'setting_row\' ng-repeat="selection in branchSelectionList track by $index">' +
@@ -2739,6 +2745,8 @@
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
           '</div>' +
+          '<radio-customize ng-show="branchType.key == 1"></radio-customize>' +
+          '<button-customize ng-show="branchType.key == 2"></button-customize>' +
           '</div>' +
           '</div>' +
           '<div id=\'branch_modal_preview\'>' +
@@ -2850,6 +2858,12 @@
       template: '<div class="customize_form">' +
           '<label><input type="checkbox" ng-model="isCustomize">デザインをカスタマイズする</label>' +
           '<div ng-show="isCustomize" class="customize_area radio_customize">' +
+          '<span class="customize_row">' +hasBackground
+          '<label>選択肢の行間</label>' +
+          '<input class="line_setting" type="number" ng-model="omanko" maxlength="7">' +
+          '<p>px</p>' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
           '<span class="customize_row">' +
           '<label>ラジオボタン背景色</label>' +
           '<input class="jscolor {hash:true}" type="text" ng-model="radioBackgroundColor" maxlength="7">' +
@@ -2889,9 +2903,9 @@
           '<span class="customize_row">' +
           '<label>ボタン文字位置</label>' +
           '<div>' +
-          '<label><input type="radio" value="1" ng-model="buttonUITextAlign">左寄せ</label>' +
-          '<label><input type="radio" value="2" ng-model="buttonUITextAlign">中央寄せ</label>' +
-          '<label><input type="radio" value="3" ng-model="buttonUITextAlign">右寄せ</label>' +
+          '<label class="pointer"><input type="radio" value="1" ng-model="buttonUITextAlign">左寄せ</label>' +
+          '<label class="pointer"><input type="radio" value="2" ng-model="buttonUITextAlign">中央寄せ</label>' +
+          '<label class="pointer"><input type="radio" value="3" ng-model="buttonUITextAlign">右寄せ</label>' +
           '</div>' +
           '</span>' +
           '<span class="customize_row">' +
