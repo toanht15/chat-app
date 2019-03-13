@@ -40,6 +40,7 @@
 
         var time = 2;
         if(self.callFirst
+            || actionNode.attrs.nodeBasicInfo.nodeType === 'scenario'
             || actionNode.attrs.nodeBasicInfo.nodeType === 'jump'
             || actionNode.attrs.nodeBasicInfo.nodeType === 'link'
             || actionNode.attrs.nodeBasicInfo.nodeType === 'operator'
