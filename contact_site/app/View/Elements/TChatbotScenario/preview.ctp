@@ -227,7 +227,7 @@
         li.action{{setActionId}}_buttonUI{{index}} .hasText {margin-top: 8px}
       </style>
       <style ng-if="hearings.uiType === '9'">
-        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox {display: block;position: relative;padding-left: 20px; margin-bottom: {{hearings.settings.customDesign.checkboxSelectionDistance ? hearings.settings.customDesign.checkboxSelectionDistance : 4}}px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: {{widget.settings['re_text_color']}};}
+        li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox {display: block;position: relative;padding-left: 20px; margin-bottom: {{hearings.settings.customDesign.checkboxSelectionDistance ? hearings.settings.customDesign.checkboxSelectionDistance : 4}}px;cursor: pointer;font-size: {{widget.re_text_size}}px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: {{widget.settings['re_text_color']}};}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {position: absolute;top: 1px;left: 0px;height: {{widget.re_text_size + 2}}px; width: {{widget.re_text_size + 2}}px;}
         li.action{{setActionId}}_checkbox{{index}} .sinclo-checkbox .checkmark {background-color: {{hearings.settings.customDesign.checkboxBackgroundColor}};}

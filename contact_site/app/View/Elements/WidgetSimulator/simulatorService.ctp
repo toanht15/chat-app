@@ -908,7 +908,7 @@
         var separator = this.getCheckboxSeparator(data.settings.checkboxSeparator);
         var style = '<style>';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' + data.settings.customDesign.checkboxSelectionDistance + 'px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' + data.settings.customDesign.checkboxSelectionDistance + 'px;cursor: pointer;font-size: ' + this.re_text_size + 'px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox #' + checkboxName +
