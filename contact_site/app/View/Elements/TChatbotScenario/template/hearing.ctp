@@ -103,8 +103,7 @@
                                                           value="2" ng-model="hearingItem.inputType">number</label>
                         </span>
 
-            <div
-                ng-if="(hearingItem.uiType === '1' && hearingItem.inputType != 1) || (hearingItem.uiType === '2' &&  hearingItem.inputType != 1)"
+            <div ng-if="(hearingItem.uiType === '1' && hearingItem.inputType != 1) || (hearingItem.uiType === '2' &&  hearingItem.inputType != 1)"
                 class="styleFlexbox m15t">
                             <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ
                                     <span class="questionBalloon">
@@ -164,6 +163,7 @@
               </select>
             </div>
 
+            <!-- radio button style customize -->
             <span ng-if="hearingItem.uiType === '3'" style="padding: 0; margin-top: 8px;">
                             <label>表示形式<span class="questionBalloon"><icon class="questionBtn"
                                                                            data-tooltip="吹き出しの表示有無を選択できます。">?</icon></span></label>
@@ -175,19 +175,6 @@
                                                           name="action{{setActionId}}-hearing{{listId}}-radio-style"
                                                           value="2"
                                                           ng-model="hearingItem.settings.radioStyle">ラベル型</label>
-            </span>
-
-            <span ng-if="hearingItem.uiType === '9'" style="padding: 0; margin-top: 8px;">
-                            <label>表示形式<span class="questionBalloon"><icon class="questionBtn"
-                                                                           data-tooltip="吹き出しの表示有無を選択できます。">?</icon></span></label>
-                            <label class="pointer"><input type="radio"
-                                                          name="action{{setActionId}}-hearing{{listId}}-checkbox-style"
-                                                          value="1"
-                                                          ng-model="hearingItem.settings.checkboxStyle">ボタン型</label>
-                            <label class="pointer"><input type="radio"
-                                                          name="action{{setActionId}}-hearing{{listId}}-checkbox-style"
-                                                          value="2"
-                                                          ng-model="hearingItem.settings.checkboxStyle">ラベル型</label>
             </span>
 
             <div ng-if="hearingItem.uiType === '3' && hearingItem.settings.radioStyle === '1'"
@@ -225,6 +212,20 @@
                         ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioActiveTextColor')">標準に戻す</span>
                 </span>
             </div>
+
+            <!-- checkbox style customize -->
+            <span ng-if="hearingItem.uiType === '9'" style="padding: 0; margin-top: 8px;">
+                            <label>表示形式<span class="questionBalloon"><icon class="questionBtn"
+                                                                           data-tooltip="吹き出しの表示有無を選択できます。">?</icon></span></label>
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-checkbox-style"
+                                                          value="1"
+                                                          ng-model="hearingItem.settings.checkboxStyle">ボタン型</label>
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-checkbox-style"
+                                                          value="2"
+                                                          ng-model="hearingItem.settings.checkboxStyle">ラベル型</label>
+            </span>
 
             <div ng-if="hearingItem.uiType === '9' && hearingItem.settings.checkboxStyle === '1'"
                  class="checkbox-design-custom-area">
