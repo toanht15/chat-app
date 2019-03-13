@@ -1608,9 +1608,9 @@
 
       createBranchRadioMessage: function(nodeId, message, selection, labels, settings) {
         var messageHtml = this.createMessage(message, nodeId);
-        var prefix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
+        var suffix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
         var index = $('#chatTalk > div:not([style*="display: none;"])').length;
-        var radioName = prefix + 'sinclo-radio-' + index;
+        var radioName = 'sinclo-radio-' + index + suffix;
         // style
         var html = '<div id="' + radioName + '">';
         if (settings && settings.customDesign && settings.customDesign.isCustomize) {
@@ -1640,9 +1640,9 @@
 
       createBranchButtonMessage: function(nodeId, message, selection, labels, settings) {
         var messageHtml = this.createMessage(message, nodeId);
-        var prefix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
+        var suffix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
         var index = $('#chatTalk > div:not([style*="display: none;"])').length;
-        var buttonUIName = prefix + 'sinclo-buttonUI-' + index;
+        var buttonUIName = 'sinclo-buttonUI-' + index + suffix;
         var hasOldOptionValue = false;
         var style = '<style>';
         style += ' #sincloBox #' + buttonUIName + ' .sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
