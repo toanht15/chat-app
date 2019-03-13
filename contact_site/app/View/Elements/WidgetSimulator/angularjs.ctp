@@ -1985,6 +1985,7 @@
       } else if (Number( widgetSizeType ) === 1) {
         html += 'botNowTypingSmall\'>';
       } else if (Number( widgetSizeType )  === 5) {
+        console.log("なんかするヵ");
         html += 'botNowTypingLarge\'>';
       }
       html += '    <div class=\'reload_dot_left\'></div>';

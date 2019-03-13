@@ -2306,7 +2306,7 @@
           this.chatApi.scDown(obj);
           return false;
         }
-        
+
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
           cn = 'sinclo_re';
           if (window.sincloInfo.widget.showAutomessageName === 2) {
@@ -12363,64 +12363,6 @@
               sinclo.hideTextarea();
               break;
           }
-        }
-      }
-    },
-    /**
-     * ダイアグラムAPI
-     */
-    diagramApi: {
-      _lKey: {
-        beforeTextareaOpened: 'd_beforeTextareaOpened',
-        scenarioBase: 'scl_d_currentdata',
-        scenarioId: 'd_id',
-        processing: 'd_processing',
-        waitingInput: 'd_waiting',
-        variables: 'scl_d_variables',
-        messages: 'd_messages',
-        allowSave: 'd_allowSave',
-        scenarios: 'd_scenarios',
-        scenarioLength: 'd_scenarioLength',
-        currentScenario: 'd_currentScenario',
-        currentScenarioSeqNum: 'd_currentScenarioSeqNum',
-        storedVariableKeys: 'd_storedVariableKeys',
-        sendCustomerMessageType: 'd_sendCustomerMessageType',
-        showSequenceSet: 'd_showSequenceList',
-        scenarioMessageType: 'd_scenarioMessageType',
-        previousChatMessageLength: 'd_prevChatMessageLength',
-        stackReturnSettings: 'd_stackReturnSettings',
-        isSentMail: 'd_isSentMail'
-      },
-      defaultVal: {
-        's_id': 0,
-        's_currentdata': {},
-        's_processing': {},
-        's_waiting': false,
-        's_messages': [],
-        's_allowSave': false,
-        's_scenarios': {},
-        's_scenarioLength': 0,
-        's_currentScenario': 0,
-        's_currentScenarioSeqNum': 0,
-        's_storedVariableKeys': [],
-        's_sendCustomerMessageType': 1,
-        's_showSequenceList': {},
-        's_scenarioMessageType': 3,
-        's_stackReturnSettings': {},
-        's_targetChatId': [],
-        's_isSentMail': false
-      },
-      common: {
-        init: function(data) {
-
-        }
-      },
-      /**
-       * 分岐
-       */
-      branch: {
-        init: function(data) {
-
         }
       }
     },
