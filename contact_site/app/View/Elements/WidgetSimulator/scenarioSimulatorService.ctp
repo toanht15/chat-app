@@ -250,12 +250,6 @@
       self.doAction();
     };
 
-    // シミュレーションの終了(ダイアログ非表示)
-    self.closeSimulator = function() {
-      self.actionStop();
-      $('#tchatbotscenario_simulator_wrapper').hide();
-    };
-
     // アクションの開始
     self.actionInit = function() {
       self.actionStep = 0;
@@ -281,13 +275,6 @@
     // アクションの停止
     self.actionStop = function() {
       $timeout.cancel(self.simulatorTimer);
-    };
-
-    // アクションのクリア(アクションを最初から実行し直す)
-    self.actionClear = function() {
-      self.actionStop();
-      self.actionInit();
-      self.setActionList = self.actionListOrigin;
     };
 
     /**

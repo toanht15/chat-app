@@ -3091,6 +3091,7 @@
        */
       $scope.$on('openSimulator', function(event, activity) {
         var scenarios = JSON.parse(activity).scenarios;
+        $scope.actionListOrigin = scenarios;
         $scope.scenarioSimulatorService.setActionList = scenarios;
         var defaultHeight = 101;
         if (document.getElementById('maximum_description') != null) {
@@ -3120,7 +3121,18 @@
         });
       });
 
+      // シミュレーションの終了(ダイアログ非表示)
+      $scope.closeSimulator = function() {
+        $scope.scenarioSimulatorService.actionStop();
+        $('#tchatbotscenario_simulator_wrapper').hide();
+      };
 
+      // アクションのクリア(アクションを最初から実行し直す)
+      $scope.actionClear = function() {
+        $scope.scenarioSimulatorService.actionStop();
+        $scope.scenarioSimulatorService.actionInit();
+        $scope.scenarioSimulatorService.setActionList = $scope.actionListOrigin;
+      };
     }]).directive('resizeTextarea', function() {
     return {
       restrict: 'E',
