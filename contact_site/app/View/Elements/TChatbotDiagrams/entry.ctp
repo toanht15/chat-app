@@ -8,7 +8,6 @@
 ?>
 <?php echo $this->element('TChatbotDiagrams/nodeCreator'); ?>
 <?php echo $this->element('WidgetSimulator/simulatorService'); ?>
-<?= $this->element('TChatbotScenario/preview'); ?>
 <div>
   <ul>
     <li>

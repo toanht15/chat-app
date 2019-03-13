@@ -6,15 +6,33 @@
  * Time: 20:28
  */
 ?>
+<style ng-if="widget.settings['widget_size_type'] == 1">
+  #popup #popup-frame-base #popup-frame.p_diagrams_text {width: 785px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_text #text_modal #text_modal_preview {width: 285px}
+</style>
+<style ng-if="widget.settings['widget_size_type'] == 2">
+  #popup #popup-frame-base #popup-frame.p_diagrams_text {width: 842px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_text #text_modal #text_modal_preview {width: 342px}
+</style>
+<style ng-if="widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4">
+  #popup #popup-frame-base #popup-frame.p_diagrams_text {width: 898px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_text #text_modal #text_modal_preview {width: 398px}
+</style>
+<style ng-if="widget.settings['widget_size_type'] == 5">
+  #popup #popup-frame-base #popup-frame.p_diagrams_text {min-width: 785px; max-width: 898px; width: calc(500px + {{widget.settings['widget_custom_width']}}px)}
+  #popup #popup-frame-base #popup-frame.p_diagrams_text #text_modal #text_modal_preview {width: {{widget.settings['widget_custom_width']}}px}
+</style>
 <style>
-  #tchatbotscenario_form_preview.customSize { flex-basis: {{widget_custom_width}}px; max-width: 400px; min-width:285px;  }
-  #tchatbotscenario_form_preview_body { background-color: {{widget.settings['chat_talk_background_color']}}; }
-
-  .diagram_preview_area { width: 100%; padding: 5px 5px 10px 5px; list-style-type: none; margin: 0px}
+  .diagram_preview_area { width: 100%; list-style-type: none; margin: 0; max-height: 275px; overflow-y: auto;}
+  .diagram_preview_area { background-color: {{widget.settings['chat_talk_background_color']}}; height: calc(100% - 66px)}
+  .diagram_preview_area .iconDiv.arrowBottom { align-items: flex-end;}
+  .diagram_preview_area .iconDiv.arrowUp {align-items: flex-start;}
+  .diagram_preview_area .iconDiv.arrowUp div.img_wrapper { margin-top: 10px; }
+  .diagram_preview_area .iconDiv.arrowUp i { margin-top: 10px; }
   .diagram_preview_area .iconDiv > i { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; font-size: 23px; color: {{widget.settings['string_color']}}; border-radius: 50%; background-color: {{widget.settings['main_color']}}}
   .diagram_preview_area .iconDiv > i.icon_border { border: 1px solid {{widget.settings['string_color']}};}
   .diagram_preview_area li { border-radius: 5px; background-color: #FFF; margin: 10px 0 0; padding: 12px; font-size: 12px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
-  .diagram_preview_area li { word-break: break-all; white-space: pre-wrap; }
+  .diagram_preview_area li { word-break: break-all; white-space: pre-wrap; justify-self: start; }
   .diagram_preview_area li.boxType { display: inline-block; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
   .diagram_preview_area div.arrowUp li.boxType.chat_left { border-radius: 0 12px 12px 12px ; }
   .diagram_preview_area div.arrowBottom li.boxType.chat_left { border-radius: 12px 12px 12px 0; }
@@ -74,11 +92,10 @@
 
   .diagram_preview_area li select { border: 1px solid #909090; border-radius: 0; padding: 5px; height: 30px; margin-top: 9px; margin-bottom: -2px; width: 100%; word-break: break-all}
   .diagram_preview_area .grid_preview li.smallSize select { min-width: 183px;}
-  .diagram_preview_area .grid_preview {display: grid; grid-template-columns: minmax(max-content, max-content) 1fr ; }
+  .diagram_preview_area .grid_preview {display: grid; grid-template-columns: minmax(max-content, max-content) 1fr; margin-bottom: 5px; }
 
   /* icon css */
   .diagram_preview_area .img_wrapper {display: inline-block; width: 40px; height: 40px; padding: 0; text-align: center; border-radius: 50%; overflow: hidden; position: relative;}
-
   .diagram_preview_area .img_wrapper img {position: absolute; max-width: 40px; left: -100%; right: -100%; margin: auto; }
 </style>
 <script>
@@ -87,21 +104,42 @@
     return {
       restrict: 'E',
       replace: true,
-      template: '<div ng-show="text" ng-class="{grid_preview : widget.chatbotIconToggle == 1}">' +
-          '<div>' +
+      template: '<div ng-show="text" ng-class="{grid_preview: ,arrowUp: ,}   checkClass.handler(\'grid_preview,arrowUp,arrowBottom\')">' +
+          '<div ng-if="widget.settings[\'show_chatbot_icon\'] == 1" class="iconDiv" ng-class="checkClass.handler(\'arrowUp,arrowBottom\')">' +
           '<div ng-if="widget.isBotIconImg" class="img_wrapper">' +
           '<img ng-src="{{widget.settings[\'chatbot_icon\']}}" alt="無人対応アイコンに設定している画像">' +
           '</div>' +
-          '<i ng-if="widget.isBotIconIcon"></i>' +
+          '<i ng-if="widget.isBotIconIcon" ng-class=checkClass(\'icon_border\');" class="fal {{widget.settings[\'chatbot_icon\']}}"></i>' +
           '</div>' +
-          '<li class="sinclo_re chat_left"><span ng-if="widge.settings[\'show_automessage_name\'] == 1" class="cName details">{{widget.settings["sub_title"]}}</span><span>{{text}}</span></li>' +
+          //'<li class="sinclo_re chat_left details" ng-class="checkClass.handler(\'notNone,boxType,balloonType,middleSize,largeSize,customSize\')">' +
+          '<li class="sinclo_re chat_left details" ng-class="{notNone: false,boxType: true,balloonType: false,middleSize: widget.isMiddleSize(),largeSize: false,customSize: false}">' +
+          '<span ng-if="widget.settings[\'show_automessage_name\'] == 1" class="cName details">{{widget.settings["sub_title"]}}</span>' +
+          '<span class="details">{{text}}</span>' +
+          '</li>' +
           '</div>'
     }
   }).directive('previewBranch', function() {
     return {
       restrict: 'E',
       replace: true,
-      template: ''
+      template: '<div ng-show="branchText" ng-class="checkClass.handler(\'grid_preview,arrowUp,arrowBottom\')">' +
+          '<div ng-if="widget.settings[\'show_chatbot_icon\'] == 1" class="iconDiv" ng-class="checkClass.handler(\'arrowUp,arrowBottom\')">' +
+          '<div ng-if="widget.isBotIconImg" class="img_wrapper">' +
+          '<img ng-src="{{widget.settings[\'chatbot_icon\']}}" alt="無人対応アイコンに設定している画像">' +
+          '</div>' +
+          '<i ng-if="widget.isBotIconIcon" ng-class=checkClass(\'icon_border\');" class="fal {{widget.settings[\'chatbot_icon\']}}"></i>' +
+          '</div>' +
+          '<li ng-show="branchText" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster(\'notNone,boxType,balloonType,middleSize,largeSize,customSize\')">' +
+          '<span ng-if="widget.settings[\'show_automessage_name\'] === \'1\'" class="cName details">{{widget.settings[\'sub_title\']}}</span>' +
+          '<span id="action{{setActionId}}-{{index}}_message" class="details">' +
+          '<span class="sinclo-text-line" ng-if="!hearings.message"></span>' +
+          '</span>' +
+          '<div ng-class="{noneText: !branchText, hasText: branchText}">' +
+          '<button ng-repeat="value in branchSelectionList track by $index" class="sinclo-button-ui" ng-show="value"' +
+          'ng-class="checkClass.handler(\'tal,tac,tar,noneBorder,hasBorder\')" onclick="return false;" >{{value}}</button>' +
+          '</div>' +
+          '</li>' +
+          '</div>'
     }
   });
 
