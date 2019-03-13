@@ -5203,8 +5203,11 @@
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio {padding: 8px; font-size: ' + radioSize + 'px;}';
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {display: inline !important; font-size: ' + radioSize + 'px !important;}';
           if (check.smartphone()) {
-            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {top: 8px !important; left: 4px !important; width: 9px !important; height: 9px !important;}';
-            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {top: 8px !important; left: 0 !important; width: ' + radioSize + 'px !important; height: ' + radioSize + 'px !important;}';
+            var top = (11 * ratio) / 2;
+            var left = (11 * ratio) / 4 + 1;
+            var marginTop = 0 - (11 * ratio) / 4;
+            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {top: ' + top + 'px !important; left: ' + left + 'px !important; margin-top: ' + marginTop + 'px !important;  width: 9px !important; height: 9px !important;}';
+            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {top: ' + (top - 1) + 'px !important; left: 0 !important; width: ' + radioSize + 'px !important; height: ' + radioSize + 'px !important;}';
           } else {
             style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {top: 9px !important;}';
             style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {top: 2px !important;}';
@@ -5441,10 +5444,16 @@
         style += '#sincloBox ' + id +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox ' + id +
-            ' .sinclo-checkbox .checkmark {position: absolute;top: 1px;left: 0;height: ' + checkmarkSize + 'px;width: ' + checkmarkSize + 'px; background-color: ' +
+            ' .sinclo-checkbox .checkmark {position: absolute;top: 1px;left: 0;height: ' + checkboxFontSize + 'px;width: ' + checkboxFontSize + 'px; background-color: ' +
             settings.customDesign.checkboxBackgroundColor + '}';
-        style += '#sincloBox ' + id +
-            ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (sincloInfo.widget.reTextSize - 9) + 'px;top: ' + (sincloInfo.widget.reTextSize - 12) + 'px;width: 3px;height: 6px;border: solid ' + checkmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+        if (check.smartphone) {
+          style += '#sincloBox ' + id +
+              ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (sincloInfo.widget.reTextSize - 8) + 'px;top: ' + (sincloInfo.widget.reTextSize - 11) + 'px;width: 3px;height: 6px;border: solid ' + checkmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+        } else {
+          style += '#sincloBox ' + id +
+              ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (sincloInfo.widget.reTextSize - 9) + 'px;top: ' + (sincloInfo.widget.reTextSize - 12) + 'px;width: 3px;height: 6px;border: solid ' + checkmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+        }
+
         style += '#sincloBox ' + id + ' .sinclo-checkbox input:checked ~ .checkmark {background-color: ' +
             settings.customDesign.checkboxActiveColor + '}';
         style += '#sincloBox ' + id + ' .sinclo-checkbox input:checked ~ .checkmark:after {display: block}';
