@@ -120,6 +120,14 @@
   .diagram_preview_area li button.tac {text-align: center;}
   .diagram_preview_area li button.tar {text-align: right;}
 
+  /* radio button UI */
+  .diagram_preview_area li span.sinclo-radio [type="radio"] + label.hasBackground {background-color: {{}}; padding: 8px 8px 8px 28px; color: {{}}}
+  .diagram_preview_area li {}
+  .diagram_preview_area li {}
+  .diagram_preview_area li {}
+  .diagram_preview_area li {}
+  .diagram_preview_area li {}
+
   /* icon css */
   .diagram_preview_area .img_wrapper {display: inline-block; width: 40px; height: 40px; padding: 0; text-align: center; border-radius: 50%; overflow: hidden; position: relative;}
   .diagram_preview_area .img_wrapper img {position: absolute; max-width: 40px; left: -100%; right: -100%; margin: auto; }
@@ -195,8 +203,11 @@
           '' +
           '<div>' +
           '<span ng-repeat="value in branchSelectionList track by $index" class="sinclo-radio" style="display: block" ng-if="value">' +
-          '<input name="radio_button" id="radio_{{$index}}" type="radio" value="{{value}}">' +
-          '<label for="radio_{{$index}}" ng-class="{noneBackground: hearings.settings.radioStyle !== \'1\', hasBackground: hearings.settings.radioStyle === \'1\'}">{{value}}</label>' +
+          '<input name="radio_button" id="radio_{{$index}}" type="radio" value="{{value}}" ng-model="radioStyle">' +
+          '<label for="radio_{{$index}}" ng-class="{' +
+          'noneBackground: radioStyle != 1,' +
+          'hasBackground: radioStyle == 1' +
+          '}">{{value}}</label>' +
           '</span>' +
           '</div>' +
           '' +

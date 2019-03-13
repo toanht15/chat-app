@@ -1861,13 +1861,21 @@
                     width: 120px;
                     height: 26px;
                     padding-left: 4px;
+                    margin-left: 38px;
+                  }
+                  input[type='number']{
+                    width: 107px;
+                    margin-left: 38px;
                   }
                   span.revert-button {
                     text-align: center;
                     position: relative;
                     width: 100px;
-                    left: 20px;
+                    left: 15px;
                     padding: 4px;
+                  }
+                  p {
+                    margin: 0;
                   }
                 }
                 &.button_customize > .customize_row {

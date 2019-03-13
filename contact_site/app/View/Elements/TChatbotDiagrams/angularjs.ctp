@@ -132,6 +132,11 @@
       /* Model for branch customize */
       $scope.isCustomize = false;
       $scope.radioStyle = 2;
+      $scope.radioEntireBackgroundColor = "";
+      $scope.radioEntireActiveColor = "";
+      $scope.radioTextColor = "";
+      $scope.radioActiveTextColor = "";
+      $scope.radioSelectionDistance = 4;
       $scope.radioBackgroundColor = "";
       $scope.radioActiveColor = "";
       $scope.radioBorderColor = "";
@@ -1390,6 +1395,9 @@
       $scope.$watch("branchType.key", function(){
         $scope.popupPositionAdjustment();
       });
+      $scope.$watch("radioStyle", function(){
+        $scope.popupPositionAdjustment();
+      });
 
       $scope.popupPositionAdjustment = function(){
         $scope.currentTop = $('#popup-frame').offset().top;
@@ -1421,6 +1429,12 @@
 
       $scope.setAllCustomizeToData = function(custom){
         $scope.isCustomize = custom.isCustomize ? custom.isCustomize : false;
+        $scope.radioStyle = custom.radioStyle ? custom.radioStyle : 2;
+        $scope.radioEntireBackgroundColor = custom.radioEntireBackgroundColor ? custom.radioEntireBackgroundColor : $scope.getRawColor($scope.widget.settings.main_color, 0.5);
+        $scope.radioEntireActiveColor = custom.radioEntireActiveColor ? custom.radioEntireActiveColor : $scope.widget.settings.main_color;
+        $scope.radioTextColor = custom.radioTextColor ? custom.radioTextColor : $scope.widget.settings.re_text_color;
+        $scope.radioActiveTextColor = custom.radioActiveTextColor ? custom.radioActiveTextColor : $scope.widget.settings.re_text_color;
+        $scope.radioSelectionDistance = custom.radioSelectionDistance ? custom.radioSelectionDistance : 4;
         $scope.radioBackgroundColor = custom.radioBackgroundColor ? custom.radioBackgroundColor : "#FFFFFF";
         $scope.radioActiveColor = custom.radioActiveColor ? custom.radioActiveColor : $scope.widget.settings.main_color;
         $scope.radioBorderColor = custom.radioBorderColor ? custom.radioBorderColor : $scope.widget.settings.main_color;
@@ -2725,13 +2739,7 @@
           '</select>' +
           '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
-          '<div class="radio_type" ng-show="branchType.key == 1">' +
-          '<p>表示形式</p>' +
-          '<div style="margin-left: 14px;">' +
-          '<label class="pointer"><input type="radio" value="1" ng-model="radioStyle">ボタン型</label>' +
-          '<label class="pointer"><input type="radio" value="2" ng-model="radioStyle">ラベル型</label>' +
-          '</div>' +
-          '</div>' +
+          '<radio-type-customize ng-show="branchType.key == 1"></radio-type-customize>' +
           '<div class="btn_valid_margin">' +
           '<span class="diagram_valid" ng-show="btnTypeIsEmpty">タイプを選択してください</span>' +
           '</div>' +
@@ -2754,6 +2762,7 @@
           '<div class="diagram_preview_area">' +
           '<preview-branch>' +
           '</preview-branch>' +
+          '</div>' +
           '</div>' +
           '</div>'
     }
@@ -2850,6 +2859,44 @@
       replace: true,
       template: '<p id="op_modal">このノードに到達した場合、オペレーターを呼び出します。</p>'
     }
+  }).directive('radioTypeCustomize', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      require: '^ngModel',
+      template: '<div class="customize_form">' +
+          '<div class="radio_type">' +
+          '<p>表示形式</p>' +
+          '<div style="margin-left: 14px;">' +
+          '<label class="pointer"><input type="radio" value="1" ng-model="radioStyle">ボタン型</label>' +
+          '<label class="pointer"><input type="radio" value="2" ng-model="radioStyle">ラベル型</label>' +
+          '</div>' +
+          '</div>' +
+          '<div ng-show="radioStyle == 1" class="customize_area radio_customize">' +
+          '<span class="customize_row">' +
+          '<label>ボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioEntireBackgroundColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>選択時のボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioEntireActiveColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_select_bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>文字色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioTextColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_text",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>選択時の文字色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioActiveTextColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_select_text",$event)\' >標準に戻す</span>' +
+          '</span>' +
+          '</div>' +
+          '</div>'
+
+    }
   }).directive('radioCustomize', function(){
     return {
       restrict: 'E',
@@ -2858,11 +2905,11 @@
       template: '<div class="customize_form">' +
           '<label><input type="checkbox" ng-model="isCustomize">デザインをカスタマイズする</label>' +
           '<div ng-show="isCustomize" class="customize_area radio_customize">' +
-          '<span class="customize_row">' +hasBackground
+          '<span class="customize_row">' +
           '<label>選択肢の行間</label>' +
-          '<input class="line_setting" type="number" ng-model="omanko" maxlength="7">' +
+          '<input class="line_setting" type="number" ng-model="radioSelectionDistance" max="100" min ="0">' +
           '<p>px</p>' +
-          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","bg",$event)\'>標準に戻す</span>' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","lh",$event)\'>標準に戻す</span>' +
           '</span>' +
           '<span class="customize_row">' +
           '<label>ラジオボタン背景色</label>' +
