@@ -2580,22 +2580,6 @@
       }
 
       if (obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.buttonUI) {
-        this.chatApi.addButtonUI('hearing_msg sinclo_re', JSON.parse(obj.message).message,
-            JSON.parse(obj.message).settings);
-        this.chatApi.scDown();
-        return false;
-      }
-
-      if (obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.checkbox) {
-        this.chatApi.addCheckbox('hearing_msg sinclo_re', JSON.parse(obj.message).message,
-            JSON.parse(obj.message).settings);
-        this.chatApi.scDown();
-        return false;
-      }
-
-      if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.radio) {
         this.chatApi.addRadioButton('hearing_msg sinclo_re', JSON.parse(obj.message).message,
             JSON.parse(obj.message).settings);
@@ -5397,12 +5381,14 @@
         return style;
       },
       createCheckboxStyle: function(settings, id) {
+        var borderColor = '#FFFFFF';
+        var checkmarkColor = '#FFFFFF';
         if (settings.checkboxCustomDesign) {
-          var borderColor = settings.customDesign.checkboxBorderColor;
-          var checkmarkColor = settings.customDesign.checkboxCheckmarkColor;
+           borderColor = settings.customDesign.checkboxBorderColor;
+           checkmarkColor = settings.customDesign.checkboxCheckmarkColor;
         } else {
-          var borderColor = sincloInfo.widget.mainColor;
-          var checkmarkColor = sincloInfo.widget.mainColor;
+           borderColor = sincloInfo.widget.mainColor;
+           checkmarkColor = sincloInfo.widget.mainColor;
         }
         var checkmarkSize = Number(sincloInfo.widget.reTextSize) + 2;
         var selectionDistance = settings.customDesign.checkboxSelectionDistance ? settings.customDesign.checkboxSelectionDistance : 4;
