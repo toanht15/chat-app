@@ -4848,7 +4848,15 @@ io.sockets.on('connection', function(socket) {
         else {
           messageDistinction = results[0].conversation_count;
         }
-        obj.message.forEach(function(elm, index, arr) {
+
+        let messages = obj.message;
+        if(isset(sincloCore[obj.siteKey])
+            && isset(sincloCore[obj.siteKey][obj.sincloSessionId])
+            && isset(sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
+          messages = sincloCore[obj.siteKey][obj.sincloSessionId].diagram.concat(messages);
+          sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
+        }
+        messages.forEach(function(elm, index, arr) {
           if (!isset(elm.created)) {
             elm.created = new Date();
             elm.sort = fullDateTime(elm.created);

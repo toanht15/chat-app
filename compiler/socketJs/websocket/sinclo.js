@@ -1664,14 +1664,8 @@
             };
             sinclo.diagramApi.branch.showMessage(currentNode, branches.message, branches.selectionMap, branches.labels, branches.customizeDesign);
           } else if (Number(chat.messageType) === 302) {
-            var speakTextMessage = check.isJSON(chat.message) ? JSON.parse(chat.message) : chat.message;
             var chatObj = check.isJSON(chat.message) ? JSON.parse(chat.message) : chat.message;
-            var currentNode = {
-              isRedraw: true,
-              diagramId: speakTextMessage.did,
-              message: [chatObj.message]
-            };
-            sinclo.diagramApi.speakText.showMessages(currentNode, currentNode.message);
+            sinclo.diagramApi.speakText.showMessageProcess(chatObj.message);
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true &&
@@ -12622,7 +12616,9 @@
         },
         getDiagramId: function() {
           var self = sinclo.diagramApi;
-          return self.storage.get(self.storage._lKey.diagramId);
+          var value = self.storage.get(self.storage._lKey.diagramId);
+          console.log('getDiagramId ==> $s', value);
+          return value;
         },
         getCurrentNodeId: function() {
           var self = sinclo.diagramApi;
@@ -12885,30 +12881,11 @@
           var defer = $.Deferred();
           var self = sinclo.diagramApi;
           for(var i=0; i < messages.length; i++) {
-            var html = sinclo.chatApi.createMessageHtml(messages[i]);
-            (function(index, showHtml){
+            (function(index){
               var timeoutMSec = self.executor.getIntervalTimeSec() * 1000 * index;
               console.log('speakText.showMessages. timer msec : %s', timeoutMSec);
               setTimeout(function() {
-                common.chatBotTypingTimerClear();
-                common.chatBotTypingRemove();
-                var cs = 'diagram_msg sinclo_re';
-                var chatList = document.getElementsByTagName('sinclo-chat')[0];
-                var div = document.createElement('div');
-                var li = document.createElement('li');
-                div = sinclo.chatApi._editDivForIconSetting(div, true);
-                div.classList.add('sinclo-diagram-msg');
-                div.appendChild(li);
-                chatList.appendChild(div);
-
-                div.style.textAlign = 'left';
-                cs += ' effect_left';
-                cs += ' diagram_msg';
-
-                li.className = cs;
-
-                li.innerHTML = showHtml;
-
+                self.speakText.showMessageProcess(messages[index]);
                 if (!currentNode.isRedraw) {
                   self.speakText.saveShownMessage(currentNode, messages[index]);
                 }
@@ -12918,9 +12895,29 @@
                   common.chatBotTypingCall({});
                 }
               }, timeoutMSec);
-            })(i, html);
+            })(i);
           }
           return defer.promise();
+        },
+        showMessageProcess: function(message) {
+          common.chatBotTypingTimerClear();
+          common.chatBotTypingRemove();
+          var cs = 'diagram_msg sinclo_re';
+          var chatList = document.getElementsByTagName('sinclo-chat')[0];
+          var div = document.createElement('div');
+          var li = document.createElement('li');
+          div = sinclo.chatApi._editDivForIconSetting(div, true);
+          div.classList.add('sinclo-diagram-msg');
+          div.appendChild(li);
+          chatList.appendChild(div);
+
+          div.style.textAlign = 'left';
+          cs += ' effect_left';
+          cs += ' diagram_msg';
+
+          li.className = cs;
+          li.innerHTML = sinclo.chatApi.createMessageHtml(message);
+
         },
         doAction: function() {
           console.log("<><><><><> SPEAK TEXT <><><><><>");
