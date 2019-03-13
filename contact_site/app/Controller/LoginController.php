@@ -138,7 +138,7 @@ class LoginController extends AppController {
         else {
           $this->TLogin->rollback();
         }
-        return $this->redirect(['controller' => 'Customers']);
+        return $this->redirect(['controller' => 'Customers', 'action' => 'index']);
       }
       else {
         // ログイン失敗カウントを増やす
