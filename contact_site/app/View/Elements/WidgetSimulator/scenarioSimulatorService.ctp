@@ -251,7 +251,7 @@
     };
 
     // アクションの開始
-    self.actionInit = function() {
+    self.actionInit = function(callDiagram) {
       self.actionStep = 0;
       self.hearingIndex = 0;
       self.sendFileIndex = 0;
@@ -260,7 +260,9 @@
       self.hearingInputResult = true;
 
       // シミュレーション上のメッセージをクリアする
-      $rootScope.$broadcast('removeMessage');
+      if(!callDiagram) {
+        $rootScope.$broadcast('removeMessage');
+      }
       self.doAction();
     };
 
@@ -1088,7 +1090,8 @@
     };
 
     // handle radio button click
-    $(document).on('change', '#chatTalk input[type="radio"]', function() {
+    $(document).on('change', '#chatTalk input[type="radio"]', function(e) {
+      if($(e.target).data('nid') || $(e.target).data('nextNid')) return;
       var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
       var message = $(this).val().replace(/^\s/, '');
       var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;

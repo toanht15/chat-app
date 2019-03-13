@@ -60,6 +60,7 @@
               self.doTextAction(actionNode);
               break;
             case 'scenario': // シナリオ呼び出し
+              self.doCallScenarioAction(actionNode);
               break;
             case 'jump': // ジャンプ
               var nextNode = self.findNodeById(actionNode.attrs.actionParam.targetId);
@@ -84,6 +85,11 @@
         setTimeout(chatBotTypingRemove, 801);
         self.actionStop();
       }
+    };
+
+    // アクションの停止
+    self.actionStop = function() {
+      $timeout.cancel(self.actionTimer);
     };
 
     self.findNodeById = function(nodeId) {
@@ -131,6 +137,27 @@
       var nextNodeId = node.attrs.nodeBasicInfo.nextNodeId;
       var intervalSec = 2;
       $rootScope.$broadcast('addReDiagramTextMessage', nodeId, messages, nextNodeId, intervalSec);
+    };
+
+    self.doCallScenarioAction = function(node) {
+      $.ajax({
+        url: "<?= $this->Html->url('/TChatbotScenario/remoteGetActionDetail') ?>",
+        type: 'post',
+        dataType: 'json',
+        data: {
+          id: node.attrs.actionParam.scenarioId
+        },
+        cache: false,
+        timeout: 10000
+      }).done(function(data) {
+        console.info('successed get scenario detail.');
+        var activity = JSON.parse(data['TChatbotScenario']['activity']);
+        $rootScope.$broadcast('receiveScenario', activity);
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        // エラー情報を出力する
+        console.warn('failed get scenario detail');
+        console.error(errorThrown);
+      });
     };
 
     $rootScope.$on('finishAddTextMessage', function(event, nextNodeId){
