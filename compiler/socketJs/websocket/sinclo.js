@@ -5173,7 +5173,9 @@
         var radioStyle = settings.radioStyle === '1' ? 'buttonStyle' : 'labelStyle';
         html += '<div id="' + name + '" class="' + radioStyle + '">';
         var selectionDistance = settings.customDesign.radioSelectionDistance ? settings.customDesign.radioSelectionDistance : 4;
-        var radioSize = Number(sincloInfo.widget.reTextSize) + 2;
+        var ratio = $(window).width() * (1 / 285);
+        var radioSize = check.smartphone() ? 12 * ratio : Number(sincloInfo.widget.reTextSize);
+
         var style = '<style>';
         style += '#sincloBox ul#chatTalk #' + name +
             ' sinclo-radio [type="radio"] + label:before {background-color: ' +
@@ -5198,8 +5200,8 @@
         if (settings.radioStyle !== '1') {
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
         } else {
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio {padding: 8px; font-size: ' + sincloInfo.widget.reTextSize + 'px;}';
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {display: inline !important; font-size: ' + sincloInfo.widget.reTextSize + 'px !important;}';
+          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio {padding: 8px; font-size: ' + radioSize + 'px;}';
+          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {display: inline !important; font-size: ' + radioSize + 'px !important;}';
           if (check.smartphone()) {
             style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {top: 8px !important; left: 4px !important; width: 9px !important; height: 9px !important;}';
             style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {top: 8px !important; left: 0 !important; width: ' + radioSize + 'px !important; height: ' + radioSize + 'px !important;}';
@@ -5430,10 +5432,12 @@
            checkmarkColor = sincloInfo.widget.mainColor;
         }
         var checkmarkSize = Number(sincloInfo.widget.reTextSize) + 2;
+        var ratio = $(window).width() * (1 / 285);
+        var checkboxFontSize = check.smartphone() ? 12 * ratio : Number(sincloInfo.widget.reTextSize);
         var selectionDistance = settings.customDesign.checkboxSelectionDistance ? settings.customDesign.checkboxSelectionDistance : 4;
         var style = '<style>';
         style += '#sincloBox ' + id +
-            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' + selectionDistance + 'px;cursor: pointer;font-size: ' + sincloInfo.widget.reTextSize + 'px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + sincloInfo.widget.reTextColor + ';}';
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' + selectionDistance + 'px;cursor: pointer;font-size: ' + checkboxFontSize + 'px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + sincloInfo.widget.reTextColor + ';}';
         style += '#sincloBox ' + id +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox ' + id +
