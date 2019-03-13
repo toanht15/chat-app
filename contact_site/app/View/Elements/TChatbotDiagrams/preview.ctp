@@ -8,23 +8,32 @@
 ?>
 <style ng-if="widget.settings['widget_size_type'] == 1">
   #popup #popup-frame-base #popup-frame.p_diagrams_text {width: 785px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_branch {width: 785px}
   #popup #popup-frame-base #popup-frame.p_diagrams_text #text_modal #text_modal_preview {width: 285px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_branch #branch_modal #branch_modal_preview {width: 285px}
 </style>
 <style ng-if="widget.settings['widget_size_type'] == 2">
   #popup #popup-frame-base #popup-frame.p_diagrams_text {width: 842px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_branch {width: 842px}
   #popup #popup-frame-base #popup-frame.p_diagrams_text #text_modal #text_modal_preview {width: 342px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_branch #branch_modal #branch_modal_preview {width: 342px}
 </style>
 <style ng-if="widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4">
   #popup #popup-frame-base #popup-frame.p_diagrams_text {width: 898px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_branch {width: 898px}
   #popup #popup-frame-base #popup-frame.p_diagrams_text #text_modal #text_modal_preview {width: 398px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_branch #branch_modal #branch_modal_preview {width: 398px}
 </style>
 <style ng-if="widget.settings['widget_size_type'] == 5">
   #popup #popup-frame-base #popup-frame.p_diagrams_text {min-width: 785px; max-width: 898px; width: calc(500px + {{widget.settings['widget_custom_width']}}px)}
+  #popup #popup-frame-base #popup-frame.p_diagrams_branch {min-width: 785px; max-width: 898px; width: calc(500px + {{widget.settings['widget_custom_width']}}px)}
   #popup #popup-frame-base #popup-frame.p_diagrams_text #text_modal #text_modal_preview {width: {{widget.settings['widget_custom_width']}}px}
+  #popup #popup-frame-base #popup-frame.p_diagrams_branch #branch_modal #branch_modal_preview {width: {{widget.settings['widget_custom_width']}}px}
 </style>
 <style>
   .diagram_preview_area { width: 100%; list-style-type: none; margin: 0; max-height: 275px; overflow-y: auto;}
   .diagram_preview_area { background-color: {{widget.settings['chat_talk_background_color']}}; height: calc(100% - 66px)}
+  .diagram_preview_area .iconDiv {display: flex}
   .diagram_preview_area .iconDiv.arrowBottom { align-items: flex-end;}
   .diagram_preview_area .iconDiv.arrowUp {align-items: flex-start;}
   .diagram_preview_area .iconDiv.arrowUp div.img_wrapper { margin-top: 10px; }
@@ -94,6 +103,23 @@
   .diagram_preview_area .grid_preview li.smallSize select { min-width: 183px;}
   .diagram_preview_area .grid_preview {display: grid; grid-template-columns: minmax(max-content, max-content) 1fr; margin-bottom: 5px; }
 
+  /* button UI */
+  .diagram_preview_area li button {background-color: {{buttonUIBackgroundColor}};  color: {{buttonUITextColor}};  cursor: pointer;  min-height: 35px;  margin-bottom: 1px;  padding: 10px 15px;  }
+  .diagram_preview_area li button {width: 188px;}
+  .diagram_preview_area li.middleSize button { width: 240px;}
+  .diagram_preview_area li.largeSize button { width: 280px;}
+  .diagram_preview_area li button:first-child {border-top-left-radius: 8px; border-top-right-radius: 8px}
+  .diagram_preview_area li button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
+  .diagram_preview_area li button:active{background-color: {{buttonUIActiveColor}};}
+  .diagram_preview_area li button:focus{outline: none}
+  .diagram_preview_area li button:hover{background-color: {{buttonUIActiveColor}};}
+  .diagram_preview_area li button.noneBorder {border: none;}
+  .diagram_preview_area li button.hasBorder {border: 1px solid {{buttonUIBorderColor}};}
+  .diagram_preview_area li div.hasText {margin-top: 8px}
+  .diagram_preview_area li button.tal {text-align: left;}
+  .diagram_preview_area li button.tac {text-align: center;}
+  .diagram_preview_area li button.tar {text-align: right;}
+
   /* icon css */
   .diagram_preview_area .img_wrapper {display: inline-block; width: 40px; height: 40px; padding: 0; text-align: center; border-radius: 50%; overflow: hidden; position: relative;}
   .diagram_preview_area .img_wrapper img {position: absolute; max-width: 40px; left: -100%; right: -100%; margin: auto; }
@@ -104,15 +130,30 @@
     return {
       restrict: 'E',
       replace: true,
-      template: '<div ng-show="text" ng-class="{grid_preview: ,arrowUp: ,}   checkClass.handler(\'grid_preview,arrowUp,arrowBottom\')">' +
-          '<div ng-if="widget.settings[\'show_chatbot_icon\'] == 1" class="iconDiv" ng-class="checkClass.handler(\'arrowUp,arrowBottom\')">' +
+      template: '<div ng-show="text" ng-class="{' +
+          'grid_preview: widget.settings[\'show_chatbot_icon\'] == 1,' +
+          'arrowUp: widget.settings[\'chat_message_design_type\'] == 1 &&  widget.settings[\'chat_message_arrow_position\'] == 1,' +
+          'arrowBottom: widget.settings[\'chat_message_design_type\'] == 2 || widget.settings[\'chat_message_arrow_position\'] == 2' +
+          '}">' +
+          '<div ng-if="widget.settings[\'show_chatbot_icon\'] == 1" class="iconDiv" ng-class="{' +
+          'arrowUp: widget.settings[\'chat_message_design_type\'] == 1 &&  widget.settings[\'chat_message_arrow_position\'] == 1,' +
+          'arrowBottom: widget.settings[\'chat_message_design_type\'] == 2 || widget.settings[\'chat_message_arrow_position\'] == 2' +
+          '}">' +
           '<div ng-if="widget.isBotIconImg" class="img_wrapper">' +
           '<img ng-src="{{widget.settings[\'chatbot_icon\']}}" alt="無人対応アイコンに設定している画像">' +
           '</div>' +
-          '<i ng-if="widget.isBotIconIcon" ng-class=checkClass(\'icon_border\');" class="fal {{widget.settings[\'chatbot_icon\']}}"></i>' +
+          '<i ng-if="widget.isBotIconIcon" class="fal {{widget.settings[\'chatbot_icon\']}}" ng-class="{' +
+          'icon_border: false' +
+          '}"></i>' +
           '</div>' +
-          //'<li class="sinclo_re chat_left details" ng-class="checkClass.handler(\'notNone,boxType,balloonType,middleSize,largeSize,customSize\')">' +
-          '<li class="sinclo_re chat_left details" ng-class="{notNone: false,boxType: true,balloonType: false,middleSize: widget.isMiddleSize(),largeSize: false,customSize: false}">' +
+          '<li class="sinclo_re chat_left details" ng-class="{' +
+          'notNone: widget.re_border_none === \'\' || widget.re_border_none === false,' +
+          'boxType: widget.settings[\'chat_message_design_type\'] == 1,' +
+          'balloonType: widget.settings[\'chat_message_design_type\'] == 2,' +
+          'middleSize: widget.settings[\'widget_size_type\'] == 2,' +
+          'largeSize: widget.settings[\'widget_size_type\'] == 3 || widget.settings[\'widget_size_type\'] == 4,' +
+          'customSize: widget.settings[\'widget_size_type\'] == 5' +
+          '}">' +
           '<span ng-if="widget.settings[\'show_automessage_name\'] == 1" class="cName details">{{widget.settings["sub_title"]}}</span>' +
           '<span class="details">{{text}}</span>' +
           '</li>' +
@@ -122,21 +163,53 @@
     return {
       restrict: 'E',
       replace: true,
-      template: '<div ng-show="branchText" ng-class="checkClass.handler(\'grid_preview,arrowUp,arrowBottom\')">' +
-          '<div ng-if="widget.settings[\'show_chatbot_icon\'] == 1" class="iconDiv" ng-class="checkClass.handler(\'arrowUp,arrowBottom\')">' +
+      template: '<div ng-show="branchText || branchSelectionList[0]" ng-class="{' +
+          'grid_preview: widget.settings[\'show_chatbot_icon\'] == 1,' +
+          'arrowUp: widget.settings[\'chat_message_design_type\'] == 1 &&  widget.settings[\'chat_message_arrow_position\'] == 1,' +
+          'arrowBottom: widget.settings[\'chat_message_design_type\'] == 2 || widget.settings[\'chat_message_arrow_position\'] == 2' +
+          '}">' +
+          '<div ng-if="widget.settings[\'show_chatbot_icon\'] == 1" class="iconDiv" ng-class="{' +
+          'arrowUp: widget.settings[\'chat_message_design_type\'] == 1 &&  widget.settings[\'chat_message_arrow_position\'] == 1,' +
+          'arrowBottom: widget.settings[\'chat_message_design_type\'] == 2 || widget.settings[\'chat_message_arrow_position\'] == 2' +
+          '}">' +
           '<div ng-if="widget.isBotIconImg" class="img_wrapper">' +
           '<img ng-src="{{widget.settings[\'chatbot_icon\']}}" alt="無人対応アイコンに設定している画像">' +
           '</div>' +
-          '<i ng-if="widget.isBotIconIcon" ng-class=checkClass(\'icon_border\');" class="fal {{widget.settings[\'chatbot_icon\']}}"></i>' +
+          '<i ng-if="widget.isBotIconIcon" class="fal {{widget.settings[\'chatbot_icon\']}}" ng-class="{' +
+          'icon_border: false;' +
+          '}"></i>' +
           '</div>' +
-          '<li ng-show="branchText" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster(\'notNone,boxType,balloonType,middleSize,largeSize,customSize\')">' +
+          '<li ng-show="branchText || branchSelectionList[0]" class="sinclo_re chat_left details" ng-class="{' +
+          'notNone: widget.re_border_none === \'\' || widget.re_border_none === false,' +
+          'boxType: widget.settings[\'chat_message_design_type\'] == 1,' +
+          'balloonType: widget.settings[\'chat_message_design_type\'] == 2,' +
+          'middleSize: widget.settings[\'widget_size_type\'] == 2,' +
+          'largeSize: widget.settings[\'widget_size_type\'] == 3 || widget.settings[\'widget_size_type\'] == 4,' +
+          'customSize: widget.settings[\'widget_size_type\'] == 5' +
+          '}">' +
           '<span ng-if="widget.settings[\'show_automessage_name\'] === \'1\'" class="cName details">{{widget.settings[\'sub_title\']}}</span>' +
           '<span id="action{{setActionId}}-{{index}}_message" class="details">' +
-          '<span class="sinclo-text-line" ng-if="!hearings.message"></span>' +
+          '<span class="sinclo-text-line" ng-show="branchText">{{branchText}}</span>' +
           '</span>' +
-          '<div ng-class="{noneText: !branchText, hasText: branchText}">' +
-          '<button ng-repeat="value in branchSelectionList track by $index" class="sinclo-button-ui" ng-show="value"' +
-          'ng-class="checkClass.handler(\'tal,tac,tar,noneBorder,hasBorder\')" onclick="return false;" >{{value}}</button>' +
+          '<div ng-if="branchType.key == 1">' +
+          '' +
+          '<div>' +
+          '<span ng-repeat="value in branchSelectionList track by $index" class="sinclo-radio" style="display: block" ng-if="value">' +
+          '<input name="{{value}}_{{$index}}" id="radio_{{$index}}" type="radio" value="{{value}}">' +
+          '<label for="radio_{{$index}}" ng-class="{noneBackground: hearings.settings.radioStyle !== \'1\', hasBackground: hearings.settings.radioStyle === \'1\'}">{{value}}</label>' +
+          '</span>' +
+          '</div>' +
+          '' +
+          '</div>' +
+          '<div ng-class="{noneText: !branchText, hasText: branchText}" ng-if="branchType.key == 2">' +
+          '<button ng-repeat="value in branchSelectionList track by $index" class="sinclo-button-ui" ng-if="value"' +
+          'ng-class="{' +
+          'tal: buttonUITextAlign == 1,' +
+          'tac: buttonUITextAlign == 2,' +
+          'tar: buttonUITextAlign == 3,' +
+          'noneBorder: outButtonUINoneBorder,' +
+          'hasBorder: !outButtonUINoneBorder' +
+          '}" onclick="return false;" finisher>{{value}}</button>' +
           '</div>' +
           '</li>' +
           '</div>'

@@ -1543,87 +1543,6 @@
       };
 
       /** ==========================
-       * Preview Methods
-       * =========================== */
-      $scope.checkClass = {
-        resultClass: {},
-        handler: function(className){
-          var cnArray = className.split(",");
-          for( var i=0; i < cnArray.length; i++ ){
-            switch (cnArray[i]) {
-              case 'notNone':
-                this.notNoneChecker();
-                break;
-              case 'boxType':
-              case 'balloonType':
-                this.balloonTypeChecker();
-                break;
-              case 'middleSize':
-              case 'largeSize':
-              case 'customSize':
-                this.widgetSizeChecker();
-                break;
-              case 'arrowUp':
-              case 'arrowBottom':
-                this.allowPositionChecker();
-                break;
-              case 'grid_preview':
-                this.iconChecker();
-                break;
-              case 'tal':
-              case 'tac':
-              case 'tar':
-                this.textAlignChecker();
-                break;
-              case 'noneBorder':
-              case 'hasBorder':
-                this.borderChecker();
-                break;
-              default:
-            }
-          }
-          return this.resultClass;
-        },
-        notNoneChecker: function() {
-          this.resultClass['notNone'] = $scope.widget.re_border_none === '' || $scope.widget.re_border_none === false;
-        },
-        balloonTypeChecker: function() {
-          var type = Number($scope.widget.settings['chat_message_design_type']);
-          this.resultClass['boxType'] = type === 1;
-          this.resultClass['balloonType'] = type === 2;
-        },
-        widgetSizeChecker: function() {
-          var type = Number($scope.widget.settings['widget_size_type']);
-          this.resultClass['smallSize'] = type === 1;
-          this.resultClass['middleSize'] = type === 2;
-          this.resultClass['largeSize'] = type === 3 || type ===4;
-          this.resultClass['customSize'] = type === 5;
-        },
-        allowPositionChecker: function() {
-          var type = Number($scope.widget.settings['chat_message_design_type']);
-          var position = Number($scope.widget.settings['chat_message_arrow_position']);
-          this.resultClass['arrowUp'] = type === 1 && position === 1;
-          this.resultClass['arrowBottom'] = type === 2 || position === 2;
-        },
-        iconChecker: function() {
-          this.resultClass['grid_preview'] = Number($scope.widget.chatbotIconToggle) === 1;
-        },
-        textAlignChecker: function() {
-          if(Number($scope.branchType) === 2 && $scope.isCustomize){
-            this.resultClass['tal'] = Number($scope.buttonUITextAlign) === 1;
-            this.resultClass['tac'] = Number($scope.buttonUITextAlign) === 2;
-            this.resultClass['tar'] = Number($scope.buttonUITextAlign) === 3;
-          }
-        },
-        borderChecker: function() {
-          if(Number($scope.branchType) === 2 && $scope.isCustomize){
-            this.resultClass['noneBorder'] = $scope.outButtonUINoneBorder;
-            this.resultClass['hasBorder'] = !$scope.outButtonUINoneBorder
-          }
-        }
-      };
-
-      /** ==========================
        * Simulator Methods
        * =========================== */
       // シミュレーターの起動
@@ -2792,11 +2711,11 @@
           '<h3>プレビュー</h3>' +
           '<div class="diagram_preview_area">' +
           '<preview-branch>' +
-          '</preview-branch' +
+          '</preview-branch>' +
           '</div>' +
           '</div>'
     }
-  }).directive('textModal', function($timeout){
+  }).directive('textModal', function(){
     return {
       restrict: 'E',
       replace: true,
@@ -2951,6 +2870,9 @@
           '<input class="jscolor {hash:true}" type="text" ng-model="buttonUIBorderColor" maxlength="7">' +
           '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("button","border",$event)\'>標準に戻す</span>' +
           '</span>' +
+          '<label class="pointer" style="margin-left:100px; width: 100px;">' +
+          '<input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;" ng-model="outButtonUINoneBorder">枠線なしにする' +
+          '</label>' +
           '</div>' +
           '</div>'
     }
