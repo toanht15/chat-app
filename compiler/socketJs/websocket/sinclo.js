@@ -1662,7 +1662,7 @@
                 }
               }
             };
-            sinclo.diagramApi.branch.showMessage(currentNode, branches.message, branches.selectionMap, branches.labels);
+            sinclo.diagramApi.branch.showMessage(currentNode, branches.message, branches.selectionMap, branches.labels, branches.customizeDesign);
           } else if (Number(chat.messageType) === 302) {
             var speakTextMessage = check.isJSON(chat.message) ? JSON.parse(chat.message) : chat.message;
             var chatObj = check.isJSON(chat.message) ? JSON.parse(chat.message) : chat.message;
@@ -12736,6 +12736,7 @@
                };
 
               sinclo.chatApi.send(sendData);
+              sinclo.chatApi.scDown();
             });
           }
         },
@@ -12765,11 +12766,11 @@
                 break;
               case 2:
                 // ボタン
-                var name               = 'sinclo-buttonUI_' + nodeId;
+                var timestamp = (new Date()).getTime();
+                var name               = 'sinclo-buttonUI_' + timestamp;
                 var style              = self.branch.createButtonUIStyle(customizeDesign, '#' + name);
                 html += '<div id="' + name + '">';
                 html += style;
-                var timestamp = (new Date()).getTime();
                 html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui" data-did="' + self.common.getDiagramId() +
                     '" data-nid="' + self.common.getCurrentNodeId() +
                     '" data-next-nid="' + selectionMap[nodeId] + '">' + labels[nodeId] + '</button>';
@@ -12781,7 +12782,7 @@
         },
         createRadioButtonStyle: function(settings, name) {
           var style = "";
-          if (settings.radioCustomDesign) {
+          if (settings.isCustomize) {
             style = '<style>';
             style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {background-color: ' + settings.customDesign.radioBackgroundColor + ' !important;}';
             style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {background: ' + settings.customDesign.radioActiveColor + ' !important;}';
@@ -12798,21 +12799,21 @@
           var style = '<style>';
           style += '#sincloBox ul#chatTalk ' + id +
               ' button.sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
-          if (settings.buttonUICustomDesign) {
+          if (settings.isCustomize) {
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui {background-color: ' +
-                settings.customDesign.buttonUIBackgroundColor + '}';
+                settings.buttonUIBackgroundColor + '}';
             style += '#sincloBox ul#chatTalk ' + id + ' button.sinclo-button-ui {color: ' +
-                settings.customDesign.buttonUITextColor + '}';
+                settings.buttonUITextColor + '}';
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui:focus {outline: none}';
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui:active {background-color: ' +
-                settings.customDesign.buttonUIActiveColor + '}';
+                settings.buttonUIActiveColor + '}';
 
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui.selected {background-color: ' +
-                settings.customDesign.buttonUIActiveColor + ' !important;}';
+                settings.buttonUIActiveColor + ' !important;}';
           } else {
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui {background-color: ' +
@@ -12842,7 +12843,7 @@
 
           return style;
         },
-        saveShownMessage: function(currentNode, message, selectionMap, labels) {
+        saveShownMessage: function(currentNode, message, selectionMap, labels, customizeDesign) {
           var self = sinclo.diagramApi;
           var obj = {
             nid: self.common.getCurrentNodeId(),
@@ -12850,7 +12851,8 @@
             message: message,
             type: Number(currentNode.attrs.actionParam.btnType),
             selectionMap: selectionMap,
-            labels: labels
+            labels: labels,
+            customizeDesign: customizeDesign
           };
           self.storage.putDiagramMessage(currentNode.id, currentNode.attrs.nodeBasicInfo.nodeType, obj, false);
         }
@@ -12862,6 +12864,8 @@
           for(var i=0; i < messages.length; i++) {
             var html = sinclo.chatApi.createMessageHtml(messages[i]);
             (function(index, showHtml){
+              var timeoutMSec = self.executor.getIntervalTimeSec() * 1000 * index;
+              console.log('speakText.showMessages. timer msec : %s', timeoutMSec);
               setTimeout(function() {
                 common.chatBotTypingTimerClear();
                 common.chatBotTypingRemove();
@@ -12890,7 +12894,7 @@
                 } else {
                   common.chatBotTypingCall({});
                 }
-              }, self.executor.getIntervalTimeSec() * 1000 * index);
+              }, timeoutMSec);
             })(i, html);
           }
           return defer.promise();
@@ -12902,13 +12906,12 @@
           var messages = currentNode.attrs.actionParam.text;
           common.chatBotTypingCall({});
           self.executor.wait(self.executor.getIntervalTimeSec())
-          .then(self.speakText.showMessages(currentNode, messages))
-          .then(function(){
+          .then(self.speakText.showMessages(currentNode, messages).then(function(){
             sinclo.chatApi.scDown();
             var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
             self.executor.setNext(self.common.getDiagramId(), nextNodeId);
             self.executor.execute();
-          });
+          }));
         },
         saveShownMessage: function(currentNode, message) {
           var self = sinclo.diagramApi;
