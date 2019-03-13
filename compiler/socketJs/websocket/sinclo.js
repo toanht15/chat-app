@@ -2331,6 +2331,7 @@
             name: userName,
             chatId: obj.chatId
           }, false, false, false);
+          sinclo.diagramApi.executor.setDiagramId(obj.chatMessage.did);
           sinclo.diagramApi.executor.setNext(obj.chatMessage.did, nextNodeId);
           sinclo.diagramApi.executor.execute();
           return false;
@@ -3629,6 +3630,7 @@
                   sourceNodeId: $(e.target).data('nid'),
                   nextNodeId: $(e.target).data('nextNid')
                 };
+                sinclo.diagramApi.executor.setDiagramId($(e.target).data('did'));
                 sinclo.chatApi.send(message);
                 return false;
               }
@@ -12581,13 +12583,19 @@
           var result = self.storage.get(self.storage._lKey.messageInterval);
           console.log("interval timesec : %s", result);
           return Number(result);
+        },
+        setDiagramId: function(diagramId) {
+          var self = sinclo.diagramApi;
+          self.storage.set(self.storage._lKey.diagramId, diagramId);
         }
       },
       common: {
         init: function(id, data) {
           var self = sinclo.diagramApi;
-          self.storage.setBaseObj(self.defaultVal);
-          self.storage.set(self.storage._lKey.diagramId, id);
+          if(!self.common.isProcessing()) {
+            self.storage.setBaseObj(self.defaultVal);
+          }
+          self.executor.setDiagramId(id);
           self.storage.set(self.storage._lKey.diagrams, data.cells);
           self.common._saveProcessingState(true);
           var beginNode = self.common.getStartNode(data.cells);
@@ -12624,6 +12632,15 @@
         _saveProcessingState: function(isProcessing) {
           var self = sinclo.diagramApi.storage;
           self.set(self._lKey.processing, isProcessing);
+        },
+        isProcessing: function() {
+          var self = sinclo.diagramApi.storage;
+          var result = false;
+          var value = self.get(self._lKey.processing);
+          if (value !== null && (value === 'true' || value === true)) {
+            result = true;
+          }
+          return result;
         },
         disallowSaveing: function() {
           var self = sinclo.diagramApi;
@@ -12735,6 +12752,8 @@
                  nextNodeId: $(e.target).data('nextNid')
                };
 
+              sinclo.diagramApi.executor.setDiagramId($(e.target).data('did'));
+
               sinclo.chatApi.send(sendData);
               sinclo.chatApi.scDown();
             });
@@ -12769,12 +12788,16 @@
                 var timestamp = (new Date()).getTime();
                 var name               = 'sinclo-buttonUI_' + timestamp;
                 var style              = self.branch.createButtonUIStyle(customizeDesign, '#' + name);
-                html += '<div id="' + name + '">';
-                html += style;
+                if(idx === 0) {
+                  html += '<div id="' + name + '">';
+                  html += style;
+                }
                 html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui" data-did="' + self.common.getDiagramId() +
                     '" data-nid="' + self.common.getCurrentNodeId() +
                     '" data-next-nid="' + selectionMap[nodeId] + '">' + labels[nodeId] + '</button>';
-                html += '</div>';
+                if(idx === arr.length - 1) {
+                  html += '</div>';
+                }
                 break;
             }
           });
@@ -12799,6 +12822,14 @@
           var style = '<style>';
           style += '#sincloBox ul#chatTalk ' + id +
               ' button.sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button.sinclo-button-ui:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button.sinclo-button-ui:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' button.sinclo-button-ui {text-align: center}';
+          style += '#sincloBox ul#chatTalk ' + id + ' button.sinclo-button-ui {width: ' +
+              sinclo.chatApi.getButtonUIWidth() + 'px;}';
           if (settings.isCustomize) {
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui {background-color: ' +
@@ -12830,14 +12861,6 @@
                 ' button.sinclo-button-ui.selected {background-color: ' +
                 sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
                 ' !important;}';
-            style += '#sincloBox ul#chatTalk ' + id + ' button.sinclo-button-ui {width: ' +
-                sinclo.chatApi.getButtonUIWidth() + 'px;}';
-            style += '#sincloBox ul#chatTalk ' + id +
-                ' button.sinclo-button-ui:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
-            style += '#sincloBox ul#chatTalk ' + id +
-                ' button.sinclo-button-ui:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
-            style += '#sincloBox ul#chatTalk ' + id +
-                ' button.sinclo-button-ui {text-align: center}';
           }
           style += '</style>';
 

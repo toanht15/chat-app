@@ -21,7 +21,7 @@ class TChatbotDiagramsController extends WidgetSettingController
         'TChatbotDiagram.sort' => 'asc',
         'TChatbotDiagram.id' => 'asc'
       ),
-      'fields' => array('TChatbotDiagram.*'),
+      'fields' => array('DISTINCT TChatbotDiagram.id', 'TChatbotDiagram.name', 'TChatbotDiagram.sort'),
       'conditions' => array('TChatbotDiagram.del_flg != ' => 1),
       'joins' => array(
         array(
@@ -39,6 +39,7 @@ class TChatbotDiagramsController extends WidgetSettingController
 
   public function index()
   {
+    $this->set('title_for_layout', 'チャットツリー設定');
     $this->paginate['TChatbotDiagram']['conditions']['TChatbotDiagram.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TChatbotDiagram');
     foreach($data as &$item) {
@@ -49,6 +50,11 @@ class TChatbotDiagramsController extends WidgetSettingController
 
   public function add($id = null)
   {
+    if(empty($id)) {
+      $this->set('title_for_layout', 'チャットツリー登録');
+    } else {
+      $this->set('title_for_layout', 'チャットツリー更新');
+    }
     $scenarioData = $this->_getScenarioList();
     $this->set('scenarioList', $scenarioData);
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
