@@ -3076,13 +3076,13 @@
     '$timeout',
     'SimulatorService',
     'ScenarioSimulatorService',
-    'DiagramSimulatorService',
-    'LocalStorageService',
-    function($scope, $timeout, SimulatorService, ScenarioSimulatorService, DialogSimulatorService, LocalStorageService) {
+    'DiagramSimulatorService'
+    function($scope, $timeout, SimulatorService, ScenarioSimulatorService, DialogSimulatorService) {
       //thisを変数にいれておく
       var self = this;
 
       $scope.scenarioSimulatorService = ScenarioSimulatorService;
+      $scope.dialogSimulatorService = DialogSimulatorService;
       $scope.scenarioSimulatorService.widget = SimulatorService;
 
       /**
