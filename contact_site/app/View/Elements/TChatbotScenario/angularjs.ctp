@@ -1332,6 +1332,41 @@
                   self.renderMessage(index, hearingIndex, hearing);
                   $scope.$apply();
                 }).then(function() {
+                  var radioTarget      = $('.action' + index + '_radio' + hearingIndex + ' input[type="radio"]');
+                  var radioLabelTarget = $('.action' + index + '_radio' + hearingIndex + ' .sinclo-radio');
+                  if (hearing.settings.radioStyle === '1') {
+                    radioLabelTarget.css('background-color', hearing.settings.customDesign.radioEntireBackgroundColor);
+                    radioTarget.each(function() {
+                      if ($(this).prop('checked')) {
+                        $(this).parent().css('background-color', hearing.settings.customDesign.radioEntireActiveColor);
+                        $(this).parent().find('label').css('color', hearing.settings.customDesign.radioActiveTextColor);
+                      } else {
+                        $(this).parent().find('label').css('color', hearing.settings.customDesign.radioTextColor);
+                      }
+                    });
+                    radioTarget.on('change', function() {
+                      radioTarget.each(function() {
+                        if ($(this).prop('checked')) {
+                          if (hearing.settings.radioStyle !== '1') {$(this).parent().css('background-color', 'transparent');
+                          } else {
+                            $(this).parent().css('background-color', hearing.settings.customDesign.radioEntireActiveColor);
+                            $(this).parent().find('label').css('color', hearing.settings.customDesign.radioActiveTextColor);
+                          }
+                        } else {
+                          if (hearing.settings.radioStyle !== '1') {
+                            $(this).parent().css('background-color', 'transparent');
+                          } else {
+                            $(this).parent().css('background-color', hearing.settings.customDesign.radioEntireBackgroundColor);
+                            $(this).parent().find('label').css('color', hearing.settings.customDesign.radioTextColor);
+                          }
+                        }
+                      });
+                    });
+                  } else {
+                    radioLabelTarget.css('background-color', 'transparent');
+                    radioLabelTarget.find('label').css('color', $scope.widget.settings.re_text_color);
+                  }
+
                   if (hearing.settings.radioStyle === '1') {
                     jscolor.installByClassName('jscolor');
                   }
