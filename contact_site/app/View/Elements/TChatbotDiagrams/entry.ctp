@@ -14,7 +14,7 @@
 <div>
   <ul>
     <li>
-      <label>チャットツリー名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットツリーに名称を設定します。">?</icon></span></label>
+      <label>チャットツリー名称<span class="questionBalloon"><icon class="commontooltip questionBtn" data-text="チャットツリーに名称を設定します。">?</icon></span></label>
       <?= $this->ngForm->input('TChatbotDiagram.name', array(
         'type' => 'text',
         'placeholder' => 'チャットツリー名称を入力',
@@ -26,7 +26,7 @@
     </li>
     <!-- メッセージ間隔 -->
     <li>
-      <label>メッセージ間隔<span class="questionBalloon"><icon class="questionBtn" data-tooltip="各メッセージを送信する間隔（秒数）を設定します。">?</icon></span></label>
+      <label>メッセージ間隔<span class="questionBalloon"><icon class="commontooltip questionBtn" data-text="各メッセージを送信する間隔（秒数）を設定します。">?</icon></span></label>
       <?= $this->ngForm->input('TChatbotDiagram.messageIntervalTimeSec', array(
         'type' => 'number',
         'max' => 99,
