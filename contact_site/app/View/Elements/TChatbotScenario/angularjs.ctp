@@ -3076,7 +3076,7 @@
     '$timeout',
     'SimulatorService',
     'ScenarioSimulatorService',
-    'DiagramSimulatorService'
+    'DiagramSimulatorService',
     function($scope, $timeout, SimulatorService, ScenarioSimulatorService, DialogSimulatorService) {
       //thisを変数にいれておく
       var self = this;

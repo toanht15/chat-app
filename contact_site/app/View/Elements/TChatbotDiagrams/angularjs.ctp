@@ -176,6 +176,7 @@
       };
 
 
+
       var nodeMaster = function(type, posX, posY) {
         var node = nodeFactory.createNode(type, posX, posY);
         graph.addCell(node);
@@ -253,18 +254,29 @@
       var dragReferencePosition = null;
       var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
+      $scope.setMessageInterval = function(){
+        var allCellList = JSON.parse(dataForUpdate).cells;
+        for( var i=0; i < allCellList.length; i++ ){
+          if(allCellList[i].attrs.nodeBasicInfo.nodeType === "start"){
+            $scope.messageIntervalTimeSec = allCellList[i].attrs.nodeBasicInfo.messageIntervalSec;
+            break;
+          }
+        }
+      };
+
       if (dataForUpdate !== null && dataForUpdate !== '') {
         graph.fromJSON(JSON.parse(dataForUpdate));
+        $scope.setMessageInterval();
         setTimeout(function(){
           dataForUpdate = JSON.parse(dataForUpdate);
           graph.resetCells(dataForUpdate.cells);
           initNodeEvent(graph.getCells());
         }, 500);
       }
+      
 
-      var allDrawnCellList = graph.getCells();
-      for( var i = 0; i < allDrawnCellList; i++) {
-      }
+
+      
 
       paper.on('cell:pointerup',
           function(cellView, evt, x, y) {
@@ -437,9 +449,11 @@
         try{
           var source = graph.getCell(link.get("source").id);
           source.portProp("out", "attrs/.port-body/fill", "#C0C0C0");
+          source.attributes.ports.groups.out.attrs[".port-body"].fill = "#C0C0C0";
           var target = graph.getCell(link.get("target").id);
           if(Object.keys(target.graph._in[target.id]).length === 0) {
             target.portProp("in", "attrs/.port-body/fill", "#C0C0C0");
+            target.attributes.ports.groups.in.attrs[".port-body"].fill = "#C0C0C0";
           }
         } catch (e) {
           console.log(e + "ERROR DETECTED!");
@@ -451,9 +465,11 @@
         var source = linkView.sourceView.model;
         var typeS = source.attributes.ports.groups.out.attrs.type;
         source.portProp("out", "attrs/.port-body/fill", $scope.getPortColor(typeS, "out"));
+        source.attributes.ports.groups.out.attrs[".port-body"].fill = $scope.getPortColor(typeS, "out");
         var target = linkView.targetView.model;
         var typeT = target.attributes.ports.groups.in.attrs.type;
         target.portProp("in", "attrs/.port-body/fill", $scope.getPortColor(typeT, "in"));
+        target.attributes.ports.groups.in.attrs[".port-body"].fill = $scope.getPortColor(typeT, "in");
       };
 
       $scope.getPortColor = function(type, cond){
@@ -479,6 +495,7 @@
 
       /* save Act */
       $('#submitBtn').on('click', function() {
+        $scope.isChangedSomething = false;
         var graphJSON = graph.toJSON();
         for(var i = 0; i < graphJSON.cells.length; i++) {
           if(graphJSON.cells[i].attrs.nodeBasicInfo.nodeType === "start"){
@@ -768,7 +785,7 @@
         },
         branch: {
           setView: function(){
-            nodeEditHandler.typeBranch.branchPortController($scope.branchSelectionList.filter(Boolean));
+            nodeEditHandler.typeBranch.branchPortController($scope.branchSelectionList);
             $scope.currentEditCellParent.attr('.label/text',
                 convertTextForTitle(convertTextLength($scope.branchTitle, 22), '分岐'));
             $scope.currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate($scope.branchText), 96));
@@ -972,12 +989,20 @@
           $scope.branchSelectionList.length = 0;
           $scope.branchSelectionList.push("");
         }
-        $scope.oldSelectionList = $scope.branchSelectionList.concat();
+        $scope.oldSelectionList = createOldSelectionList($scope.branchSelectionList.concat());
         $scope.branchTitle = nodeData.nodeName;
         $scope.branchType.key = nodeData.btnType;
         $scope.branchText = nodeData.text;
         $scope.initCustomizeColor(nodeData);
         return $('<branch-modal></branch-modal>');
+      }
+      
+      function createOldSelectionList(list){
+        var oldSelectionList = [];
+        for(var i=0; i < list.length; i++){
+          oldSelectionList.push(list[i].value);
+        }
+        return oldSelectionList;
       }
 
       function createTextHtml(nodeData) {
@@ -1090,6 +1115,56 @@
         }
       };
 
+      $scope.handleButtonCSS = function(){
+        $timeout(function() {
+          var spanList = [];
+          var buttonComponent = $("#button_component");
+          var buttonList = buttonComponent.find('button');
+          var targetList = buttonComponent.children();
+          /* 対象となるスパンが何番目かを設定 */
+          for (var i = 0; i < targetList.length; i++) {
+            if (targetList[i].children[0].tagName === "SPAN") {
+              spanList.push(i);
+            }
+          }
+          /* ボタン全部のCSS(class)を取り除く */
+          buttonList.removeClass("btn_top_radius");
+          buttonList.removeClass("btn_bottom_radius");
+          /* 最初と最後のボタンにCSS(class)を付与 */
+          $(buttonList[0]).addClass("btn_top_radius");
+          $(buttonList[buttonList.length - 1]).addClass("btn_bottom_radius");
+          /* スパン要素前後にあるボタンにCSS(class)を付与する */
+          for (var j = 0; j < spanList.length; j++) {
+            if (spanList[j] !== 0) {
+              if(targetList[spanList[j] - 1].children[0].tagName === "SPAN") return;
+              $(targetList[spanList[j] - 1].children[0]).css({
+                'border-bottom-left-radius': "8px",
+                'border-bottom-right-radius': "8px"
+              });
+            }
+            if (spanList[j] !== targetList.length) {
+              if(targetList[spanList[j] + 1].children[0].tagName === "SPAN") return;
+              $(targetList[spanList[j] + 1].children[0]).css({
+                'border-top-left-radius': "8px",
+                'border-top-right-radius': "8px"
+              });
+            }
+          }
+        });
+      };
+
+      $scope.addBottomBorderRadius = function(target){
+        $(target).addClass();
+      };
+
+      $scope.removeBottomBorderRadius = function(target){
+        $(target).removeClass();
+      };
+
+      $scope.addTopBorderRadius = function(target){
+        $(target).addClass();
+      };
+
       $scope.popupInit = function(popup) {
         var newTop = popup.offset().top,
             newLeft = popup.offset().left;
@@ -1141,12 +1216,22 @@
             for(var i = 0; i < newSelectionList.length; i++){
               /* Set rect height */
               self._resizeParentHeight(i);
-              var port = self.portCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i] ,22), newSelectionList[i], self._getCoverOpacity(i, newSelectionList.length));
-              self._checkPastPortListFromCurrent(newSelectionList, i, port);
+              var cell;
+              switch(Number(newSelectionList[i].type)) {
+                case 1:
+                  cell = self.portCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i].value ,22), newSelectionList[i].value, self._getCoverOpacity(i, newSelectionList.length));
+                  break;
+                case 2:
+                  cell = self.rectCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i].value ,22), newSelectionList[i].value, self._getCoverOpacity(i, newSelectionList.length));
+                  break;
+                default:
+                  continue;
+              }
+              self._checkPastPortListFromCurrent(newSelectionList, i, cell);
             }
           },
           _checkPastPortListFromCurrent: function(targetList, number, port) {
-            if($scope.oldSelectionList.indexOf(targetList[number]) === -1 ){
+            if($scope.oldSelectionList.indexOf(targetList[number].value) === -1 ){
               /* add port */
               $scope.currentEditCellParent.embed(port);
               initNodeEvent([port]);
@@ -1155,7 +1240,7 @@
               /* edit port */
               var childList = this._getCurrentPortList();
               for( var i = 0; i < childList.length; i++ ){
-                if( childList[i].attr(".label/text") === targetList[number] ){
+                if( childList[i].attr(".label/text") === targetList[number].value ){
                   this._setSelfPosition(childList[i], this._getSelfPosition(number));
                   var topOpacity = 1,
                       bottomOpacity = 1;
@@ -1172,9 +1257,14 @@
             }
           },
           _checkCurrentPortListFromPast: function(targetList) {
+            var textList = [];
+            for(var j=0; j < targetList.length; j++){
+              textList.push(targetList[j].value);
+            }
+            
             var childList = this._getCurrentPortList();
             for( var i = 0; i < childList.length; i++ ){
-              if(targetList.indexOf(childList[i].attr("nodeBasicInfo/tooltip")) === -1){
+              if(textList.indexOf(childList[i].attr("nodeBasicInfo/tooltip")) === -1){
                 /* delete port */
                 childList[i].remove();
               }
@@ -1285,6 +1375,48 @@
                   height: 10,
                   transform: "translate(0 26)",
                   'fill-opacity': opacity.bot
+                }
+              },
+              markup: '<rect class="body"/><text class="label"/><rect class="cover_top"/><rect class="cover_bottom"/>'
+            });
+          },
+          rectCreator: function(position, text, originalText, opacity){
+            return new joint.shapes.basic.Rect({
+              position: {x: position.x, y: position.y},
+              size: {width: 240, height: 36},
+              attrs: {
+                'rect.body': {
+                  fill: "#FFFFFF",
+                  stroke: false,
+                  width: 240,
+                  height: 36,
+                  rx: 10,
+                  ry: 10
+                },
+                text: {
+                  text: text,
+                  'ref-width': '70%',
+                  'font-size': "14px",
+                  fill: '#000',
+                  y: 12
+                },
+                nodeBasicInfo: {
+                  nodeType: "childViewNode"
+                },
+                '.cover_top': {
+                  fill: '#FFFFFF',
+                  width: 240,
+                  height: 10,
+                  'fill-opacity': opacity.top,
+                  stroke: false
+                },
+                '.cover_bottom': {
+                  fill: '#FFFFFF',
+                  width: 240,
+                  height: 10,
+                  transform: "translate(0 26)",
+                  'fill-opacity': opacity.bot,
+                  stroke: false
                 }
               },
               markup: '<rect class="body"/><text class="label"/><rect class="cover_top"/><rect class="cover_bottom"/>'
@@ -1714,7 +1846,7 @@
           '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
           '<label for=\'branch_button\'>タイプ</label>' +
-          '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
+          '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-change="handleButtonCSS()" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
           '</select>' +
           '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
@@ -1726,8 +1858,11 @@
           '</div>' +
           '<div class=\'branch_modal_setting_content\'>' +
           '<div class=\'setting_row\' ng-repeat="selection in branchSelectionList track by $index">' +
-          '<p>選択肢</p>' +
-          '<input type="text" ng-model="branchSelectionList[$index]" />' +
+          '<select name="branchButton" ng-model="branchSelectionList[$index].type" ng-change="handleButtonCSS()" ng-init="branchSelectionList[$index].type = \'1\'">' +
+          '<option value="1">選択肢' +
+          '<option value="2">発言内容' +
+          '</select>' +
+          '<input type="text" ng-model="branchSelectionList[$index].value" ng-change="handleButtonCSS()"  />' +
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index)">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
