@@ -1242,8 +1242,11 @@
                 if (typeof hearing.settings.customDesign.checkboxActiveTextColor === 'undefined') {
                   hearing.settings.customDesign.checkboxActiveTextColor = $scope.widget.settings.re_text_color;
                 }
-                hearing.settings.customDesign.checkboxSelectionDistance = Number(
-                    hearing.settings.customDesign.checkboxSelectionDistance);
+
+                if (typeof hearing.settings.customDesign.checkboxSelectionDistance === 'undefined') {
+                  hearing.settings.customDesign.checkboxSelectionDistance = 4;
+                }
+                hearing.settings.customDesign.checkboxSelectionDistance = Number(hearing.settings.customDesign.checkboxSelectionDistance);
 
                 $timeout(function() {
                   self.renderMessage(index, hearingIndex, hearing);
@@ -1324,9 +1327,12 @@
                 if (typeof hearing.settings.customDesign.radioActiveTextColor === 'undefined') {
                   hearing.settings.customDesign.radioActiveTextColor = $scope.widget.settings.re_text_color;
                 }
+                
+                if (typeof hearing.settings.customDesign.radioSelectionDistance === 'undefined') {
+                  hearing.settings.customDesign.radioSelectionDistance = 4;
+                }
 
-                hearing.settings.customDesign.radioSelectionDistance = Number(
-                    hearing.settings.customDesign.radioSelectionDistance);
+                hearing.settings.customDesign.radioSelectionDistance = Number(hearing.settings.customDesign.radioSelectionDistance);
 
                 $timeout(function() {
                   self.renderMessage(index, hearingIndex, hearing);
