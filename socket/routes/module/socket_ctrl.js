@@ -1277,7 +1277,7 @@ io.sockets.on('connection', function(socket) {
               insertData.message_read_flg = 1;
               insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
               insertData.message_distinction = d.messageDistinction;
-            } else if ((Number(insertData.message_type) === 1 || Number(insertData.message_type) === 303) &&
+            } else if (((Number(insertData.message_type) === 1 || Number(insertData.message_type) === 303) &&
                 d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) ||
                 Number(insertData.message_type) === 12 ||
                 Number(insertData.message_type) === 13) {
@@ -1321,7 +1321,7 @@ io.sockets.on('connection', function(socket) {
         // 担当者のいない消費者からのメッセージの場合
         if ((d.messageType === 1 &&
             !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))
-        || (d.messageType === 301 && d.notifyToCompany && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))) {
+        || (d.messageType === 303 && d.notifyToCompany && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))) {
           // 応対可能かチェック(対応できるのであれば trueが返る)
           chatApi.sendCheck(d, function(err, ret) {
             sendData.opFlg = ret.opFlg;
