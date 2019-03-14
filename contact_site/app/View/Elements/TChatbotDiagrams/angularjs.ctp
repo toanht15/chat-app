@@ -31,7 +31,7 @@
         branch: function(target){
           return $scope.branchTitle === target.attr("actionParam/nodeName")
               && $scope.branchText === target.attr("actionParam/text")
-              && $scope.branchType.key === target.attr("actionParam/btnType")
+              && $scope.branchType === target.attr("actionParam/btnType")
               && $scope.compareArray($scope.branchSelectionList, target.attr("actionParam/selection"));
         },
         text: function(target){
@@ -126,12 +126,7 @@
 
       /* Model for branch node */
       $scope.branchTitle = "";
-      $scope.branchTypeList = [
-        {"key": "", "value": "タイプを選択して下さい"},
-        {"key": "1", "value": "ラジオボタン"},
-        {"key": "2", "value": "ボタン"}
-      ];
-      $scope.branchType = $scope.branchTypeList[0];
+      $scope.branchType = "";
       $scope.branchText = "";
       $scope.branchSelectionList = [];
       $scope.oldSelectionList = [];
@@ -284,7 +279,8 @@
             $scope.currentEditCell = null;
             $scope.currentEditCellParent = null;
             if(cellView.model.attr("nodeBasicInfo/nodeType") === "childViewNode"
-                || cellView.model.attr("nodeBasicInfo/nodeType") === "childPortNode") {
+                || cellView.model.attr("nodeBasicInfo/nodeType") === "childPortNode"
+                || cellView.model.attr("nodeBasicInfo/nodeType") === "childTextNode") {
               if($scope.checkTextEnd(cellView.model.attr("text/text"))) {
                 $scope.createToolTip(cellView.model);
               }
@@ -319,6 +315,7 @@
                 }
 
                 $scope.popupHandler();
+                $scope.handleButtonCSS();
                 $scope.popupInit(frame);
                 initPopupCloseEvent();
                 /* Install jscolor after create modal */
@@ -336,7 +333,8 @@
 
       paper.on('cell:mouseenter', function(e) {
         if(e.model.attr("nodeBasicInfo/nodeType") === "childViewNode"
-        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode") {
+        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode"
+        || e.model.attr("nodeBasicInfo/nodeType") === "childTextNode") {
           if($scope.checkTextEnd(e.model.attr("text/text"))) {
             $scope.createToolTip(e.model);
           }
@@ -353,7 +351,8 @@
 
       $scope.removeTooltip = function(e){
         if(e.model.attr("nodeBasicInfo/nodeType") === "childViewNode"
-        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode") {
+        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode"
+        || e.model.attr("nodeBasicInfo/nodeType") === "childTextNode") {
           var tooltips = $('.diagram_tooltip');
           for( var i = 0; i < tooltips.length; i++ ){
             $('#t_chatbot_diagrams_idx')[0].removeChild(tooltips[i]);
@@ -569,7 +568,8 @@
         for (var i = 0; i < node.length; i++) {
 
           if (node[i].attr('nodeBasicInfo/nodeType') === 'childViewNode'
-              || node[i].attr('nodeBasicInfo/nodeType') === 'childPortNode') {
+              || node[i].attr('nodeBasicInfo/nodeType') === 'childPortNode'
+              || node[i].attr('nodeBasicInfo/nodeType') === 'childTextNode') {
             node[i].on('change:position', childMove);
           }
 
@@ -600,6 +600,7 @@
           return nodeTypeArray.indexOf(type) > -1
               || type === 'childViewNode'
               || type === 'childPortNode'
+              || type === 'childTextNode'
               || type === 'operator'
               || type === 'cv';
         }
@@ -796,14 +797,14 @@
             return {
               nodeName: $scope.branchTitle,
               text: $scope.branchText,
-              btnType: $scope.branchType.key,
+              btnType: $scope.branchType,
               selection: $scope.branchSelectionList.filter(Boolean),
               customizeDesign: $scope.selectCustomizeDesign()
             };
           },
           validation: function(){
             $scope.nodeNameIsEmpty = $scope.branchTitle === "";
-            $scope.btnTypeIsEmpty = $scope.branchType.key === "";
+            $scope.btnTypeIsEmpty = $scope.branchType === "";
             $scope.nodeNameIsNotUnique = $scope.isNotUniqueName($scope.branchTitle);
             return $scope.nodeNameIsEmpty || $scope.btnTypeIsEmpty || $scope.nodeNameIsNotUnique;
           }
@@ -899,7 +900,7 @@
 
       $scope.selectCustomizeDesign = function() {
         var design;
-        switch (Number($scope.branchType.key)) {
+        switch (Number($scope.branchType)) {
           case 1:
             design = $scope.getRadioCustomizeDesign;
             break;
@@ -987,22 +988,15 @@
           $scope.branchSelectionList = nodeData.selection.concat();
         } else {
           $scope.branchSelectionList.length = 0;
-          $scope.branchSelectionList.push("");
+          $scope.branchSelectionList.push({type: "1", value: ""});
         }
-        $scope.oldSelectionList = createOldSelectionList($scope.branchSelectionList.concat());
+        //強制的に値渡しにする。
+        $scope.oldSelectionList = JSON.parse(JSON.stringify($scope.branchSelectionList.concat()));
         $scope.branchTitle = nodeData.nodeName;
-        $scope.branchType.key = nodeData.btnType;
+        $scope.branchType = nodeData.btnType;
         $scope.branchText = nodeData.text;
         $scope.initCustomizeColor(nodeData);
         return $('<branch-modal></branch-modal>');
-      }
-      
-      function createOldSelectionList(list){
-        var oldSelectionList = [];
-        for(var i=0; i < list.length; i++){
-          oldSelectionList.push(list[i].value);
-        }
-        return oldSelectionList;
       }
 
       function createTextHtml(nodeData) {
@@ -1041,11 +1035,11 @@
         return $('<cv-modal></cv-modal>');
       }
 
-      $scope.btnClick = function(type, target, index){
+      $scope.btnClick = function(type, target, index, param){
         $scope.currentTop = $('#popup-frame').offset().top;
         switch (type) {
           case "add":
-            target.splice(index + 1, 0, "");
+            target.splice(index + 1, 0, param);
             break;
           case "delete":
             target.splice(index, 1);
@@ -1054,6 +1048,7 @@
             break;
         }
         $timeout(function(){
+          $scope.handleButtonCSS();
           popupEvent.resize();
           $scope.popupFix();
         })
@@ -1123,7 +1118,7 @@
           var targetList = buttonComponent.children();
           /* 対象となるスパンが何番目かを設定 */
           for (var i = 0; i < targetList.length; i++) {
-            if (targetList[i].children[0].tagName === "SPAN") {
+            if (targetList[i].children[0] && targetList[i].children[0].tagName === "SPAN") {
               spanList.push(i);
             }
           }
@@ -1136,33 +1131,15 @@
           /* スパン要素前後にあるボタンにCSS(class)を付与する */
           for (var j = 0; j < spanList.length; j++) {
             if (spanList[j] !== 0) {
-              if(targetList[spanList[j] - 1].children[0].tagName === "SPAN") return;
-              $(targetList[spanList[j] - 1].children[0]).css({
-                'border-bottom-left-radius': "8px",
-                'border-bottom-right-radius': "8px"
-              });
+              if(targetList[spanList[j] - 1].children[0].tagName === "SPAN") continue;
+              $(targetList[spanList[j] - 1].children[0]).addClass("btn_bottom_radius");
             }
-            if (spanList[j] !== targetList.length) {
-              if(targetList[spanList[j] + 1].children[0].tagName === "SPAN") return;
-              $(targetList[spanList[j] + 1].children[0]).css({
-                'border-top-left-radius': "8px",
-                'border-top-right-radius': "8px"
-              });
+            if (spanList[j] !== targetList.length - 1) {
+              if(targetList[spanList[j] + 1].children[0].tagName === "SPAN") continue;
+              $(targetList[spanList[j] + 1].children[0]).addClass("btn_top_radius");
             }
           }
         });
-      };
-
-      $scope.addBottomBorderRadius = function(target){
-        $(target).addClass();
-      };
-
-      $scope.removeBottomBorderRadius = function(target){
-        $(target).removeClass();
-      };
-
-      $scope.addTopBorderRadius = function(target){
-        $(target).addClass();
       };
 
       $scope.popupInit = function(popup) {
@@ -1231,13 +1208,21 @@
             }
           },
           _checkPastPortListFromCurrent: function(targetList, number, port) {
-            if($scope.oldSelectionList.indexOf(targetList[number].value) === -1 ){
-              /* add port */
+            var textList = [];
+            var typeList = [];
+            for(var j=0; j < $scope.oldSelectionList.length; j++){
+              textList.push($scope.oldSelectionList[j].value);
+              typeList.push($scope.oldSelectionList[j].type);
+            }
+            var contentNum = $scope.oldSelectionList.indexOf(targetList[number]);
+            if(contentNum === -1){
+              /* 追加するパターン */
+              /* 過去にはないが、現在にあるパターン */
               $scope.currentEditCellParent.embed(port);
               initNodeEvent([port]);
               graph.addCell(port);
             } else {
-              /* edit port */
+              /* edit port position */
               var childList = this._getCurrentPortList();
               for( var i = 0; i < childList.length; i++ ){
                 if( childList[i].attr(".label/text") === targetList[number].value ){
@@ -1258,15 +1243,36 @@
           },
           _checkCurrentPortListFromPast: function(targetList) {
             var textList = [];
+            var typeList = [];
+            /* テキストと選択肢で内容が同一の場合は削除すること */
             for(var j=0; j < targetList.length; j++){
               textList.push(targetList[j].value);
+              typeList.push(targetList[j].type);
             }
             
             var childList = this._getCurrentPortList();
             for( var i = 0; i < childList.length; i++ ){
-              if(textList.indexOf(childList[i].attr("nodeBasicInfo/tooltip")) === -1){
-                /* delete port */
+              var containNum = textList.indexOf(childList[i].attr("nodeBasicInfo/tooltip"));
+              if(containNum === -1){
+                /* 過去には有るが、現在に見つからない場合は削除 */
                 childList[i].remove();
+              } else {
+                /* 過去にも現在にも同名のテキストがあるが、タイプが違う場合は削除 */
+                switch(Number(typeList[containNum])) {
+                  case 1:
+                    /* 現在は選択肢　過去は文章 */
+                    if(childList[i].attr("nodeBasicInfo/nodeType") === "childTextNode" ) {
+                      childList[i].remove();
+                    }
+                    break;
+                  case 2:
+                    /* 現在は文章　過去は選択肢 */
+                    if(childList[i].attr("nodeBasicInfo/nodeType") === "childPortNode" ) {
+                      childList[i].remove();
+                    }
+                    break;
+                  default:
+                }
               }
             }
           },
@@ -1275,7 +1281,8 @@
             var targetList = [];
             for(var i = 0; i < list.length; i++){
               try{
-                if(list[i].attr("nodeBasicInfo/nodeType") === "childPortNode") {
+                if(list[i].attr("nodeBasicInfo/nodeType") === "childPortNode"
+                || list[i].attr("nodeBasicInfo/nodeType") === "childTextNode") {
                   targetList.push(list[i]);
                 }
               } catch (e) {
@@ -1401,7 +1408,7 @@
                   y: 12
                 },
                 nodeBasicInfo: {
-                  nodeType: "childViewNode"
+                  nodeType: "childTextNode"
                 },
                 '.cover_top': {
                   fill: '#FFFFFF',
@@ -1522,6 +1529,7 @@
       };
 
       $scope.$on('ngRepeatFinish', function(){
+        $scope.handleButtonCSS();
         popupEvent.resize();
         $scope.popupFix();
       });
@@ -1546,7 +1554,7 @@
         $scope.popupPositionAdjustment();
       });
 
-      $scope.$watch("branchType.key", function(){
+      $scope.$watch("branchType", function(){
         $scope.popupPositionAdjustment();
       });
       $scope.$watch("radioStyle", function(){
@@ -1846,11 +1854,14 @@
           '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
           '<label for=\'branch_button\'>タイプ</label>' +
-          '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-change="handleButtonCSS()" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
+          '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-change="handleButtonCSS()">' +
+          '<option value="" selected>タイプを選択してください' +
+          '<option value="1">ラジオボタン' +
+          '<option value="2">ボタン' +
           '</select>' +
           '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
-          '<radio-type-customize ng-show="branchType.key == 1"></radio-type-customize>' +
+          '<radio-type-customize ng-show="branchType == 1"></radio-type-customize>' +
           '<div class="btn_valid_margin">' +
           '<span class="diagram_valid" ng-show="btnTypeIsEmpty">タイプを選択してください</span>' +
           '</div>' +
@@ -1858,17 +1869,17 @@
           '</div>' +
           '<div class=\'branch_modal_setting_content\'>' +
           '<div class=\'setting_row\' ng-repeat="selection in branchSelectionList track by $index">' +
-          '<select name="branchButton" ng-model="branchSelectionList[$index].type" ng-change="handleButtonCSS()" ng-init="branchSelectionList[$index].type = \'1\'">' +
+          '<select name="contentType" ng-model="branchSelectionList[$index].type" ng-change="handleButtonCSS()">' +
           '<option value="1">選択肢' +
           '<option value="2">発言内容' +
           '</select>' +
           '<input type="text" ng-model="branchSelectionList[$index].value" ng-change="handleButtonCSS()"  />' +
-          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index)">' +
+          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index, {type: \'1\', value: \'\'})">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
           '</div>' +
-          '<radio-customize ng-show="branchType.key == 1"></radio-customize>' +
-          '<button-customize ng-show="branchType.key == 2"></button-customize>' +
+          '<radio-customize ng-show="branchType == 1"></radio-customize>' +
+          '<button-customize ng-show="branchType == 2"></button-customize>' +
           '</div>' +
           '</div>' +
           '<div id=\'branch_modal_preview\'>' +
@@ -1898,7 +1909,7 @@
           '<div id="text_modal_contents" >' +
           '<div class=\'text_modal_setting\' ng-repeat="speakText in speakTextList track by $index" finisher>' +
           '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="speakTextList[$index]"></resize-textarea>' +
-          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index)">' +
+          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index, \'\')">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', speakTextList, $index)">' +
           '</div>' +
           '</div>' +

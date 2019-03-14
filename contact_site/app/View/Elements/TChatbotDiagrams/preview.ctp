@@ -114,8 +114,8 @@
   .diagram_preview_area li button {width: 188px; background-color: {{widget.settings.re_text_color}};  color: {{widget.settings.re_background_color}}; cursor: pointer;  min-height: 35px; margin-bottom: 1px;  padding: 10px 15px; border: 1px solid #E3E3E3; text-align: center; }
   .diagram_preview_area li.middleSize button { width: 240px;}
   .diagram_preview_area li.largeSize button { width: 280px;}
-  /*.diagram_preview_area li button:first-child {border-top-left-radius: 8px; border-top-right-radius: 8px}*/
-  /*.diagram_preview_area li button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}*/
+  .diagram_preview_area li button.btn_top_radius {border-top-left-radius: 8px; border-top-right-radius: 8px}
+  .diagram_preview_area li button.btn_bottom_radius {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
   .diagram_preview_area li button:active{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
   .diagram_preview_area li button:focus{outline: none}
   .diagram_preview_area li button:hover{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
@@ -139,8 +139,6 @@
   .diagram_preview_area li button {width: 188px;}
   .diagram_preview_area li.middleSize button { width: 240px;}
   .diagram_preview_area li.largeSize button { width: 280px;}
-  .diagram_preview_area li button:first-child {border-top-left-radius: 8px; border-top-right-radius: 8px}
-  .diagram_preview_area li button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
   .diagram_preview_area li button:active{background-color: {{buttonUIActiveColor}};}
   .diagram_preview_area li button:focus{outline: none}
   .diagram_preview_area li button:hover{background-color: {{buttonUIActiveColor}};}
@@ -225,7 +223,7 @@
           '<span id="action{{setActionId}}-{{index}}_message" class="details">' +
           '<span class="sinclo-text-line" ng-show="branchText">{{branchText}}</span>' +
           '</span>' +
-          '<div ng-if="branchType.key == 1">' +
+          '<div ng-if="branchType == 1">' +
           '' +
           '<span ng-repeat="content in branchSelectionList track by $index" style="display: block" ng-if="content.value"' +
           'ng-class="{' +
@@ -244,7 +242,7 @@
           '</span>' +
           '' +
           '</div>' +
-          '<div id="button_component" ng-class="{noneText: !branchText, hasText: branchText}" ng-if="branchType.key == 2">' +
+          '<div id="button_component" ng-class="{noneText: !branchText, hasText: branchText}" ng-if="branchType == 2">' +
           '<div ng-repeat="content in branchSelectionList track by $index">' +
           '<button class="sinclo-button-ui" ng-if="content.value && content.type == 1"' +
           'ng-class="{' +
