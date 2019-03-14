@@ -9,6 +9,8 @@
 <script type="text/javascript">
   'use strict';
 
+
+
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.config(function($controllerProvider){
     sincloApp.controllerProvider = $controllerProvider;
@@ -88,6 +90,7 @@
         'link'
       ];
 
+
       /* Scenario List */
       $scope.scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
       $scope.scenarioArrayList = [{"key": "", "value":"シナリオを選択して下さい"}];
@@ -97,6 +100,9 @@
           "value": $scope.scenarioList[idx]
         });
       }
+
+      /* something change flg */
+      $scope.isChangedSomething = false;
 
       /* Model for scenario node */
       $scope.selectedScenario = $scope.scenarioArrayList[0];
@@ -121,7 +127,7 @@
       /* Model for branch node */
       $scope.branchTitle = "";
       $scope.branchTypeList = [
-        {"key": "", "value": "表示形式を選択して下さい"},
+        {"key": "", "value": "タイプを選択して下さい"},
         {"key": "1", "value": "ラジオボタン"},
         {"key": "2", "value": "ボタン"}
       ];
@@ -132,6 +138,12 @@
 
       /* Model for branch customize */
       $scope.isCustomize = false;
+      $scope.radioStyle = 2;
+      $scope.radioEntireBackgroundColor = "";
+      $scope.radioEntireActiveColor = "";
+      $scope.radioTextColor = "";
+      $scope.radioActiveTextColor = "";
+      $scope.radioSelectionDistance = 4;
       $scope.radioBackgroundColor = "";
       $scope.radioActiveColor = "";
       $scope.radioBorderColor = "";
@@ -157,6 +169,12 @@
       /* Valid connection flag */
       $scope.isValidConnection = null;
 
+      window.onbeforeunload = function(){
+        if($scope.isChangedSomething){
+          return "行った変更が保存されない可能性があります。";
+        }
+      };
+
 
       var nodeMaster = function(type, posX, posY) {
         var node = nodeFactory.createNode(type, posX, posY);
@@ -172,6 +190,7 @@
           if (ui.draggable.attr('id') === 'popup-frame') return;
           var cursorPos = paper.clientToLocalPoint(ui.offset.left, ui.offset.top);
           nodeMaster(ui.draggable.attr('id'), cursorPos.x, cursorPos.y);
+          $scope.isChangedSomething = true;
         }
       });
 
@@ -347,6 +366,7 @@
           console.log('unexpected connect');
         }
         $scope.colorizePort(linkView);
+        $scope.isChangedSomething = true;
       });
 
 
@@ -632,6 +652,7 @@
               saveEditNode( function(){
                 previewHandler.typeJump.editTargetName();
                 popupEvent.closeNoPopup(true);
+                $scope.isChangedSomething = true;
                 $scope.addLineHeight();
               });
               break;
@@ -877,6 +898,12 @@
       $scope.getRadioCustomizeDesign = function(){
         return {
           isCustomize: $scope.isCustomize,
+          radioStyle: $scope.radioStyle,
+          radioEntireBackgroundColor: $scope.radioEntireBackgroundColor,
+          radioEntireActiveColor: $scope.radioEntireActiveColor,
+          radioTextColor: $scope.radioTextColor,
+          radioActiveTextColor: $scope.radioActiveTextColor,
+          radioSelectionDistance: $scope.radioSelectionDistance,
           radioBackgroundColor: $scope.radioBackgroundColor,
           radioActiveColor: $scope.radioActiveColor,
           radioBorderColor: $scope.radioBorderColor,
@@ -1390,6 +1417,10 @@
       $scope.$watch("branchType.key", function(){
         $scope.popupPositionAdjustment();
       });
+      $scope.$watch("radioStyle", function(){
+        $scope.popupPositionAdjustment();
+        console.log($scope.radioStyle);
+      });
 
       $scope.popupPositionAdjustment = function(){
         $scope.currentTop = $('#popup-frame').offset().top;
@@ -1421,6 +1452,12 @@
 
       $scope.setAllCustomizeToData = function(custom){
         $scope.isCustomize = custom.isCustomize ? custom.isCustomize : false;
+        $scope.radioStyle = custom.radioStyle ? custom.radioStyle : 2;
+        $scope.radioEntireBackgroundColor = custom.radioEntireBackgroundColor ? custom.radioEntireBackgroundColor : $scope.getRawColor($scope.widget.settings.main_color, 0.5);
+        $scope.radioEntireActiveColor = custom.radioEntireActiveColor ? custom.radioEntireActiveColor : $scope.widget.settings.main_color;
+        $scope.radioTextColor = custom.radioTextColor ? custom.radioTextColor : $scope.widget.settings.re_text_color;
+        $scope.radioActiveTextColor = custom.radioActiveTextColor ? custom.radioActiveTextColor : $scope.widget.settings.re_text_color;
+        $scope.radioSelectionDistance = custom.radioSelectionDistance ? custom.radioSelectionDistance : 4;
         $scope.radioBackgroundColor = custom.radioBackgroundColor ? custom.radioBackgroundColor : "#FFFFFF";
         $scope.radioActiveColor = custom.radioActiveColor ? custom.radioActiveColor : $scope.widget.settings.main_color;
         $scope.radioBorderColor = custom.radioBorderColor ? custom.radioBorderColor : $scope.widget.settings.main_color;
@@ -1451,7 +1488,12 @@
 
       $scope.radioCustomizeHandler = function(colorType, target){
         var targetValue;
+        var isColorType = true;
         switch(colorType) {
+          case "lh":
+            targetValue = $scope.radioSelectionDistance = 4;
+            isColorType = false;
+            break;
           case "bg":
             targetValue = $scope.radioBackgroundColor = "#FFFFFF";
             break;
@@ -1461,10 +1503,24 @@
           case "border":
             targetValue = $scope.radioBorderColor = $scope.widget.settings.main_color;
             break;
+          case "b_bg":
+            targetValue = $scope.radioEntireBackgroundColor = $scope.getRawColor($scope.widget.settings.main_color, 0.5);
+            break;
+          case "b_select_bg":
+            targetValue = $scope.radioEntireActiveColor = $scope.widget.settings.main_color;
+            break;
+          case "b_text":
+            targetValue = $scope.radioTextColor = $scope.widget.settings.re_text_color;
+            break;
+          case "b_select_text":
+            targetValue = $scope.radioActiveTextColor = $scope.widget.settings.re_text_color;
+            break;
           default:
             /* Do nothing */
         }
-        target.css("background-color", targetValue);
+        if(isColorType) {
+          target.css("background-color", targetValue);
+        }
       };
 
       $scope.buttonUICustomizeHandler = function(colorType, target){
@@ -1655,19 +1711,18 @@
           '<p>発言内容</p>' +
           '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="branchText"></resize-textarea>' +
           '</div>' +
-          '<div class="m40">' +
+          '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
-          '<label for=\'branch_button\'>表示形式</label>' +
+          '<label for=\'branch_button\'>タイプ</label>' +
           '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
           '</select>' +
           '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
+          '<radio-type-customize ng-show="branchType.key == 1"></radio-type-customize>' +
           '<div class="btn_valid_margin">' +
-          '<span class="diagram_valid" ng-show="btnTypeIsEmpty">表示形式を選択してください</span>' +
+          '<span class="diagram_valid" ng-show="btnTypeIsEmpty">タイプを選択してください</span>' +
           '</div>' +
           '</div>' +
-          '<radio-customize ng-show="branchType.key == \'1\'"></radio-customize>' +
-          '<button-customize ng-show="branchType.key == \'2\'"></button-customize>' +
           '</div>' +
           '<div class=\'branch_modal_setting_content\'>' +
           '<div class=\'setting_row\' ng-repeat="selection in branchSelectionList track by $index">' +
@@ -1677,6 +1732,8 @@
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
           '</div>' +
+          '<radio-customize ng-show="branchType.key == 1"></radio-customize>' +
+          '<button-customize ng-show="branchType.key == 2"></button-customize>' +
           '</div>' +
           '</div>' +
           '<div id=\'branch_modal_preview\'>' +
@@ -1684,6 +1741,7 @@
           '<div class="diagram_preview_area">' +
           '<preview-branch>' +
           '</preview-branch>' +
+          '</div>' +
           '</div>' +
           '</div>'
     }
@@ -1780,6 +1838,44 @@
       replace: true,
       template: '<p id="op_modal">このノードに到達した場合、オペレーターを呼び出します。</p>'
     }
+  }).directive('radioTypeCustomize', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      require: '^ngModel',
+      template: '<div class="customize_form">' +
+          '<div class="radio_type">' +
+          '<p>表示形式</p>' +
+          '<div style="margin-left: 14px;">' +
+          '<label class="pointer"><input type="radio" value="1" ng-model="radioStyle">ボタン型</label>' +
+          '<label class="pointer"><input type="radio" value="2" ng-model="radioStyle">ラベル型</label>' +
+          '</div>' +
+          '</div>' +
+          '<div ng-show="radioStyle == 1" class="customize_area radio_customize">' +
+          '<span class="customize_row">' +
+          '<label>ボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioEntireBackgroundColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>選択時のボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioEntireActiveColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_select_bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>文字色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioTextColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_text",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>選択時の文字色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioActiveTextColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_select_text",$event)\' >標準に戻す</span>' +
+          '</span>' +
+          '</div>' +
+          '</div>'
+
+    }
   }).directive('radioCustomize', function(){
     return {
       restrict: 'E',
@@ -1788,6 +1884,12 @@
       template: '<div class="customize_form">' +
           '<label><input type="checkbox" ng-model="isCustomize">デザインをカスタマイズする</label>' +
           '<div ng-show="isCustomize" class="customize_area radio_customize">' +
+          '<span class="customize_row">' +
+          '<label>選択肢の行間</label>' +
+          '<input class="line_setting" type="number" ng-model="radioSelectionDistance" max="100" min ="0">' +
+          '<p>px</p>' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","lh",$event)\'>標準に戻す</span>' +
+          '</span>' +
           '<span class="customize_row">' +
           '<label>ラジオボタン背景色</label>' +
           '<input class="jscolor {hash:true}" type="text" ng-model="radioBackgroundColor" maxlength="7">' +
@@ -1803,6 +1905,9 @@
           '<input class="jscolor {hash:true}" type="text" ng-model="radioBorderColor" maxlength="7">' +
           '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","border",$event)\' >標準に戻す</span>' +
           '</span>' +
+          '<label class="pointer" style="margin-left:158px; width: 100px;">' +
+          '<input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;" ng-model="radioNoneBorder">枠線なしにする' +
+          '</label>' +
           '</div>' +
           '</div>'
     }
@@ -1826,10 +1931,10 @@
           '</span>' +
           '<span class="customize_row">' +
           '<label>ボタン文字位置</label>' +
-          '<div>' +
-          '<label><input type="radio" value="1" ng-model="buttonUITextAlign">左寄せ</label>' +
-          '<label><input type="radio" value="2" ng-model="buttonUITextAlign">中央寄せ</label>' +
-          '<label><input type="radio" value="3" ng-model="buttonUITextAlign">右寄せ</label>' +
+          '<div style="margin-left: 32px;">' +
+          '<label class="pointer"><input type="radio" value="1" ng-model="buttonUITextAlign">左寄せ</label>' +
+          '<label class="pointer"><input type="radio" value="2" ng-model="buttonUITextAlign">中央寄せ</label>' +
+          '<label class="pointer"><input type="radio" value="3" ng-model="buttonUITextAlign">右寄せ</label>' +
           '</div>' +
           '</span>' +
           '<span class="customize_row">' +
@@ -1842,7 +1947,7 @@
           '<input class="jscolor {hash:true}" type="text" ng-model="buttonUIBorderColor" maxlength="7">' +
           '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("button","border",$event)\'>標準に戻す</span>' +
           '</span>' +
-          '<label class="pointer" style="margin-left:100px; width: 100px;">' +
+          '<label class="pointer" style="margin-left:138px; width: 100px;">' +
           '<input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;" ng-model="outButtonUINoneBorder">枠線なしにする' +
           '</label>' +
           '</div>' +
