@@ -9,6 +9,8 @@
 <script type="text/javascript">
   'use strict';
 
+
+
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.config(function($controllerProvider){
     sincloApp.controllerProvider = $controllerProvider;
@@ -87,6 +89,7 @@
         'link'
       ];
 
+
       /* Scenario List */
       $scope.scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
       $scope.scenarioArrayList = [{"key": "", "value":"シナリオを選択して下さい"}];
@@ -96,6 +99,9 @@
           "value": $scope.scenarioList[idx]
         });
       }
+
+      /* something change flg */
+      $scope.isChangedSomething = false;
 
       /* Model for scenario node */
       $scope.selectedScenario = $scope.scenarioArrayList[0];
@@ -120,7 +126,7 @@
       /* Model for branch node */
       $scope.branchTitle = "";
       $scope.branchTypeList = [
-        {"key": "", "value": "表示形式を選択して下さい"},
+        {"key": "", "value": "タイプを選択して下さい"},
         {"key": "1", "value": "ラジオボタン"},
         {"key": "2", "value": "ボタン"}
       ];
@@ -131,6 +137,12 @@
 
       /* Model for branch customize */
       $scope.isCustomize = false;
+      $scope.radioStyle = 2;
+      $scope.radioEntireBackgroundColor = "";
+      $scope.radioEntireActiveColor = "";
+      $scope.radioTextColor = "";
+      $scope.radioActiveTextColor = "";
+      $scope.radioSelectionDistance = 4;
       $scope.radioBackgroundColor = "";
       $scope.radioActiveColor = "";
       $scope.radioBorderColor = "";
@@ -156,6 +168,12 @@
       /* Valid connection flag */
       $scope.isValidConnection = null;
 
+      window.onbeforeunload = function(){
+        if($scope.isChangedSomething){
+          return "行った変更が保存されない可能性があります。";
+        }
+      };
+
 
       var nodeMaster = function(type, posX, posY) {
         var node = nodeFactory.createNode(type, posX, posY);
@@ -171,6 +189,7 @@
           if (ui.draggable.attr('id') === 'popup-frame') return;
           var cursorPos = paper.clientToLocalPoint(ui.offset.left, ui.offset.top);
           nodeMaster(ui.draggable.attr('id'), cursorPos.x, cursorPos.y);
+          $scope.isChangedSomething = true;
         }
       });
 
@@ -346,6 +365,7 @@
           console.log('unexpected connect');
         }
         $scope.colorizePort(linkView);
+        $scope.isChangedSomething = true;
       });
       
 
@@ -631,6 +651,7 @@
               saveEditNode( function(){
                 previewHandler.typeJump.editTargetName();
                 popupEvent.closeNoPopup(true);
+                $scope.isChangedSomething = true;
                 $scope.addLineHeight();
               });
               break;
@@ -876,6 +897,12 @@
       $scope.getRadioCustomizeDesign = function(){
         return {
           isCustomize: $scope.isCustomize,
+          radioStyle: $scope.radioStyle,
+          radioEntireBackgroundColor: $scope.radioEntireBackgroundColor,
+          radioEntireActiveColor: $scope.radioEntireActiveColor,
+          radioTextColor: $scope.radioTextColor,
+          radioActiveTextColor: $scope.radioActiveTextColor,
+          radioSelectionDistance: $scope.radioSelectionDistance,
           radioBackgroundColor: $scope.radioBackgroundColor,
           radioActiveColor: $scope.radioActiveColor,
           radioBorderColor: $scope.radioBorderColor,
@@ -1389,6 +1416,10 @@
       $scope.$watch("branchType.key", function(){
         $scope.popupPositionAdjustment();
       });
+      $scope.$watch("radioStyle", function(){
+        $scope.popupPositionAdjustment();
+        console.log($scope.radioStyle);
+      });
 
       $scope.popupPositionAdjustment = function(){
         $scope.currentTop = $('#popup-frame').offset().top;
@@ -1420,6 +1451,12 @@
 
       $scope.setAllCustomizeToData = function(custom){
         $scope.isCustomize = custom.isCustomize ? custom.isCustomize : false;
+        $scope.radioStyle = custom.radioStyle ? custom.radioStyle : 2;
+        $scope.radioEntireBackgroundColor = custom.radioEntireBackgroundColor ? custom.radioEntireBackgroundColor : $scope.getRawColor($scope.widget.settings.main_color, 0.5);
+        $scope.radioEntireActiveColor = custom.radioEntireActiveColor ? custom.radioEntireActiveColor : $scope.widget.settings.main_color;
+        $scope.radioTextColor = custom.radioTextColor ? custom.radioTextColor : $scope.widget.settings.re_text_color;
+        $scope.radioActiveTextColor = custom.radioActiveTextColor ? custom.radioActiveTextColor : $scope.widget.settings.re_text_color;
+        $scope.radioSelectionDistance = custom.radioSelectionDistance ? custom.radioSelectionDistance : 4;
         $scope.radioBackgroundColor = custom.radioBackgroundColor ? custom.radioBackgroundColor : "#FFFFFF";
         $scope.radioActiveColor = custom.radioActiveColor ? custom.radioActiveColor : $scope.widget.settings.main_color;
         $scope.radioBorderColor = custom.radioBorderColor ? custom.radioBorderColor : $scope.widget.settings.main_color;
@@ -1450,7 +1487,12 @@
 
       $scope.radioCustomizeHandler = function(colorType, target){
         var targetValue;
+        var isColorType = true;
         switch(colorType) {
+          case "lh":
+            targetValue = $scope.radioSelectionDistance = 4;
+            isColorType = false;
+            break;
           case "bg":
             targetValue = $scope.radioBackgroundColor = "#FFFFFF";
             break;
@@ -1460,10 +1502,24 @@
           case "border":
             targetValue = $scope.radioBorderColor = $scope.widget.settings.main_color;
             break;
+          case "b_bg":
+            targetValue = $scope.radioEntireBackgroundColor = $scope.getRawColor($scope.widget.settings.main_color, 0.5);
+            break;
+          case "b_select_bg":
+            targetValue = $scope.radioEntireActiveColor = $scope.widget.settings.main_color;
+            break;
+          case "b_text":
+            targetValue = $scope.radioTextColor = $scope.widget.settings.re_text_color;
+            break;
+          case "b_select_text":
+            targetValue = $scope.radioActiveTextColor = $scope.widget.settings.re_text_color;
+            break;
           default:
             /* Do nothing */
         }
-        target.css("background-color", targetValue);
+        if(isColorType) {
+          target.css("background-color", targetValue);
+        }
       };
 
       $scope.buttonUICustomizeHandler = function(colorType, target){
@@ -1540,87 +1596,6 @@
           elm.style.overflow = 'hidden';
         }
         $scope.popupPositionAdjustment();
-      };
-
-      /** ==========================
-       * Preview Methods
-       * =========================== */
-      $scope.checkClass = {
-        resultClass: {},
-        handler: function(className){
-          var cnArray = className.split(",");
-          for( var i=0; i < cnArray.length; i++ ){
-            switch (cnArray[i]) {
-              case 'notNone':
-                this.notNoneChecker();
-                break;
-              case 'boxType':
-              case 'balloonType':
-                this.balloonTypeChecker();
-                break;
-              case 'middleSize':
-              case 'largeSize':
-              case 'customSize':
-                this.widgetSizeChecker();
-                break;
-              case 'arrowUp':
-              case 'arrowBottom':
-                this.allowPositionChecker();
-                break;
-              case 'grid_preview':
-                this.iconChecker();
-                break;
-              case 'tal':
-              case 'tac':
-              case 'tar':
-                this.textAlignChecker();
-                break;
-              case 'noneBorder':
-              case 'hasBorder':
-                this.borderChecker();
-                break;
-              default:
-            }
-          }
-          return this.resultClass;
-        },
-        notNoneChecker: function() {
-          this.resultClass['notNone'] = $scope.widget.re_border_none === '' || $scope.widget.re_border_none === false;
-        },
-        balloonTypeChecker: function() {
-          var type = Number($scope.widget.settings['chat_message_design_type']);
-          this.resultClass['boxType'] = type === 1;
-          this.resultClass['balloonType'] = type === 2;
-        },
-        widgetSizeChecker: function() {
-          var type = Number($scope.widget.settings['widget_size_type']);
-          this.resultClass['smallSize'] = type === 1;
-          this.resultClass['middleSize'] = type === 2;
-          this.resultClass['largeSize'] = type === 3 || type ===4;
-          this.resultClass['customSize'] = type === 5;
-        },
-        allowPositionChecker: function() {
-          var type = Number($scope.widget.settings['chat_message_design_type']);
-          var position = Number($scope.widget.settings['chat_message_arrow_position']);
-          this.resultClass['arrowUp'] = type === 1 && position === 1;
-          this.resultClass['arrowBottom'] = type === 2 || position === 2;
-        },
-        iconChecker: function() {
-          this.resultClass['grid_preview'] = Number($scope.widget.chatbotIconToggle) === 1;
-        },
-        textAlignChecker: function() {
-          if(Number($scope.branchType) === 2 && $scope.isCustomize){
-            this.resultClass['tal'] = Number($scope.buttonUITextAlign) === 1;
-            this.resultClass['tac'] = Number($scope.buttonUITextAlign) === 2;
-            this.resultClass['tar'] = Number($scope.buttonUITextAlign) === 3;
-          }
-        },
-        borderChecker: function() {
-          if(Number($scope.branchType) === 2 && $scope.isCustomize){
-            this.resultClass['noneBorder'] = $scope.outButtonUINoneBorder;
-            this.resultClass['hasBorder'] = !$scope.outButtonUINoneBorder
-          }
-        }
       };
 
       /** ==========================
@@ -1972,11 +1947,21 @@
        */
       $scope.receiveFileEventListener = null;
       $scope.firstActionFlg = true;
-      $scope.doAction = function(setTime) {
+      $scope.callFirst = true;
+      $scope.doAction = function() {
         if (true) {
           // メッセージ間隔
-          var time = parseInt(2, 10) * 1000;
           var actionNode = $scope.findNodeById($scope.currentNodeId);
+
+          var time = 2;
+          if($scope.callFirst
+              || actionNode.attrs.nodeBasicInfo.nodeType === 'jump'
+              || actionNode.attrs.nodeBasicInfo.nodeType === 'link'
+              || actionNode.attrs.nodeBasicInfo.nodeType === 'operator'
+              || actionNode.attrs.nodeBasicInfo.nodeType === 'cv') {
+            time = 0;
+            $scope.callFirst = false;
+          }
 
           chatBotTyping();
 
@@ -1987,19 +1972,29 @@
                 $scope.doBranchAction(actionNode);
                 break;
               case 'text': // テキスト発言
+                $scope.doTextAction(actionNode);
                 break;
               case 'scenario': // シナリオ呼び出し
                 break;
               case 'jump': // ジャンプ
+                var nextNode = $scope.findNodeById(actionNode.attrs.actionParam.targetId);
+                $scope.currentNodeId = nextNode.id;
+                $scope.doAction();
                 break;
               case 'link': // リンク
+                var nextNode = $scope.findNodeById(actionNode.attrs.nodeBasicInfo.nextNodeId);
+                $scope.currentNodeId = nextNode.id;
+                $scope.doAction();
                 break;
               case 'operator': // オペレータ呼び出し
                 break;
               case 'cv': //CVポイント
+                var nextNode = $scope.findNodeById(actionNode.attrs.nodeBasicInfo.nextNodeId);
+                $scope.currentNodeId = nextNode.id;
+                $scope.doAction();
                 break;
             }
-          }, time);
+          }, time * 1000);
         } else {
           setTimeout(chatBotTypingRemove, 801);
           $scope.actionStop();
@@ -2150,14 +2145,30 @@
        * @param Object actionDetail アクションの詳細
        */
       $scope.doBranchAction = function(node) {
-        chatBotTypingRemove();
         var nodeId = node.id;
         var buttonType = node.attrs.actionParam.btnType;
         var message = node.attrs.actionParam.text;
         var selections = $scope.getBranchSelection(node);
         var labels = $scope.getBranchLabels(node, Object.keys(selections));
-        $scope.$broadcast('addReBranchMessage', nodeId, buttonType, message, selections, labels);
+        var customDesign = node.attrs.actionParam.customizeDesign;
+        $scope.$broadcast('addReDiagramBranchMessage', nodeId, buttonType, message, selections, labels, customDesign);
       };
+
+      $scope.doTextAction = function(node) {
+        clearChatbotTypingTimer();
+        chatBotTypingRemove();
+        var nodeId = node.id;
+        var messages = node.attrs.actionParam.text;
+        var nextNodeId = node.attrs.nodeBasicInfo.nextNodeId;
+        var intervalSec = 2;
+        $scope.$broadcast('addReDiagramTextMessage', nodeId, messages, nextNodeId, intervalSec);
+      };
+
+      $scope.$on('finishAddTextMessage', function(event, nextNodeId){
+        var nextNode = $scope.findNodeById(nextNodeId);
+        $scope.currentNodeId = nextNode.id;
+        $scope.doAction();
+      });
 
       $scope.getBranchSelection = function(node) {
         var itemIds = node.embeds;
@@ -2520,26 +2531,33 @@
       };
 
       // handle radio button click
-      $(document).on('change', '#chatTalk input[type="radio"]', function() {
+      $(document).on('change', '#chatTalk input[type="radio"]', function(e) {
         var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
         var message = $(this).val().replace(/^\s/, '');
-        var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
-        var name = $(this).attr('name');
-
-        var numbers = prefix.match(/\d+/g).map(Number);
-        var actionStep = numbers[0];
-        var hearingIndex = numbers[1];
-        if (isConfirm) {
-          // confirm message
-          $scope.addVisitorHearingMessage(message);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
-              'action' + actionStep + '_hearing_confirm');
-          $('input[name=' + name + '][type="radio"]').prop('disabled', true);
-          // ラジオボタンを非活性にする
-          self.disableHearingInput($scope.actionStep);
-          $('[id^="action' + actionStep + '_hearing"][id$="_question"]').removeAttr('id');
+        if($(e.target).data('nid') && $(e.target).data('nextNid')) {
+          self.handleDiagramReselectionInput(message, 'branch', $(e.target).data('nid'));
+          var nextNode = $scope.findNodeById($(e.target).data('nextNid'));
+          $scope.currentNodeId = nextNode.id;
+          $scope.doAction();
         } else {
-          self.handleReselectionInput(message, actionStep, hearingIndex);
+          var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
+          var name = $(this).attr('name');
+
+          var numbers = prefix.match(/\d+/g).map(Number);
+          var actionStep = numbers[0];
+          var hearingIndex = numbers[1];
+          if (isConfirm) {
+            // confirm message
+            $scope.addVisitorHearingMessage(message);
+            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
+                'action' + actionStep + '_hearing_confirm');
+            $('input[name=' + name + '][type="radio"]').prop('disabled', true);
+            // ラジオボタンを非活性にする
+            self.disableHearingInput($scope.actionStep);
+            $('[id^="action' + actionStep + '_hearing"][id$="_question"]').removeAttr('id');
+          } else {
+            self.handleReselectionInput(message, actionStep, hearingIndex);
+          }
         }
       });
 
@@ -2587,38 +2605,29 @@
         var prefix = $(this).parents('div.sinclo-button-wrap').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
         var message = $(this).text().replace(/^\s/, '');
 
-        if($(this).data('nid') && (this).data('nextNid')) {
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
 
+      $(document).on('click', '#chatTalk .sinclo-button-ui', function(e) {
+        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
+        $(this).addClass('selected');
+        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
+        var message = $(this).text().replace(/^\s/, '');
+
+        if($(e.target).data('nid') && $(e.target).data('nextNid')) {
+          self.handleDiagramReselectionInput(message, 'branch', $(e.target).data('nid'));
+          var nextNode = $scope.findNodeById($(e.target).data('nextNid'));
+          $scope.currentNodeId = nextNode.id;
+          $scope.doAction();
         } else {
           var numbers = prefix.match(/\d+/g).map(Number);
           var actionStep = numbers[0];
           var hearingIndex = numbers[1];
           self.handleReselectionInput(message, actionStep, hearingIndex);
         }
-      });
-
-      $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
-        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
-        $(this).addClass('selected');
-        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
-        var message = $(this).text().replace(/^\s/, '');
-
-        var numbers = prefix.match(/\d+/g).map(Number);
-        var actionStep = numbers[0];
-        var hearingIndex = numbers[1];
-        self.handleReselectionInput(message, actionStep, hearingIndex);
-      });
-      // button ui
-      $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
-        $(this).parent('div').find('.sinclo-button-ui').removeClass('selected');
-        $(this).addClass('selected');
-        var prefix = $(this).parents('div').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
-        var message = $(this).text().replace(/^\s/, '');
-
-        var numbers = prefix.match(/\d+/g).map(Number);
-        var actionStep = numbers[0];
-        var hearingIndex = numbers[1];
-        self.handleReselectionInput(message, actionStep, hearingIndex);
       });
 
       $(document).on('click', '#chatTalk .checkbox-submit-btn', function() {
@@ -2764,19 +2773,18 @@
           '<p>発言内容</p>' +
           '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="branchText"></resize-textarea>' +
           '</div>' +
-          '<div class="m40">' +
+          '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
-          '<label for=\'branch_button\'>表示形式</label>' +
+          '<label for=\'branch_button\'>タイプ</label>' +
           '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
           '</select>' +
           '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
+          '<radio-type-customize ng-show="branchType.key == 1"></radio-type-customize>' +
           '<div class="btn_valid_margin">' +
-          '<span class="diagram_valid" ng-show="btnTypeIsEmpty">表示形式を選択してください</span>' +
+          '<span class="diagram_valid" ng-show="btnTypeIsEmpty">タイプを選択してください</span>' +
           '</div>' +
           '</div>' +
-          '<radio-customize ng-show="branchType.key == \'1\'"></radio-customize>' +
-          '<button-customize ng-show="branchType.key == \'2\'"></button-customize>' +
           '</div>' +
           '<div class=\'branch_modal_setting_content\'>' +
           '<div class=\'setting_row\' ng-repeat="selection in branchSelectionList track by $index">' +
@@ -2786,17 +2794,20 @@
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
           '</div>' +
+          '<radio-customize ng-show="branchType.key == 1"></radio-customize>' +
+          '<button-customize ng-show="branchType.key == 2"></button-customize>' +
           '</div>' +
           '</div>' +
           '<div id=\'branch_modal_preview\'>' +
           '<h3>プレビュー</h3>' +
           '<div class="diagram_preview_area">' +
           '<preview-branch>' +
-          '</preview-branch' +
+          '</preview-branch>' +
+          '</div>' +
           '</div>' +
           '</div>'
     }
-  }).directive('textModal', function($timeout){
+  }).directive('textModal', function(){
     return {
       restrict: 'E',
       replace: true,
@@ -2889,6 +2900,44 @@
       replace: true,
       template: '<p id="op_modal">このノードに到達した場合、オペレーターを呼び出します。</p>'
     }
+  }).directive('radioTypeCustomize', function(){
+    return {
+      restrict: 'E',
+      replace: true,
+      require: '^ngModel',
+      template: '<div class="customize_form">' +
+          '<div class="radio_type">' +
+          '<p>表示形式</p>' +
+          '<div style="margin-left: 14px;">' +
+          '<label class="pointer"><input type="radio" value="1" ng-model="radioStyle">ボタン型</label>' +
+          '<label class="pointer"><input type="radio" value="2" ng-model="radioStyle">ラベル型</label>' +
+          '</div>' +
+          '</div>' +
+          '<div ng-show="radioStyle == 1" class="customize_area radio_customize">' +
+          '<span class="customize_row">' +
+          '<label>ボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioEntireBackgroundColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>選択時のボタン背景色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioEntireActiveColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_select_bg",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>文字色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioTextColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_text",$event)\'>標準に戻す</span>' +
+          '</span>' +
+          '<span class="customize_row">' +
+          '<label>選択時の文字色</label>' +
+          '<input class="jscolor {hash:true}" type="text" ng-model="radioActiveTextColor" maxlength="7">' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","b_select_text",$event)\' >標準に戻す</span>' +
+          '</span>' +
+          '</div>' +
+          '</div>'
+
+    }
   }).directive('radioCustomize', function(){
     return {
       restrict: 'E',
@@ -2897,6 +2946,12 @@
       template: '<div class="customize_form">' +
           '<label><input type="checkbox" ng-model="isCustomize">デザインをカスタマイズする</label>' +
           '<div ng-show="isCustomize" class="customize_area radio_customize">' +
+          '<span class="customize_row">' +
+          '<label>選択肢の行間</label>' +
+          '<input class="line_setting" type="number" ng-model="radioSelectionDistance" max="100" min ="0">' +
+          '<p>px</p>' +
+          '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","lh",$event)\'>標準に戻す</span>' +
+          '</span>' +
           '<span class="customize_row">' +
           '<label>ラジオボタン背景色</label>' +
           '<input class="jscolor {hash:true}" type="text" ng-model="radioBackgroundColor" maxlength="7">' +
@@ -2912,6 +2967,9 @@
           '<input class="jscolor {hash:true}" type="text" ng-model="radioBorderColor" maxlength="7">' +
           '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("radio","border",$event)\' >標準に戻す</span>' +
           '</span>' +
+          '<label class="pointer" style="margin-left:158px; width: 100px;">' +
+          '<input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;" ng-model="radioNoneBorder">枠線なしにする' +
+          '</label>' +
           '</div>' +
           '</div>'
     }
@@ -2935,10 +2993,10 @@
           '</span>' +
           '<span class="customize_row">' +
           '<label>ボタン文字位置</label>' +
-          '<div>' +
-          '<label><input type="radio" value="1" ng-model="buttonUITextAlign">左寄せ</label>' +
-          '<label><input type="radio" value="2" ng-model="buttonUITextAlign">中央寄せ</label>' +
-          '<label><input type="radio" value="3" ng-model="buttonUITextAlign">右寄せ</label>' +
+          '<div style="margin-left: 32px;">' +
+          '<label class="pointer"><input type="radio" value="1" ng-model="buttonUITextAlign">左寄せ</label>' +
+          '<label class="pointer"><input type="radio" value="2" ng-model="buttonUITextAlign">中央寄せ</label>' +
+          '<label class="pointer"><input type="radio" value="3" ng-model="buttonUITextAlign">右寄せ</label>' +
           '</div>' +
           '</span>' +
           '<span class="customize_row">' +
@@ -2951,6 +3009,9 @@
           '<input class="jscolor {hash:true}" type="text" ng-model="buttonUIBorderColor" maxlength="7">' +
           '<span class="greenBtn btn-shadow revert-button" ng-click=\'revertStandard("button","border",$event)\'>標準に戻す</span>' +
           '</span>' +
+          '<label class="pointer" style="margin-left:138px; width: 100px;">' +
+          '<input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;" ng-model="outButtonUINoneBorder">枠線なしにする' +
+          '</label>' +
           '</div>' +
           '</div>'
     }

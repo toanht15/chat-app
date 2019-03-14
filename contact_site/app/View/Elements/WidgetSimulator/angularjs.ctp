@@ -88,8 +88,12 @@
         $scope.addCheckbox(data);
       });
 
-      $scope.$on('addReBranchMessage', function(event, nodeId, buttonType, message, selection, labels) {
-        $scope.addReBranchMessage(nodeId, buttonType, message, selection, labels);
+      $scope.$on('addReDiagramBranchMessage', function(event, nodeId, buttonType, message, selection, labels, customDesign) {
+        $scope.addReDiagramBranchMessage(nodeId, buttonType, message, selection, labels, customDesign);
+      });
+
+      $scope.$on('addReDiagramTextMessage', function(event, nodeId, messages, nextNodeId, intervalSec) {
+        $scope.addReDiagramTextMessage(nodeId, messages, nextNodeId, intervalSec);
       });
 
       $scope.$on('disableHearingInputFlg', function(event) {
@@ -888,16 +892,18 @@
         self.autoScroll();
       };
 
-      $scope.addReBranchMessage = function(nodeId, buttonType, message, selection, labels) {
+      $scope.addReDiagramBranchMessage = function(nodeId, buttonType, message, selection, labels, customDesign) {
+        clearChatbotTypingTimer();
+        chatBotTypingRemove();
         var gridElm = document.createElement("div");
         $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = 'branch_question_' + (new Date()).getTime();
         var html = '';
         if(buttonType === '1') {
-          html = $scope.simulatorSettings.createBranchRadioMessage(nodeId, message, selection, labels);
+          html = $scope.simulatorSettings.createBranchRadioMessage(nodeId, message, selection, labels, {customDesign: customDesign});
         } else {
-
+          html = $scope.simulatorSettings.createBranchButtonMessage(nodeId, message, selection, labels, {customDesign: customDesign});
         }
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
         divElm.style.display = "";
@@ -910,6 +916,47 @@
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
         self.autoScroll();
+        $timeout(function() {
+          $scope.$apply();
+        });
+      };
+
+      $scope.addReDiagramTextMessage = function(nodeId, messages, nextNodeId, intervalSec) {
+        for(var i=0; i < messages.length; i++) {
+          (function(idx) {
+              $timeout(function(){
+              chatBotTypingRemove();
+              // ベースとなる要素をクローンし、メッセージを挿入する
+              var prefix = 'text_' + (new Date()).getTime();
+              var gridElm = document.createElement("div");
+              $(gridElm).addClass("grid_balloon");
+
+              var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+               divElm.id = prefix + '_text';
+
+              var formattedMessage = $scope.simulatorSettings.createMessage(messages[idx], prefix);
+              divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
+              divElm.classList.add('diagram_msg');
+
+              // 要素を追加する
+              divElm.style.display = "";
+              if ($scope.needsIcon()) {
+                //チャットボットのアイコンを表示する場合は
+                //アイコンを含む要素を作成する。
+                gridElm = $scope.addIconImage(gridElm);
+              }
+
+              gridElm.appendChild(divElm);
+              document.getElementById('chatTalk').appendChild(gridElm);
+              self.autoScroll();
+              if(idx === messages.length - 1) {
+                $scope.$emit('finishAddTextMessage',nextNodeId);
+              } else {
+                chatBotTyping();
+              }
+            }, (idx) * intervalSec * 1000);
+          })(i);
+        }
       };
 
       /**
@@ -1944,6 +1991,8 @@
 
   var waitAnimationAddFlg = true;
 
+  var chatbotTimer = null;
+
   function chatBotTyping() {
     if (!waitAnimationAddFlg) return;
     waitAnimationAddFlg = false;
@@ -1988,7 +2037,7 @@
     }
     html += '  </li>';
     html += '</div>';
-    setTimeout(function() {
+    chatbotTimer = setTimeout(function() {
       $('#chatTalk').append(html);
     }, 800);
     return;
@@ -1997,6 +2046,13 @@
   function chatBotTypingRemove() {
     waitAnimationAddFlg = true;
     $('div.botNowDiv').remove();
+  }
+
+  function clearChatbotTypingTimer() {
+    if(chatbotTimer) {
+      clearTimeout(chatbotTimer);
+      chatbotTimer = null;
+    }
   }
 
 </script>
