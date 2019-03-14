@@ -82,13 +82,49 @@ class TChatbotDiagramsController extends WidgetSettingController
   public function save()
   {
     if ($this->request->is('post')) {
-      $transaction = $this->TransactionManager->begin();
+      $this->TChatbotDiagram->create();
+      $params = [
+        'fields' => [
+          'TChatbotDiagram.sort'
+        ],
+        'conditions' => [
+          'TChatbotDiagram.m_companies_id' => $this->userInfo['MCompany']['id']
+//              'TAutoMessage.del_flg != ' => 1
+        ],
+        'order' => [
+          'TChatbotDiagram.sort' => 'desc',
+          'TChatbotDiagram.id' => 'desc'
+        ],
+        'limit' => 1,
+        'recursive' => -1
+      ];
+      $lastData = $this->TChatbotDiagram->find('first', $params);
+      if ($lastData) {
+        if ($lastData['TChatbotDiagram']['sort'] === '0'
+          || $lastData['TChatbotDiagram']['sort'] === 0
+          || $lastData['TChatbotDiagram']['sort'] === null) {
+          //ソート順が登録されていなかったらソート順をセットする
+          if (!$this->remoteSetSort()) {
+            $this->set('alertMessage',
+              ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+            throw new AutoMessageException('ソート順が設定できませんでした。');
+          }
+          //もう一度ソートの最大値を取り直す
+          $lastData = $this->TChatbotDiagram->find('first', $params);
+        }
+      }
+      $nextSort = 1;
+      if (!empty($lastData)) {
+        $nextSort = intval($lastData['TChatbotDiagram']['sort']) + 1;
+      }
 
+      $transaction = $this->TransactionManager->begin();
       // FIXME ソート
       $saveData = array(
         'm_companies_id' => $this->userInfo['MCompany']['id'],
         'name' => $this->request->data['TChatbotDiagram']['name'],
-        'activity' => $this->request->data['TChatbotDiagram']['activity']
+        'activity' => $this->request->data['TChatbotDiagram']['activity'],
+        'sort' => $nextSort
       );
 
       if(!empty($this->request->data['TChatbotDiagram']['id'])) {
@@ -106,6 +142,122 @@ class TChatbotDiagramsController extends WidgetSettingController
 
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       $this->redirect(['action' => 'index']);
+    }
+  }
+
+  /* *
+   * コピー処理
+   * @return void
+   * */
+  public function remoteCopyEntryForm()
+  {
+    Configure::write('debug', 0);
+    $this->autoRender = false;
+    $this->layout = 'ajax';
+    $selectedList = $this->request->data['selectedList'];
+    //コピー元のオートメッセージリスト取得
+    foreach ($selectedList as $value) {
+      $copyData[] = $this->TChatbotDiagram->read(null, $value);
+    }
+    $errorMessage = [];
+    //コピー元のオートメッセージリストの数だけ繰り返し
+    $res = true;
+    foreach ($copyData as $value) {
+      $this->TChatbotDiagram->create();
+      $saveData = [];
+      $params = [
+        'fields' => [
+          'TChatbotDiagram.sort'
+        ],
+        'conditions' => [
+          'TChatbotDiagram.m_companies_id' => $this->userInfo['MCompany']['id']
+          //'TChatbotDiagram.del_flg != ' => 1
+        ],
+        'order' => [
+          'TChatbotDiagram.sort' => 'desc',
+          'TChatbotDiagram.id' => 'desc'
+        ],
+        'limit' => 1,
+        'recursive' => -1
+      ];
+      $lastData = $this->TChatbotDiagram->find('first', $params);
+      if ($lastData['TChatbotDiagram']['sort'] === '0'
+        || $lastData['TChatbotDiagram']['sort'] === 0
+        || $lastData['TChatbotDiagram']['sort'] === null) {
+        //ソート順が登録されていなかったらソート順をセットする
+        if (!$this->remoteSetSort()) {
+          $this->set('alertMessage',
+            ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+          return false;
+        }
+        //もう一度ソートの最大値を取り直す
+        $lastData = $this->TChatbotDiagram->find('first', $params);
+      }
+      $nextSort = 1;
+      if (!empty($lastData)) {
+        $nextSort = intval($lastData['TChatbotDiagram']['sort']) + 1;
+      }
+
+      $saveData['TChatbotDiagram']['sort'] = $nextSort;
+      $saveData['TChatbotDiagram']['m_companies_id'] = $value['TChatbotDiagram']['m_companies_id'];
+      $saveData['TChatbotDiagram']['name'] = $value['TChatbotDiagram']['name'] . 'コピー';
+      $saveData['TChatbotDiagram']['activity'] = $value['TChatbotDiagram']['activity'];
+      $saveData['TChatbotDiagram']['del_flg'] = $value['TChatbotDiagram']['del_flg'];
+
+      $this->TChatbotDiagram->set($saveData);
+      $this->TChatbotDiagram->begin();
+
+      if (!$this->TChatbotDiagram->validates()) {
+        $res = false;
+        $errorMessage = $this->TChatbotDiagram->validationErrors;
+        $this->TChatbotDiagram->rollback();
+      } else {
+        if ($this->TChatbotDiagram->save($saveData, false)) {
+          $this->TChatbotDiagram->commit();
+          $this->Session->delete('dstoken');
+          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        }
+      }
+    }
+  }
+
+  /* *
+   * 削除(一覧ページから実行)
+   * */
+  public function remoteDelete(){
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $diagramIdList = (isset($this->request->data['selectedList'])) ? $this->request->data['selectedList'] : "";
+
+    // 呼び出し設定されている場合は削除しない
+    $callerInfo = $this->_getDiagramCallerInfo($diagramIdList);
+    if (!empty($callerInfo['TAutoMessage'])) {
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      return;
+    }
+
+    $transactions = null;
+    try {
+      $transactions = $this->TransactionManager->begin();
+
+      if (!$this->TChatbotDiagram->logicalDelete($diagramIdList)) {
+        throw new ChatbotScenarioException('シナリオ削除エラー');
+      }
+
+      $this->TransactionManager->commitTransaction($transactions);
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+
+    } catch (ChatbotScenarioException $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    } catch (Exception $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
   }
 
@@ -199,6 +351,73 @@ class TChatbotDiagramsController extends WidgetSettingController
   }
 
   /**
+   * オートメッセージ設定ソート順を現在のID順でセット
+   *
+   * */
+  public function remoteSetSort()
+  {
+    $this->TChatbotDiagram->begin();
+    /* 現在の並び順を取得 */
+    $this->paginate['TChatbotDiagram']['conditions']['TChatbotDiagram.m_companies_id'] = $this->userInfo['MCompany']['id'];
+    $params = [
+      'fields' => [
+        'TChatbotDiagram.sort'
+      ],
+      'conditions' => [
+        'TChatbotDiagram.m_companies_id' => $this->userInfo['MCompany']['id']
+//            'TChatbotDiagram.del_flg != ' => 1
+      ],
+      'order' => [
+        'TChatbotDiagram.sort' => 'asc',
+        'TChatbotDiagram.id' => 'asc'
+      ],
+      'limit' => 1,
+      'recursive' => -1
+    ];
+    $params['fields'] = [
+      'TChatbotDiagram.id',
+      'TChatbotDiagram.sort'
+    ];
+    unset($params['limit']);
+    $prevSort = $this->TChatbotDiagram->find('list', $params);
+    //ソート順のリセットはID順とする
+    $i = 1;
+    foreach ($prevSort as $key => $val) {
+      $prevSort[$key] = strval($i);
+      $i++;
+    }
+    $prevSortKeys = am($prevSort);
+    $this->log($prevSortKeys, LOG_DEBUG);
+    $i = 0;
+    $ret = true;
+    foreach ($prevSort as $key => $val) {
+      $id = $key;
+      $saveData = [
+        'TChatbotDiagram' => [
+          'id' => $id,
+          'sort' => $prevSortKeys[$i]
+        ]
+      ];
+      if (!$this->TChatbotDiagram->validates()) {
+        $ret = false;
+        break;
+      }
+      if (!$this->TChatbotDiagram->save($saveData)) {
+        $ret = false;
+        break;
+      }
+      $i++;
+    }
+    if ($ret) {
+      $this->TChatbotDiagram->commit();
+      return true;
+    } else {
+      $this->TChatbotDiagram->rollback();
+      return false;
+    }
+  }
+
+  /**
    * シナリオ設定ソート順を現在のID順でセット
    * */
   private function _remoteSetSort()
@@ -257,29 +476,29 @@ class TChatbotDiagramsController extends WidgetSettingController
    * @param  Array  $scenarioList アクション「チャットツリー呼び出し」を含むシナリオ一覧
    * @return Array                呼び出し元情報
    */
-  private function _getDiagramCallerInfo($id, $scenarioList) {
-    $callerInfo = [];
+  private function _getDiagramCallerInfo($id) {
+    $callerInfo = array();
 
     // 呼び出し元オートメッセージ情報を取得する
-    $callerInfo['TAutoMessage'] = $this->TAutoMessage->coFind('list', [
-      'fileds' => ['id', 'name'],
-      'order' => [
+    $callerInfo['TAutoMessage'] = $this->TAutoMessage->coFind('list', array(
+      'fileds' => array('id', 'name'),
+      'order' => array(
         'TAutoMessage.sort' => 'asc',
         'TAutoMessage.id' => 'asc'
-      ],
-      'conditions' => [
+      ),
+      'conditions' => array(
         'TAutoMessage.del_flg != ' => 1,
+        'TAutoMessage.action_type' => C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM,
         'TAutoMessage.t_chatbot_diagram_id' => $id,
         'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
-      ]
-    ]);
+      )
+    ));
 
-    // 呼び出し元シナリオ情報を取得する
-    $matchScenarioNames = [];
     /*
-    $keyword = '"tChatbotScenarioId":"'. $id . '"';
-    $branchOnCondKeyword = '"callScenarioId":"'. $id . '"';
-    $branchOnCondKeywordForSelf = '"callScenarioId":"self"';
+    // 呼び出し元シナリオ情報を取得する
+    $matchScenarioNames = array();
+
+    $keyword = '"tChatbotDiagramId":"'. $id . '"';
     foreach ($scenarioList as $scenario) {
       if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
         $matchScenarioNames[] = $scenario['TChatbotScenario']['name'];
@@ -289,8 +508,8 @@ class TChatbotDiagramsController extends WidgetSettingController
         $matchScenarioNames[] = self::CALL_SELF_SCENARIO_NAME;
       }
     }
-    */
     $callerInfo['TChatbotScenario'] = $matchScenarioNames;
+    */
 
     return $callerInfo;
   }
