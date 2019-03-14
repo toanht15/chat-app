@@ -4,7 +4,7 @@
     <li class="styleFlexbox">
       <span class="fb11em"><label>見出し文<span class="questionBalloon"><icon class="questionBtn" data-tooltip="見出しに表示するテキストメッセージを設定します。">?</icon></span></label></span>
       <div>
-        <resize-textarea name="dropAreaMessage" ng-model="setItem.dropAreaMessage" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
+        <resize-textarea name="dropAreaMessage" class="variable-suggest" ng-model="setItem.dropAreaMessage" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li class="styleFlexbox">
@@ -17,7 +17,7 @@
     <li class="styleFlexbox">
       <span class="fb11em" style="white-space:normal;"><label>ファイルエラー時の<br>返信メッセージ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="指定外のファイル形式のファイルが選択された場合や複数のファイルが選択された場合にチャットボットに発言させるテキストメッセージを設定します。">?</icon></span></label></span>
       <div style="display:flex; align-items: center;">
-        <resize-textarea maxlength="4000" name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
+        <resize-textarea maxlength="4000" class="variable-suggest" name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li>

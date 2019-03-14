@@ -252,6 +252,19 @@
         return custom;
       };
 
+      $scope.createTextOfCheckbox = function(message) {
+        var checkboxData = JSON.parse(message);
+        var array = checkboxData.message.split(checkboxData.separator);
+        var html = '<ul style="margin: auto; height: auto !important; width: auto; border: none; padding-left: 0;background-color: transparent; overflow-y: hidden !important;">';
+        angular.forEach(array, function(item) {
+          html += '<li style="list-style-type: disc; border: none; background-color: transparent; margin: 5px 0 0 15px; padding: 0;">' + item + '</li>';
+        });
+        html += '</ul>';
+        html = replaceVariable(html,true,'6');
+
+        return html;
+      };
+
       // 【チャット】チャット枠の構築
       $scope.createMessage = function(elem, chat) {
         var chatApi = {
@@ -291,6 +304,10 @@
                 reInputCarousel: 44,
                 button: 47,
                 reInputButton: 48,
+                buttonUI: 50,
+                reInputButtonUI: 51,
+                checkbox: 53,
+                reInputCheckbox: 54,
                 cancel: 90
               },
               message: {
@@ -302,7 +319,10 @@
                 pulldown: 41,
                 calendar: 42,
                 carousel: 45,
-                button: 46
+                button: 46,
+                buttonUI: 49,
+                checkbox: 52,
+                radio: 55,
               }
             },
             cogmo: {
@@ -324,13 +344,13 @@
         var coreSettings = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
         var img = message.match(/<img ([\s\S]*?)>/g);
         //横並びの場合
-        if (<?= $screenFlg ?> == 1;
+        if (<?= $screenFlg ?> == 1
       )
         {
           dataBaloon = 89;
         }
         //縦並びの場合
-        if (<?= $screenFlg ?> == 2;
+        if (<?= $screenFlg ?> == 2
       )
         {
           dataBaloon = 45;
@@ -585,10 +605,13 @@
             content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize,
                 message.extension, isExpired);
           }
-        } else if (type === chatApi.messageType.scenario.customer.hearing || type ===
-            chatApi.messageType.scenario.customer.radio || type === chatApi.messageType.scenario.customer.pulldown ||
-            type === chatApi.messageType.scenario.customer.calendar || type ===
-            chatApi.messageType.scenario.customer.carousel
+        } else if (type === chatApi.messageType.scenario.customer.hearing
+            || type === chatApi.messageType.scenario.customer.radio
+            || type === chatApi.messageType.scenario.customer.pulldown
+            || type === chatApi.messageType.scenario.customer.calendar
+            || type === chatApi.messageType.scenario.customer.carousel
+            || type === chatApi.messageType.scenario.customer.buttonUI
+            || type === chatApi.messageType.scenario.customer.checkbox
             || type === chatApi.messageType.scenario.customer.button) {
           var created = chat.created.replace(' ', '%');
           var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g, '');
@@ -621,15 +644,22 @@
                   dataBaloon +
                   '\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">';
             }
-            content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
-                $scope.createTextOfMessage(chat, message, {radio: false}) + '</span>';
+            if (type === chatApi.messageType.scenario.customer.checkbox) {
+              content += '<span class=\'cChat\' style ="font-size:' + fontSize + '; margin-bottom: 0;">' +
+                  $scope.createTextOfCheckbox(message) + '</span>';
+            } else {
+              content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
+                  $scope.createTextOfMessage(chat, message, {radio: false}) + '</span>';
+            }
           }
-        } else if (type === chatApi.messageType.scenario.customer.reInputText || type ===
-            chatApi.messageType.scenario.customer.reInputRadio || type ===
-            chatApi.messageType.scenario.customer.reInputPulldown || type ===
-            chatApi.messageType.scenario.customer.reInputCalendar || type ===
-            chatApi.messageType.scenario.customer.reInputCarousel || type ===
-            chatApi.messageType.scenario.customer.reInputButton) {
+        } else if (type === chatApi.messageType.scenario.customer.reInputText
+            || type === chatApi.messageType.scenario.customer.reInputRadio
+            || type === chatApi.messageType.scenario.customer.reInputPulldown
+            || type === chatApi.messageType.scenario.customer.reInputCalendar
+            || type === chatApi.messageType.scenario.customer.reInputCarousel
+            || type === chatApi.messageType.scenario.customer.reInputButtonUI
+            || type === chatApi.messageType.scenario.customer.reInputCheckbox
+            || type === chatApi.messageType.scenario.customer.reInputButton) {
           var created = chat.created.replace(' ', '%');
           var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g, '');
           forDeletionMessage = escape_html(forDeletionMessage);
@@ -767,8 +797,13 @@
             content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
                 $scope.createTextOfMessage(chat, message) + '</span>';
           }
-        } else if (type === chatApi.messageType.scenario.message.pulldown || type ===
-            chatApi.messageType.scenario.message.calendar || type === chatApi.messageType.scenario.message.carousel || type === chatApi.messageType.scenario.message.button) {
+        } else if (type === chatApi.messageType.scenario.message.pulldown
+            || type === chatApi.messageType.scenario.message.calendar
+            || type === chatApi.messageType.scenario.message.carousel
+            || type === chatApi.messageType.scenario.message.radio
+            || type === chatApi.messageType.scenario.message.buttonUI
+            || type === chatApi.messageType.scenario.message.checkbox
+            || type === chatApi.messageType.scenario.message.button) {
           cn = 'sinclo_auto';
           var created = chat.created.replace(' ', '%');
           var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g, '');
@@ -811,12 +846,32 @@
                 case chatApi.messageType.scenario.message.carousel:
                   textOfMessage = '（カルーセル質問内容なし）';
                   break;
+                case chatApi.messageType.scenario.message.buttonUI:
+                  textOfMessage = '（ボタン質問内容なし）';
+                  break;
+                case chatApi.messageType.scenario.message.checkbox:
+                  textOfMessage = '（チェックボックス質問内容なし）';
+                  break;
+                case chatApi.messageType.scenario.message.radio:
+                  textOfMessage = '（ラジオボタン質問内容なし）';
+                  break;
                 default:
                   textOfMessage = '（質問内容なし）';
                   break;
               }
             } else {
               textOfMessage = $scope.createTextOfMessage(chat, messageContent.message);
+            }
+            if(type === chatApi.messageType.scenario.message.radio) {
+              textOfMessage = messageContent.message + "\n";
+              for(var i=0; i < messageContent.settings.options.length; i++) {
+                if(i === (messageContent.settings.options.length - 1)) {
+                  textOfMessage += '[] ' + messageContent.settings.options[i];
+                } else {
+                  textOfMessage += '[] ' + messageContent.settings.options[i] + "\n";
+                }
+              }
+              textOfMessage = $scope.createTextOfMessage(chat, textOfMessage);
             }
             content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+ textOfMessage +"</span>";
           }
@@ -1336,7 +1391,7 @@
         ;
         return trimToURL(targetParams, url);
       };
-    };
+    }
   ])
   ;
 

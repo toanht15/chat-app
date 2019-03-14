@@ -189,9 +189,9 @@ class TrialController extends AppController {
       $this->log('入力時バリデーションエラー：'.var_export($this->MUser->validationErrors, TRUE).'　データ：'.var_export($data['MUser'], TRUE), LOG_WARNING);
       $errorMessage = $this->MUser->validationErrors;
       return $errorMessage['mail_address'][0];
-    } else if(!$this->isFreeAddressChk($data['MUser']['mail_address'])) {
+    } else if(!$this->isFreeAddressChk($data['MUser'])) {
       return 'フリーアドレスのご利用はできません。';
-    } else if(!$this->isCareerDomainChk($data['MUser']['mail_address'])) {
+    } else if(!$this->isCareerDomainChk($data['MUser'])) {
       return '携帯電話のメールアドレスのご利用はできません。';
     }
   }

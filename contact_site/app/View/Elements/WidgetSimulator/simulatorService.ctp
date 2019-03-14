@@ -137,6 +137,9 @@
       get re_text_size() {
         return Number(this._settings['re_text_size']);
       },
+      get re_text_color() {
+        return this._settings['re_text_color'];
+      },
       get radioButtonBeforeTop() {
         return Math.ceil((Number(this.re_text_size) / 2));
       },
@@ -530,10 +533,12 @@
        * 表示用HTMLへの変換
        * @param String val    変換したいメッセージ
        * @param String prefix ラジオボタンに付与するプレフィックス
+       * @param String align 文字寄せを指定したい場合に使う。'2': 中央寄せ、'3': 右寄せ
+       * @param boolean nospan 出力するHTMLにspanのラップを付けるかどうか
        * @return String       変換したメッセージ
        */
-      createMessage: function(val, prefix, align) {
-        if (val === '') return　'';
+      createMessage: function(val, prefix, align, nospan) {
+        if (val === '') return '';
         prefix = (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
         var isSmartphone = Number(this._showWidgetType) !== 1;
         var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
@@ -556,10 +561,12 @@
         }
 
         var isFreeBlock = false;
+        var hasFreeBlock = false;
         for (var i = 0; strings.length > i; i++) {
           if(strings[i].match(/(<div class="free-block")/)) {
             content += strings[i];
             isFreeBlock = true;
+            hasFreeBlock = true;
             continue;
           } else if(strings[i].match(/(<\/div>)/)) {
             isFreeBlock = false;
@@ -595,7 +602,17 @@
 
         return content;
       },
+      createCheckboxMessage: function(message, separator) {
+        var separatorChar = this.getCheckboxSeparator(separator);
+        var array = message.split(separatorChar);
+        var html = '<ul style="margin-top: -7px">';
+        angular.forEach(array, function(item) {
+          html += '<li style="list-style-type: disc; background-color: transparent; margin: 5px 0 0 15px; padding: 0;">' + item + '</li>';
+        });
+        html += '</ul>';
 
+        return html;
+      },
       createForm: function(isConfirm, hearingTarget, resultData) {
         var self = this;
         var formElements = '';
@@ -735,27 +752,54 @@
         var radioName = prefix + 'sinclo-radio-' + index;
         var hasOldOptionValue = false;
         // style
-        var html = '';
+        var html = '<div id="' + radioName + '">';
+        var style = '<style>';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' +
+            data.settings.customDesign.radioBackgroundColor + ' !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' +
+            data.settings.customDesign.radioActiveColor + ' !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio:first-of-type {margin-top: 4px !important}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio {margin-top: ' +
+            data.settings.customDesign.radioSelectionDistance + 'px !important;}';
+        if (data.settings.radioNoneBorder) {
+          style += '#sincloBox #' + radioName +
+              ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+        } else {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' +
+              data.settings.customDesign.radioBorderColor + '!important;}';
+        }
+
+        if (data.settings.radioStyle !== '1') {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
+        } else {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio {padding: 8px; color: ' + data.settings.customDesign.radioTextColor + ';}';
+        }
+        style += '</style>';
+        html += style;
         angular.forEach(data.options, function(option, key) {
           if (!option || option == '') return false;
           if (data.isRestore && option === data.oldValue) {
-            html += '<span class=\'sinclo-radio\'><input type=\'radio\' checked=\'checked\' name=\'' + radioName + '\' id=\'' +
+            html += '<span style="display: block;" class=\'sinclo-radio\'><input type=\'radio\' checked=\'checked\' name=\'' + radioName + '\' id=\'' +
                 radioName + '-' + key + '\' class=\'sinclo-chat-radio\' value=\'' + option + '\'>';
-            html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span><br>';
+            html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span>';
             hasOldOptionValue = true;
           } else {
-            html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
+            html += '<span style="display: block" class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
                 key + '\' class=\'sinclo-chat-radio\' value=\'' + option + '\'>';
-            html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span><br>';
+            html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span>';
           }
         });
         html += '</select>';
+        html += '</div>';
         if (data.isRestore && hasOldOptionValue) {
           html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' +
               data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
         }
 
-        return messageHtml + html;
+        return {
+          html: messageHtml + html,
+          radioName: radioName
+        };
       },
 
       _needResizeCauseIcon: function() {
@@ -769,14 +813,8 @@
         var index = $('#chatTalk > div:not([style*="display: none;"])').length;
         var pulldownName = prefix + 'sinclo-pulldown-' + index;
         var hasOldOptionValue = false;
-        /* ウィジェットサイズ小でアイコン表示だとプルダウンが見切れてしまう対策*/
-        var minWidth = '210';
-        if (this._needResizeCauseIcon()) {
-          minWidth = '183';
-        }
         // style
-
-        var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; min-width: ' + minWidth + 'px;';
+        var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; width: 100%; word-break: break-all;';
         style += 'background-color: ' + data.design.backgroundColor + ';';
         style += 'color: ' + data.design.textColor + ';';
         style += 'border-color: ' + data.design.borderColor + ';"';
@@ -801,6 +839,165 @@
         return messageHtml + html;
       },
 
+      createButtonUI: function(data) {
+        var messageHtml = this.createMessage(data.message, data.prefix);
+        var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
+        var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+        var buttonUIName = prefix + 'sinclo-buttonUI-' + index;
+        var hasOldOptionValue = false;
+        var style = '<style>';
+        style += '#sincloBox #' + buttonUIName + ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+        style += '#sincloBox #' + buttonUIName + ' button {background-color: ' + data.settings.customDesign.buttonUIBackgroundColor + '}';
+        style += '#sincloBox #' + buttonUIName + ' button {width: ' + this.getButtonUIWidth() + 'px;}';
+        style += '#sincloBox #' + buttonUIName + ' button {color: ' + data.settings.customDesign.buttonUITextColor + '}';
+        style += '#sincloBox #' + buttonUIName + ' button:focus {outline: none}';
+        style += '#sincloBox #' + buttonUIName + ' button:active {background-color: ' + data.settings.customDesign.buttonUIActiveColor +'}';
+        style += '#sincloBox #' + buttonUIName + ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+        style += '#sincloBox #' + buttonUIName + ' button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+        style += '#sincloBox #' + buttonUIName + ' button.selected {background-color: ' + data.settings.customDesign.buttonUIActiveColor + ' !important;}';
+        if (data.message) {
+          style += '#sincloBox #' + buttonUIName + ' {margin-top: 8px}';
+        }
+        if (data.settings.outButtonUINoneBorder) {
+          style += '#sincloBox #' + buttonUIName + ' button {border: none}';
+        } else {
+          style += '#sincloBox #' + buttonUIName + ' button {border: 1px solid ' + data.settings.customDesign.buttonUIBorderColor +' }';
+        }
+        switch (Number(data.settings.customDesign.buttonUITextAlign)) {
+          case 1:
+            style += '#sincloBox #' + buttonUIName + ' button {text-align: left}';
+            break;
+          case 2:
+            style += '#sincloBox #' + buttonUIName + ' button {text-align: center}';
+            break;
+          case 3:
+            style += '#sincloBox #' + buttonUIName + ' button {text-align: right}';
+            break;
+          default:
+            style += '#sincloBox #' + buttonUIName + ' button {text-align: center}';
+            break;
+        }
+        style += '</style>';
+
+        var html = '<div id="' + buttonUIName + '">';
+        html += style;
+        angular.forEach(data.options, function(option, key) {
+          if (!option || option === '') return false;
+          if (data.isRestore && option === data.oldValue) {
+            html += '<button onclick="return false;" class="sinclo-button-ui selected">' + option + '</button>';
+            hasOldOptionValue = true;
+          } else {
+            html += '<button onclick="return false;" class="sinclo-button-ui">' + option + '</button>'
+          }
+        });
+        html += '</div>';
+        if (data.isRestore && hasOldOptionValue) {
+          html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' +
+              data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
+        }
+
+        return messageHtml + html;
+      },
+
+      createCheckbox: function(data) {
+        var messageHtml = this.createMessage(data.message, data.prefix);
+        var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
+        var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+        var checkboxName = prefix + 'sinclo-checkbox-' + index;
+        var separator = this.getCheckboxSeparator(data.settings.checkboxSeparator);
+        var style = '<style>';
+        style += '#sincloBox #' + checkboxName +
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' + data.settings.customDesign.checkboxSelectionDistance + 'px;cursor: pointer;font-size: ' + this.re_text_size + 'px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
+        style += '#sincloBox #' + checkboxName +
+            ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
+        style += '#sincloBox #' + checkboxName +
+            ' .sinclo-checkbox .checkmark {position: absolute;top: 1px;left: 0px;height: ' + (this.re_text_size + 2) + 'px;width: ' + (this.re_text_size + 2) + 'px; background-color: ' +
+            data.settings.customDesign.checkboxBackgroundColor + '}';
+        style += '#sincloBox #' + checkboxName +
+            ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (this.re_text_size - 9) + 'px;top: ' + (this.re_text_size - 12) + 'px;width: 3px;height: 6px;border: solid ' + data.settings.customDesign.checkboxCheckmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+        style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox input:checked ~ .checkmark {background-color: ' +
+            data.settings.customDesign.checkboxActiveColor + '}';
+        style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox input:checked ~ .checkmark:after {display: block}';
+        style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox input:hover ~ .checkmark {background-color: ' +
+            data.settings.customDesign.checkboxActiveColor + '}';
+        style += '#sincloBox #' + checkboxName +
+            ' span.ok-button {width: 100px; height: 30px; line-height: 30px; cursor: pointer; margin: auto; margin-top: 10px; display: block; text-align: center; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + this._settings['chat_send_btn_background_color'] + '; color: ' + this._settings['chat_send_btn_text_color'] + ';}';
+        style += '#sincloBox #' + checkboxName + '{display: table;}';
+        if (data.settings.checkboxNoneBorder) {
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {border: none;}';
+        } else {
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {border: 1px solid ' +
+              data.settings.customDesign.checkboxBorderColor + ';}';
+        }
+
+        if (data.settings.checkboxStyle !== '1') {
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {background-color: transparent;}';
+        } else {
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {padding: 8px 8px 8px 28px;}';
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {top: 9px;left: 8px; }';
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {background-color: ' +
+              data.settings.customDesign.checkboxEntireBackgroundColor + ';}';
+          style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox {color: ' +
+              data.settings.customDesign.checkboxTextColor + ';}';
+        }
+        if (data.message) {
+          style += '#sincloBox #' + checkboxName + ' {margin-top: 8px}';
+        }
+        style += '</style>';
+
+        var html = '<div id="' + checkboxName + '" style="display: block;" data-separator="' + data.settings.checkboxSeparator + '">';
+        html += style;
+        if (data.oldValue) {
+          var oldMessages = data.oldValue.split(separator);
+        }
+        var i = 0;
+        angular.forEach(data.options, function(option, key) {
+          if (!option || option === '') return false;
+          var hasOldOptionValue = false;
+          html += '<label class="sinclo-checkbox">';
+          if (data.isRestore && data.oldValue) {
+            angular.forEach(oldMessages, function(oldMessage) {
+              if (option === oldMessage) {
+                html += '<input type="checkbox" checked="checked" value="' + option + '">';
+                hasOldOptionValue = true;
+                i++;
+              }
+            });
+            if (!hasOldOptionValue) {
+              html += '<input type="checkbox" value="' + option + '">';
+            }
+          } else {
+            html += '<input type="checkbox" value="' + option + '">';
+          }
+          html += option;
+          html += '<span class="checkmark"></span>';
+          html += '</label>';
+        });
+        if (i > 0) {
+          html += '<span class="ok-button checkbox-submit-btn">OK</span>';
+        } else {
+          html += '<span  class="ok-button checkbox-submit-btn disabledArea">OK</span >';
+        }
+        html += '</div>';
+
+        return {
+          html: messageHtml + html,
+          checkboxName: checkboxName
+        };
+      },
+
+      getCheckboxSeparator: function(separatorType) {
+        switch (Number(separatorType)) {
+          case 1:
+            return ',';
+          case 2:
+            return '/';
+          case 3:
+            return '|';
+          default:
+            return ',';
+        }
+      },
       createCalendarInput: function(data) {
         var result = {html: '', selector: ''};
         var messageHtml = this.createMessage(data.message, data.prefix);
@@ -1038,7 +1235,27 @@
       result.selector = '#' + carouselId;
       return result;
     },
-
+    getButtonUIWidth: function() {
+        var width = 280;
+        switch (Number(this.widgetSizeTypeToggle)) {
+          case 1:
+            width= 183;
+            break;
+          case 2:
+            width= 230;
+            break;
+          case 3:
+            width= 280;
+            break;
+          case 4:
+            width= 280;
+            break;
+          default:
+            width= 280;
+            break;
+        }
+        return Number(this.settings.show_chatbot_icon) === 1 ? width : width + 20;
+    },
     getCarouselSize: function(settings) {
       if (settings.carouselPattern === '1') {
         return this.getInsideArrowCarouselSize(settings);

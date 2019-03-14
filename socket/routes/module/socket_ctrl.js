@@ -570,7 +570,7 @@ function getMessageTypeByUiType(type) {
       result = 22;
       break;
     case 3:
-      result = 22;
+      result = 55;
       break;
     case 4:
       result = 41;
@@ -583,6 +583,12 @@ function getMessageTypeByUiType(type) {
       break;
     case 7:
       result = 46;
+      break;
+    case 8:
+      result = 49;
+      break;
+    case 9:
+      result = 52;
       break;
     default:
       result = 22;
@@ -1271,6 +1277,32 @@ io.sockets.on('connection', function(socket) {
     },
     _handleInsertData: function(
         error, results, d, noReturnSelfMessage, insertData) {
+      try {
+        if(d.messageType === 1
+            || d.messageType === 12
+            || d.messageType === 13
+            || d.messageType === 19
+            || (d.messageType >= 30 && d.messageType <= 39)
+            || d.messageType === 43
+            || d.messageType === 44
+            || d.messageType === 47
+            || d.messageType === 48
+            || d.messageType === 50
+            || d.messageType === 51
+            || d.messageType === 53
+            || d.messageType === 54) {
+          // DEBUG: サイト訪問者側メッセージのログ出力
+          console.log('customer message',{
+            siteKey: d.siteKey,
+            ssId: d.sincloSessionId,
+            tabId: d.tabId,
+            message: d.chatMessage,
+            type: d.messageType
+          });
+        }
+      } catch(e) {
+
+      }
       if (!isset(error)) {
         let messageTimeType = 1;
         if(Number(insertData.message_request_flg) === 1) {
@@ -4068,7 +4100,9 @@ io.sockets.on('connection', function(socket) {
             (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller) ||
                 !sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isSwitchingOperator())) {
           if (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller)) {
-            sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller();
+            // functionManager.isEnabledでCogmoAttendAPIのsystemUUIDが返却される
+            sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller(functionManager.isEnabled(obj.siteKey,
+                functionManager.keyList.useCogmoAttendApi));
             sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.init(
                 sincloCore[obj.siteKey][obj.tabId].historyId, obj,
                 fullDateTime(), emit).then(() => {

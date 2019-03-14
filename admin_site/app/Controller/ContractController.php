@@ -385,6 +385,7 @@ class ContractController extends AppController
       $coreSetting = json_decode($companyEditData['MCompany']['core_settings'], TRUE);
       $saveData['MCompany']['options']['hideRealtimeMonitor'] = !empty($coreSetting['hideRealtimeMonitor']) ? $coreSetting['hideRealtimeMonitor'] : false;
       $saveData['MCompany']['options']['monitorPollingMode'] = !empty($coreSetting['monitorPollingMode']) ? $coreSetting['monitorPollingMode'] : false;
+      $saveData['MCompany']['options']['useCogmoAttendApi'] = !empty($coreSetting['useCogmoAttendApi']) ? $coreSetting['useCogmoAttendApi'] : false;
       $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']['options']);
       $this->MCompany->save($companySaveData, false);
       // 有効・無効でJSファイルの中身が変わるので書き換える
@@ -851,9 +852,10 @@ class ContractController extends AppController
     );
     if (empty($autoMessages)) {
       $default = $this->getDefaultAutomessageConfigurations($companyInfo['options']['chatbotScenario']);
+      $addedRelationAutomessageIds = array();
       foreach ($default as $index => $item) {
         $this->TAutoMessages->create();
-        $data = [
+        $data = array(
           "m_companies_id" => $m_companies_id,
           "name" => $item['name'],
           "trigger_type" => $item['trigger_type'],
@@ -861,12 +863,15 @@ class ContractController extends AppController
           "action_type" => $item['action_type'],
           "sort" => $item['sort'],
           "active_flg" => $item['active_type']
-        ];
+        );
         if (array_key_exists($index, $addedRelationScenarioIds) && array_key_exists('t_chatbot_scenario_id', $item)) {
           $data['t_chatbot_scenario_id'] = $addedRelationScenarioIds[$index];
+        } else if (array_key_exists('target_automessage_index', $item) && array_key_exists($item['target_automessage_index'], $addedRelationAutomessageIds)) {
+          $data['call_automessage_id'] = $addedRelationAutomessageIds[$item['target_automessage_index']];
         }
         $this->TAutoMessages->set($data);
         $this->TAutoMessages->save();
+        array_push($addedRelationAutomessageIds, $this->TAutoMessages->getLastInsertId());
       }
     }
   }
@@ -1035,7 +1040,7 @@ class ContractController extends AppController
           "sort" => $scenario['sort']
         ));
         if (!$this->TChatbotScenario->save()) {
-          throw new Exception($this->TChatbotScenario->validationError);
+          throw new Exception(json_encode($this->TChatbotScenario->validationErrors, JSON_UNESCAPED_UNICODE));
         }
         if (array_key_exists('relation_auto_message_index', $scenario)) {
           $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
@@ -1100,7 +1105,7 @@ class ContractController extends AppController
           "sort" => $sortNum
         ));
         if (!$this->TChatbotScenario->save()) {
-          throw new Exception($this->TChatbotScenario->validationError);
+          throw new Exception(json_encode($this->TChatbotScenario->validationErrors, JSON_UNESCAPED_UNICODE));
         }
         if (array_key_exists('relation_auto_message_index', $scenario)) {
           $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
@@ -1188,7 +1193,11 @@ class ContractController extends AppController
     }
     $planObj = json_decode($plan, TRUE);
     foreach ($options as $key => $enabled) {
-      $planObj[$key] = strcmp($enabled, "1") === 0;
+      if(strcmp('useCogmoAttendApi', $key) === 0) {
+        $planObj[$key] = is_string($enabled) ? $enabled : false;
+      } else {
+        $planObj[$key] = strcmp($enabled, "1") === 0;
+      }
     }
     return json_encode($planObj);
   }

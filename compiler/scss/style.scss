@@ -108,6 +108,10 @@ li {
   }
 }
 
+.disabled {
+  color: #CCCCCC;
+}
+
 table {
   border-collapse: separate;
   border-spacing:0;
@@ -6116,6 +6120,9 @@ ul.naviBtn {
       &.actionValueScenarioLabel {
         background-color: #edbf35;
       }
+      &.actionValueCallAutomessageLabel {
+        background-color: #d251c4;
+      }
     }
 
     #balloons {
@@ -6170,11 +6177,18 @@ ul.naviBtn {
         > li {
           padding: 15px 0;
 
+          &#callAutoMessageSetting {
+            select {
+              height: 23px;
+            }
+            padding-bottom: 30px;
+          }
+
           &:not(.error-message) {
             border-top: 1px solid #B7B7B7;
           }
 
-          &:first-child {
+          &:first-child, &.no-border{
             border-top: none;
           }
 
@@ -7385,6 +7399,10 @@ ul.naviBtn {
               border: 1px solid #B7B7B7;
               margin-top: 20px;
 
+              &#action0_setting {
+                margin-top: 8px;
+              }
+
               hr.separator {
                 border-color: #C3D69B;
                 border-style: solid;
@@ -7822,6 +7840,118 @@ ul.naviBtn {
                         padding: 4px;
                         bottom: 0px;
                       }
+                    }
+                  }
+
+                  .checkbox-design-custom-area {
+                    input[type="checkbox"], input[type="radio"] {
+                      margin-top: 0px;
+                    }
+
+                    .checkbox-custom-items {
+                      margin-left: 16px;
+                      height: 35px;
+                      display: flex;
+                      width: 35em;
+                      padding: 2px 0;
+                      align-items: center;
+
+                      input[type="text"] {
+                        width: 120px;
+                        height: 26px;
+                        font-size: 12px;
+                        padding-left: 4px;
+                        position: relative;
+                        border: none !important;
+                        border-bottom: 1px solid #909090 !important;
+                        border-radius: 0 !important;
+                      }
+
+                      label {
+                        flex-basis: 210px;
+                      }
+
+                      .radio-buttons {
+                        display: flex;
+                        align-items: center;
+                        flex-basis: 265px;
+                        label {
+                          margin-top: 0px;
+                          &.text3 {
+
+                          }
+                          &.text4 {
+                            margin-right: 20px;
+                          }
+                        }
+                      }
+
+                      .revert-button {
+                        position: relative;
+                        left: 10px;
+                        padding: 4px;
+                        bottom: 0px;
+                      }
+                    }
+
+                    .noneBorderCheckbox {
+                      margin-left: 213px;
+                    }
+                  }
+
+                  .radio-design-custom-area {
+                    input[type="checkbox"], input[type="radio"] {
+                      margin-top: 0px;
+                    }
+
+                    .radio-custom-items {
+                      margin-left: 16px;
+                      height: 32px;
+                      display: flex;
+                      width: 35em;
+                      padding: 2px 0;
+                      align-items: center;
+
+                      input[type="text"] {
+                        width: 120px;
+                        height: 26px;
+                        font-size: 12px;
+                        padding-left: 4px;
+                        position: relative;
+                        border: none !important;
+                        border-bottom: 1px solid #909090 !important;
+                        border-radius: 0 !important;
+                      }
+
+                      label {
+                        flex-basis: 150px;
+                      }
+
+                      .radio-buttons {
+                        display: flex;
+                        align-items: center;
+                        flex-basis: 265px;
+                        label {
+                          margin-top: 0px;
+                          &.text3 {
+
+                          }
+                          &.text4 {
+                            margin-right: 20px;
+                          }
+                        }
+                      }
+
+                      .revert-button {
+                        position: relative;
+                        left: 10px;
+                        padding: 4px;
+                        bottom: 0px;
+                      }
+                    }
+
+                    .noneBorderCheckbox {
+                      margin-left: 213px;
                     }
                   }
                 }
@@ -8506,7 +8636,8 @@ ul.naviBtn {
                         label {
                           padding-top: 6px;
                           &.executeNextActionCheck {
-                            display: block;
+                            display: flex;
+                            align-items: center;
                           }
                           &.jumpLinkAction {
                             display: inline-flex;
@@ -8659,7 +8790,7 @@ ul.naviBtn {
                   grid-column: 4;
                   -ms-grid-column: 4;
                 }
-                input[type="text"].make-box{
+                input[type="text"].make-box, select.make-box{
                   border-radius: 4px;
                   border: 1px solid #909090;
                   width: auto;

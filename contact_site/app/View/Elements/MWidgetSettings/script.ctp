@@ -1630,6 +1630,9 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         }
         $scope.changeFlg = true;
       });
+      if(Number($scope.chat_init_show_textarea) === 2) {
+        $scope.resizeChatArea();
+      }
       $(window).on('resize', function(e){
         if($scope.showWidgetType === 1) {
           $scope.resizeWidgetHeightByWindowHeight();
@@ -1646,10 +1649,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
       if(Number($scope.closeButtonSettingToggle) !== 2 || Number($scope.closeButtonModeTypeToggle) !== 1) {
         $scope.showTimeBannerSettingDisable();
-      }
-
-      if(Number($scope.chat_init_show_textarea) === 2) {
-        $scope.resizeChatArea();
       }
     });
 
