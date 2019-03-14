@@ -1422,6 +1422,10 @@ var socket, // socket.io
             (Number(chatPosition.re.textSize) - 6) + 'px; height: ' +
             (Number(chatPosition.re.textSize) - 6) + 'px; background: ' +
             colorList['mainColor'] + '; border-radius: 50%; } ';
+
+        html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio { font-size: ' + Number(chatPosition.re.textSize)+ 'px;}';
+        html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label{ font-size: ' + Number(chatPosition.re.textSize)+ 'px;}';
+
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver { cursor: pointer; display: none; position: absolute; left: 0; right: 0; width: 100%; height: 1.5em; background-color: rgba(0, 0, 0, 0.45); vertical-align: middle; word-wrap: break-word; z-index: 2; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver:before {content: ""; display: inline-block; border: 6px solid transparent; position: absolute; top: 50%; margin-top: -3px; left: 5px; height: 8px; border-top: 8px solid white; border-bottom: 0; }';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { overflow: hidden; font-size: 10px; height: 100%; line-height: 2em; padding-left: 2em; color: #FFF; }';
@@ -1429,6 +1433,8 @@ var socket, // socket.io
             colorList['widgetInsideBorderColor'] + '; background-color: ' +
             colorList['chatMessageBackgroundColor'] + ';}';
 
+        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + (Number(chatPosition.re.textSize) + 2) + 'px;}';
+        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (Number(chatPosition.re.textSize) + 2) + 'px; height: ' + (Number(chatPosition.re.textSize) + 2) + 'px;}';
         /* ヒアリング */
         html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
         html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
@@ -1955,6 +1961,18 @@ var socket, // socket.io
               Math.ceil(((11 * ratio) / 2) + 1) + 'px; height: ' +
               Math.ceil(((11 * ratio) / 2) + 1) + 'px; background: ' +
               colorList['mainColor'] + '; border-radius: 50%; } ';
+
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio { font-size: ' + (12 * ratio) + 'px;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label { font-size: ' + (12 * ratio) + 'px;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label:before {top: ' + ((11 * ratio) / 2 - 1) + 'px; ' +
+              ' left: 0; width: ' + (12 * ratio) + 'px; height: ' + (12 * ratio) + 'px; }';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label:after {top: ' + (11 * ratio) / 2 + 'px; ' +
+              ' left: ' + ((11 * ratio) / 4 + 1) + 'px; margin-top: ' + (0 - (11 * ratio) / 4) + 'px; width: 9px; height: 9px; }';
+
+
+          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + (12 * ratio) + 'px;}';
+          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (12 * ratio) + 'px; height: ' + (12 * ratio) + 'px;}';
+
           html += '#sincloBox ul#chatTalk li span.cName { font-size: ' +
               (13 * ratio) + 'px; margin: 0 0 ' + (5 * ratio) + 'px 0; }';
           if (colorList['seBorderNone'] === 0) {
@@ -2298,8 +2316,8 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:14px); }';
 
           html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0 0 -1em 0.5em; display: inline-block; } ';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio { margin: 0;} '; // 1
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].labelStyle sinclo-radio { margin: 0 0 0 5px;} '; // 1
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio { margin: 0;} ';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].labelStyle sinclo-radio { margin: 0 0 0 5px;} ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"], #sincloBox ul#chatTalk li sinclo-radio label { webkit-transform: scale(1.3); transform: scale(1.3); moz-transform: scale(1.3); } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1em; font-size: 0.7em; } ';
@@ -2308,9 +2326,21 @@ var socket, // socket.io
               chatContentTextColor + '; border-radius: 50%; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 10px; left: 0px; margin-top: -5px; width: 11px; height: 11px; background: ' +
               colorList['mainColor'] + '; border-radius: 50%; } ';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].labelStyle sinclo-radio [type="radio"]:checked + label:after {top: 9px; left: -1px;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].labelStyle sinclo-radio [type="radio"]:checked + label:after {top: 11px; left: -1px;}';
           html += '#sincloBox ul#chatTalk li label, #sincloBox ul#chatTalk li span, #sincloBox ul#chatTalk li a { font-size: 1em; }';
           html += '#sincloBox ul#chatTalk li span.cName { margin: 0 0 0.3em 0 }';
+
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label { padding-left: 25px !important;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label:before {top: ' + ((11 * ratio) / 2 + 1) + 'px; ' +
+              ' left: 0; width: ' + (12 * ratio) + 'px; height: ' + (12 * ratio) + 'px; }';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label:after {top: ' + (11 * ratio) / 2 + 'px; ' +
+              ' left: ' + ((11 * ratio) / 4 + 1) + 'px; margin-top: ' + (0 - (11 * ratio) / 4) + 'px; width: 9px; height: 9px; }';
+
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio { font-size: ' + (12 * ratio) + 'px;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label{ font-size: ' + (12 * ratio) + 'px;}';
+
+          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + (12 * ratio) + 'px;}';
+          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (12 * ratio) + 'px; height: ' + (12 * ratio) + 'px;}';
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
           }
