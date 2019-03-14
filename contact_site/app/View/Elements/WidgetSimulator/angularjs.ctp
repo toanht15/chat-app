@@ -492,8 +492,11 @@
         $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
-        var html = $scope.simulatorSettings.createRadioButton(data);
-        divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        var radioData = $scope.simulatorSettings.createRadioButton(data);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = radioData.html;
+        if (data.settings.radioStyle === '1') {
+          divElm.querySelector('li').classList.add('widthCustom');
+        }
         divElm.style.display = "";
         if( $scope.needsIcon() ) {
           //チャットボットのアイコンを表示する場合は
@@ -505,6 +508,39 @@
 
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
+
+        if (data.settings.radioStyle === '1') {
+          var radioTarget = $('#' + radioData.radioName + ' input[type="radio"]');
+          var radioLabelTarget = $('#' + radioData.radioName + ' .sinclo-radio');
+          radioLabelTarget.css('background-color', data.settings.customDesign.radioEntireBackgroundColor);
+          radioTarget.each(function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', data.settings.customDesign.radioEntireActiveColor);
+              $(this).parent().find('label').css('color', data.settings.customDesign.radioActiveTextColor);
+            } else {
+              $(this).parent().find('label').css('color', data.settings.customDesign.radioTextColor);
+            }
+          });
+          radioTarget.on('change', function() {
+            radioTarget.each(function() {
+              if ($(this).prop('checked')) {
+                if (data.settings.radioStyle !== '1') {
+                  $(this).parent().css('background-color', 'transparent');
+                } else {
+                  $(this).parent().css('background-color', data.settings.customDesign.radioEntireActiveColor);
+                  $(this).parent().find('label').css('color', data.settings.customDesign.radioActiveTextColor);
+                }
+              } else {
+                if (data.settings.radioStyle !== '1') {
+                  $(this).parent().css('background-color', 'transparent');
+                } else {
+                  $(this).parent().css('background-color', data.settings.customDesign.radioEntireBackgroundColor);
+                  $(this).parent().find('label').css('color', data.settings.customDesign.radioTextColor);
+                }
+              }
+            });
+          });
+        }
 
         $scope.handleBrowserZoom();
         $('#chatTalk > div:last-child').show();
@@ -840,8 +876,11 @@
         $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
-        var html = $scope.simulatorSettings.createCheckbox(data);
-        divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        var checkboxData = $scope.simulatorSettings.createCheckbox(data);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = checkboxData.html;
+        if (data.settings.checkboxStyle === '1') {
+          divElm.querySelector('li').classList.add('widthCustom');
+        }
         divElm.style.display = "";
         if( $scope.needsIcon() ) {
           gridElm = $scope.addIconImage( gridElm );
@@ -851,6 +890,30 @@
 
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
+
+        if (data.settings.checkboxStyle === '1') {
+          var checkboxTarget = $('#' + checkboxData.checkboxName + ' input[type="checkbox"]');
+          checkboxTarget.each(function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+              $(this).parent().css('color', data.settings.customDesign.checkboxActiveTextColor);
+            }
+          });
+          checkboxTarget.on('change', function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
+              $(this).parent().css('color', data.settings.customDesign.checkboxActiveTextColor);
+            } else {
+              if (data.settings.checkboxStyle !== '1') {
+                $(this).parent().css('background-color', 'transparent');
+              } else {
+                $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireBackgroundColor);
+                $(this).parent().css('color', data.settings.customDesign.checkboxTextColor);
+              }
+            }
+          });
+        }
+
         self.autoScroll();
       };
 
@@ -1922,6 +1985,7 @@
       } else if (Number( widgetSizeType ) === 1) {
         html += 'botNowTypingSmall\'>';
       } else if (Number( widgetSizeType )  === 5) {
+        console.log("なんかするヵ");
         html += 'botNowTypingLarge\'>';
       }
       html += '    <div class=\'reload_dot_left\'></div>';

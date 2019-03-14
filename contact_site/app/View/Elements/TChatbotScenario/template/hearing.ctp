@@ -103,8 +103,7 @@
                                                           value="2" ng-model="hearingItem.inputType">number</label>
                         </span>
 
-            <div
-                ng-if="(hearingItem.uiType === '1' && hearingItem.inputType != 1) || (hearingItem.uiType === '2' &&  hearingItem.inputType != 1)"
+            <div ng-if="(hearingItem.uiType === '1' && hearingItem.inputType != 1) || (hearingItem.uiType === '2' &&  hearingItem.inputType != 1)"
                 class="styleFlexbox m15t">
                             <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ
                                     <span class="questionBalloon">
@@ -120,6 +119,8 @@
                                  data-maxRow="10"></resize-textarea>
               </div>
             </div>
+
+
 
             <div ng-if="hearingItem.uiType === '3' || hearingItem.uiType === '4' || hearingItem.uiType === '7' || hearingItem.uiType === '8' || hearingItem.uiType === '9'"
                  ng-repeat="(optionIndex, option) in hearingItem.settings.options  track by $index"
@@ -160,6 +161,110 @@
                 <option value="2">/（スラッシュ）</option>
                 <option value="3">|（パイプ）</option>
               </select>
+            </div>
+
+            <!-- radio button style customize -->
+            <span ng-if="hearingItem.uiType === '3'" style="padding: 0; margin-top: 8px;">
+                            <label>表示形式<span class="questionBalloon"><icon class="questionBtn"
+                                                                           data-tooltip="吹き出しの表示有無を選択できます。">?</icon></span></label>
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-radio-style"
+                                                          value="1"
+                                                          ng-model="hearingItem.settings.radioStyle">ボタン型</label>
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-radio-style"
+                                                          value="2"
+                                                          ng-model="hearingItem.settings.radioStyle">ラベル型</label>
+            </span>
+
+            <div ng-if="hearingItem.uiType === '3' && hearingItem.settings.radioStyle === '1'"
+                 class="radio-design-custom-area">
+              <span class="radio-custom-items">
+                  <label>ボタン背景色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_radioEntireBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.radioEntireBackgroundColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioEntireBackgroundColor')">標準に戻す</span>
+                </span>
+              <span class="radio-custom-items">
+                  <label>選択時のボタン背景色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_radioEntireActiveColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.radioEntireActiveColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioEntireActiveColor')">標準に戻す</span>
+                </span>
+              <span class="radio-custom-items">
+                  <label>文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_radioTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.radioTextColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioTextColor')">標準に戻す</span>
+                </span>
+              <span class="radio-custom-items">
+                  <label>選択時の文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_radioActiveTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.radioActiveTextColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioActiveTextColor')">標準に戻す</span>
+                </span>
+            </div>
+
+            <!-- checkbox style customize -->
+            <span ng-if="hearingItem.uiType === '9'" style="padding: 0; margin-top: 8px;">
+                            <label>表示形式<span class="questionBalloon"><icon class="questionBtn"
+                                                                           data-tooltip="吹き出しの表示有無を選択できます。">?</icon></span></label>
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-checkbox-style"
+                                                          value="1"
+                                                          ng-model="hearingItem.settings.checkboxStyle">ボタン型</label>
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-checkbox-style"
+                                                          value="2"
+                                                          ng-model="hearingItem.settings.checkboxStyle">ラベル型</label>
+            </span>
+
+            <div ng-if="hearingItem.uiType === '9' && hearingItem.settings.checkboxStyle === '1'"
+                 class="checkbox-design-custom-area">
+              <span class="checkbox-custom-items">
+                  <label>ボタン背景色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxEntireBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.checkboxEntireBackgroundColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxEntireBackgroundColor')">標準に戻す</span>
+                </span>
+
+              <span class="checkbox-custom-items">
+                  <label>選択時のボタン背景色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxEntireActiveColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.checkboxEntireActiveColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxEntireActiveColor')">標準に戻す</span>
+                </span>
+
+              <span class="checkbox-custom-items">
+                  <label>文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.checkboxTextColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxTextColor')">標準に戻す</span>
+                </span>
+
+              <span class="checkbox-custom-items">
+                  <label>選択時の文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxActiveTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.checkboxActiveTextColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxActiveTextColor')">標準に戻す</span>
+                </span>
+
             </div>
 
             <label ng-if="hearingItem.uiType === '4'" class="pointer">
@@ -381,7 +486,7 @@
 
               <label class="pointer" style="margin-left: 145px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.outCarouselNoneBorder">枠線なしにする
+                       ng-model="hearingItem.settings.outCarouselNoneBorder" ng-change="main.handleNoneBorder(setActionId, listId)">枠線なしにする
               </label>
 
               <span>
@@ -395,7 +500,7 @@
 
               <label class="pointer" style="margin-left: 145px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.inCarouselNoneBorder">枠線なしにする
+                       ng-model="hearingItem.settings.inCarouselNoneBorder" ng-change="main.handleNoneBorder(setActionId, listId)">枠線なしにする
               </label>
             </div>
 
@@ -766,7 +871,7 @@
 
               <label class="pointer" style="margin-left: 116px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.customDesign.outButtonNoneBorder" value="1">枠線なしにする
+                       ng-model="hearingItem.settings.customDesign.outButtonNoneBorder" value="1" ng-change="main.handleNoneBorder(setActionId, listId)">枠線なしにする
               </label>
             </div>
 
@@ -837,7 +942,7 @@
 
               <label class="pointer" style="margin-left: 116px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.outButtonUINoneBorder">枠線なしにする
+                       ng-model="hearingItem.settings.outButtonUINoneBorder" ng-change="main.handleNoneBorder(setActionId, listId)">枠線なしにする
               </label>
             </div>
 
@@ -849,6 +954,14 @@
             <div ng-if="hearingItem.uiType === '9' && hearingItem.settings.checkboxCustomDesign"
                  class="checkbox-design-custom-area">
               <span class="checkbox-custom-items">
+                  <label>選択肢の行間</label>
+                <input type="number" style="width: 108px;" min="1" max="100"
+                       id="action{{setActionId}}_button{{listId}}_checkboxSelectionDistance"
+                       ng-model="hearingItem.settings.customDesign.checkboxSelectionDistance"><p>px</p>
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxSelectionDistance')">標準に戻す</span>
+                </span>
+              <span class="checkbox-custom-items">
                   <label>チェックボックス背景色</label>
                   <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxBackgroundColor"
                          class="jscolor{hash:true} ignore-click-event"
@@ -857,7 +970,7 @@
                         ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxBackgroundColor')">標準に戻す</span>
                 </span>
               <span class="checkbox-custom-items">
-                  <label>チェックON時の背景色</label>
+                  <label>選択時のチェックボックス背景色</label>
                   <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxActiveColor"
                          class="jscolor{hash:true} ignore-click-event"
                          ng-model="hearingItem.settings.customDesign.checkboxActiveColor">
@@ -881,9 +994,9 @@
                       ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxBorderColor')">標準に戻す</span>
               </span>
 
-              <label class="pointer" style="margin-left: 165px">
+              <label class="pointer noneBorderCheckbox">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.checkboxNoneBorder">枠線なしにする
+                       ng-model="hearingItem.settings.checkboxNoneBorder" ng-change="main.handleNoneBorder(setActionId, listId)">枠線なしにする
               </label>
             </div>
 
@@ -893,8 +1006,17 @@
                                                   data-tooltip="ボタンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
             </label>
             <div ng-if="hearingItem.uiType === '3' && hearingItem.settings.radioCustomDesign"
-                 class="checkbox-design-custom-area">
-              <span class="checkbox-custom-items">
+                 class="radio-design-custom-area">
+
+              <span class="radio-custom-items">
+                  <label>選択肢の行間</label>
+                <input type="number" style="width: 108px" min="1" max="100"
+                       id="action{{setActionId}}_button{{listId}}_radioSelectionDistance"
+                       ng-model="hearingItem.settings.customDesign.radioSelectionDistance"><p>px</p>
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioSelectionDistance')">標準に戻す</span>
+                </span>
+              <span class="radio-custom-items">
                   <label>ラジオボタン背景色</label>
                   <input type="text" id="action{{setActionId}}_button{{listId}}_radioBackgroundColor"
                          class="jscolor{hash:true} ignore-click-event"
@@ -902,7 +1024,7 @@
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioBackgroundColor')">標準に戻す</span>
                 </span>
-              <span class="checkbox-custom-items">
+              <span class="radio-custom-items">
                   <label>ラジオボタンの色</label>
                   <input type="text" id="action{{setActionId}}_button{{listId}}_radioActiveColor"
                          class="jscolor{hash:true} ignore-click-event"
@@ -911,7 +1033,7 @@
                         ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioActiveColor')">標準に戻す</span>
               </span>
 
-              <span class="checkbox-custom-items">
+              <span class="radio-custom-items">
                 <label>ラジオボタン枠線色</label>
                 <input type="text" class="jscolor{hash:true} ignore-click-event"
                        id="action{{setActionId}}_button{{listId}}_radioBorderColor"
@@ -922,7 +1044,7 @@
 
               <label class="pointer" style="margin-left: 165px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.radioNoneBorder">枠線なしにする
+                       ng-model="hearingItem.settings.radioNoneBorder" ng-change="main.handleNoneBorder(setActionId, listId)">枠線なしにする
               </label>
             </div>
           </div>
