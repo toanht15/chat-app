@@ -6,6 +6,7 @@
  * Date: 2019/02/18
  * Time: 21:03
  * @property TChatbotDiagram $TChatbotDiagram
+ * @property TChatbotDiagramNodeName $TChatbotDiagramNodeName
  * @property TChatbotScenario $TChatbotScenario
  * @property TransactionManager $TransactionManager
  */
@@ -13,7 +14,7 @@ App::uses('WidgetSettingController', 'Controller');
 
 class TChatbotDiagramsController extends WidgetSettingController
 {
-  public $uses = array('TChatbotDiagram', 'TransactionManager', 'TChatbotScenario', 'MWidgetSetting', 'TAutoMessage');
+  public $uses = array('TChatbotDiagram', 'TChatbotDiagramNodeName', 'TransactionManager', 'TChatbotScenario', 'MWidgetSetting', 'TAutoMessage');
   public $paginate = array(
     'TChatbotDiagram' => array(
       'limit' => 100,
@@ -132,7 +133,12 @@ class TChatbotDiagramsController extends WidgetSettingController
       }
 
       try {
-        $this->TChatbotDiagram->save($saveData);
+        if(!$this->TChatbotDiagram->save($saveData)) {
+          throw new Exception('保存に失敗しました');
+        }
+        $insertId = $this->TChatbotDiagram->getLastInsertId() ? $this->TChatbotDiagram->getLastInsertId() : $saveData['id'];
+        $this->insertNodeNameTable($insertId, json_decode($this->request->data['TChatbotDiagram']['activity'], TRUE));
+
         $this->TransactionManager->commitTransaction($transaction);
       } catch (Exception $exception) {
         throw new InternalErrorException('DB処理に失敗しました。：' . $exception->getMessage());
@@ -142,6 +148,41 @@ class TChatbotDiagramsController extends WidgetSettingController
 
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       $this->redirect(['action' => 'index']);
+    }
+  }
+
+  private function insertNodeNameTable($id, $activity) {
+    $cells = $activity['cells'];
+    foreach($cells as $index => $cell) {
+      if(strcmp($cell['type'], 'devs.Model') !== 0) continue;
+      if(!empty($cell['attrs']['actionParam']['nodeName'])) {
+        $nodeName = $this->TChatbotDiagramNodeName->find('first', array(
+          'conditions' => array(
+            'm_companies_id' => $this->userInfo['MCompany']['id'],
+            'node_id' => $cell['id']
+          )
+        ));
+        if(empty($nodeName)) {
+          $this->TChatbotDiagramNodeName->create();
+          $this->TChatbotDiagramNodeName->set(array(
+            'm_companies_id' => $this->userInfo['MCompany']['id'],
+            't_chatbot_diagram_id' => $id,
+            'type' => $cell['attrs']['nodeBasicInfo']['nodeType'],
+            'node_id' => $cell['id'],
+            'node_name' => $cell['attrs']['actionParam']['nodeName'],
+            'del_flg' => 0
+          ));
+        } else {
+          $this->TChatbotDiagramNodeName->create();
+          $nodeName['TChatbotDiagramNodeName']['t_chatbot_diagram_id'] = $id;
+          $nodeName['TChatbotDiagramNodeName']['type'] = $cell['attrs']['nodeBasicInfo']['nodeType'];
+          $nodeName['TChatbotDiagramNodeName']['node_name'] = $cell['attrs']['actionParam']['nodeName'];
+          $this->TChatbotDiagramNodeName->set($nodeName);
+        }
+        if (!$this->TChatbotDiagramNodeName->save()) {
+          throw new Exception('t_chatbot_diagram_node_nameテーブルにデータ保存時にエラー発生しました。');
+        }
+      }
     }
   }
 

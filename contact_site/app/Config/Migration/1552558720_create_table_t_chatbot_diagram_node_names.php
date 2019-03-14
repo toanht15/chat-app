@@ -21,7 +21,7 @@ class CreateTableTChatbotDiagramNodeNames extends CakeMigration {
 					'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 					't_chatbot_diagram_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 					'type' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-					'node_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+					'node_id' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 36, 'unsigned' => false),
 					'node_name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 300, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 					'del_flg' => array('type' => 'boolean', 'null' => true, 'default' => null),
 					'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
