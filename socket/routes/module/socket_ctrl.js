@@ -1277,7 +1277,7 @@ io.sockets.on('connection', function(socket) {
               insertData.message_read_flg = 1;
               insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
               insertData.message_distinction = d.messageDistinction;
-            } else if ((Number(insertData.message_type) === 1 &&
+            } else if ((Number(insertData.message_type) === 1 || Number(insertData.message_type) === 303) &&
                 d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) ||
                 Number(insertData.message_type) === 12 ||
                 Number(insertData.message_type) === 13) {
@@ -4848,7 +4848,15 @@ io.sockets.on('connection', function(socket) {
         else {
           messageDistinction = results[0].conversation_count;
         }
-        obj.message.forEach(function(elm, index, arr) {
+
+        let messages = obj.message;
+        if(isset(sincloCore[obj.siteKey])
+            && isset(sincloCore[obj.siteKey][obj.sincloSessionId])
+            && isset(sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
+          messages = sincloCore[obj.siteKey][obj.sincloSessionId].diagram.concat(messages);
+          sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
+        }
+        messages.forEach(function(elm, index, arr) {
           if (!isset(elm.created)) {
             elm.created = new Date();
             elm.sort = fullDateTime(elm.created);

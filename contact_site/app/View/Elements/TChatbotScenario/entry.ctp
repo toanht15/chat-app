@@ -1,6 +1,8 @@
 <?php echo $this->element('TChatbotScenario/angularjs'); ?>
 <?php echo $this->element('TChatbotScenario/localStorageService'); ?>
 <?php echo $this->element('WidgetSimulator/simulatorService'); ?>
+<?php echo $this->element('WidgetSimulator/scenarioSimulatorService'); ?>
+<?php echo $this->element('WidgetSimulator/diagramSimulatorService'); ?>
 <script type="text/javascript">addTooltipEvent();</script>
 <div ng-app="sincloApp" ng-controller="MainController as main" ng-cloak style="height: 100%;" id="tchatbotscenario_form">
   <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
