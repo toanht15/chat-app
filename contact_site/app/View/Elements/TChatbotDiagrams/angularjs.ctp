@@ -254,9 +254,27 @@
       var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
       if (dataForUpdate !== null && dataForUpdate !== '') {
-        graph.fromJSON(JSON.parse(dataForUpdate));
+        var graphData = JSON.parse(dataForUpdate);
+        Object.keys(graphData.cells).forEach(function(elm, idx, arr){
+          if('devs.Model'.indexOf(graphData.cells[idx]['type']) === -1) return;
+          if(graphData.cells[idx]['attrs']['actionParam']
+              && graphData.cells[idx]['attrs']['nodeBasicInfo']
+              && 'branch'.indexOf(graphData.cells[idx]['attrs']['nodeBasicInfo']['nodeType']) !== -1
+              && graphData.cells[idx]['attrs']['actionParam']['selection']
+              && typeof(graphData.cells[idx]['attrs']['actionParam']['selection'][0]) === 'string') {
+            for(var i = 0; i < graphData.cells[idx]['attrs']['actionParam']['selection'].length; i++) {
+              var label = graphData.cells[idx]['attrs']['actionParam']['selection'][i];
+              graphData.cells[idx]['attrs']['actionParam']['selection'][i] = {
+                type: 1, // 選択肢固定
+                value: label
+              };
+            }
+          }
+        });
+        console.log(graphData);
+        graph.fromJSON(graphData);
         setTimeout(function(){
-          dataForUpdate = JSON.parse(dataForUpdate);
+          dataForUpdate = graphData;
           graph.resetCells(dataForUpdate.cells);
           initNodeEvent(graph.getCells());
         }, 500);

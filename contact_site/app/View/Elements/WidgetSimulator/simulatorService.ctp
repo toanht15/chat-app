@@ -1627,10 +1627,15 @@
         }
         angular.forEach(labels, function(option, key) {
           if (!option || option == '') return false;
-          html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
-              key + '\' class=\'sinclo-chat-radio\' value=\'' + option + '\' data-nid=\'' + nodeId +
-                    '\' data-next-nid=\'' + selection[key] + '\'>';
-          html += '<label for=\'' + radioName + '-' + key + '\'>' + option + '</label></span><br>';
+          if (option.type && option.value && option.type === 2) {
+            html += this.createMessage(option.value, nodeId);
+          } else {
+            var message = option.value ? option.value : option;
+            html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
+                key + '\' class=\'sinclo-chat-radio\' value=\'' + message + '\' data-nid=\'' + nodeId +
+                '\' data-next-nid=\'' + selection[key] + '\'>';
+            html += '<label for=\'' + radioName + '-' + key + '\'>' + message + '</label></span><br>';
+          }
         });
         html += '</select>';
         html += '</div>';
@@ -1682,8 +1687,13 @@
         html += style;
         angular.forEach(labels, function(option, key) {
           if (!option || option === '') return false;
-          html += '<button onclick="return false;" class="sinclo-button-ui" data-nid=\'' + nodeId +
-                    '\' data-next-nid=\'' + selection[key] + '\'>' + option + '</button>';
+          if (option.type && option.value && option.type === 2) {
+            html += this.createMessage(option.value, nodeId);
+          } else {
+            var message = option.value ? option.value : option;
+            html += '<button onclick="return false;" class="sinclo-button-ui" data-nid=\'' + nodeId +
+                '\' data-next-nid=\'' + selection[key] + '\'>' + message + '</button>';
+          }
         });
         html += '</div>';
 
