@@ -45,6 +45,42 @@ class AddScenarioSampleShell extends AppShell
     $this->log("END   AddScenarioSampleShell", 'refresh');
   }
 
+  public function importToLandscape() {
+    try {
+      $this->log("BEGIN AddScenarioSampleShell::importToLandscape", 'refresh');
+      $record = $this->MCompany->find('all',array(
+        'conditions' => array(
+          'AND' => array(
+            'company_key' => '59f6e3aa713de'
+          ),
+          'NOT' => array(
+            'del_flg' => 1
+          )
+        )
+      ));
+      $controller = new ContractController();
+      $transaction = $this->TransactionManager->begin();
+      foreach($record as $index => $company) {
+        $this->log('==========================================', LOG_INFO, 'refresh');
+        $this->log('TARGET : ' . $company['MCompany']['company_name'], LOG_INFO, 'refresh');
+        $this->log('KEY    : ' . $company['MCompany']['company_key'], LOG_INFO, 'refresh');
+        $this->log('PLAN   : ' . $this->convertContactTypesIdToString($company['MCompany']['m_contact_types_id']), LOG_INFO, 'refresh');
+        $this->log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', LOG_INFO, 'refresh');
+        if(strcmp($company['MCompany']['company_key'], 'medialink') === 0) {
+          $this->log('当社は既にこのサンプルが入ってるため入れません。','refresh');
+        }
+        $controller->addDefaultScenarioMessage($company['MCompany']['id'], $company['MCompany'], true);
+        $this->log('RESULT: OK', 'refresh');
+      }
+    } catch(Exception $e) {
+      $this->TransactionManager->rollback($transaction);
+      $this->log('RESULT: NG!!!!', 'refresh');
+      $this->log('==========================================', 'refresh');
+    }
+    $this->TransactionManager->commit($transaction);
+    $this->log("END   AddScenarioSampleShell", 'refresh');
+  }
+
   private function convertContactTypesIdToString($m_contact_types_id) {
     $val = "";
     switch($m_contact_types_id) {
