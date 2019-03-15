@@ -1353,6 +1353,7 @@
       var prevMessageBlock = null;
       var firstCheck = true;
       var answerCount = 0;
+      var isFirstHearingMessage = true;
       for (var key in obj.chat.messages) {
         if (!obj.chat.messages.hasOwnProperty(key)) return false;
         var chat = obj.chat.messages[key], userName;
@@ -1515,6 +1516,17 @@
           }
           if (key.indexOf('_') >= 0 && 'applied' in chat &&
               chat.applied) continue;
+
+          if(sinclo.scenarioApi.isProcessing()
+              && check.isset(chat.message.answerCount)) {
+            if(!isFirstHearingMessage) {
+              isFirstHearingMessage = true;
+            } else if(Number(chat.message.answerCount) === 0) {
+              // 2回目以降のカウント0のデータがあればそれ以前のヒアリングのUIをdisableにする
+              sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
+            }
+          }
+
           if (Number(chat.messageType) === 6 || Number(chat.messageType) ===
               27) {
             // ファイル送信チャット表示
@@ -1611,32 +1623,6 @@
             this.chatApi.addCarousel('', carousel.message,
                 carousel.settings);
             // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
-            if (sinclo.scenarioApi._hearing.disableRestoreMessage(
-                chat.chatId)) {
-              sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
-            }
-          } else if (Number(chat.messageType) === 49) {
-            var buttonUI = JSON.parse(chat.message);
-            this.chatApi.addButtonUI('hearing_msg sinclo_re', buttonUI.message,
-                buttonUI.settings);
-            // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
-            if (sinclo.scenarioApi._hearing.disableRestoreMessage(
-                chat.chatId)) {
-              sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
-            }
-          }  else if (Number(chat.messageType) === 52) {
-            var checkbox = JSON.parse(chat.message);
-            this.chatApi.addCheckbox('hearing_msg sinclo_re', checkbox.message,
-                checkbox.settings);
-            // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
-            if (sinclo.scenarioApi._hearing.disableRestoreMessage(
-                chat.chatId)) {
-              sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
-            }
-          } else if (Number(chat.messageType) === 55) {
-            var radio = JSON.parse(chat.message);
-            this.chatApi.addRadioButton('hearing_msg sinclo_re', radio.message, radio.settings);
-            //シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
             if (sinclo.scenarioApi._hearing.disableRestoreMessage(
                 chat.chatId)) {
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
