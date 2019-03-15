@@ -150,14 +150,14 @@
           <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM ?>" class="bt0">
             <span class="require"><label>チャットツリー</label></span>
             <?php
-            $canSelectScenario = isset($coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO];
+            $canCallDiagram = isset($coreSettings[C_COMPANY_USE_CHATBOT_TREE_EDITOR]) && $coreSettings[C_COMPANY_USE_CHATBOT_TREE_EDITOR];
             ?>
-            <label id="tautomessage_select_diagram" style="display: inline-block;" <?php echo $canSelectScenario ? '' : 'class="commontooltip" data-text="こちらの機能はオプションの加入が必要です。"' ?>>
+            <label id="tautomessage_select_diagram" style="display: inline-block;" <?php echo $canCallDiagram ? '' : 'class="commontooltip" data-text="こちらの機能はオプションの加入が必要です。"' ?>>
               <?= $this->Form->input('t_chatbot_diagram_id', [
                 'type' => 'select',
                 'options' => $this->data['chatbotDiagram'],
                 'empty' => 'チャットツリーを選択してください',
-                'disabled' => !$canSelectScenario,
+                'disabled' => !$canCallDiagram,
               ], [
                 'default' => (!empty($this->data['TAutoMessage']['t_chatbot_diagram_id'])) ? $this->data['TAutoMessage']['t_chatbot_diagram_id'] : ''
               ]) ?>
