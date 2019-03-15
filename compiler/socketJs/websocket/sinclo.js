@@ -10326,8 +10326,8 @@
         },
         tmpSeqStorage: null,
         _getCurrentSeq: function() {
-          var self = sinclo.scenarioApi._hearing;
-          var json = self._parent.get(self._state.currentSeq);
+          var self = sinclo.scenarioApi;
+          var json = self.get(self._hearing._state.currentSeq);
           var obj = json ? json : 0;
           return obj;
         },
