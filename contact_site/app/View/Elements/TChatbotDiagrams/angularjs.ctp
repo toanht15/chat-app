@@ -24,8 +24,6 @@
       var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
       $scope.widget.settings = widgetSettings;
 
-      console.log(widgetSettings);
-
 
       $scope.valueDiffChecker = {
         branch: function(target){
@@ -68,10 +66,6 @@
         }
         return true;
       };
-
-
-
-
 
       //メニューバーのアイコンにdraggableを付与
       $('#node_list > i ').each(function(index, target) {
@@ -133,7 +127,7 @@
 
       /* Model for branch customize */
       $scope.isCustomize = false;
-      $scope.radioStyle = 2;
+      $scope.radioStyle = '1';
       $scope.radioEntireBackgroundColor = "";
       $scope.radioEntireActiveColor = "";
       $scope.radioTextColor = "";
@@ -419,7 +413,7 @@
       $(canvas).mousemove(function(e) {
         if (dragReferencePosition) {
           $scope.moveX = e.offsetX - dragReferencePosition.x;
-          $scope.moveY = e.offsetY - dragReferencePosition.y
+          $scope.moveY = e.offsetY - dragReferencePosition.y;
           paper.translate(
               $scope.moveX,
               $scope.moveY
@@ -531,17 +525,33 @@
 
       /* bulkRegister Event */
       var bulkRegister = {
-        modalData: {},
+        textList: [],
         open: function() {
           try {
+            this._initData($scope.branchSelectionList);
             this._createModal(this._getOverView($scope.branchType), this._getContent());
           } catch (e) {
             console.log(e + " ERROR DETECTED");
           }
         },
+        _initData: function(list) {
+          this.textList.length = 0;
+          for(var i=0; i<list.length; i++){
+            if(Number(list[i].type) === 1) {
+              this.textList.push(list[i].value);
+            }
+          }
+        },
         _initPopupOverlapEvent: function() {
           popupEventOverlap.closePopup = function() {
-            $scope.branchSelectionList = $("#bulk_textarea").val().split("\n");
+            $scope.branchSelectionList.length = 0;
+            this.textList = $("#bulk_textarea").val().split("\n");
+            for(var i=0; i < this.textList.length; i++){
+              $scope.branchSelectionList.push({
+                type: "1",
+                value: this.textList[i]
+              });
+            }
             popupEventOverlap.closeNoPopupOverlap();
             $scope.$apply();
             $timeout(function() {
@@ -586,7 +596,7 @@
                  '    <p>選択肢として登録する内容を改行して設定してください。</p>\n' +
                  '\n' +
                  '    <textarea name=""  id="bulk_textarea" style="overflow: hidden; resize: none; font-size: 13px;" cols="48" rows="3" placeholder=' +
-                 '"男性&#10;女性">' + $scope.branchSelectionList.join("\n") + '</textarea>\n' +
+                 '"男性&#10;女性">' + this.textList.join("\n") + '</textarea>\n' +
                  '</div>';
         }
       };
@@ -1645,7 +1655,7 @@
 
       $scope.setAllCustomizeToData = function(custom){
         $scope.isCustomize = custom.isCustomize ? custom.isCustomize : false;
-        $scope.radioStyle = custom.radioStyle ? custom.radioStyle : 2;
+        $scope.radioStyle = custom.radioStyle ? custom.radioStyle : '1';
         $scope.radioEntireBackgroundColor = custom.radioEntireBackgroundColor ? custom.radioEntireBackgroundColor : $scope.getRawColor($scope.widget.settings.main_color, 0.5);
         $scope.radioEntireActiveColor = custom.radioEntireActiveColor ? custom.radioEntireActiveColor : $scope.widget.settings.main_color;
         $scope.radioTextColor = custom.radioTextColor ? custom.radioTextColor : $scope.widget.settings.re_text_color;
