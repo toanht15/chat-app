@@ -1522,9 +1522,9 @@
               var messageObj = JSON.parse(chat.message);
               if(check.isset(messageObj.answerCount)) {
                 if (!hasFirstHearingMessage &&
-                    Number(messageObj.answerCount) === 0) {
+                    answerCount === 0) {
                   hasFirstHearingMessage = true;
-                } else if (Number(messageObj.answerCount) === 0) {
+                } else if (answerCount === 0) {
                   // 2回目以降のカウント0のデータがあればそれ以前のヒアリングのUIをdisableにする
                   sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
                 }
