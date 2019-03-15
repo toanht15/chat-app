@@ -1353,7 +1353,7 @@
       var prevMessageBlock = null;
       var firstCheck = true;
       var answerCount = 0;
-      var isFirstHearingMessage = false;
+      var hasFirstHearingMessage = false;
       for (var key in obj.chat.messages) {
         if (!obj.chat.messages.hasOwnProperty(key)) return false;
         var chat = obj.chat.messages[key], userName;
@@ -1519,8 +1519,8 @@
 
           if(sinclo.scenarioApi.isProcessing()
               && check.isset(chat.message.answerCount)) {
-            if(!isFirstHearingMessage) {
-              isFirstHearingMessage = true;
+            if(!hasFirstHearingMessage && Number(chat.message.answerCount) === 0) {
+              hasFirstHearingMessage = true;
             } else if(Number(chat.message.answerCount) === 0) {
               // 2回目以降のカウント0のデータがあればそれ以前のヒアリングのUIをdisableにする
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
