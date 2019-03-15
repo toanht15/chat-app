@@ -4291,6 +4291,9 @@ var socket, // socket.io
           $('#sincloBanner').
           css('bottom', screen.height - window.innerHeight + 5 + 'px');
         }
+        if (window.sincloInfo.contract.chat) {
+          sinclo.chatApi.scDown();
+        }
       },
       hide: function() {
         sincloBox.style.display = 'none';
