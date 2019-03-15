@@ -1353,7 +1353,7 @@
       var prevMessageBlock = null;
       var firstCheck = true;
       var answerCount = 0;
-      var isFirstHearingMessage = true;
+      var isFirstHearingMessage = false;
       for (var key in obj.chat.messages) {
         if (!obj.chat.messages.hasOwnProperty(key)) return false;
         var chat = obj.chat.messages[key], userName;
