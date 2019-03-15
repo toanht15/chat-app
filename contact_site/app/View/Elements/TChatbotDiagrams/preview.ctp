@@ -194,7 +194,7 @@
           'customSize: widget.settings[\'widget_size_type\'] == 5' +
           '}">' +
           '<span ng-if="widget.settings[\'show_automessage_name\'] == 1" class="cName details">{{widget.settings["sub_title"]}}</span>' +
-          '<span class="details">{{text}}</span>' +
+          '<span class="details preview_text_span_{{$index}}"></span>' +
           '</li>' +
           '</div>'
     }
@@ -227,7 +227,7 @@
           'customSize: widget.settings[\'widget_size_type\'] == 5' +
           '}">' +
           '<span ng-if="widget.settings[\'show_automessage_name\'] === \'1\'" class="cName details">{{widget.settings[\'sub_title\']}}</span>' +
-          '<span class="details branch_text_span">' +
+          '<span class="details preview_text_span_branch">' +
           '</span>' +
           '<div ng-if="branchType == 1">' +
           '' +

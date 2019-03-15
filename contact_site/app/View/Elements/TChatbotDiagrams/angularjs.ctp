@@ -317,12 +317,13 @@
                 /* Bind node name if diagram is text or scenario */
                 if(frame.hasClass("p_diagrams_branch")){
                   $scope.titleHandler($scope.branchTitle, "分岐");
-                  $scope.autoResize($("textarea"), true);
+                  $scope.changeTextTrigger($("textarea.for_modal"), true, $scope.branchText, "branch");
                 }else if(frame.hasClass("p_diagrams_text")){
                   $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
-                  var elements = $("textarea");
-                  for(var i = 0; i < elements.length; i++){
-                    $scope.autoResize($(elements[i]), true);
+                  var elements = $("textarea.for_modal");
+                  for(var i = 0; i < elements.length ; i++){
+                    if($scope.speakTextList[i] === "") continue;
+                    $scope.changeTextTrigger($(elements[i]), true, $scope.speakTextList[i], i);
                   }
                 }
 
@@ -1822,8 +1823,8 @@
       };
 
 
-      $scope.changeTextTrigger = function(e, forceProcess, text){
-        $scope.replaceTag(text);
+      $scope.changeTextTrigger = function(e, forceProcess, text, index){
+        $scope.replaceTag(text, index);
         $scope.autoResize(e, forceProcess);
       };
 
@@ -1857,8 +1858,8 @@
         $scope.popupPositionAdjustment();
       };
       
-      $scope.replaceTag = function(text){
-        var target = $(".branch_text_span");
+      $scope.replaceTag = function(text, index){
+        var target = $(".preview_text_span_" + index);
         target.text("");
         var str = replaceVariable(text, false, $scope.widget.settings['widget_size_type']);
         target.append(str);
@@ -1974,7 +1975,7 @@
           '<div class=\'branch_modal_setting_header\'>' +
           '<div class=\'flex_row_box\'>' +
           '<p>発言内容</p>' +
-          '<resize-textarea ng-keyup="changeTextTrigger($event, true, branchText)" ng-keydown="changeTextTrigger($event, true, branchText)" ng-model="branchText"></resize-textarea>' +
+          '<resize-textarea ng-keyup="changeTextTrigger($event, true, branchText, \'branch\')" ng-keydown="changeTextTrigger($event, true, branchText, \'branch\')" ng-model="branchText"></resize-textarea>' +
           '</div>' +
           '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
@@ -2034,7 +2035,7 @@
           '<p>発言内容</p>' +
           '<div id="text_modal_contents" >' +
           '<div class=\'text_modal_setting\' ng-repeat="speakText in speakTextList track by $index" finisher>' +
-          '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="speakTextList[$index]"></resize-textarea>' +
+          '<resize-textarea ng-keyup="changeTextTrigger($event, true, speakText, $index)" ng-keydown="changeTextTrigger($event, true, speakText, $index)" ng-model="speakTextList[$index]"></resize-textarea>' +
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index, \'\')">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', speakTextList, $index)">' +
           '</div>' +
@@ -2229,7 +2230,7 @@
     return {
       restrict: 'E',
       replace: true,
-      template: '<textarea class="resize" style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea>',
+      template: '<textarea class="resize for_modal" style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea>',
       link: function(scope, element, attr){
         scope.autoResize(element, false);
       }
