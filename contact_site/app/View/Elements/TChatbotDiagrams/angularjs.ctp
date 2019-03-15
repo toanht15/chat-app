@@ -31,7 +31,7 @@
         branch: function(target){
           return $scope.branchTitle === target.attr("actionParam/nodeName")
               && $scope.branchText === target.attr("actionParam/text")
-              && $scope.branchType.key === target.attr("actionParam/btnType")
+              && $scope.branchType === target.attr("actionParam/btnType")
               && $scope.compareArray($scope.branchSelectionList, target.attr("actionParam/selection"));
         },
         text: function(target){
@@ -126,12 +126,7 @@
 
       /* Model for branch node */
       $scope.branchTitle = "";
-      $scope.branchTypeList = [
-        {"key": "", "value": "タイプを選択して下さい"},
-        {"key": "1", "value": "ラジオボタン"},
-        {"key": "2", "value": "ボタン"}
-      ];
-      $scope.branchType = $scope.branchTypeList[0];
+      $scope.branchType = "";
       $scope.branchText = "";
       $scope.branchSelectionList = [];
       $scope.oldSelectionList = [];
@@ -174,6 +169,7 @@
           return "行った変更が保存されない可能性があります。";
         }
       };
+
 
 
       var nodeMaster = function(type, posX, posY) {
@@ -253,6 +249,16 @@
       var dragReferencePosition = null;
       var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
+      $scope.setMessageInterval = function(){
+        var allCellList = JSON.parse(dataForUpdate).cells;
+        for( var i=0; i < allCellList.length; i++ ){
+          if(allCellList[i].attrs.nodeBasicInfo.nodeType === "start"){
+            $scope.messageIntervalTimeSec = allCellList[i].attrs.nodeBasicInfo.messageIntervalSec;
+            break;
+          }
+        }
+      };
+
       if (dataForUpdate !== null && dataForUpdate !== '') {
         var graphData = JSON.parse(dataForUpdate);
         Object.keys(graphData.cells).forEach(function(elm, idx, arr){
@@ -273,6 +279,7 @@
         });
         console.log(graphData);
         graph.fromJSON(graphData);
+        $scope.setMessageInterval();
         setTimeout(function(){
           dataForUpdate = graphData;
           graph.resetCells(dataForUpdate.cells);
@@ -280,9 +287,9 @@
         }, 500);
       }
 
-      var allDrawnCellList = graph.getCells();
-      for( var i = 0; i < allDrawnCellList; i++) {
-      }
+
+
+
 
       paper.on('cell:pointerup',
           function(cellView, evt, x, y) {
@@ -290,7 +297,8 @@
             $scope.currentEditCell = null;
             $scope.currentEditCellParent = null;
             if(cellView.model.attr("nodeBasicInfo/nodeType") === "childViewNode"
-                || cellView.model.attr("nodeBasicInfo/nodeType") === "childPortNode") {
+                || cellView.model.attr("nodeBasicInfo/nodeType") === "childPortNode"
+                || cellView.model.attr("nodeBasicInfo/nodeType") === "childTextNode") {
               if($scope.checkTextEnd(cellView.model.attr("text/text"))) {
                 $scope.createToolTip(cellView.model);
               }
@@ -325,6 +333,7 @@
                 }
 
                 $scope.popupHandler();
+                $scope.handleButtonCSS();
                 $scope.popupInit(frame);
                 initPopupCloseEvent();
                 /* Install jscolor after create modal */
@@ -342,7 +351,8 @@
 
       paper.on('cell:mouseenter', function(e) {
         if(e.model.attr("nodeBasicInfo/nodeType") === "childViewNode"
-        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode") {
+        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode"
+        || e.model.attr("nodeBasicInfo/nodeType") === "childTextNode") {
           if($scope.checkTextEnd(e.model.attr("text/text"))) {
             $scope.createToolTip(e.model);
           }
@@ -359,7 +369,8 @@
 
       $scope.removeTooltip = function(e){
         if(e.model.attr("nodeBasicInfo/nodeType") === "childViewNode"
-        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode") {
+        || e.model.attr("nodeBasicInfo/nodeType") === "childPortNode"
+        || e.model.attr("nodeBasicInfo/nodeType") === "childTextNode") {
           var tooltips = $('.diagram_tooltip');
           for( var i = 0; i < tooltips.length; i++ ){
             $('#t_chatbot_diagrams_idx')[0].removeChild(tooltips[i]);
@@ -455,9 +466,11 @@
         try{
           var source = graph.getCell(link.get("source").id);
           source.portProp("out", "attrs/.port-body/fill", "#C0C0C0");
+          source.attributes.ports.groups.out.attrs[".port-body"].fill = "#C0C0C0";
           var target = graph.getCell(link.get("target").id);
           if(Object.keys(target.graph._in[target.id]).length === 0) {
             target.portProp("in", "attrs/.port-body/fill", "#C0C0C0");
+            target.attributes.ports.groups.in.attrs[".port-body"].fill = "#C0C0C0";
           }
         } catch (e) {
           console.log(e + "ERROR DETECTED!");
@@ -469,9 +482,11 @@
         var source = linkView.sourceView.model;
         var typeS = source.attributes.ports.groups.out.attrs.type;
         source.portProp("out", "attrs/.port-body/fill", $scope.getPortColor(typeS, "out"));
+        source.attributes.ports.groups.out.attrs[".port-body"].fill = $scope.getPortColor(typeS, "out");
         var target = linkView.targetView.model;
         var typeT = target.attributes.ports.groups.in.attrs.type;
         target.portProp("in", "attrs/.port-body/fill", $scope.getPortColor(typeT, "in"));
+        target.attributes.ports.groups.in.attrs[".port-body"].fill = $scope.getPortColor(typeT, "in");
       };
 
       $scope.getPortColor = function(type, cond){
@@ -497,6 +512,7 @@
 
       /* save Act */
       $('#submitBtn').on('click', function() {
+        $scope.isChangedSomething = false;
         var graphJSON = graph.toJSON();
         for(var i = 0; i < graphJSON.cells.length; i++) {
           if(graphJSON.cells[i].attrs.nodeBasicInfo.nodeType === "start"){
@@ -605,7 +621,8 @@
         for (var i = 0; i < node.length; i++) {
 
           if (node[i].attr('nodeBasicInfo/nodeType') === 'childViewNode'
-              || node[i].attr('nodeBasicInfo/nodeType') === 'childPortNode') {
+              || node[i].attr('nodeBasicInfo/nodeType') === 'childPortNode'
+              || node[i].attr('nodeBasicInfo/nodeType') === 'childTextNode') {
             node[i].on('change:position', childMove);
           }
 
@@ -636,6 +653,7 @@
           return nodeTypeArray.indexOf(type) > -1
               || type === 'childViewNode'
               || type === 'childPortNode'
+              || type === 'childTextNode'
               || type === 'operator'
               || type === 'cv';
         }
@@ -821,7 +839,7 @@
         },
         branch: {
           setView: function(){
-            nodeEditHandler.typeBranch.branchPortController($scope.branchSelectionList.filter(Boolean));
+            nodeEditHandler.typeBranch.branchPortController($scope.branchSelectionList);
             $scope.currentEditCellParent.attr('.label/text',
                 convertTextForTitle(convertTextLength($scope.branchTitle, 22), '分岐'));
             $scope.currentEditCell.attr('text/text', convertTextLength(textEditor.textLineSeparate($scope.branchText), 96));
@@ -832,14 +850,14 @@
             return {
               nodeName: $scope.branchTitle,
               text: $scope.branchText,
-              btnType: $scope.branchType.key,
+              btnType: $scope.branchType,
               selection: $scope.branchSelectionList.filter(Boolean),
               customizeDesign: $scope.selectCustomizeDesign()
             };
           },
           validation: function(){
             $scope.nodeNameIsEmpty = $scope.branchTitle === "";
-            $scope.btnTypeIsEmpty = $scope.branchType.key === "";
+            $scope.btnTypeIsEmpty = $scope.branchType === "";
             $scope.nodeNameIsNotUnique = $scope.isNotUniqueName($scope.branchTitle);
             return $scope.nodeNameIsEmpty || $scope.btnTypeIsEmpty || $scope.nodeNameIsNotUnique;
           }
@@ -935,7 +953,7 @@
 
       $scope.selectCustomizeDesign = function() {
         var design;
-        switch (Number($scope.branchType.key)) {
+        switch (Number($scope.branchType)) {
           case 1:
             design = $scope.getRadioCustomizeDesign;
             break;
@@ -1023,11 +1041,12 @@
           $scope.branchSelectionList = nodeData.selection.concat();
         } else {
           $scope.branchSelectionList.length = 0;
-          $scope.branchSelectionList.push("");
+          $scope.branchSelectionList.push({type: "1", value: ""});
         }
-        $scope.oldSelectionList = $scope.branchSelectionList.concat();
+        //強制的に値渡しにする。
+        $scope.oldSelectionList = JSON.parse(JSON.stringify($scope.branchSelectionList.concat()));
         $scope.branchTitle = nodeData.nodeName;
-        $scope.branchType.key = nodeData.btnType;
+        $scope.branchType = nodeData.btnType;
         $scope.branchText = nodeData.text;
         $scope.initCustomizeColor(nodeData);
         return $('<branch-modal></branch-modal>');
@@ -1069,11 +1088,11 @@
         return $('<cv-modal></cv-modal>');
       }
 
-      $scope.btnClick = function(type, target, index){
+      $scope.btnClick = function(type, target, index, param){
         $scope.currentTop = $('#popup-frame').offset().top;
         switch (type) {
           case "add":
-            target.splice(index + 1, 0, "");
+            target.splice(index + 1, 0, param);
             break;
           case "delete":
             target.splice(index, 1);
@@ -1082,6 +1101,7 @@
             break;
         }
         $timeout(function(){
+          $scope.handleButtonCSS();
           popupEvent.resize();
           $scope.popupFix();
         })
@@ -1143,6 +1163,38 @@
         }
       };
 
+      $scope.handleButtonCSS = function(){
+        $timeout(function() {
+          var spanList = [];
+          var buttonComponent = $("#button_component");
+          var buttonList = buttonComponent.find('button');
+          var targetList = buttonComponent.children();
+          /* 対象となるスパンが何番目かを設定 */
+          for (var i = 0; i < targetList.length; i++) {
+            if (targetList[i].children[0] && targetList[i].children[0].tagName === "SPAN") {
+              spanList.push(i);
+            }
+          }
+          /* ボタン全部のCSS(class)を取り除く */
+          buttonList.removeClass("btn_top_radius");
+          buttonList.removeClass("btn_bottom_radius");
+          /* 最初と最後のボタンにCSS(class)を付与 */
+          $(buttonList[0]).addClass("btn_top_radius");
+          $(buttonList[buttonList.length - 1]).addClass("btn_bottom_radius");
+          /* スパン要素前後にあるボタンにCSS(class)を付与する */
+          for (var j = 0; j < spanList.length; j++) {
+            if (spanList[j] !== 0) {
+              if(targetList[spanList[j] - 1].children[0].tagName === "SPAN") continue;
+              $(targetList[spanList[j] - 1].children[0]).addClass("btn_bottom_radius");
+            }
+            if (spanList[j] !== targetList.length - 1) {
+              if(targetList[spanList[j] + 1].children[0].tagName === "SPAN") continue;
+              $(targetList[spanList[j] + 1].children[0]).addClass("btn_top_radius");
+            }
+          }
+        });
+      };
+
       $scope.popupInit = function(popup) {
         var newTop = popup.offset().top,
             newLeft = popup.offset().left;
@@ -1194,21 +1246,39 @@
             for(var i = 0; i < newSelectionList.length; i++){
               /* Set rect height */
               self._resizeParentHeight(i);
-              var port = self.portCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i] ,22), newSelectionList[i], self._getCoverOpacity(i, newSelectionList.length));
-              self._checkPastPortListFromCurrent(newSelectionList, i, port);
+              var cell;
+              switch(Number(newSelectionList[i].type)) {
+                case 1:
+                  cell = self.portCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i].value ,22), newSelectionList[i].value, self._getCoverOpacity(i, newSelectionList.length));
+                  break;
+                case 2:
+                  cell = self.rectCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i].value ,22), newSelectionList[i].value, self._getCoverOpacity(i, newSelectionList.length));
+                  break;
+                default:
+                  continue;
+              }
+              self._checkPastPortListFromCurrent(newSelectionList, i, cell);
             }
           },
           _checkPastPortListFromCurrent: function(targetList, number, port) {
-            if($scope.oldSelectionList.indexOf(targetList[number]) === -1 ){
-              /* add port */
+            var textList = [];
+            var typeList = [];
+            for(var j=0; j < $scope.oldSelectionList.length; j++){
+              textList.push($scope.oldSelectionList[j].value);
+              typeList.push($scope.oldSelectionList[j].type);
+            }
+            var contentNum = $scope.oldSelectionList.indexOf(targetList[number]);
+            if(contentNum === -1){
+              /* 追加するパターン */
+              /* 過去にはないが、現在にあるパターン */
               $scope.currentEditCellParent.embed(port);
               initNodeEvent([port]);
               graph.addCell(port);
             } else {
-              /* edit port */
+              /* edit port position */
               var childList = this._getCurrentPortList();
               for( var i = 0; i < childList.length; i++ ){
-                if( childList[i].attr(".label/text") === targetList[number] ){
+                if( childList[i].attr(".label/text") === targetList[number].value ){
                   this._setSelfPosition(childList[i], this._getSelfPosition(number));
                   var topOpacity = 1,
                       bottomOpacity = 1;
@@ -1225,11 +1295,37 @@
             }
           },
           _checkCurrentPortListFromPast: function(targetList) {
+            var textList = [];
+            var typeList = [];
+            /* テキストと選択肢で内容が同一の場合は削除すること */
+            for(var j=0; j < targetList.length; j++){
+              textList.push(targetList[j].value);
+              typeList.push(targetList[j].type);
+            }
+
             var childList = this._getCurrentPortList();
             for( var i = 0; i < childList.length; i++ ){
-              if(targetList.indexOf(childList[i].attr("nodeBasicInfo/tooltip")) === -1){
-                /* delete port */
+              var containNum = textList.indexOf(childList[i].attr("nodeBasicInfo/tooltip"));
+              if(containNum === -1){
+                /* 過去には有るが、現在に見つからない場合は削除 */
                 childList[i].remove();
+              } else {
+                /* 過去にも現在にも同名のテキストがあるが、タイプが違う場合は削除 */
+                switch(Number(typeList[containNum])) {
+                  case 1:
+                    /* 現在は選択肢　過去は文章 */
+                    if(childList[i].attr("nodeBasicInfo/nodeType") === "childTextNode" ) {
+                      childList[i].remove();
+                    }
+                    break;
+                  case 2:
+                    /* 現在は文章　過去は選択肢 */
+                    if(childList[i].attr("nodeBasicInfo/nodeType") === "childPortNode" ) {
+                      childList[i].remove();
+                    }
+                    break;
+                  default:
+                }
               }
             }
           },
@@ -1238,7 +1334,8 @@
             var targetList = [];
             for(var i = 0; i < list.length; i++){
               try{
-                if(list[i].attr("nodeBasicInfo/nodeType") === "childPortNode") {
+                if(list[i].attr("nodeBasicInfo/nodeType") === "childPortNode"
+                || list[i].attr("nodeBasicInfo/nodeType") === "childTextNode") {
                   targetList.push(list[i]);
                 }
               } catch (e) {
@@ -1338,6 +1435,48 @@
                   height: 10,
                   transform: "translate(0 26)",
                   'fill-opacity': opacity.bot
+                }
+              },
+              markup: '<rect class="body"/><text class="label"/><rect class="cover_top"/><rect class="cover_bottom"/>'
+            });
+          },
+          rectCreator: function(position, text, originalText, opacity){
+            return new joint.shapes.basic.Rect({
+              position: {x: position.x, y: position.y},
+              size: {width: 240, height: 36},
+              attrs: {
+                'rect.body': {
+                  fill: "#FFFFFF",
+                  stroke: false,
+                  width: 240,
+                  height: 36,
+                  rx: 10,
+                  ry: 10
+                },
+                text: {
+                  text: text,
+                  'ref-width': '70%',
+                  'font-size': "14px",
+                  fill: '#000',
+                  y: 12
+                },
+                nodeBasicInfo: {
+                  nodeType: "childTextNode"
+                },
+                '.cover_top': {
+                  fill: '#FFFFFF',
+                  width: 240,
+                  height: 10,
+                  'fill-opacity': opacity.top,
+                  stroke: false
+                },
+                '.cover_bottom': {
+                  fill: '#FFFFFF',
+                  width: 240,
+                  height: 10,
+                  transform: "translate(0 26)",
+                  'fill-opacity': opacity.bot,
+                  stroke: false
                 }
               },
               markup: '<rect class="body"/><text class="label"/><rect class="cover_top"/><rect class="cover_bottom"/>'
@@ -1443,6 +1582,7 @@
       };
 
       $scope.$on('ngRepeatFinish', function(){
+        $scope.handleButtonCSS();
         popupEvent.resize();
         $scope.popupFix();
       });
@@ -1467,7 +1607,7 @@
         $scope.popupPositionAdjustment();
       });
 
-      $scope.$watch("branchType.key", function(){
+      $scope.$watch("branchType", function(){
         $scope.popupPositionAdjustment();
       });
       $scope.$watch("radioStyle", function(){
@@ -1767,11 +1907,14 @@
           '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
           '<label for=\'branch_button\'>タイプ</label>' +
-          '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-options="btnType.value for btnType in branchTypeList track by btnType.key">' +
+          '<select name=\'branch_button\' id=\'branchBtnType\' ng-model="branchType" ng-change="handleButtonCSS()">' +
+          '<option value="" selected>タイプを選択してください' +
+          '<option value="1">ラジオボタン' +
+          '<option value="2">ボタン' +
           '</select>' +
           '<div id="bulkRegister" class="btn-shadow disOffgreenBtn">選択肢を一括登録</div>'+
           '</div>' +
-          '<radio-type-customize ng-show="branchType.key == 1"></radio-type-customize>' +
+          '<radio-type-customize ng-show="branchType == 1"></radio-type-customize>' +
           '<div class="btn_valid_margin">' +
           '<span class="diagram_valid" ng-show="btnTypeIsEmpty">タイプを選択してください</span>' +
           '</div>' +
@@ -1779,14 +1922,17 @@
           '</div>' +
           '<div class=\'branch_modal_setting_content\'>' +
           '<div class=\'setting_row\' ng-repeat="selection in branchSelectionList track by $index">' +
-          '<p>選択肢</p>' +
-          '<input type="text" ng-model="branchSelectionList[$index]" />' +
-          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index)">' +
+          '<select name="contentType" ng-model="branchSelectionList[$index].type" ng-change="handleButtonCSS()">' +
+          '<option value="1">選択肢' +
+          '<option value="2">発言内容' +
+          '</select>' +
+          '<input type="text" ng-model="branchSelectionList[$index].value" ng-change="handleButtonCSS()"  />' +
+          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index, {type: \'1\', value: \'\'})">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
           '</div>' +
-          '<radio-customize ng-show="branchType.key == 1"></radio-customize>' +
-          '<button-customize ng-show="branchType.key == 2"></button-customize>' +
+          '<radio-customize ng-show="branchType == 1"></radio-customize>' +
+          '<button-customize ng-show="branchType == 2"></button-customize>' +
           '</div>' +
           '</div>' +
           '<div id=\'branch_modal_preview\'>' +
@@ -1816,7 +1962,7 @@
           '<div id="text_modal_contents" >' +
           '<div class=\'text_modal_setting\' ng-repeat="speakText in speakTextList track by $index" finisher>' +
           '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="speakTextList[$index]"></resize-textarea>' +
-          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index)">' +
+          '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index, \'\')">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', speakTextList, $index)">' +
           '</div>' +
           '</div>' +

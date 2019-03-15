@@ -114,8 +114,8 @@
   .diagram_preview_area li button {width: 188px; background-color: {{widget.settings.re_text_color}};  color: {{widget.settings.re_background_color}}; cursor: pointer;  min-height: 35px; margin-bottom: 1px;  padding: 10px 15px; border: 1px solid #E3E3E3; text-align: center; }
   .diagram_preview_area li.middleSize button { width: 240px;}
   .diagram_preview_area li.largeSize button { width: 280px;}
-  .diagram_preview_area li button:first-child {border-top-left-radius: 8px; border-top-right-radius: 8px}
-  .diagram_preview_area li button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
+  .diagram_preview_area li button.btn_top_radius {border-top-left-radius: 8px; border-top-right-radius: 8px}
+  .diagram_preview_area li button.btn_bottom_radius {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
   .diagram_preview_area li button:active{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
   .diagram_preview_area li button:focus{outline: none}
   .diagram_preview_area li button:hover{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
@@ -139,8 +139,6 @@
   .diagram_preview_area li button {width: 188px;}
   .diagram_preview_area li.middleSize button { width: 240px;}
   .diagram_preview_area li.largeSize button { width: 280px;}
-  .diagram_preview_area li button:first-child {border-top-left-radius: 8px; border-top-right-radius: 8px}
-  .diagram_preview_area li button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
   .diagram_preview_area li button:active{background-color: {{buttonUIActiveColor}};}
   .diagram_preview_area li button:focus{outline: none}
   .diagram_preview_area li button:hover{background-color: {{buttonUIActiveColor}};}
@@ -197,7 +195,7 @@
     return {
       restrict: 'E',
       replace: true,
-      template: '<div ng-show="branchText || branchSelectionList[0]" ng-class="{' +
+      template: '<div ng-show="branchText || branchSelectionList[0].value" ng-class="{' +
           'grid_preview: widget.settings[\'show_chatbot_icon\'] == 1,' +
           'arrowUp: widget.settings[\'chat_message_design_type\'] == 1 &&  widget.settings[\'chat_message_arrow_position\'] == 1,' +
           'arrowBottom: widget.settings[\'chat_message_design_type\'] == 2 || widget.settings[\'chat_message_arrow_position\'] == 2' +
@@ -225,28 +223,39 @@
           '<span id="action{{setActionId}}-{{index}}_message" class="details">' +
           '<span class="sinclo-text-line" ng-show="branchText">{{branchText}}</span>' +
           '</span>' +
-          '<div ng-if="branchType.key == 1">' +
+          '<div ng-if="branchType == 1">' +
           '' +
-          '<div>' +
-          '<span ng-repeat="value in branchSelectionList track by $index" class="sinclo-radio" style="display: block" ng-if="value" finisher>' +
-          '<input name="radio_button" id="radio_{{$index}}" type="radio" value="{{value}}">' +
+          '<span ng-repeat="content in branchSelectionList track by $index" style="display: block" ng-if="content.value"' +
+          'ng-class="{' +
+          '\'sinclo-radio\': content.type == \'1\'' +
+          '}" finisher>' +
+          '<div ng-if="content.type == 1">' +
+          '<input name="radio_button" id="radio_{{$index}}" type="radio">' +
           '<label for="radio_{{$index}}" ng-class="{' +
           'noneBackground: radioStyle === \'2\',' +
           'hasBackground: radioStyle === \'1\'' +
-          '}">{{value}}</label>' +
-          '</span>' +
+          '}">{{content.value}}</label>' +
           '</div>' +
+          '<span class="sinclo-text-line" ng-if="content.type == 2">' +
+          '{{content.value}}' +
+          '</span>' +
+          '</span>' +
           '' +
           '</div>' +
-          '<div ng-class="{noneText: !branchText, hasText: branchText}" ng-if="branchType.key == 2">' +
-          '<button ng-repeat="value in branchSelectionList track by $index" class="sinclo-button-ui" ng-if="value"' +
+          '<div id="button_component" ng-class="{noneText: !branchText, hasText: branchText}" ng-if="branchType == 2">' +
+          '<div ng-repeat="content in branchSelectionList track by $index">' +
+          '<button class="sinclo-button-ui" ng-if="content.value && content.type == 1"' +
           'ng-class="{' +
           'tal: buttonUITextAlign == 1,' +
           'tac: buttonUITextAlign == 2,' +
           'tar: buttonUITextAlign == 3,' +
           'noneBorder: outButtonUINoneBorder,' +
           'hasBorder: !outButtonUINoneBorder' +
-          '}" onclick="return false;" finisher>{{value}}</button>' +
+          '}" onclick="return false;" finisher>{{content.value}}</button>' +
+          '<span class="sinclo-text-line" ng-if="content.type == 2">' +
+          '{{content.value}}' +
+          '</span>' +
+          '</div>' +
           '</div>' +
           '</li>' +
           '</div>'

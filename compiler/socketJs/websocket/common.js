@@ -5019,8 +5019,7 @@ var socket, // socket.io
     chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
     chatBotTypingCall: function(obj) {
-      console.log('sinclo.scenarioApi._bulkHearing.isInMode() %s',
-          sinclo.scenarioApi._bulkHearing.isInMode());
+      console.log("common.chatBotTypingCall: %s", JSON.stringify(obj));
       if (!common.chatBotTypingDelayTimer || obj.messageType ===
           sinclo.chatApi.messageType.sorry) {
         common.chatBotTypingDelayTimer = setTimeout(function() {
@@ -5090,6 +5089,9 @@ var socket, // socket.io
         if (!sinclo.scenarioApi.isProcessing()) {
           return;
         }
+      } else if (obj.messageType === sinclo.diagramApi.messageType.message.text
+        || obj.messageType === sinclo.diagramApi.messageType.message.branch) {
+        // 表示する
       } else if (!sinclo.scenarioApi.isProcessing()) {
         return;
       }

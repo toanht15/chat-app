@@ -1905,7 +1905,7 @@
               max-height: 100px;
               .setting_row {
                 display: flex;
-                align-items: center;
+                align-items: flex-end;
                 p {
                   margin: 0;
                 }
@@ -1918,8 +1918,14 @@
                   margin-left: 5px;
                 }
                 input[type='text'] {
-                  width: 300px;
-                  margin-left: 32px;
+                  width: 298px;
+                }
+                select {
+                  padding: 0;
+                  font-size: 12px;
+                  border-radius: 4px;
+                  height: 26px;
+                  border: 1px solid #909090;
                 }
               }
             }

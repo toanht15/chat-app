@@ -2328,6 +2328,7 @@
             name: userName,
             chatId: obj.chatId
           }, false, false, false);
+          sinclo.chatApi.scDown(obj);
           sinclo.diagramApi.executor.setDiagramId(obj.chatMessage.did);
           sinclo.diagramApi.executor.setNext(obj.chatMessage.did, nextNodeId);
           sinclo.diagramApi.executor.execute();
@@ -12635,6 +12636,7 @@
           return result;
         },
         wait: function(second) {
+          console.log("<=================== BEGIN WAIT ============================>");
           var self = sinclo.diagramApi;
           var defer = $.Deferred();
           if(!self.executor.isFirstCalled()) {
@@ -12642,6 +12644,7 @@
             self.storage.set(self.storage._lKey.firstCalled, true);
           }
           setTimeout(function() {
+            console.log("<=================== END   WAIT ============================>");
             defer.resolve();
           }, second * 1000);
           return defer.promise();
@@ -12744,11 +12747,14 @@
           var labels = self.branch.getLabelMap(currentNode,
               Object.keys(selections));
           var customizeDesign = currentNode.attrs.actionParam.customizeDesign;
+          common.chatBotTypingCall({messageType: self.messageType.message.branch});
           self.executor.wait(self.executor.getIntervalTimeSec()).
               then(function() {
                 self.branch.showMessage(currentNode, message, selections,
                     labels, customizeDesign);
                 self.branch.saveShownMessage(currentNode, message, selections, labels, customizeDesign);
+                common.chatBotTypingTimerClear();
+                common.chatBotTypingRemove();
               });
         },
         getSelectionMap: function(currentNode) {
@@ -12779,8 +12785,7 @@
         },
         showMessage: function(currentNode, message, selectionMap, labels, customizeDesign) {
           var self = sinclo.diagramApi;
-          common.chatBotTypingTimerClear();
-          common.chatBotTypingRemove();
+
           var cs = 'diagram_msg sinclo_re';
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
@@ -12968,6 +12973,25 @@
         }
       },
       speakText: {
+        doAction: function() {
+          console.log("<><><><><> SPEAK TEXT <><><><><>");
+          var self = sinclo.diagramApi;
+          var currentNode = self.storage.getCurrentNode();
+          var messages = currentNode.attrs.actionParam.text;
+          common.chatBotTypingCall({messageType: self.messageType.message.text});
+          self.executor.wait(self.executor.getIntervalTimeSec())
+          .then(function() {
+            common.chatBotTypingTimerClear();
+            common.chatBotTypingRemove();
+            return self.speakText.showMessages(currentNode, messages);
+          })
+          .then(function() {
+            sinclo.chatApi.scDown();
+            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+            self.executor.setNext(self.common.getDiagramId(), nextNodeId);
+            self.executor.execute();
+          });
+        },
         showMessages: function(currentNode, messages) {
           var defer = $.Deferred();
           var self = sinclo.diagramApi;
@@ -12976,6 +13000,8 @@
               var timeoutMSec = self.executor.getIntervalTimeSec() * 1000 * index;
               console.log('speakText.showMessages. timer msec : %s', timeoutMSec);
               setTimeout(function() {
+                common.chatBotTypingTimerClear();
+                common.chatBotTypingRemove();
                 self.speakText.showMessageProcess(messages[index]);
                 if (!currentNode.isRedraw) {
                   self.speakText.saveShownMessage(currentNode, messages[index]);
@@ -12983,16 +13009,15 @@
                 if(index === messages.length - 1) {
                   defer.resolve();
                 } else {
-                  common.chatBotTypingCall({});
+                  common.chatBotTypingCall({messageType: self.messageType.message.text});
                 }
+                sinclo.chatApi.scDown();
               }, timeoutMSec);
             })(i);
           }
           return defer.promise();
         },
         showMessageProcess: function(message) {
-          common.chatBotTypingTimerClear();
-          common.chatBotTypingRemove();
           var cs = 'diagram_msg sinclo_re';
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
@@ -13008,20 +13033,6 @@
 
           li.className = cs;
           li.innerHTML = sinclo.chatApi.createMessageHtml(message);
-        },
-        doAction: function() {
-          console.log("<><><><><> SPEAK TEXT <><><><><>");
-          var self = sinclo.diagramApi;
-          var currentNode = self.storage.getCurrentNode();
-          var messages = currentNode.attrs.actionParam.text;
-          common.chatBotTypingCall({});
-          self.executor.wait(self.executor.getIntervalTimeSec())
-          .then(self.speakText.showMessages(currentNode, messages).then(function(){
-            sinclo.chatApi.scDown();
-            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
-            self.executor.setNext(self.common.getDiagramId(), nextNodeId);
-            self.executor.execute();
-          }));
         },
         saveShownMessage: function(currentNode, message) {
           var self = sinclo.diagramApi;
