@@ -6591,7 +6591,7 @@ ul.naviBtn {
             flex-grow: 1;
           }
 
-          #TAutoMessageTChatbotScenarioId {
+          #TAutoMessageTChatbotScenarioId, #TAutoMessageTChatbotDiagramId {
             padding: 5px;
             &:disabled {
               color: #CCCCCC;
