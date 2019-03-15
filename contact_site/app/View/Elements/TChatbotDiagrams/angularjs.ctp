@@ -271,7 +271,7 @@
             for(var i = 0; i < graphData.cells[idx]['attrs']['actionParam']['selection'].length; i++) {
               var label = graphData.cells[idx]['attrs']['actionParam']['selection'][i];
               graphData.cells[idx]['attrs']['actionParam']['selection'][i] = {
-                type: 1, // 選択肢固定
+                type: "1", // 選択肢固定
                 value: label
               };
             }
