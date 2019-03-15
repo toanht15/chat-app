@@ -1902,7 +1902,6 @@
               margin-top: 20px;
               position: relative;
               overflow-y: auto;
-              max-height: 100px;
               .setting_row {
                 display: flex;
                 align-items: flex-start;
@@ -1933,6 +1932,9 @@
             }
             .branch_modal_setting_content > div.setting_row:not(:first-child) {
               margin-top: 10px;
+            }
+            .branch_modal_setting_content > div.setting_row:last-child {
+              margin-bottom: 1px;
             }
           }
         }

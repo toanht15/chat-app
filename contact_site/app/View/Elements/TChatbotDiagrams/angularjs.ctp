@@ -1111,10 +1111,37 @@
             break;
         }
         $timeout(function(){
+          $scope.resetSelectionHeight();
           $scope.handleButtonCSS();
+          popupEvent.resize();
+          $scope.selectionHeightHandler();
           popupEvent.resize();
           $scope.popupFix();
         })
+      };
+      
+      $scope.resetSelectionHeight = function(){
+        $('.branch_modal_setting_content').css({
+          "height": ""
+        });
+      };
+
+      $scope.selectionHeightHandler = function(){
+        var windowHeight = window.innerHeight;
+        var popupHeight = $('#popup-frame').height();
+        var selectContent = $('.branch_modal_setting_content');
+        var prevMaxHeight = selectContent.css("max-height") ;
+        selectContent.css({
+          "max-height": ""
+        });
+        var delta = popupHeight - windowHeight;
+        if( delta >= 0 ) {
+          selectContent.css("max-height",prevMaxHeight !== "none" ? prevMaxHeight : selectContent.height() - delta);
+          selectContent.css({
+            "height": selectContent.height() - delta,
+            "min-height": "100px"
+          });
+        }
       };
 
       $scope.popupHandler = function(){
@@ -1277,7 +1304,7 @@
               textList.push($scope.oldSelectionList[j].value);
               typeList.push($scope.oldSelectionList[j].type);
             }
-            var contentNum = $scope.oldSelectionList.indexOf(targetList[number]);
+            var contentNum = textList.indexOf(targetList[number].value);
             if(contentNum === -1){
               /* 追加するパターン */
               /* 過去にはないが、現在にあるパターン */
@@ -1285,10 +1312,18 @@
               initNodeEvent([port]);
               graph.addCell(port);
             } else {
-              /* edit port position */
+              /* 追加するパターン */
+              /* 両方にあるが、タイプが違うパターン */
+              if(typeList[contentNum] !== targetList[number].type){
+                $scope.currentEditCellParent.embed(port);
+                initNodeEvent([port]);
+                graph.addCell(port);
+              }
+              /* 編集するパターン */
+              /* 両方にあり、タイプも同じパターン */
               var childList = this._getCurrentPortList();
               for( var i = 0; i < childList.length; i++ ){
-                if( childList[i].attr(".label/text") === targetList[number].value ){
+                if( childList[i].attr("nodeBasicInfo/tooltip") === targetList[number].value ){
                   this._setSelfPosition(childList[i], this._getSelfPosition(number));
                   var topOpacity = 1,
                       bottomOpacity = 1;
@@ -1471,7 +1506,8 @@
                   y: 12
                 },
                 nodeBasicInfo: {
-                  nodeType: "childTextNode"
+                  nodeType: "childTextNode",
+                  tooltip: originalText
                 },
                 '.cover_top': {
                   fill: '#FFFFFF',
@@ -1600,7 +1636,7 @@
       $scope.popupFix = function(){
         var popup = $('#popup-frame');
         popup.offset({
-          top: $scope.currentTop ? $scope.currentTop : window.innerHeight / 2 - popup.height() / 2,
+          top: typeof $scope.currentTop === "number" ? $scope.currentTop : window.innerHeight / 2 - popup.height() / 2,
           left: popup.offset().left
         });
       };

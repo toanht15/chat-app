@@ -99,6 +99,9 @@
   .diagram_preview_area li .sinclo-button-wrap:not(.sideBySide) .sinclo-button.noText:only-child { border-radius: 12px }
   .diagram_preview_area li .sinclo-button-wrap:not(.sideBySide) .sinclo-button:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px }
 
+  .diagram_preview_area li button.btn_top_radius {border-top-left-radius: 8px; border-top-right-radius: 8px}
+  .diagram_preview_area li button.btn_bottom_radius {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
+
   .diagram_preview_area li select { border: 1px solid #909090; border-radius: 0; padding: 5px; height: 30px; margin-top: 9px; margin-bottom: -2px; width: 100%; word-break: break-all}
   .diagram_preview_area .grid_preview li.smallSize select { min-width: 183px;}
   .diagram_preview_area .grid_preview {display: grid; grid-template-columns: minmax(max-content, max-content) 1fr; margin-bottom: 5px; }
@@ -114,8 +117,6 @@
   .diagram_preview_area li button {width: 188px; background-color: {{widget.settings.re_text_color}};  color: {{widget.settings.re_background_color}}; cursor: pointer;  min-height: 35px; margin-bottom: 1px;  padding: 10px 15px; border: 1px solid #E3E3E3; text-align: center; }
   .diagram_preview_area li.middleSize button { width: 240px;}
   .diagram_preview_area li.largeSize button { width: 280px;}
-  .diagram_preview_area li button.btn_top_radius {border-top-left-radius: 8px; border-top-right-radius: 8px}
-  .diagram_preview_area li button.btn_bottom_radius {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
   .diagram_preview_area li button:active{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
   .diagram_preview_area li button:focus{outline: none}
   .diagram_preview_area li button:hover{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
