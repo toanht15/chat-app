@@ -61,7 +61,7 @@ class AppController extends Controller {
   public $userInfo;
   public $coreSettings;
 
-  private $defaultCoreSettings = [
+  private $defaultCoreSettings = array(
     C_COMPANY_USE_CHAT => false, // チャット機能有効
     C_COMPANY_USE_SYNCLO => false, // 画面共有機能有効
     C_COMPANY_USE_DOCUMENT => false, // ドキュメント共有機能有効
@@ -90,8 +90,9 @@ class AppController extends Controller {
     C_COMPANY_USE_COGMO_ATTEND_API => false, // CogmoAttend連携
     C_COMPANY_USE_MESSAGE_RANKING => false, //メッセージランキング機能
     C_COMPANY_USE_ICON_SETTINGS => false, // ボット・有人時のアイコン設定
-    C_COMPANY_USE_CUSTOM_WIDGET_SIZE => false // ウィジェットサイズ「カスタム」
-  ];
+    C_COMPANY_USE_CUSTOM_WIDGET_SIZE => false, // ウィジェットサイズ「カスタム」
+    C_COMPANY_USE_CHATBOT_TREE_EDITOR => false // チャットツリー設定
+  );
 
   protected $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
 
