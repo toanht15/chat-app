@@ -176,10 +176,7 @@
         baseData.length; nodeIndex++) {
           if(baseData[nodeIndex]['type'] !== 'devs.Model') continue;
           console.log('baseData.id:%s itemId:%s baseData.attrs.nodeBasicInfo.nodeType: %s', baseData[nodeIndex]['id'], itemIds[i], baseData[nodeIndex]['attrs']['nodeBasicInfo']['nodeType']);
-          if (baseData[nodeIndex]['id'] === itemIds[i] &&
-              baseData[nodeIndex]['attrs']['nodeBasicInfo'] &&
-              'childPortNode'.indexOf(baseData[nodeIndex]['attrs']['nodeBasicInfo']['nodeType']) !== -1 &&
-              baseData[nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId']) {
+          if (baseData[nodeIndex]['id'] === itemIds[i]) {
             map[itemIds[i]] = baseData[nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'];
           }
         }

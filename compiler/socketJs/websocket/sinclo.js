@@ -2328,6 +2328,7 @@
             name: userName,
             chatId: obj.chatId
           }, false, false, false);
+          sinclo.chatApi.scDown(obj);
           sinclo.diagramApi.executor.setDiagramId(obj.chatMessage.did);
           sinclo.diagramApi.executor.setNext(obj.chatMessage.did, nextNodeId);
           sinclo.diagramApi.executor.execute();
@@ -3268,7 +3269,8 @@
         },
         diagram: {
           customer: {
-            branch: 301
+            branch: 301,
+            operator: 303
           },
           message: {
             branch: 300,
@@ -3749,6 +3751,69 @@
         // チェックボックス
         $('.sinclo-checkbox').removeClass(addClassName);
         $('.checkbox-submit-btn').removeClass(addClassName);
+      },
+      disableAllButtons: function() {
+        console.log(
+            '<><><><><><> DISABLE "ALL" MESSAGE INPUT <><><><><><>');
+        $('#sincloBox ul#chatTalk li.sinclo_re').
+            each(function(index, elm) {
+              // ラジオボタン
+              $(this).
+                  find('input[type="radio"]').
+                  prop('disabled', true).
+                  parent().
+                  css('opacity', 0.5);
+              // プルダウン
+              $(this).
+                  find('select[name^="sinclo-pulldown"]').
+                  prop('disabled', true).
+                  css('opacity', 0.5);
+              // カレンダー
+              $(this).find('.flatpickr-calendar').addClass('disable');
+              // ボタン
+              $(this).
+                  find('.sincloHearingButton').
+                  prop('disabled', true).
+                  prop('disabled', true).css('background-color', '#DADADA');
+              // button UI
+              $(this).
+                  find('.sinclo-button-ui').
+                  prop('disabled', true).
+                  prop('disabled', true).css('background-color', '#DADADA');
+              // checkbox
+              $(this).
+                  find('.sinclo-checkbox').
+                  prop('disabled', true).
+                  css('opacity', 0.5);
+              $(this).
+                  find('.checkbox-submit-btn').
+                  prop('disabled', true).
+                  css('opacity', 0.5);
+              $(this).
+                  find('input[name^="sinclo-checkbox"]').
+                  prop('disabled', true).
+                  css('opacity', 0.5);
+            });
+
+        $('#sincloBox ul#chatTalk li.hearing_msg').
+            each(function(index, elm) {
+              //　カルーセル
+              $(this).
+                  find('[id^="slide_sinclo-carousel"]').
+                  prop('disabled', true).
+                  css('opacity', 0.5);
+              $(this).
+                  find('[id^="slide_sinclo-carousel"]').
+                  prop('disabled', true).
+                  css('opacity', 0.5);
+            });
+
+        $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').
+            each(function(index, elm) {
+              // 再回答用リンク
+              $(this).removeClass('cancelable');
+              $(this).off('click', self._handleCancel);
+            });
       },
       showMiniMessageArea: function() {
         console.log('>>>>>>>>>>>>>>>>>>>>>showMiniMessageArea');
@@ -9277,6 +9342,9 @@
               prop('disabled', true).
               parent().
               css('opacity', 0.5);
+          $(chatMessageBlock[i]).find('.sinclo-button-ui')
+              .prop('disabled', true)
+              .css('background-color', '#DADADA');
         }
       },
       _enablePreviousRadioButton: function(length) {
@@ -9293,6 +9361,9 @@
               prop('disabled', false).
               parent().
               css('opacity', 1);
+          $(chatMessageBlock[i]).find('.sinclo-button-ui')
+          .prop('disabled', false)
+          .css('background-color', '');
         }
       },
       /**
@@ -12565,6 +12636,7 @@
           return result;
         },
         wait: function(second) {
+          console.log("<=================== BEGIN WAIT ============================>");
           var self = sinclo.diagramApi;
           var defer = $.Deferred();
           if(!self.executor.isFirstCalled()) {
@@ -12572,6 +12644,7 @@
             self.storage.set(self.storage._lKey.firstCalled, true);
           }
           setTimeout(function() {
+            console.log("<=================== END   WAIT ============================>");
             defer.resolve();
           }, second * 1000);
           return defer.promise();
@@ -12674,11 +12747,14 @@
           var labels = self.branch.getLabelMap(currentNode,
               Object.keys(selections));
           var customizeDesign = currentNode.attrs.actionParam.customizeDesign;
+          common.chatBotTypingCall({messageType: self.messageType.message.branch});
           self.executor.wait(self.executor.getIntervalTimeSec()).
               then(function() {
                 self.branch.showMessage(currentNode, message, selections,
                     labels, customizeDesign);
                 self.branch.saveShownMessage(currentNode, message, selections, labels, customizeDesign);
+                common.chatBotTypingTimerClear();
+                common.chatBotTypingRemove();
               });
         },
         getSelectionMap: function(currentNode) {
@@ -12709,8 +12785,7 @@
         },
         showMessage: function(currentNode, message, selectionMap, labels, customizeDesign) {
           var self = sinclo.diagramApi;
-          common.chatBotTypingTimerClear();
-          common.chatBotTypingRemove();
+
           var cs = 'diagram_msg sinclo_re';
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
@@ -12771,39 +12846,44 @@
             var timestamp = (new Date()).getTime();
             var did = check.isset(currentNode.diagramId) ? currentNode.diagramId : self.common.getDiagramId();
             var nid = check.isset(currentNode.sourceNodeId) ? currentNode.sourceNodeId : self.common.getCurrentNodeId();
-            switch (Number(currentNode.attrs.actionParam.btnType)) {
-              case 1:
-                // ラジオボタン
-                var name               = 'sinclo-radio-' + timestamp;
-                var style              = self.branch.createRadioButtonStyle(customizeDesign, '#' + name);
-                html += style;
-                html += '<sinclo-radio>';
-                html += '<input type="radio" name="sinclo-radio-' + timestamp +
-                    '" id="sinclo-radio-' + timestamp +
-                    '" class="sinclo-chat-radio" value="' + labels[nodeId] +
-                    '" data-did="' + did +
-                    '" data-nid="' + nid +
-                    '" data-next-nid="' + selectionMap[nodeId] + '">';
-                html += '<label for="sinclo-radio-' + timestamp + '">' +
-                    labels[nodeId] + '</label>';
-                html += '</sinclo-radio>';
-                break;
-              case 2:
-                // ボタン
-                var timestamp = (new Date()).getTime();
-                var name               = 'sinclo-buttonUI_' + timestamp;
-                var style              = self.branch.createButtonUIStyle(customizeDesign, '#' + name);
-                if(idx === 0) {
-                  html += '<div id="' + name + '">';
+            if(check.isset(labels[nodeId]['type']) && check.isset(labels[nodeId]['value']) && Number(labels[nodeId]['type']) === 2) {
+              html += sinclo.chatApi.createMessageHtml(labels[nodeId]['value']);
+            } else {
+              var message = check.isset(labels[nodeId]['value']) ? labels[nodeId]['value'] : labels[nodeId];
+              switch (Number(currentNode.attrs.actionParam.btnType)) {
+                case 1:
+                  // ラジオボタン
+                  var name               = 'sinclo-radio-' + timestamp;
+                  var style              = self.branch.createRadioButtonStyle(customizeDesign, '#' + name);
                   html += style;
-                }
-                html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui" data-did="' + did +
-                    '" data-nid="' + nid +
-                    '" data-next-nid="' + selectionMap[nodeId] + '">' + labels[nodeId] + '</button>';
-                if(idx === arr.length - 1) {
-                  html += '</div>';
-                }
-                break;
+                  html += '<sinclo-radio>';
+                  html += '<input type="radio" name="sinclo-radio-' + timestamp +
+                      '" id="sinclo-radio-' + timestamp +
+                      '" class="sinclo-chat-radio" value="' + message +
+                      '" data-did="' + did +
+                      '" data-nid="' + nid +
+                      '" data-next-nid="' + selectionMap[nodeId] + '">';
+                  html += '<label for="sinclo-radio-' + timestamp + '">' +
+                      message + '</label>';
+                  html += '</sinclo-radio>';
+                  break;
+                case 2:
+                  // ボタン
+                  var timestamp = (new Date()).getTime();
+                  var name               = 'sinclo-buttonUI_' + timestamp;
+                  var style              = self.branch.createButtonUIStyle(customizeDesign, '#' + name);
+                  if(idx === 0) {
+                    html += '<div id="' + name + '">';
+                    html += style;
+                  }
+                  html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui" data-did="' + did +
+                      '" data-nid="' + nid +
+                      '" data-next-nid="' + selectionMap[nodeId] + '">' + message + '</button>';
+                  if(idx === arr.length - 1) {
+                    html += '</div>';
+                  }
+                  break;
+              }
             }
           });
           return html;
@@ -12867,6 +12947,13 @@
                 sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
                 ' !important;}';
           }
+          if (settings.outButtonUINoneBorder) {
+            style += '#sincloBox ul#chatTalk ' + id + ' button {border: none}';
+          } else {
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button {border: 1px solid ' +
+                settings.buttonUIBorderColor + ' }';
+          }
           style += '</style>';
 
           return style;
@@ -12886,6 +12973,25 @@
         }
       },
       speakText: {
+        doAction: function() {
+          console.log("<><><><><> SPEAK TEXT <><><><><>");
+          var self = sinclo.diagramApi;
+          var currentNode = self.storage.getCurrentNode();
+          var messages = currentNode.attrs.actionParam.text;
+          common.chatBotTypingCall({messageType: self.messageType.message.text});
+          self.executor.wait(self.executor.getIntervalTimeSec())
+          .then(function() {
+            common.chatBotTypingTimerClear();
+            common.chatBotTypingRemove();
+            return self.speakText.showMessages(currentNode, messages);
+          })
+          .then(function() {
+            sinclo.chatApi.scDown();
+            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+            self.executor.setNext(self.common.getDiagramId(), nextNodeId);
+            self.executor.execute();
+          });
+        },
         showMessages: function(currentNode, messages) {
           var defer = $.Deferred();
           var self = sinclo.diagramApi;
@@ -12894,6 +13000,8 @@
               var timeoutMSec = self.executor.getIntervalTimeSec() * 1000 * index;
               console.log('speakText.showMessages. timer msec : %s', timeoutMSec);
               setTimeout(function() {
+                common.chatBotTypingTimerClear();
+                common.chatBotTypingRemove();
                 self.speakText.showMessageProcess(messages[index]);
                 if (!currentNode.isRedraw) {
                   self.speakText.saveShownMessage(currentNode, messages[index]);
@@ -12901,16 +13009,15 @@
                 if(index === messages.length - 1) {
                   defer.resolve();
                 } else {
-                  common.chatBotTypingCall({});
+                  common.chatBotTypingCall({messageType: self.messageType.message.text});
                 }
+                sinclo.chatApi.scDown();
               }, timeoutMSec);
             })(i);
           }
           return defer.promise();
         },
         showMessageProcess: function(message) {
-          common.chatBotTypingTimerClear();
-          common.chatBotTypingRemove();
           var cs = 'diagram_msg sinclo_re';
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
@@ -12926,20 +13033,6 @@
 
           li.className = cs;
           li.innerHTML = sinclo.chatApi.createMessageHtml(message);
-        },
-        doAction: function() {
-          console.log("<><><><><> SPEAK TEXT <><><><><>");
-          var self = sinclo.diagramApi;
-          var currentNode = self.storage.getCurrentNode();
-          var messages = currentNode.attrs.actionParam.text;
-          common.chatBotTypingCall({});
-          self.executor.wait(self.executor.getIntervalTimeSec())
-          .then(self.speakText.showMessages(currentNode, messages).then(function(){
-            sinclo.chatApi.scDown();
-            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
-            self.executor.setNext(self.common.getDiagramId(), nextNodeId);
-            self.executor.execute();
-          }));
         },
         saveShownMessage: function(currentNode, message) {
           var self = sinclo.diagramApi;
