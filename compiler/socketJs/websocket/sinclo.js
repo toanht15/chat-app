@@ -1517,13 +1517,28 @@
           if (key.indexOf('_') >= 0 && 'applied' in chat &&
               chat.applied) continue;
 
-          if(sinclo.scenarioApi.isProcessing()
-              && check.isset(chat.message.answerCount)) {
-            if(!hasFirstHearingMessage && Number(chat.message.answerCount) === 0) {
-              hasFirstHearingMessage = true;
-            } else if(Number(chat.message.answerCount) === 0) {
-              // 2回目以降のカウント0のデータがあればそれ以前のヒアリングのUIをdisableにする
-              sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
+          if(sinclo.scenarioApi.isProcessing()) {
+            try {
+              var messageObj = JSON.parse(chat.message);
+              if(check.isset(messageObj.answerCount)) {
+                if (!hasFirstHearingMessage &&
+                    Number(messageObj.answerCount) === 0) {
+                  hasFirstHearingMessage = true;
+                } else if (Number(messageObj.answerCount) === 0) {
+                  // 2回目以降のカウント0のデータがあればそれ以前のヒアリングのUIをdisableにする
+                  sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
+                }
+              }
+            } catch(e) {
+
+            } finally {
+              if(hasFirstHearingMessage
+                 && sinclo.scenarioApi.isProcessing()
+                 && sinclo.scenarioApi._hearing.isHearingMode()
+                 && Number(sinclo.scenarioApi._hearing._getCurrentSeq()) === 0) {
+                // 1回目のヒアリングアクションが終了して2回目のヒアリングアクションに回答していない状態
+                sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
+              }
             }
           }
 
