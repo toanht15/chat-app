@@ -1936,7 +1936,8 @@
           '<option value="1">選択肢' +
           '<option value="2">発言内容' +
           '</select>' +
-          '<input type="text" ng-model="branchSelectionList[$index].value" ng-change="handleButtonCSS()"  />' +
+          '<input type="text" ng-model="branchSelectionList[$index].value" ng-change="handleButtonCSS()" ng-if="branchSelectionList[$index].type == 1" />' +
+          '<resize-textarea ng-if="branchSelectionList[$index].type == 2" ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="branchSelectionList[$index].value"></resize-textarea>' +
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index, {type: \'1\', value: \'\'})">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
