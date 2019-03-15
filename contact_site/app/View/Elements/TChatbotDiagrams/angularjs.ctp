@@ -254,18 +254,36 @@
       };
 
       if (dataForUpdate !== null && dataForUpdate !== '') {
-        graph.fromJSON(JSON.parse(dataForUpdate));
+        var graphData = JSON.parse(dataForUpdate);
+        Object.keys(graphData.cells).forEach(function(elm, idx, arr){
+          if('devs.Model'.indexOf(graphData.cells[idx]['type']) === -1) return;
+          if(graphData.cells[idx]['attrs']['actionParam']
+              && graphData.cells[idx]['attrs']['nodeBasicInfo']
+              && 'branch'.indexOf(graphData.cells[idx]['attrs']['nodeBasicInfo']['nodeType']) !== -1
+              && graphData.cells[idx]['attrs']['actionParam']['selection']
+              && typeof(graphData.cells[idx]['attrs']['actionParam']['selection'][0]) === 'string') {
+            for(var i = 0; i < graphData.cells[idx]['attrs']['actionParam']['selection'].length; i++) {
+              var label = graphData.cells[idx]['attrs']['actionParam']['selection'][i];
+              graphData.cells[idx]['attrs']['actionParam']['selection'][i] = {
+                type: "1", // 選択肢固定
+                value: label
+              };
+            }
+          }
+        });
+        console.log(graphData);
+        graph.fromJSON(graphData);
         $scope.setMessageInterval();
         setTimeout(function(){
-          dataForUpdate = JSON.parse(dataForUpdate);
+          dataForUpdate = graphData;
           graph.resetCells(dataForUpdate.cells);
           initNodeEvent(graph.getCells());
         }, 500);
       }
-      
 
 
-      
+
+
 
       paper.on('cell:pointerup',
           function(cellView, evt, x, y) {
@@ -547,6 +565,16 @@
           popupEventOverlap.initOverlap();
           popupEventOverlap.open(content, overView.class, overView.title);
           this._initPopupOverlapEvent();
+          $scope.autoResizeTextArea();
+          popupEventOverlap.resize();
+          $('#bulk_textarea').bind('input', function() {
+            $scope.autoResizeTextArea();
+            popupEventOverlap.resize();
+          });
+          $(window).on('resize', function() {
+            $scope.autoResizeTextArea();
+            popupEventOverlap.resize();
+          });
         },
         _getOverView: function(type) {
           switch(Number(type.key)) {
@@ -570,6 +598,31 @@
                  '    <textarea name=""  id="bulk_textarea" style="overflow: hidden; resize: none; font-size: 13px;" cols="48" rows="3" placeholder=' +
                  '"男性&#10;女性">' + this.textList.join("\n") + '</textarea>\n' +
                  '</div>';
+        }
+      };
+
+      $scope.autoResizeTextArea = function() {
+        var maxRow = 4;   // 表示可能な最大行数
+        var fontSize = 13;  // 行数計算のため、templateにて設定したフォントサイズを取得
+        var borderSize = 2;   // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
+        var paddingSize = 5;   // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
+        var lineHeight = 1.5; // 表示高さの計算のため、templateにて設定した行の高さを取得
+        var elm = $('#bulk_textarea');
+        // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
+        var areaWidth = elm[0].getBoundingClientRect().width - borderSize - paddingSize;
+        // フォントサイズとテキストエリアのサイズを基に、行数を計算する
+        var textRow = 1;
+        elm[0].value.split('\n').forEach(function(string) {
+          var stringWidth = string.length * fontSize;
+          textRow += Math.max(Math.ceil(stringWidth / areaWidth), 1);
+        });
+        // 表示する行数に応じて、テキストエリアの高さを調整する
+        if (textRow > maxRow) {
+          elm.height((maxRow * (fontSize * lineHeight)) + paddingSize);
+          elm.css('overflow', 'auto');
+        } else {
+          elm.height(textRow * (fontSize * lineHeight));
+          elm.css('overflow', 'hidden');
         }
       };
 
@@ -1259,7 +1312,7 @@
               textList.push(targetList[j].value);
               typeList.push(targetList[j].type);
             }
-            
+
             var childList = this._getCurrentPortList();
             for( var i = 0; i < childList.length; i++ ){
               var containNum = textList.indexOf(childList[i].attr("nodeBasicInfo/tooltip"));

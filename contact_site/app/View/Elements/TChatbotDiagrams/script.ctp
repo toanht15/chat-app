@@ -150,11 +150,11 @@ $(document).ready(function(){
         data: {
           selectedList: selectedList,
         },
-        url: "<?= $this->Html->url('/TChatbotDiagrams/chkRemoteDelete') ?>",
+        url: "<?= $this->Html->url('/TChatbotDiagrams/remoteDelete') ?>",
         success: function(data){
           // ページ再読み込み
           var url = "<?= $this->Html->url('/TChatbotDiagrams/index') ?>";
-          location.href = url + "/page:" + index;
+          location.href = url + "/page:" + 1;
         },
         error: function() {
           console.log('error');
