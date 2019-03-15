@@ -1279,6 +1279,7 @@
         typeBranch: {
           branchPortController: function(newSelectionList) {
             var self = nodeEditHandler.typeBranch;
+            newSelectionList = self._removeEmptyValue(newSelectionList);
             self._checkCurrentPortListFromPast(newSelectionList);
             for(var i = 0; i < newSelectionList.length; i++){
               /* Set rect height */
@@ -1296,6 +1297,18 @@
               }
               self._checkPastPortListFromCurrent(newSelectionList, i, cell);
             }
+          },
+          _removeEmptyValue: function(newSelectionList){
+            var emptyList = [];
+            for(var i=0; i < newSelectionList.length; i++){
+              if( newSelectionList[i].value === "" ){
+                emptyList.unshift(i);
+              }
+            }
+            for(var j=0; j < emptyList.length; j++){
+              newSelectionList.splice(emptyList[j], 1);
+            }
+            return newSelectionList;
           },
           _checkPastPortListFromCurrent: function(targetList, number, port) {
             var textList = [];
@@ -1458,7 +1471,7 @@
                   y: 12
                 },
                 'rect.body': {
-                  fill: '#FFFFFF',
+                  fill: '#F9EBF1',
                   stroke: false,
                   rx: 10,
                   ry: 10
@@ -1469,13 +1482,13 @@
                   tooltip: originalText
                 },
                 '.cover_top': {
-                  fill: '#FFFFFF',
+                  fill: '#F9EBF1',
                   width: 240,
                   height: 10,
                   'fill-opacity': opacity.top
                 },
                 '.cover_bottom': {
-                  fill: '#FFFFFF',
+                  fill: '#F9EBF1',
                   width: 240,
                   height: 10,
                   transform: "translate(0 26)",
@@ -1809,6 +1822,12 @@
       };
 
 
+      $scope.changeTextTrigger = function(e, forceProcess, text){
+        $scope.replaceTag(text);
+        $scope.autoResize(e, forceProcess);
+      };
+
+
       $scope.autoResize = function(e, forceProcess){
         if(e == null && !forceProcess) return;
         var elm = e.target ? e.target : e[0];
@@ -1836,6 +1855,13 @@
           elm.style.overflow = 'hidden';
         }
         $scope.popupPositionAdjustment();
+      };
+      
+      $scope.replaceTag = function(text){
+        var target = $(".branch_text_span");
+        target.text("");
+        var str = replaceVariable(text, false, $scope.widget.settings['widget_size_type']);
+        target.append(str);
       };
 
       /** ==========================
@@ -1948,7 +1974,7 @@
           '<div class=\'branch_modal_setting_header\'>' +
           '<div class=\'flex_row_box\'>' +
           '<p>発言内容</p>' +
-          '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="branchText"></resize-textarea>' +
+          '<resize-textarea ng-keyup="changeTextTrigger($event, true, branchText)" ng-keydown="changeTextTrigger($event, true, branchText)" ng-model="branchText"></resize-textarea>' +
           '</div>' +
           '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +

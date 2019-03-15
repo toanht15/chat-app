@@ -65,6 +65,12 @@
   .diagram_preview_area li.balloonType.chat_left.middleSize { margin-right: 21px; }
   .diagram_preview_area li.balloonType.chat_left.largeSize { margin-right: 24.6px; }
 
+  .diagram_previwe_area li img { display: block; }
+  .diagram_preview_area li img.smallSizeImg { max-width:165px; max-height:120px; }
+  .diagram_preview_area li img.middleSizeImg { max-width:215px; max-height:188px; }
+  .diagram_preview_area li img.largeSizeImg { max-width:265px; max-height:285px; }
+
+
   .diagram_preview_area li span.cName { display: block; color: {{widget.settings['main_color']}}!important; font-weight: bold; font-size: {{widget.settings['re_text_size']}}px; margin: 0 0 5px 0; }
   .diagram_preview_area li span.cName.details{ color: {{widget.settings['c_name_text_color']}}!important;}
 
@@ -221,8 +227,7 @@
           'customSize: widget.settings[\'widget_size_type\'] == 5' +
           '}">' +
           '<span ng-if="widget.settings[\'show_automessage_name\'] === \'1\'" class="cName details">{{widget.settings[\'sub_title\']}}</span>' +
-          '<span id="action{{setActionId}}-{{index}}_message" class="details">' +
-          '<span class="sinclo-text-line" ng-show="branchText">{{branchText}}</span>' +
+          '<span class="details branch_text_span">' +
           '</span>' +
           '<div ng-if="branchType == 1">' +
           '' +
@@ -244,8 +249,8 @@
           '' +
           '</div>' +
           '<div id="button_component" ng-class="{noneText: !branchText, hasText: branchText}" ng-if="branchType == 2">' +
-          '<div ng-repeat="content in branchSelectionList track by $index">' +
-          '<button class="sinclo-button-ui" ng-if="content.value && content.type == 1"' +
+          '<div ng-repeat="content in branchSelectionList track by $index" ng-if="content.value">' +
+          '<button class="sinclo-button-ui" ng-if="content.type == 1"' +
           'ng-class="{' +
           'tal: buttonUITextAlign == 1,' +
           'tac: buttonUITextAlign == 2,' +
