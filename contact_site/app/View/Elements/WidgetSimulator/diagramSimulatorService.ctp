@@ -176,7 +176,8 @@
         baseData.length; nodeIndex++) {
           if(baseData[nodeIndex]['type'] !== 'devs.Model') continue;
           console.log('baseData.id:%s itemId:%s baseData.attrs.nodeBasicInfo.nodeType: %s', baseData[nodeIndex]['id'], itemIds[i], baseData[nodeIndex]['attrs']['nodeBasicInfo']['nodeType']);
-          if (baseData[nodeIndex]['id'] === itemIds[i]) {
+          if (baseData[nodeIndex]['id'] === itemIds[i]
+          && baseData[nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId']) {
             map[itemIds[i]] = baseData[nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'];
           }
         }
