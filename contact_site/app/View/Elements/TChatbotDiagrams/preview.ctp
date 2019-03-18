@@ -65,6 +65,12 @@
   .diagram_preview_area li.balloonType.chat_left.middleSize { margin-right: 21px; }
   .diagram_preview_area li.balloonType.chat_left.largeSize { margin-right: 24.6px; }
 
+  .diagram_previwe_area li img { display: block; }
+  .diagram_preview_area li img.smallSizeImg { max-width:165px; max-height:120px; }
+  .diagram_preview_area li img.middleSizeImg { max-width:215px; max-height:188px; }
+  .diagram_preview_area li img.largeSizeImg { max-width:265px; max-height:285px; }
+
+
   .diagram_preview_area li span.cName { display: block; color: {{widget.settings['main_color']}}!important; font-weight: bold; font-size: {{widget.settings['re_text_size']}}px; margin: 0 0 5px 0; }
   .diagram_preview_area li span.cName.details{ color: {{widget.settings['c_name_text_color']}}!important;}
 
@@ -99,6 +105,9 @@
   .diagram_preview_area li .sinclo-button-wrap:not(.sideBySide) .sinclo-button.noText:only-child { border-radius: 12px }
   .diagram_preview_area li .sinclo-button-wrap:not(.sideBySide) .sinclo-button:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px }
 
+  .diagram_preview_area li button.btn_top_radius {border-top-left-radius: 8px; border-top-right-radius: 8px}
+  .diagram_preview_area li button.btn_bottom_radius {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
+
   .diagram_preview_area li select { border: 1px solid #909090; border-radius: 0; padding: 5px; height: 30px; margin-top: 9px; margin-bottom: -2px; width: 100%; word-break: break-all}
   .diagram_preview_area .grid_preview li.smallSize select { min-width: 183px;}
   .diagram_preview_area .grid_preview {display: grid; grid-template-columns: minmax(max-content, max-content) 1fr; margin-bottom: 5px; }
@@ -114,8 +123,6 @@
   .diagram_preview_area li button {width: 188px; background-color: {{widget.settings.re_text_color}};  color: {{widget.settings.re_background_color}}; cursor: pointer;  min-height: 35px; margin-bottom: 1px;  padding: 10px 15px; border: 1px solid #E3E3E3; text-align: center; }
   .diagram_preview_area li.middleSize button { width: 240px;}
   .diagram_preview_area li.largeSize button { width: 280px;}
-  .diagram_preview_area li button.btn_top_radius {border-top-left-radius: 8px; border-top-right-radius: 8px}
-  .diagram_preview_area li button.btn_bottom_radius {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}
   .diagram_preview_area li button:active{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
   .diagram_preview_area li button:focus{outline: none}
   .diagram_preview_area li button:hover{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
@@ -187,7 +194,7 @@
           'customSize: widget.settings[\'widget_size_type\'] == 5' +
           '}">' +
           '<span ng-if="widget.settings[\'show_automessage_name\'] == 1" class="cName details">{{widget.settings["sub_title"]}}</span>' +
-          '<span class="details">{{text}}</span>' +
+          '<span class="details preview_text_span_{{$index}}"></span>' +
           '</li>' +
           '</div>'
     }
@@ -220,8 +227,7 @@
           'customSize: widget.settings[\'widget_size_type\'] == 5' +
           '}">' +
           '<span ng-if="widget.settings[\'show_automessage_name\'] === \'1\'" class="cName details">{{widget.settings[\'sub_title\']}}</span>' +
-          '<span id="action{{setActionId}}-{{index}}_message" class="details">' +
-          '<span class="sinclo-text-line" ng-show="branchText">{{branchText}}</span>' +
+          '<span class="details preview_text_span_branch">' +
           '</span>' +
           '<div ng-if="branchType == 1">' +
           '' +
@@ -243,8 +249,8 @@
           '' +
           '</div>' +
           '<div id="button_component" ng-class="{noneText: !branchText, hasText: branchText}" ng-if="branchType == 2">' +
-          '<div ng-repeat="content in branchSelectionList track by $index">' +
-          '<button class="sinclo-button-ui" ng-if="content.value && content.type == 1"' +
+          '<div ng-repeat="content in branchSelectionList track by $index" ng-if="content.value">' +
+          '<button class="sinclo-button-ui" ng-if="content.type == 1"' +
           'ng-class="{' +
           'tal: buttonUITextAlign == 1,' +
           'tac: buttonUITextAlign == 2,' +

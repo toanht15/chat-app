@@ -317,12 +317,13 @@
                 /* Bind node name if diagram is text or scenario */
                 if(frame.hasClass("p_diagrams_branch")){
                   $scope.titleHandler($scope.branchTitle, "分岐");
-                  $scope.autoResize($("textarea"), true);
+                  $scope.changeTextTrigger($("textarea.for_modal"), true, $scope.branchText, "branch");
                 }else if(frame.hasClass("p_diagrams_text")){
                   $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
-                  var elements = $("textarea");
-                  for(var i = 0; i < elements.length; i++){
-                    $scope.autoResize($(elements[i]), true);
+                  var elements = $("textarea.for_modal");
+                  for(var i = 0; i < elements.length ; i++){
+                    if($scope.speakTextList[i] === "") continue;
+                    $scope.changeTextTrigger($(elements[i]), true, $scope.speakTextList[i], i);
                   }
                 }
 
@@ -1111,10 +1112,37 @@
             break;
         }
         $timeout(function(){
+          $scope.resetSelectionHeight();
           $scope.handleButtonCSS();
+          popupEvent.resize();
+          $scope.selectionHeightHandler();
           popupEvent.resize();
           $scope.popupFix();
         })
+      };
+      
+      $scope.resetSelectionHeight = function(){
+        $('.branch_modal_setting_content').css({
+          "height": ""
+        });
+      };
+
+      $scope.selectionHeightHandler = function(){
+        var windowHeight = window.innerHeight;
+        var popupHeight = $('#popup-frame').height();
+        var selectContent = $('.branch_modal_setting_content');
+        var prevMaxHeight = selectContent.css("max-height") ;
+        selectContent.css({
+          "max-height": ""
+        });
+        var delta = popupHeight - windowHeight;
+        if( delta >= 0 ) {
+          selectContent.css("max-height",prevMaxHeight !== "none" ? prevMaxHeight : selectContent.height() - delta);
+          selectContent.css({
+            "height": selectContent.height() - delta,
+            "min-height": "100px"
+          });
+        }
       };
 
       $scope.popupHandler = function(){
@@ -1252,6 +1280,7 @@
         typeBranch: {
           branchPortController: function(newSelectionList) {
             var self = nodeEditHandler.typeBranch;
+            newSelectionList = self._removeEmptyValue(newSelectionList);
             self._checkCurrentPortListFromPast(newSelectionList);
             for(var i = 0; i < newSelectionList.length; i++){
               /* Set rect height */
@@ -1270,6 +1299,18 @@
               self._checkPastPortListFromCurrent(newSelectionList, i, cell);
             }
           },
+          _removeEmptyValue: function(newSelectionList){
+            var emptyList = [];
+            for(var i=0; i < newSelectionList.length; i++){
+              if( newSelectionList[i].value === "" ){
+                emptyList.unshift(i);
+              }
+            }
+            for(var j=0; j < emptyList.length; j++){
+              newSelectionList.splice(emptyList[j], 1);
+            }
+            return newSelectionList;
+          },
           _checkPastPortListFromCurrent: function(targetList, number, port) {
             var textList = [];
             var typeList = [];
@@ -1277,7 +1318,7 @@
               textList.push($scope.oldSelectionList[j].value);
               typeList.push($scope.oldSelectionList[j].type);
             }
-            var contentNum = $scope.oldSelectionList.indexOf(targetList[number]);
+            var contentNum = textList.indexOf(targetList[number].value);
             if(contentNum === -1){
               /* 追加するパターン */
               /* 過去にはないが、現在にあるパターン */
@@ -1285,10 +1326,18 @@
               initNodeEvent([port]);
               graph.addCell(port);
             } else {
-              /* edit port position */
+              /* 追加するパターン */
+              /* 両方にあるが、タイプが違うパターン */
+              if(typeList[contentNum] !== targetList[number].type){
+                $scope.currentEditCellParent.embed(port);
+                initNodeEvent([port]);
+                graph.addCell(port);
+              }
+              /* 編集するパターン */
+              /* 両方にあり、タイプも同じパターン */
               var childList = this._getCurrentPortList();
               for( var i = 0; i < childList.length; i++ ){
-                if( childList[i].attr(".label/text") === targetList[number].value ){
+                if( childList[i].attr("nodeBasicInfo/tooltip") === targetList[number].value ){
                   this._setSelfPosition(childList[i], this._getSelfPosition(number));
                   var topOpacity = 1,
                       bottomOpacity = 1;
@@ -1423,7 +1472,7 @@
                   y: 12
                 },
                 'rect.body': {
-                  fill: '#FFFFFF',
+                  fill: '#F9EBF1',
                   stroke: false,
                   rx: 10,
                   ry: 10
@@ -1434,13 +1483,13 @@
                   tooltip: originalText
                 },
                 '.cover_top': {
-                  fill: '#FFFFFF',
+                  fill: '#F9EBF1',
                   width: 240,
                   height: 10,
                   'fill-opacity': opacity.top
                 },
                 '.cover_bottom': {
-                  fill: '#FFFFFF',
+                  fill: '#F9EBF1',
                   width: 240,
                   height: 10,
                   transform: "translate(0 26)",
@@ -1471,7 +1520,8 @@
                   y: 12
                 },
                 nodeBasicInfo: {
-                  nodeType: "childTextNode"
+                  nodeType: "childTextNode",
+                  tooltip: originalText
                 },
                 '.cover_top': {
                   fill: '#FFFFFF',
@@ -1600,7 +1650,7 @@
       $scope.popupFix = function(){
         var popup = $('#popup-frame');
         popup.offset({
-          top: $scope.currentTop ? $scope.currentTop : window.innerHeight / 2 - popup.height() / 2,
+          top: typeof $scope.currentTop === "number" ? $scope.currentTop : window.innerHeight / 2 - popup.height() / 2,
           left: popup.offset().left
         });
       };
@@ -1773,6 +1823,12 @@
       };
 
 
+      $scope.changeTextTrigger = function(e, forceProcess, text, index){
+        $scope.replaceTag(text, index);
+        $scope.autoResize(e, forceProcess);
+      };
+
+
       $scope.autoResize = function(e, forceProcess){
         if(e == null && !forceProcess) return;
         var elm = e.target ? e.target : e[0];
@@ -1800,6 +1856,13 @@
           elm.style.overflow = 'hidden';
         }
         $scope.popupPositionAdjustment();
+      };
+      
+      $scope.replaceTag = function(text, index){
+        var target = $(".preview_text_span_" + index);
+        target.text("");
+        var str = replaceVariable(text, false, $scope.widget.settings['widget_size_type']);
+        target.append(str);
       };
 
       /** ==========================
@@ -1912,7 +1975,7 @@
           '<div class=\'branch_modal_setting_header\'>' +
           '<div class=\'flex_row_box\'>' +
           '<p>発言内容</p>' +
-          '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="branchText"></resize-textarea>' +
+          '<resize-textarea ng-keyup="changeTextTrigger($event, true, branchText, \'branch\')" ng-keydown="changeTextTrigger($event, true, branchText, \'branch\')" ng-model="branchText"></resize-textarea>' +
           '</div>' +
           '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
@@ -1936,7 +1999,8 @@
           '<option value="1">選択肢' +
           '<option value="2">発言内容' +
           '</select>' +
-          '<input type="text" ng-model="branchSelectionList[$index].value" ng-change="handleButtonCSS()"  />' +
+          '<input type="text" ng-model="branchSelectionList[$index].value" ng-change="handleButtonCSS()" ng-if="branchSelectionList[$index].type == 1" />' +
+          '<resize-textarea ng-if="branchSelectionList[$index].type == 2" ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="branchSelectionList[$index].value"></resize-textarea>' +
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', branchSelectionList, $index, {type: \'1\', value: \'\'})">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', branchSelectionList, $index)">' +
           '</div>' +
@@ -1971,7 +2035,7 @@
           '<p>発言内容</p>' +
           '<div id="text_modal_contents" >' +
           '<div class=\'text_modal_setting\' ng-repeat="speakText in speakTextList track by $index" finisher>' +
-          '<resize-textarea ng-keyup="autoResize($event, true)" ng-keydown="autoResize($event, true)" ng-model="speakTextList[$index]"></resize-textarea>' +
+          '<resize-textarea ng-keyup="changeTextTrigger($event, true, speakText, $index)" ng-keydown="changeTextTrigger($event, true, speakText, $index)" ng-model="speakTextList[$index]"></resize-textarea>' +
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index, \'\')">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', speakTextList, $index)">' +
           '</div>' +
@@ -2166,7 +2230,7 @@
     return {
       restrict: 'E',
       replace: true,
-      template: '<textarea class="resize" style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea>',
+      template: '<textarea class="resize for_modal" style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea>',
       link: function(scope, element, attr){
         scope.autoResize(element, false);
       }
