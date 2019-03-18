@@ -43,10 +43,6 @@
 
     graph = new joint.dia.Graph;
 
-    if (!!$('#TChatbotDiagramActivity').val()) {
-      graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
-    }
-
     var paper = new joint.dia.Paper({
       el: canvas,
       width: canvas.width,
@@ -108,6 +104,10 @@
     });
 
     var dragReferencePosition = null;
+
+    if ($('#TChatbotDiagramActivity').val() !== null && $('#TChatbotDiagramActivity').val() !== '') {
+      graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
+    }
 
     paper.on('cell:pointerup',
       function(cellView, evt, x, y) {
