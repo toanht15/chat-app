@@ -7,12 +7,15 @@
  */
 ?>
 <?php echo $this->element('TChatbotDiagrams/nodeCreator'); ?>
-<?php echo $this->element('TChatbotDiagrams/jointScript'); ?>
+<?php echo $this->element('TChatbotScenario/localStorageService'); ?>
+<?php echo $this->element('WidgetSimulator/simulatorService'); ?>
+<?php echo $this->element('WidgetSimulator/diagramSimulatorService'); ?>
+<?php echo $this->element('WidgetSimulator/scenarioSimulatorService'); ?>
 <div>
   <ul>
     <li>
-      <label>チャットツリー名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットツリーに名称を設定します。">?</icon></span></label>
-      <?= $this->ngForm->input('TChatDiagram.name', array(
+      <label>チャットツリー名称<span class="questionBalloon"><icon class="commontooltip questionBtn" data-text="チャットツリーに名称を設定します。">?</icon></span></label>
+      <?= $this->ngForm->input('TChatbotDiagram.name', array(
         'type' => 'text',
         'placeholder' => 'チャットツリー名称を入力',
         'maxlength' => 50,
@@ -23,14 +26,14 @@
     </li>
     <!-- メッセージ間隔 -->
     <li>
-      <label>メッセージ間隔<span class="questionBalloon"><icon class="questionBtn" data-tooltip="各メッセージを送信する間隔（秒数）を設定します。">?</icon></span></label>
-      <?= $this->ngForm->input('messageIntervalTimeSec', array(
-        'type' => 'text',
-        'class' => 'tRight',
-        'maxlength' => 3,
+      <label>メッセージ間隔<span class="questionBalloon"><icon class="commontooltip questionBtn" data-text="各メッセージを送信する間隔（秒数）を設定します。">?</icon></span></label>
+      <?= $this->ngForm->input('TChatbotDiagram.messageIntervalTimeSec', array(
+        'type' => 'number',
+        'max' => 99,
+        'min' => 0,
         'ng-model' => 'messageIntervalTimeSec',
         'after' => '秒',
-        'label' => false
+        'label' => false,
       )) ?>
       <?php if (!empty($errors['messageIntervalTimeSec'])) echo "<li class='error-message'>" . h($errors['messageIntervalTimeSec'][0]) . "</li>"; ?>
     </li>
@@ -43,6 +46,7 @@
 <section>
   <?= $this->Form->hidden('TChatbotDiagram.id') ?>
   <?= $this->Form->hidden('TChatbotDiagram.activity') ?>
+  <?=$this->ngForm->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
   <div id="tchatbotscenario_actions" class="fotterBtnArea">
     <?=$this->Html->link('戻る','/TChatbotDiagrams/index/page:', ['class'=>'whiteBtn btn-shadow'])?>
     <a id="submitBtn" href="javascript:void(0)" class="greenBtn btn-shadow">保存</a>
@@ -64,5 +68,10 @@
         'class' => 'btn-shadow redBtn',
         'id' => 'tchatbotscenario_edit_remove_btn',
       )) ?>
+  </div>
+  <!-- シミュレーター -->
+  <div ng-controller="DialogController as dialog" ng-cloak>
+    <?php echo $this->element('WidgetSimulator/simulatorService'); ?>
+    <?= $this->element('TChatbotDiagrams/simulator'); ?>
   </div>
 </section>

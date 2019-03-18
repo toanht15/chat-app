@@ -12,9 +12,11 @@
   <?=$this->Form->create('TChatbotScenario', ['url'=>['controller' =>'TChatbotScenario', 'action'=>'add'], 'novalidate' => true, 'id'=>'TChatbotScenarioEntryForm', 'name'=>'TChatbotScenarioEntryForm'])?>
     <?= $this->element('TChatbotScenario/entry'); ?>
   <?=$this->Form->end();?>
-</div><!-- /tchatbotscenario_form -->
+</div>
+  <!-- /tchatbotscenario_form -->
 
 </div>
 <script>
+
   FontAwesomeConfig = { searchPseudoElements: true };
 </script>

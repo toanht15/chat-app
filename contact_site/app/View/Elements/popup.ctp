@@ -440,7 +440,7 @@
           };
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
-            return popupEvent.closeNoPopup();
+            return popupEvent.closePopup(3);
           };
 
           var deleteBtn = _button("削除");
@@ -469,7 +469,7 @@
           };
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
-            return popupEvent.closeNoPopup();
+            return popupEvent.closePopup(3);
           };
 
           var deleteBtn = _button("削除");
@@ -485,7 +485,7 @@
           };
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
-            return popupEvent.closeNoPopup();
+            return popupEvent.closePopup(3);
           };
 
           var deleteBtn = _button("削除");
@@ -755,11 +755,3 @@
 </div>
 <div id="shortMessage" class="popup-off">
 </div>
-<script>
-  console.log(location.href);
-  if(location.href.indexOf("TChatbotDiagrams/add") > -1
-  || location.href.indexOf("TchatbotDiagrams/edit") > -1) {
-    $('#popup').attr("ng-app", "sincloApp")
-    .attr("ng-controller", "ModalController");
-  }
-</script>

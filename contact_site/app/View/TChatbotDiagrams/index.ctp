@@ -1,6 +1,9 @@
 <?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?php echo $this->element('TChatbotDiagrams/script'); ?>
-
+<?php
+  $params = $this->Paginator->params();
+  $prevCnt = ($params['page'] - 1) * $params['limit'];
+?>
 <div id='TChatbotDiagram_idx' class="card-shadow">
 
   <div id='TChatbotDiagram_title'>
@@ -21,7 +24,6 @@
               'data-balloon-position' => '36',
               'width' => 45,
               'height' => 45,
-              'onclick' => 'openAdd()',
             )) ?>
           </a>
         </span>
@@ -54,13 +56,13 @@
       <!-- チャットツリー設定の並び替えモード -->
       <div class="tabpointer">
         <label class="pointer">
-          <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText"> 並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; float: right; position: relative; top: 0px; left: 0px;">（！）並び替え中（保存する場合はチェックを外してください）</span>
+          <?= $this->Form->checkbox('sort'); ?><span id="sortText"> 並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; float: right; position: relative; top: 0px; left: 0px;">（！）並び替え中（保存する場合はチェックを外してください）</span>
         </label>
       </div>
       <!-- チャットツリー設定の並び替えモード -->
     </div>
 
-    <!--
+
     <div id="paging" class="fRight">
       <?php
       echo $this->Paginator->prev(
@@ -80,7 +82,6 @@
       );
       ?>
     </div>
-    -->
   </div>
 
   <div id='TChatbotDiagram_list' class="p20x">
@@ -90,7 +91,7 @@
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
         <th width=" 5%">No</th>
         <th width="25%">名称</th>
-        <th width="75%">呼び出し元<div class="questionBalloon"><icon class="questionBtn commontooltip" data-text="オートメッセージ設定やシナリオ設定のアクションから、呼び出し設定を利用できます">?</icon></div></th>
+        <th width="65%">呼び出し元<div class="questionBalloon"><icon class="questionBtn commontooltip" data-text="オートメッセージ設定やシナリオ設定のアクションから、呼び出し設定を利用できます">?</icon></div></th>
       </tr>
       </thead>
       <!--
@@ -106,21 +107,20 @@
           $id = $val['TChatbotDiagram']['id'];
         }
 
-//        // 呼び出し元情報
-//        $callerAutoMessage = count($val['callerInfo']['TAutoMessage']) > 0 ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
-//        $callerScenario = count($val['callerInfo']['TChatbotDiagram']) > 0 ? implode(', ', $val['callerInfo']['TChatbotDiagram']) : '';
+        // 呼び出し元情報
+        $callerAutoMessage = (array_key_exists('TAutoMessage', $val['callerInfo']) && count($val['callerInfo']['TAutoMessage']) > 0) ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
+        $callerScenario = (array_key_exists('TChatbotDiagram', $val['callerInfo']) && count($val['callerInfo']['TChatbotDiagram']) > 0) ? implode(', ', $val['callerInfo']['TChatbotDiagram']) : '';
 
         $no = $prevCnt + h($key+1);
         ?>
-        <tr class="pointer" data-sort="<?= $val['TChatbotDiagram']['sort'] ?>" data-id="<?= h($id) ?>"
-            onclick="openEdit(<?= $id ?>)">
+        <tr class="pointer diagram_column" data-sort="<?= $val['TChatbotDiagram']['sort'] ?>" data-id="<?= $id ? h($id) : 0 ?>">
           <td class="tCenter" onclick="event.stopPropagation();" width=" 5%">
-            <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
+            <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?= $id ? h($id) : 0?>">
             <label for="selectTab<?=h($id)?>"></label>
           </td>
           <td class="tCenter" width=" 5%"><?=$no?></td>
           <td class="tCenter scenarioTitle" width="25%"><?= $val['TChatbotDiagram']['name']; ?></td>
-          <td class="p10x" width="75%">
+          <td class="p10x" width="65%">
             <?php if ($callerAutoMessage === '' && $callerScenario === ''): ?>
               <p>（未設定）</p>
             <?php else: ?>
