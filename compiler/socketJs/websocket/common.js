@@ -5097,6 +5097,10 @@ var socket, // socket.io
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.buttonUI
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.checkbox
+          || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.button) {
         return;
       } else if (obj.messageType ===
