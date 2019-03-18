@@ -1612,6 +1612,9 @@ var socket, // socket.io
         /* flatpickr カスタム値の方が強いため基本important指定 */
         html += '#sincloBox #chatTalk li.sinclo_re div.flatpickr-calendar.disable { pointer-events: none!important; opacity: 0.5!important; }';
 
+        /* diagram - button */
+        html += '#sincloBox #chatTalk li.sinclo_re.diagram_msg button { border: 0; border-radius: 0; }';
+
         if (colorList['widgetInsideBorderNone'] === 1) {
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
         }
@@ -5035,8 +5038,7 @@ var socket, // socket.io
     chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
     chatBotTypingCall: function(obj) {
-      console.log('sinclo.scenarioApi._bulkHearing.isInMode() %s',
-          sinclo.scenarioApi._bulkHearing.isInMode());
+      console.log("common.chatBotTypingCall: %s", JSON.stringify(obj));
       if (!common.chatBotTypingDelayTimer || obj.messageType ===
           sinclo.chatApi.messageType.sorry) {
         common.chatBotTypingDelayTimer = setTimeout(function() {
@@ -5095,10 +5097,6 @@ var socket, // socket.io
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.buttonUI
-          || obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.checkbox
-          || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.button) {
         return;
       } else if (obj.messageType ===
@@ -5110,6 +5108,9 @@ var socket, // socket.io
         if (!sinclo.scenarioApi.isProcessing()) {
           return;
         }
+      } else if (obj.messageType === sinclo.diagramApi.messageType.message.text
+        || obj.messageType === sinclo.diagramApi.messageType.message.branch) {
+        // 表示する
       } else if (!sinclo.scenarioApi.isProcessing()) {
         return;
       }
@@ -7019,6 +7020,13 @@ var socket, // socket.io
       sinclo.scenarioApi.begin();
     }); // socket-on: sendChatResult
 
+    // 新着チャット
+    socket.on('resGetChatDiagram', function(d) {
+      var obj = common.jParse(d);
+      sinclo.diagramApi.common.init(obj.id, obj.activity);
+      sinclo.diagramApi.executor.execute();
+    }); // socket-on: sendChatResult
+
     // チャット入力状況受信
     socket.on('receiveTypeCond', function(d) {
       sinclo.chatApi.createTypingMessage(d);
@@ -7187,7 +7195,7 @@ function emit(evName, data, callback) {
       'sendAutoChat' || evName === 'sendChat' ||
       evName === 'storeScenarioMessage' || evName === 'saveCustomerInfoValue' ||
       evName === 'beginBulkHearing' || evName === 'sendParseSignature'
-      || evName === 'hideScenarioMessages') {
+      || evName === 'hideScenarioMessages' || evName === 'storeDiagramMessage') {
     data.userId = userInfo.userId;
   }
   if (evName === 'connectSuccess' || evName === 'sendWindowInfo' || evName ===

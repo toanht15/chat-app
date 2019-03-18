@@ -104,12 +104,34 @@ var popupEventOverlap = {
                 };
                 break;
               case 'p_diagram_delete_alert':
+                var entryBtn = _button('はい');
+                entryBtn.onclick = function () {
+                  return popupEventOverlap.closePopup();
+                };
                 var closeBtn = _button('いいえ');
                 closeBtn.onclick = function () {
                   return popupEventOverlap.closeNoPopupOverlap();
                 };
-                var entryBtn = _button('はい');
+                this.moveType = "moment";
+                break;
+              case 'p_selection_bulk_register':
+                var entryBtn = _button("設定");
                 entryBtn.onclick = function () {
+                  return popupEventOverlap.closePopup();
+                };
+                var closeBtn = _button("閉じる");
+                closeBtn.onclick = function () {
+                  return popupEventOverlap.closeNoPopupOverlap();
+                };
+                this.moveType = "moment";
+                break;
+              case 'p_confirm_diagram_change':
+                var entryBtn = _button("いいえ");
+                entryBtn.onclick = function () {
+                  return popupEventOverlap.closeNoPopupOverlap();
+                };
+                var closeBtn = _button("はい");
+                closeBtn.onclick = function () {
                   return popupEventOverlap.closePopup();
                 };
                 this.moveType = "moment";

@@ -19,7 +19,7 @@ class TChatbotScenarioController extends FileAppController {
 
   const CALL_SELF_SCENARIO_NAME = "（このシナリオ）";
 
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting', 'TLeadListSetting', 'TLeadList'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting', 'TLeadListSetting', 'TLeadList', 'TChatbotDiagram'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -141,6 +141,7 @@ sinclo@medialink-ml.co.jp
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->request->data['leadList'] = $this->leadInfoSet();
+    $this->request->data['chatbotDiagramList'] = $this->getChatbotDiagramSettingList();
     $this->_deleteInvalidLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
@@ -192,6 +193,7 @@ sinclo@medialink-ml.co.jp
     ),$this->request->data['scenarioList']);
     $this->set('storedVariableList', $this->getStoredAllVariableList($id));
     $this->request->data['leadList'] = $this->leadInfoSet();
+    $this->request->data['chatbotDiagramList'] = $this->getChatbotDiagramSettingList();
     $this->_viewElement();
   }
 
@@ -2164,6 +2166,17 @@ sinclo@medialink-ml.co.jp
       $targetList[$currentId]['TLeadListSetting']['list_parameter'] = json_encode($labelList);
     }
     return $targetList;
+  }
+
+  private function getChatbotDiagramSettingList() {
+    $data = $this->TChatbotDiagram->find('list', array(
+      'field' => array('id', 'name'),
+      'conditions' => array(
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'del_flg' => '0'
+      )
+    ));
+    return $data;
   }
 
   /**

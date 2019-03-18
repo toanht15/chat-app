@@ -431,6 +431,7 @@ class ContractController extends AppController
       $editData['MCompany']['options']['refCompanyData'] = json_decode($editData['MCompany']['core_settings'], TRUE)['refCompanyData'];
       $editData['MCompany']['options']['chatbotScenario'] = json_decode($editData['MCompany']['core_settings'], TRUE)['chatbotScenario'];
       $editData['MCompany']['options']['laCoBrowse'] = json_decode($editData['MCompany']['core_settings'], TRUE)['laCoBrowse'];
+      $editData['MCompany']['options']['chatbotTreeEditor'] = json_decode($editData['MCompany']['core_settings'], TRUE)['chatbotTreeEditor'];
 
       // ここまで
       $agreementData = $this->MAgreements->find('first', [

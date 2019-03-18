@@ -1575,6 +1575,45 @@
       }
 
       /*チャットツリーエディタ用*/
+      &[class*="diagrams"] {
+        #popup-title {
+          background-color: #C3D69B;
+          border-bottom: none!important;
+          color: #FFFFFF!important;
+          font-size: 17px!important;
+          font-weight: bold;
+        }
+      }
+
+      &.diagram-ui {
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        #popup-title{
+          cursor: move;
+        }
+        h3 {
+          margin: 20px;
+          border-bottom: 3px solid #C3D69B;
+          padding-bottom: 5px;
+        }
+        .diagram_valid:not(.ng-hide) {
+          display: block;
+          height: 0;
+          margin-top: 5px;
+          color: #b71b65;
+          animation-name: diagram_validation;
+          animation-duration: 400ms;
+          animation-timing-function: linear;
+          animation-fill-mode: both;
+        }
+
+        @keyframes diagram_validation {
+          0% {height: 0; opacity: 0}
+          90% {height: 10px; opacity: 0}
+          100% {height: 10px; opacity: 1}
+        }
+      }
+
+
       /* 設定個数が固定のモーダル */
       &.p_const_diagrams {
         width: 400px;
@@ -1586,7 +1625,11 @@
           label {
             margin-top: 6px;
           }
+          #callTargetScenario {
+            max-width: 200px;
+          }
         }
+
         #jump_modal {
           select#jumpTargetNode {
             width: 200px;
@@ -1603,6 +1646,18 @@
           display: flex;
           justify-content: space-between;
           margin: 10px 65px 0 65px;
+        }
+
+        .scenario_valid_margin {
+          margin-left: 131px;
+        }
+
+        .jump_valid_margin {
+          margin-left: 119px;
+        }
+
+        .link_valid_margin {
+          margin-left: 107px;
         }
 
 
@@ -1638,17 +1693,15 @@
 
       /* テキスト発言のモーダル */
       &.p_diagrams_text {
-        width: 960px;
+        width: 870px;
         #popup-main {
           padding: 0!important;
         }
         #text_modal {
           display: flex;
-          justify-content: start;
-          align-items: center;
           border-bottom: 1px solid #909090;
           #text_modal_editor {
-            width: 585px;
+            width: 500px;
             display: flex;
             border-right: 1px solid #909090;
             flex-direction: column;
@@ -1657,15 +1710,16 @@
               width: 230px;
             }
             #text_modal_head {
-              padding: 20px 0 0 20px;
+              padding-left: 40px;
               input[type='text'] {
-                width: 521px;
+                width: 349px;
                 margin-left: 21px;
                 margin-top: 10px;
               }
             }
-            #text_modal_contents {
-              margin-left: 20px;
+
+            .node_name_valid_margin {
+              margin-left: 108px;
             }
 
             #text_modal_contents > div:not(:first-child) {
@@ -1673,11 +1727,16 @@
             }
             #text_modal_body {
               display: flex;
-              margin-top: 20px;
-              padding: 20px 0 20px 20px;
-              border-top: 1px solid;
+              margin-top: 40px;
+              padding: 0 0 20px 40px;
+              max-height: 180px;
+              overflow-y: auto;
               p {
                 margin: 0;
+                position: absolute;
+              }
+              #text_modal_contents {
+                margin-left: 48px;
               }
               .text_modal_setting {
                 display: flex;
@@ -1687,16 +1746,18 @@
                   padding: 2px;
                 }
                 textarea {
-                  width: 425px;
-                  height: 6em;
+                  width: 300px;
                   resize: none;
-                  overflow: hidden;
+                  margin-left: 20px;
                 }
               }
             }
           }
           #text_modal_preview {
-            width: 200px;
+            width: 370px;
+            .diagram_preview_area {
+              max-height: 256px;
+            }
           }
         }
         #popup-button {
@@ -1712,7 +1773,7 @@
       }
       /* 分岐のモーダル */
       &.p_diagrams_branch {
-        width: 960px;
+        width: 870px;
         #popup-main {
           padding: 0!important;
         }
@@ -1720,21 +1781,22 @@
           display: flex;
         }
         #branch_modal_editor {
-          padding-bottom: 20px;
-          width: 585px;
+          padding-bottom: 25px;
+          width: 500px;
           border-right: 1px solid #909090;
           #branch_modal_head {
-            padding: 20px 0 0 20px;
+            padding: 0 0 0 40px;
             input[type='text'] {
-              width: 521px;
+              width: 349px;
               margin-left: 21px;
               margin-top: 10px;
             }
           }
+          .node_name_valid_margin {
+            margin-left: 108px;
+          }
           #branch_modal_body {
-            padding-left: 20px;
-            padding-top: 20px;
-            border-top: 1px solid;
+            padding-left: 40px;
             margin-top: 20px;
             textarea {
               height: 6em;
@@ -1742,59 +1804,144 @@
               overflow: hidden;
             }
             .branch_modal_setting_header {
-              .flex_row_box {
+              .radio_type {
+                margin-top: 20px;
                 display: flex;
-                textarea {
-                  width: 474px;
-                  margin-left: 20px;
-                }
-                label {
-                  margin-left: 67px;
-                }
-                select {
-                  width: 226px;
-                  margin-left: 30px;
-                }
-                p {
-                  margin: 0;
-                }
-              }
-            }
-            .branch_modal_setting_header > div:not(:first-child){
-              margin-top: 20px;
-            }
-            .branch_modal_setting_content {
-              margin-left: 145px;
-              margin-top: 20px;
-              position: relative;
-              .setting_row {
-                display: flex;
+                justify-content: flex-start;
                 align-items: center;
                 p {
                   margin: 0;
                 }
+              }
+              .mt20 {
+                margin-top: 20px;
+              }
+              .btn_valid_margin {
+                margin-left: 66px;
+              }
+              .flex_row_box {
+                display: flex;
                 textarea {
-                  margin-left: 30px;
-                  width: 162px;
+                  width: 351px;
+                  margin-left: 20px;
+                }
+                select {
+                  width: 226px;
+                  margin-left: 32px;
+                  height: 30px;
+                  border: 1px solid #909090;
+                  border-radius: 4px;
+                }
+                p {
+                  margin: 0;
+                  align-self: center;
+                }
+                label {
+                  display: flex;
+                  align-items: center;
+                }
+                #bulkRegister {
+                  margin-left: 15px;
+                }
+              }
+            }
+
+            div.customize_form {
+              margin-top: 15px;
+              input[type='checkbox'] {
+                margin-left: 0;
+              }
+              .customize_area {
+                display: flex;
+                flex-direction: column;
+                margin-left: 16px;
+                margin-top: 6px;
+                .customize_row {
+                  display: flex;
+                  align-items: center;
+                  padding: 5px 0;
+                  input[type='text']{
+                    width: 120px;
+                    height: 26px;
+                    padding-left: 4px;
+                    margin-left: 38px;
+                  }
+                  input[type='number']{
+                    width: 107px;
+                    margin-left: 38px;
+                  }
+                  span.revert-button {
+                    text-align: center;
+                    position: relative;
+                    width: 100px;
+                    left: 15px;
+                    padding: 4px;
+                  }
+                  p {
+                    margin: 0;
+                  }
+                }
+                &.button_customize > .customize_row {
+                  label {
+                    flex-basis: 100px;
+                  }
+                }
+                &.radio_customize > .customize_row {
+                  label {
+                    flex-basis: 120px;
+                  }
+                }
+              }
+            }
+
+
+            .branch_modal_setting_header > div.flex_row_box:not(:first-child){
+              margin-top: 20px;
+            }
+            .branch_modal_setting_content {
+              margin-top: 20px;
+              position: relative;
+              overflow-y: auto;
+              .setting_row {
+                display: flex;
+                align-items: flex-start;
+                p {
+                  margin: 0;
+                }
+                textarea {
+                  margin-left: 18px;
+                  width: 280px;
                 }
                 img {
                   padding: 0;
                   margin-left: 5px;
                 }
                 input[type='text'] {
-                  width: 164px;
-                  margin-left: 25px;
+                  width: 280px;
+                  margin-left: 18px;
+                  height: 29.5px;
                 }
-              }
-              #bulkRegister {
-                position: absolute;
-                top: -1px;
-                right: 22px;
+                select {
+                  padding: 0;
+                  font-size: 12px;
+                  border-radius: 4px;
+                  height: 26px;
+                  border: 1px solid #909090;
+                }
               }
             }
             .branch_modal_setting_content > div.setting_row:not(:first-child) {
               margin-top: 10px;
             }
+            .branch_modal_setting_content > div.setting_row:last-child {
+              margin-bottom: 1px;
+            }
+          }
+        }
+        #branch_modal_preview {
+          width: 370px;
+          .diagram_preview_area {
+            max-height: 859px;
           }
         }
         #popup-button {
@@ -3242,6 +3389,58 @@
           align-items: start;
           .textBtn {
             width: 80px
+          }
+        }
+      }
+
+      /* ツリーエディタ選択肢一括登録 */
+      &.p_selection_bulk_register {
+        width: 410px;
+        #popup-main-overlap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-bottom: 0!important;
+          line-height: 0;
+          p {
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+          }
+        }
+        #popup-button-overlap {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          height: 70px!important;
+          .textBtn {
+            width: 75px;
+          }
+        }
+      }
+
+      /* ツリーエディタ閉じるボタン確認 */
+      &.p_confirm_diagram_change {
+        width: 380px;
+        #popup-main-overlap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-bottom: 0!important;
+          line-height: 0;
+          p {
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+          }
+        }
+        #popup-button-overlap {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          height: 70px!important;
+          .textBtn {
+            width: 100px;
           }
         }
       }
