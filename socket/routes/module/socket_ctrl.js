@@ -570,7 +570,7 @@ function getMessageTypeByUiType(type) {
       result = 22;
       break;
     case 3:
-      result = 22;
+      result = 55;
       break;
     case 4:
       result = 41;
@@ -1522,7 +1522,7 @@ io.sockets.on('connection', function(socket) {
                     var userId = Object.keys(scList[d.siteKey].user)[key];
                     //対応数がMAX人数か確認
                     if (scList[d.siteKey].user[userId] >
-                        scList[d.esiteKey].cnt[userId]) {
+                        scList[d.siteKey].cnt[userId]) {
                       addChatActiveUser(results.insertId, userId, d.siteKey);
                     }
                   }
