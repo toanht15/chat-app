@@ -30,8 +30,8 @@
         </li>
         <li class="styleFlexbox">
           <span class="fb15em indentDown"><label class="require">条件</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数の値に入力した内容を完全一致で扱うか、部分一致で扱うかを選択します。">?</icon></span></span>
-          <label class="pointer" style="flex-grow: 0"><input type="radio" name="action{{setActionId}}_matchValuePattern{{listId}}" ng-model="condition.matchValuePattern" value="1">完全一致</label>
-          <label class="pointer" style="margin-left: 40px"><input type="radio" name="action{{setActionId}}_matchValuePattern{{listId}}" ng-model="condition.matchValuePattern" value="2">部分一致</label>
+          <label class="pointer" style="flex-grow: 0"><input type="radio" ng-model="condition.matchValuePattern" value="1">完全一致</label>
+          <label class="pointer" style="margin-left: 40px"><input type="radio" ng-model="condition.matchValuePattern" value="2">部分一致</label>
         </li>
         <li class="styleFlexbox">
           <div class="fb15em indentDown"><label class="require">実行するアクション</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件を満たした場合に「テキスト発言」「シナリオ呼出」「リンク（URL）」「シナリオを終了」「次のアクションへ」のいずれかの処理を行うことができます。">?</icon></span></div>

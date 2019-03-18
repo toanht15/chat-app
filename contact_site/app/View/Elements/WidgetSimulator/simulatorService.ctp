@@ -778,11 +778,7 @@
         if (data.settings.radioStyle !== '1') {
           style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
         } else {
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {padding: 8px 8px 8px 28px !important; color: ' + data.settings.customDesign.radioTextColor + ' !important;}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {top: 13px !important; left: 12px !important;}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {top: 9px !important; left: 8px !important;}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: ' + data.settings.customDesign.radioEntireBackgroundColor + ';}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked ~ label {background-color: ' + data.settings.customDesign.radioEntireActiveColor + '; color: ' + data.settings.customDesign.radioActiveTextColor + ' !important;}';
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio {padding: 8px; color: ' + data.settings.customDesign.radioTextColor + ';}';
         }
         style += '</style>';
         html += style;
@@ -806,7 +802,10 @@
               data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
         }
 
-        return messageHtml + html;
+        return {
+          html: messageHtml + html,
+          radioName: radioName
+        };
       },
 
       _needResizeCauseIcon: function() {
@@ -914,7 +913,7 @@
         var separator = this.getCheckboxSeparator(data.settings.checkboxSeparator);
         var style = '<style>';
         style += '#sincloBox #' + checkboxName +
-            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: 5px;cursor: pointer;font-size: 13px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' + data.settings.customDesign.checkboxSelectionDistance + 'px;cursor: pointer;font-size: ' + this.re_text_size + 'px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + this.re_text_color + ';}';
         style += '#sincloBox #' + checkboxName +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox #' + checkboxName +

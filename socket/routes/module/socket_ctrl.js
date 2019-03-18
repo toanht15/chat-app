@@ -1296,6 +1296,32 @@ io.sockets.on('connection', function(socket) {
     },
     _handleInsertData: function(
         error, results, d, noReturnSelfMessage, insertData) {
+      try {
+        if(d.messageType === 1
+            || d.messageType === 12
+            || d.messageType === 13
+            || d.messageType === 19
+            || (d.messageType >= 30 && d.messageType <= 39)
+            || d.messageType === 43
+            || d.messageType === 44
+            || d.messageType === 47
+            || d.messageType === 48
+            || d.messageType === 50
+            || d.messageType === 51
+            || d.messageType === 53
+            || d.messageType === 54) {
+          // DEBUG: サイト訪問者側メッセージのログ出力
+          console.log('customer message',{
+            siteKey: d.siteKey,
+            ssId: d.sincloSessionId,
+            tabId: d.tabId,
+            message: d.chatMessage,
+            type: d.messageType
+          });
+        }
+      } catch(e) {
+
+      }
       if (!isset(error)) {
         let messageTimeType = 1;
         if(Number(insertData.message_request_flg) === 1) {
