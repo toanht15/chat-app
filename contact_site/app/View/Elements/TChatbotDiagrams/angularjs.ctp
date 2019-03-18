@@ -251,6 +251,10 @@
             break;
           }
         }
+        if(!$scope.messageIntervalTimeSec) {
+          // default value
+          $scope.messageIntervalTimeSec = 2;
+        }
       };
 
       if (dataForUpdate !== null && dataForUpdate !== '') {
@@ -1120,7 +1124,7 @@
           $scope.popupFix();
         })
       };
-      
+
       $scope.resetSelectionHeight = function(){
         $('.branch_modal_setting_content').css({
           "height": ""
@@ -1857,7 +1861,7 @@
         }
         $scope.popupPositionAdjustment();
       };
-      
+
       $scope.replaceTag = function(text, index){
         var target = $(".preview_text_span_" + index);
         target.text("");
