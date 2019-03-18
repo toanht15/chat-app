@@ -243,6 +243,8 @@
       var dragReferencePosition = null;
       var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
+      // default value
+      $scope.messageIntervalTimeSec = 2;
       $scope.setMessageInterval = function(){
         var allCellList = JSON.parse(dataForUpdate).cells;
         for( var i=0; i < allCellList.length; i++ ){
@@ -250,10 +252,6 @@
             $scope.messageIntervalTimeSec = allCellList[i].attrs.nodeBasicInfo.messageIntervalSec;
             break;
           }
-        }
-        if(!$scope.messageIntervalTimeSec) {
-          // default value
-          $scope.messageIntervalTimeSec = 2;
         }
       };
 
