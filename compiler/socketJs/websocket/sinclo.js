@@ -5459,31 +5459,38 @@
         if (settings.radioStyle !== '1') {
           style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
         } else {
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio {padding: 8px;}';
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {display: inline !important;}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio {padding: 8px;}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio [type="radio"] + label {display: inline !important;}';
           if (!check.smartphone()) {
-            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {top: 9px !important;}';
-            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {top: 2px !important;}';
-        html += '<div id="' + name + '">';
-        if (settings.radioCustomDesign) {
-          var style = '<style>';
-          style += '#sincloBox ul#chatTalk #' + name +
-              ' sinclo-radio [type="radio"] + label:before {background-color: ' +
-              settings.customDesign.radioBackgroundColor + ' !important;}';
-          style += '#sincloBox ul#chatTalk #' + name +
-              ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
-              settings.customDesign.radioActiveColor + ' !important;}';
-          if (settings.radioNoneBorder) {
             style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
-          } else {
+                ' sinclo-radio [type="radio"]:checked + label:after {top: 9px !important;}';
             style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"] + label:before {border-color: ' +
-                settings.customDesign.radioBorderColor + '!important;}';
+                ' sinclo-radio [type="radio"] + label:before {top: 2px !important;}';
+            html += '<div id="' + name + '">';
+            if (settings.radioCustomDesign) {
+              var style = '<style>';
+              style += '#sincloBox ul#chatTalk #' + name +
+                  ' sinclo-radio [type="radio"] + label:before {background-color: ' +
+                  settings.customDesign.radioBackgroundColor + ' !important;}';
+              style += '#sincloBox ul#chatTalk #' + name +
+                  ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
+                  settings.customDesign.radioActiveColor + ' !important;}';
+              if (settings.radioNoneBorder) {
+                style += '#sincloBox ul#chatTalk #' + name +
+                    ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+              } else {
+                style += '#sincloBox ul#chatTalk #' + name +
+                    ' sinclo-radio [type="radio"] + label:before {border-color: ' +
+                    settings.customDesign.radioBorderColor + '!important;}';
+              }
+            }
           }
-          style += '</style>';
-          html += style;
         }
+
+        style += '</style>';
+        html += style;
         settings.options.forEach(function(option, index) {
           html += '<sinclo-radio style="display: block;">';
           if (storedValue === option) {
