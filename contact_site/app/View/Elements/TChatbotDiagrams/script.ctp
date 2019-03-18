@@ -20,8 +20,7 @@
 //並び替え
 
 //編集
-
-function openEditor(id) {
+function openEdit(id) {
   if(!document.getElementById("sort").checked) {
     var index = Number("<?= $this->Paginator->params()["page"] ?>");
     location.href = createUrl(index, id);
