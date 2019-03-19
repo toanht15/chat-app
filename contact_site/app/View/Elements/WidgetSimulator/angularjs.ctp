@@ -949,26 +949,36 @@
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
 
-        if (data.settings.checkboxStyle === '1') {
-          var checkboxTarget = $('#' + checkboxData.checkboxName + ' input[type="checkbox"]');
-          checkboxTarget.each(function() {
+        if (customDesign.radioStyle === '1') {
+          var radioTarget = $('#' + divElm.id + ' input[type="radio"]');
+          var radioLabelTarget = $('#' + divElm.id + ' .sinclo-radio');
+          radioLabelTarget.css('background-color', customDesign.radioEntireBackgroundColor);
+          radioTarget.each(function() {
             if ($(this).prop('checked')) {
-              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
-              $(this).parent().css('color', data.settings.customDesign.checkboxActiveTextColor);
+              $(this).parent().css('background-color', customDesign.radioEntireActiveColor);
+              $(this).parent().find('label').css('color', customDesign.radioActiveTextColor);
+            } else {
+              $(this).parent().find('label').css('color', customDesign.radioTextColor);
             }
           });
-          checkboxTarget.on('change', function() {
-            if ($(this).prop('checked')) {
-              $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireActiveColor);
-              $(this).parent().css('color', data.settings.customDesign.checkboxActiveTextColor);
-            } else {
-              if (data.settings.checkboxStyle !== '1') {
-                $(this).parent().css('background-color', 'transparent');
+          radioTarget.on('change', function() {
+            radioTarget.each(function() {
+              if ($(this).prop('checked')) {
+                if (customDesign.radioStyle !== '1') {
+                  $(this).parent().css('background-color', 'transparent');
+                } else {
+                  $(this).parent().css('background-color', customDesign.radioEntireActiveColor);
+                  $(this).parent().find('label').css('color', customDesign.radioActiveTextColor);
+                }
               } else {
-                $(this).parent().css('background-color', data.settings.customDesign.checkboxEntireBackgroundColor);
-                $(this).parent().css('color', data.settings.customDesign.checkboxTextColor);
+                if (customDesign.radioStyle !== '1') {
+                  $(this).parent().css('background-color', 'transparent');
+                } else {
+                  $(this).parent().css('background-color', customDesign.radioEntireBackgroundColor);
+                  $(this).parent().find('label').css('color', customDesign.radioTextColor);
+                }
               }
-            }
+            });
           });
         }
 
@@ -1005,12 +1015,12 @@
 
               gridElm.appendChild(divElm);
               document.getElementById('chatTalk').appendChild(gridElm);
-              self.autoScroll();
               if(idx === messages.length - 1) {
                 $scope.$emit('finishAddTextMessage',nextNodeId);
               } else {
                 chatBotTyping();
               }
+              self.autoScroll();
             }, (idx) * intervalSec * 1000);
           })(i);
         }
