@@ -1611,19 +1611,31 @@
         var index = $('#chatTalk > div:not([style*="display: none;"])').length;
         var radioName = 'sinclo-radio-' + index + suffix;
         // style
-        var html = '<div id="' + radioName + '">';
-        if (settings && settings.customDesign && settings.customDesign.isCustomize) {
-          var style = '<style>';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' + settings.customDesign.radioBackgroundColor + ' !important;}';
-          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' + settings.customDesign.radioActiveColor + ' !important;}';
-          if (settings.radioNoneBorder) {
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
-          } else {
-            style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' + settings.customDesign.radioBorderColor + '!important;}';
-          }
-          style += '</style>';
-          html += style;
+        var html = '<div id="' + radioName + '" style="line-height: 0!important; ">';
+        var style = '<style>';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' +
+            settings.customDesign.radioBackgroundColor + ' !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' +
+            settings.customDesign.radioActiveColor + ' !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio:first-of-type {margin-top: 4px !important}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio {margin-top: ' +
+            settings.customDesign.radioSelectionDistance + 'px !important;}';
+        if (settings.radioNoneBorder) {
+          style += '#sincloBox #' + radioName +
+              ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+        } else {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' +
+              settings.customDesign.radioBorderColor + '!important;}';
         }
+
+        if (settings.customDesign.radioStyle !== '1') {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
+        } else {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio {display: block!important; padding: 8px; color: ' + settings.customDesign.radioTextColor + ';}';
+        }
+        style += '</style>';
+        html += style;
+
         angular.forEach(labels, function(option, key) {
           if (!option || option == '') return false;
           if (option.type && option.value && option.type === 2) {
@@ -1633,7 +1645,7 @@
             html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
                 key + '\' class=\'sinclo-chat-radio\' value=\'' + message + '\' data-nid=\'' + nodeId +
                 '\' data-next-nid=\'' + selection[key] + '\'>';
-            html += '<label for=\'' + radioName + '-' + key + '\'>' + message + '</label></span><br>';
+            html += '<label for=\'' + radioName + '-' + key + '\'>' + message + '</label></span>' + "\n";
           }
         });
         html += '</select>';
