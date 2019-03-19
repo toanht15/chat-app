@@ -1951,7 +1951,7 @@
       $scope.actionClear = function() {
         $scope.diagramSimulatorService.actionStop();
         $scope.diagramSimulatorService.actionInit();
-        $scope.diagramSimulatorService.setActionList = $scope.actionListOrigin;
+        $scope.diagramSimulatorService.doAction();
       };
 
       $scope.$on('receiveScenario', function(event, activity){
