@@ -1639,7 +1639,7 @@
         angular.forEach(labels, function(option, key) {
           if (!option || option == '') return false;
           if (option.type && option.value && Number(option.type) === 2) {
-            html += this.createMessage(option.value, nodeId);
+            html += self.createMessage(option.value, nodeId);
           } else {
             var message = option.value ? option.value : option;
             html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
@@ -1699,7 +1699,7 @@
         angular.forEach(labels, function(option, key) {
           if (!option || option === '') return false;
           if (option.type && option.value && Number(option.type) === 2) {
-            html += this.createMessage(option.value, nodeId);
+            html += self.createMessage(option.value, nodeId);
           } else {
             var message = option.value ? option.value : option;
             html += '<button onclick="return false;" class="sinclo-button-ui" data-nid=\'' + nodeId +
