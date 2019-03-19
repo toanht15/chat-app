@@ -13009,7 +13009,7 @@
                       '" data-next-nid="' + selectionMap[nodeId] + '">';
                   html += '<label for="sinclo-radio-' + timestamp + '">' +
                       message + '</label>';
-                  html += '</sinclo-radio>';
+                  html += '</sinclo-radio>' + "\n";
                   break;
                 case 2:
                   // ボタン
