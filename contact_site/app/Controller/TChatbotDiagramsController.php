@@ -282,8 +282,10 @@ class TChatbotDiagramsController extends WidgetSettingController
     try {
       $transactions = $this->TransactionManager->begin();
 
-      if (!$this->TChatbotDiagram->logicalDelete($diagramIdList)) {
-        throw new ChatbotScenarioException('シナリオ削除エラー');
+      for($i = 0; $i < count($diagramIdList); $i++) {
+        if (!$this->TChatbotDiagram->logicalDelete($diagramIdList[$i])) {
+          throw new ChatbotScenarioException('シナリオ削除エラー');
+        }
       }
 
       $this->TransactionManager->commitTransaction($transactions);
