@@ -1698,7 +1698,7 @@
         html += style;
         angular.forEach(labels, function(option, key) {
           if (!option || option === '') return false;
-          if (option.type && option.value && option.type === 2) {
+          if (option.type && option.value && Number(option.type) === 2) {
             html += this.createMessage(option.value, nodeId);
           } else {
             var message = option.value ? option.value : option;
