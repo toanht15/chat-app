@@ -1636,10 +1636,11 @@
         style += '</style>';
         html += style;
 
+        var selfobj = this;
         angular.forEach(labels, function(option, key) {
           if (!option || option == '') return false;
           if (option.type && option.value && Number(option.type) === 2) {
-            html += self.createMessage(option.value, nodeId);
+            html += selfobj.createMessage(option.value, nodeId);
           } else {
             var message = option.value ? option.value : option;
             html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
@@ -1696,10 +1697,12 @@
 
         var html = '<div id="' + buttonUIName + '">';
         html += style;
+
+        var selfobj = this;
         angular.forEach(labels, function(option, key) {
           if (!option || option === '') return false;
           if (option.type && option.value && Number(option.type) === 2) {
-            html += self.createMessage(option.value, nodeId);
+            html += selfobj.createMessage(option.value, nodeId);
           } else {
             var message = option.value ? option.value : option;
             html += '<button onclick="return false;" class="sinclo-button-ui" data-nid=\'' + nodeId +
