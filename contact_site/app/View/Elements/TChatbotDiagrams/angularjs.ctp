@@ -1678,10 +1678,14 @@
       });
 
       $scope.popupPositionAdjustment = function(){
-        $scope.currentTop = $('#popup-frame').offset().top;
         $timeout(function(){
-          popupEvent.resize();
-          $scope.popupFix();
+          $scope.$apply();
+        }).then(function(){
+          $scope.currentTop = $('#popup-frame').offset().top;
+          $timeout(function(){
+            popupEvent.resize();
+            $scope.popupFix();
+          });
         });
       };
 
@@ -1947,7 +1951,7 @@
       $scope.actionClear = function() {
         $scope.diagramSimulatorService.actionStop();
         $scope.diagramSimulatorService.actionInit();
-        $scope.diagramSimulatorService.setActionList = $scope.actionListOrigin;
+        $scope.diagramSimulatorService.doAction();
       };
 
       $scope.$on('receiveScenario', function(event, activity){
