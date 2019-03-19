@@ -593,7 +593,7 @@
             str += '<label for=\'' + radioName + '-' + i + '\'>' + value + '</label></span>';
           }
           //リンク、電話番号、imgタグ
-          str = replaceVariable(str, isSmartphone, this._settings['widget_size_type']);
+          str = replaceVariable(str, isSmartphone, this._settings['widget_size_type'] + 'sim');
 
           if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
             content += '' + str + '\n';
