@@ -795,7 +795,7 @@ $config['outMessageTriggerList'] = array(
 $config['outMessageActionType'] = array(
   C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
   C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す",
-  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "オートメッセージを呼び出す",
+  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "トリガーを呼び出す",
   C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM => "チャットツリーを呼び出す"
 );
 

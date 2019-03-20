@@ -98,7 +98,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->actionTypeMap = [
-      'オートメッセージを呼び出す'    => 3,
+      'トリガーを呼び出す'    => 3,
       'シナリオを呼び出す'    => 2,
       'チャットメッセージを送る' => 1
     ];
