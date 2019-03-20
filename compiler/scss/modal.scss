@@ -1774,7 +1774,6 @@
       /* 分岐のモーダル */
       &.p_diagrams_branch {
         width: 870px;
-        max-height: 80%;
         #popup-main {
           padding: 0!important;
         }
@@ -1785,7 +1784,7 @@
           width: 500px;
           border-right: 1px solid #909090;
           .scroll-wrapper {
-            max-height: 588px;
+            max-height: 500px;
             overflow-y: scroll;
           }
           #branch_modal_head {
@@ -1944,7 +1943,7 @@
         #branch_modal_preview {
           width: 370px;
           .diagram_preview_area {
-            max-height: 589px;
+            max-height: 500px;
           }
         }
         #popup-button {
