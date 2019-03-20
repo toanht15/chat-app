@@ -1,4 +1,4 @@
-<?php 
+<?php
 class AppSchema extends CakeSchema {
 
 	public function before($event = array()) {
@@ -381,7 +381,7 @@ class AppSchema extends CakeSchema {
 		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => '企業ID'),
 		'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 50, 'collate' => 'utf8_general_ci', 'comment' => 'オートメッセージ名称', 'charset' => 'utf8'),
 		'trigger_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'トリガーの種類'),
-		'activity' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'オートメッセージ設定内容', 'charset' => 'utf8'),
+		'activity' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'トリガー設定内容', 'charset' => 'utf8'),
 		'action_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'アクションの種類'),
 		'send_mail_flg' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'm_mail_transmission_settings_id' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
@@ -503,7 +503,7 @@ class AppSchema extends CakeSchema {
 		'visitors_id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'conversation_count' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'indexes' => array(
-			
+
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);

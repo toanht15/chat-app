@@ -2131,6 +2131,7 @@
       template: '<div id=\'branch_modal\'>' +
           '<div id=\'branch_modal_editor\'>' +
           '<h3>設定</h3>' +
+          '<div class="scroll-wrapper">' +
           '<div id=\'branch_modal_head\'>' +
           '<label for=\'node_name\'>ノード名</label>' +
           '<input ng-model="branchTitle" id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
@@ -2175,6 +2176,7 @@
           '</div>' +
           '<radio-customize ng-show="branchType == 1"></radio-customize>' +
           '<button-customize ng-show="branchType == 2"></button-customize>' +
+          '</div>' +
           '</div>' +
           '</div>' +
           '<div id=\'branch_modal_preview\'>' +

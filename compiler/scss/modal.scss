@@ -1781,9 +1781,12 @@
           display: flex;
         }
         #branch_modal_editor {
-          padding-bottom: 25px;
           width: 500px;
           border-right: 1px solid #909090;
+          .scroll-wrapper {
+            max-height: 500px;
+            overflow-y: scroll;
+          }
           #branch_modal_head {
             padding: 0 0 0 40px;
             input[type='text'] {
@@ -1901,7 +1904,6 @@
             .branch_modal_setting_content {
               margin-top: 20px;
               position: relative;
-              overflow-y: auto;
               .setting_row {
                 display: flex;
                 align-items: flex-start;
@@ -1941,7 +1943,7 @@
         #branch_modal_preview {
           width: 370px;
           .diagram_preview_area {
-            max-height: 859px;
+            max-height: 500px;
           }
         }
         #popup-button {
@@ -2493,7 +2495,7 @@
 }
 
 
-/* オートメッセージ設定レイアウト調整 */
+/* トリガー設定レイアウト調整 */
 #tautomessages_idx{
   #tautomessages_menu{
     .btnSet{
