@@ -58,9 +58,9 @@ class TChatbotDiagramsController extends WidgetSettingController
   public function add($id = null)
   {
     if(empty($id)) {
-      $this->set('title_for_layout', 'チャットツリー登録');
+      $this->set('title_for_layout', 'チャットツリーエディタ');
     } else {
-      $this->set('title_for_layout', 'チャットツリー更新');
+      $this->set('title_for_layout', 'チャットツリーエディタ');
     }
     $scenarioData = $this->_getScenarioList();
     $this->set('scenarioList', $scenarioData);

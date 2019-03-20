@@ -13,7 +13,7 @@
   <?= $this->element('TChatbotDiagrams/preview'); ?>
   <div id="t_chatbot_diagramas_add_title">
     <div class="fLeft"><i class="fal fa-sitemap fa-rotate-270 fa-2x"></i></div>
-    <h1>チャットツリー設定登録</h1>
+    <h1>チャットツリーエディタ</h1>
   </div>
   <div id="t_chatbot_diagrams_header">
     <div id="t_chatbot_diagrams_entry">
