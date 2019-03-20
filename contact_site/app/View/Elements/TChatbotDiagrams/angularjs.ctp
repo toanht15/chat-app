@@ -1304,11 +1304,11 @@
               switch (Number(newSelectionList[i].type)) {
                 case 1:
                   cell = self.portCreator(self._getSelfPosition(i, newSelectionList), convertTextLength(newSelectionList[i].value, 22),
-                      newSelectionList[i].value, self._getCoverOpacity(coverIndex, selectionLength[selectionLengthIndex]));
+                      newSelectionList[i].value.replace(/<[^>]*>/g, ''), self._getCoverOpacity(coverIndex, selectionLength[selectionLengthIndex]));
                   break;
                 case 2:
                   cell = self.textRectCreator(self._getSelfPosition(i, newSelectionList), convertTextLength(newSelectionList[i].value, 22),
-                      newSelectionList[i].value, self._getCoverOpacity(coverIndex, selectionLength[selectionLengthIndex]));
+                      newSelectionList[i].value.replace(/<[^>]*>/g, ''), self._getCoverOpacity(coverIndex, selectionLength[selectionLengthIndex]));
                   coverIndex = 0;
                   selectionLengthIndex++;
                   break;
@@ -1712,6 +1712,8 @@
         lineCounter: 1,
         textLineSeparate: function(text){
           if(text == null) return "";
+          // タグを全て外す
+          text = text.replace(/<[^>]*>/g, '');
           var self = textEditor;
           var originTextArray = text.split(/\r\n|\n/);
           var resultTextArray = [];
