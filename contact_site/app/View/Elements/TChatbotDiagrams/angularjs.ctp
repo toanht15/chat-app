@@ -1284,44 +1284,64 @@
             var self = nodeEditHandler.typeBranch;
             newSelectionList = self._removeEmptyValue(newSelectionList);
             self._checkCurrentPortListFromPast(newSelectionList);
-            for(var i = 0; i < newSelectionList.length; i++){
+            var selectionLength = [];
+            var count = 0;
+            for (var i = 0; i < newSelectionList.length; i++) {
+              if(Number(newSelectionList[i].type) === 1) {
+                count++;
+              } else {
+                selectionLength.push(count);
+                count = 0;
+              }
+            }
+            selectionLength.push(count);
+            var selectionLengthIndex = 0;
+            var coverIndex = 0;
+            for (var i = 0; i < newSelectionList.length; i++) {
               /* Set rect height */
-              self._resizeParentHeight(i);
+              self._resizeParentHeight(i, newSelectionList);
               var cell;
-              switch(Number(newSelectionList[i].type)) {
+              switch (Number(newSelectionList[i].type)) {
                 case 1:
-                  cell = self.portCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i].value ,22), newSelectionList[i].value, self._getCoverOpacity(i, newSelectionList.length));
+                  cell = self.portCreator(self._getSelfPosition(i, newSelectionList), convertTextLength(newSelectionList[i].value, 22),
+                      newSelectionList[i].value, self._getCoverOpacity(coverIndex, selectionLength[selectionLengthIndex]));
                   break;
                 case 2:
-                  cell = self.rectCreator(self._getSelfPosition(i), convertTextLength(newSelectionList[i].value ,22), newSelectionList[i].value, self._getCoverOpacity(i, newSelectionList.length));
+                  cell = self.textRectCreator(self._getSelfPosition(i, newSelectionList), convertTextLength(newSelectionList[i].value, 22),
+                      newSelectionList[i].value, self._getCoverOpacity(coverIndex, selectionLength[selectionLengthIndex]));
+                  coverIndex = 0;
+                  selectionLengthIndex++;
                   break;
                 default:
                   continue;
               }
-              self._checkPastPortListFromCurrent(newSelectionList, i, cell);
+              self._checkPastPortListFromCurrent(newSelectionList, i, coverIndex, selectionLength[selectionLengthIndex], cell);
+              if(Number(newSelectionList[i].type) === 1) {
+                coverIndex++;
+              }
             }
           },
-          _removeEmptyValue: function(newSelectionList){
+          _removeEmptyValue: function(newSelectionList) {
             var emptyList = [];
-            for(var i=0; i < newSelectionList.length; i++){
-              if( newSelectionList[i].value === "" ){
+            for (var i = 0; i < newSelectionList.length; i++) {
+              if (newSelectionList[i].value === "") {
                 emptyList.unshift(i);
               }
             }
-            for(var j=0; j < emptyList.length; j++){
+            for (var j = 0; j < emptyList.length; j++) {
               newSelectionList.splice(emptyList[j], 1);
             }
             return newSelectionList;
           },
-          _checkPastPortListFromCurrent: function(targetList, number, port) {
+          _checkPastPortListFromCurrent: function(targetList, number, coverIndex, groupListLength, port) {
             var textList = [];
             var typeList = [];
-            for(var j=0; j < $scope.oldSelectionList.length; j++){
+            for (var j = 0; j < $scope.oldSelectionList.length; j++) {
               textList.push($scope.oldSelectionList[j].value);
               typeList.push($scope.oldSelectionList[j].type);
             }
             var contentNum = textList.indexOf(targetList[number].value);
-            if(contentNum === -1){
+            if (contentNum === -1) {
               /* 追加するパターン */
               /* 過去にはないが、現在にあるパターン */
               $scope.currentEditCellParent.embed(port);
@@ -1330,7 +1350,7 @@
             } else {
               /* 追加するパターン */
               /* 両方にあるが、タイプが違うパターン */
-              if(typeList[contentNum] !== targetList[number].type){
+              if (typeList[contentNum] !== targetList[number].type) {
                 $scope.currentEditCellParent.embed(port);
                 initNodeEvent([port]);
                 graph.addCell(port);
@@ -1338,19 +1358,19 @@
               /* 編集するパターン */
               /* 両方にあり、タイプも同じパターン */
               var childList = this._getCurrentPortList();
-              for( var i = 0; i < childList.length; i++ ){
-                if( childList[i].attr("nodeBasicInfo/tooltip") === targetList[number].value ){
-                  this._setSelfPosition(childList[i], this._getSelfPosition(number));
+              for (var i = 0; i < childList.length; i++) {
+                if (childList[i].attr("nodeBasicInfo/tooltip") === targetList[number].value) {
+                  this._setSelfPosition(childList[i], this._getSelfPosition(number, targetList));
                   var topOpacity = 1,
                       bottomOpacity = 1;
-                  if(number === 0){
+                  if (coverIndex === 0) {
                     topOpacity = 0;
                   }
-                  if(number === targetList.length - 1){
+                  if (coverIndex === groupListLength - 1) {
                     bottomOpacity = 0;
                   }
-                  childList[i].attr(".cover_top/fill-opacity", topOpacity)
-                  .attr(".cover_bottom/fill-opacity", bottomOpacity);
+                  childList[i].attr(".cover_top/fill-opacity", topOpacity).
+                      attr(".cover_bottom/fill-opacity", bottomOpacity);
                 }
               }
             }
@@ -1359,29 +1379,29 @@
             var textList = [];
             var typeList = [];
             /* テキストと選択肢で内容が同一の場合は削除すること */
-            for(var j=0; j < targetList.length; j++){
+            for (var j = 0; j < targetList.length; j++) {
               textList.push(targetList[j].value);
               typeList.push(targetList[j].type);
             }
 
             var childList = this._getCurrentPortList();
-            for( var i = 0; i < childList.length; i++ ){
+            for (var i = 0; i < childList.length; i++) {
               var containNum = textList.indexOf(childList[i].attr("nodeBasicInfo/tooltip"));
-              if(containNum === -1){
+              if (containNum === -1) {
                 /* 過去には有るが、現在に見つからない場合は削除 */
                 childList[i].remove();
               } else {
                 /* 過去にも現在にも同名のテキストがあるが、タイプが違う場合は削除 */
-                switch(Number(typeList[containNum])) {
+                switch (Number(typeList[containNum])) {
                   case 1:
                     /* 現在は選択肢　過去は文章 */
-                    if(childList[i].attr("nodeBasicInfo/nodeType") === "childTextNode" ) {
+                    if (childList[i].attr("nodeBasicInfo/nodeType") === "childTextNode") {
                       childList[i].remove();
                     }
                     break;
                   case 2:
                     /* 現在は文章　過去は選択肢 */
-                    if(childList[i].attr("nodeBasicInfo/nodeType") === "childPortNode" ) {
+                    if (childList[i].attr("nodeBasicInfo/nodeType") === "childPortNode") {
                       childList[i].remove();
                     }
                     break;
@@ -1393,10 +1413,10 @@
           _getCurrentPortList: function() {
             var list = $scope.currentEditCellParent.getEmbeddedCells();
             var targetList = [];
-            for(var i = 0; i < list.length; i++){
-              try{
-                if(list[i].attr("nodeBasicInfo/nodeType") === "childPortNode"
-                || list[i].attr("nodeBasicInfo/nodeType") === "childTextNode") {
+            for (var i = 0; i < list.length; i++) {
+              try {
+                if (list[i].attr("nodeBasicInfo/nodeType") === "childPortNode"
+                    || list[i].attr("nodeBasicInfo/nodeType") === "childTextNode") {
                   targetList.push(list[i]);
                 }
               } catch (e) {
@@ -1406,26 +1426,46 @@
             return targetList;
           },
           _setSelfPosition: function(elm, position) {
-            elm.set("position",position);
+            elm.set("position", position);
           },
-          _getSelfPosition: function(index) {
+          _getSelfPosition: function(index, list) {
+            var calcSize = 0;
+            if(index > 0) {
+              for(var i = 0; i <= index - 1; i++) {
+                if(Number(list[i].type) === 2) {
+                  calcSize += 30;
+                } else if(Number(list[i].type) === 1) {
+                  calcSize += 40;
+                }
+              }
+            }
             return {
               x: $scope.currentEditCellParent.get('position').x + 5,
-              y: $scope.currentEditCellParent.get('position').y + 115 + index * 40
+              y: $scope.currentEditCellParent.get('position').y + 115 + calcSize
             }
           },
-          _resizeParentHeight: function(index) {
-            $scope.currentEditCellParent.get('size').height = 160 + index * 40;
+          _resizeParentHeight: function(index, list) {
+            var calcSize = 0;
+            if(index > 0) {
+              for(var i = 1; i <= index; i++) {
+                if(Number(list[i].type) === 2) {
+                  calcSize += 30;
+                } else if(Number(list[i].type) === 1) {
+                  calcSize += 40;
+                }
+              }
+            }
+            $scope.currentEditCellParent.get('size').height = 160 + calcSize;
           },
-          _getCoverOpacity: function(index, maxLength){
+          _getCoverOpacity: function(index, maxLength) {
             return {
-              top : index === 0 ? "0" : "1",
-              bot : index === maxLength - 1 ? "0" : "1"
+              top: index === 0 ? "0" : "1",
+              bot: index === maxLength - 1 ? "0" : "1"
             }
           },
           portCreator: function(position, text, originalText, opacity) {
             return new joint.shapes.devs.Model({
-              position: {x: position.x , y: position.y},
+              position: {x: position.x, y: position.y},
               size: {width: 240, height: 36},
               outPorts: ['out'],
               ports: {
@@ -1474,7 +1514,7 @@
                   y: 12
                 },
                 'rect.body': {
-                  fill: '#F9EBF1',
+                  fill: '#FFF',
                   stroke: false,
                   rx: 10,
                   ry: 10
@@ -1485,13 +1525,13 @@
                   tooltip: originalText
                 },
                 '.cover_top': {
-                  fill: '#F9EBF1',
+                  fill: '#FFFFFF',
                   width: 240,
                   height: 10,
                   'fill-opacity': opacity.top
                 },
                 '.cover_bottom': {
-                  fill: '#F9EBF1',
+                  fill: '#FFFFFF',
                   width: 240,
                   height: 10,
                   transform: "translate(0 26)",
@@ -1501,7 +1541,85 @@
               markup: '<rect class="body"/><text class="label"/><rect class="cover_top"/><rect class="cover_bottom"/>'
             });
           },
-          rectCreator: function(position, text, originalText, opacity){
+          textPortCreator: function(position, text, originalText, opacity) {
+            return new joint.shapes.devs.Model({
+              position: {x: position.x, y: position.y},
+              size: {width: 240, height: 36},
+              outPorts: ['out'],
+              ports: {
+                groups: {
+                  'out': {
+                    attrs: {
+                      '.port-body': {
+                        fill: "#C0C0C0",
+                        'fill-opacity': "0.9",
+                        height: 30,
+                        width: 30,
+                        stroke: false,
+                        rx: 3,
+                        ry: 3
+                      },
+                      '.port-label': {
+                        'font-size': 0
+                      },
+                      type: "branch"
+                    },
+                    position: {
+                      name: 'absolute',
+                      args: {
+                        x: 235,
+                        y: 3
+                      }
+                    },
+                    z: 4,
+                    markup: '<rect class="port-body"/>'
+                  }
+                }
+              },
+              attrs: {
+                text: {
+                  text: text,
+                  'ref-width': '70%',
+                  'font-size': '14px',
+                  fill: '#FFF',
+                  y: 12
+                },
+                '.label': {
+                  text: text,
+                  'ref-width': '70%',
+                  'font-size': '14px',
+                  fill: '#FFF',
+                  y: 12
+                },
+                'rect.body': {
+                  fill: '#c73576',
+                  stroke: false,
+                  rx: 10,
+                  ry: 10
+                },
+                nodeBasicInfo: {
+                  nodeType: 'childPortNode',
+                  nextNode: '',
+                  tooltip: originalText
+                },
+                '.cover_top': {
+                  fill: '#c73576',
+                  width: 240,
+                  height: 10,
+                  'fill-opacity': opacity.top
+                },
+                '.cover_bottom': {
+                  fill: '#c73576',
+                  width: 240,
+                  height: 10,
+                  transform: "translate(0 26)",
+                  'fill-opacity': opacity.bot
+                }
+              },
+              markup: '<rect class="body"/><text class="label"/><rect class="cover_top"/><rect class="cover_bottom"/>'
+            });
+          },
+          rectCreator: function(position, text, originalText, opacity) {
             return new joint.shapes.basic.Rect({
               position: {x: position.x, y: position.y},
               size: {width: 240, height: 36},
@@ -1543,8 +1661,51 @@
               },
               markup: '<rect class="body"/><text class="label"/><rect class="cover_top"/><rect class="cover_bottom"/>'
             });
+          },
+          textRectCreator: function(position, text, originalText, opacity) {
+            return new joint.shapes.basic.Rect({
+              position: {x: position.x, y: position.y},
+              size: {width: 240, height: 26},
+              attrs: {
+                'rect.body': {
+                  fill: "#c73576",
+                  stroke: false,
+                  width: 240,
+                  height: 26,
+                  rx: 0,
+                  ry: 0
+                },
+                text: {
+                  text: text,
+                  'ref-width': '70%',
+                  'font-size': "14px",
+                  fill: '#FFF',
+                  y: 10
+                },
+                nodeBasicInfo: {
+                  nodeType: "childTextNode",
+                  tooltip: originalText
+                },
+                '.cover_top': {
+                  fill: '#c73576',
+                  width: 240,
+                  height: 5,
+                  'fill-opacity': opacity.top,
+                  stroke: false
+                },
+                '.cover_bottom': {
+                  fill: '#c73576',
+                  width: 240,
+                  height: 5,
+                  transform: "translate(0 21)",
+                  'fill-opacity': opacity.bot,
+                  stroke: false
+                }
+              },
+              markup: '<rect class="body"/><text class="label"/><rect class="cover_top"/><rect class="cover_bottom"/>'
+            });
           }
-        }
+        },
       };
 
       var textEditor = {
@@ -1627,7 +1788,6 @@
                 allCells[i].getEmbeddedCells()[0].attr("text/text", convertTextLength(targetCell.getAncestors()[0].attr("actionParam/nodeName"), 14));
               }
             }
-
           },
           deleteTargetName: function(targetCell){
             var allCells = graph.getCells();
