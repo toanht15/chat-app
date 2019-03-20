@@ -8,7 +8,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 
   <div id='tautomessages_title'>
     <div class="fLeft"><i class="fal fa-comments fa-2x"></i></div>
-    <h1>オートメッセージ設定</h1>
+    <h1>トリガー設定</h1>
   </div>
 
   <div id='tautomessages_menu' class="p20trl">
@@ -82,13 +82,13 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </a>
         </span>
       </div>
-      <!-- オートメッセージ設定の並び替えモード -->
+      <!-- トリガー設定の並び替えモード -->
       <div class="tabpointer">
         <label class="pointer">
           <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText"> 並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; float: right; position: relative; top: 0px; left: 0px;">（！）並び替え中（保存する場合はチェックを外してください）</span>
         </label>
       </div>
-      <!-- オートメッセージ設定の並び替えモード -->
+      <!-- トリガー設定の並び替えモード -->
     </div>
     <!-- 検索窓 -->
     <div id="rightContentWrap" class="fRight">
@@ -305,7 +305,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         </tr>
       <?php endforeach; ?>
       <?php if ( count($settingList) === 0 ) : ?>
-        <tr><td colspan="6" class="tCenter" style="letter-spacing: 2px">オートメッセージ設定がありません</td></tr>
+        <tr><td colspan="6" class="tCenter" style="letter-spacing: 2px">トリガー設定がありません</td></tr>
       <?php endif; ?>
       </tbody>
     </table>

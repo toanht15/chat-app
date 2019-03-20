@@ -394,7 +394,7 @@ class TChatbotDiagramsController extends WidgetSettingController
   }
 
   /**
-   * オートメッセージ設定ソート順を現在のID順でセット
+   * トリガー設定ソート順を現在のID順でセット
    *
    * */
   public function remoteSetSort()

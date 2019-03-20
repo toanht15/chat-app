@@ -689,7 +689,7 @@ function sendMail(autoMessageId, lastChatLogId, callback) {
       return;
     } else {
       console.log(
-          'オートメッセージ設定メール通知時にエラーが返却されました。 errorCode : ' + response.statusCode);
+          'トリガー設定メール通知時にエラーが返却されました。 errorCode : ' + response.statusCode);
       callback(false);
       return;
     }
@@ -697,7 +697,7 @@ function sendMail(autoMessageId, lastChatLogId, callback) {
 
   req.on('error', function(error) {
     console.log(
-        'オートメッセージ設定メール通知時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+        'トリガー設定メール通知時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
     callback(false);
     return;
   });

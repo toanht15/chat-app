@@ -251,7 +251,7 @@ function isActive(flg, id){
 }
 
 // function removeAct(no, id){
-//  modalOpen.call(window, "No." + no + " を削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
+//  modalOpen.call(window, "No." + no + " を削除します、よろしいですか？", 'p-confirm', 'トリガー設定', 'moment');
 //  popupEvent.closePopup = function(){
 //    $.ajax({
 //      type: 'post',
@@ -267,7 +267,7 @@ function isActive(flg, id){
 //  };
 // }
 
-//オートメッセージ設定の削除
+//トリガー設定の削除
 function openConfirmDialog(){
   //チェックボックスのチェック状態の取得
   var list = document.querySelectorAll('input[name^="selectTab"]:checked');
@@ -286,7 +286,7 @@ function openConfirmDialog(){
     index = index - 1;
   }
   //modalOpen.call(window, "選択された定型文を削除します。<br/><br/>よろしいですか？<br/>", 'p-dictionary-del', '削除', 'moment');
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
+  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'トリガー設定', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
     $.ajax({
       type: 'post',
@@ -318,7 +318,7 @@ function openCopyDialog(){
   for (var i = 0; i < list.length; i++){
     selectedList.push(Number(list[i].value));
   }
-  modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
+  modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', 'トリガー設定', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
     loading.load.start();
     $.ajax({
@@ -356,7 +356,7 @@ var toExecutableOnce = function(f){
 
 //オートメッセージ新規追加
 function openAdd(){
-  //オートメッセージ設定並べ替えチェックボックスが入っているときはリンク無効とする
+  //トリガー設定並べ替えチェックボックスが入っているときはリンク無効とする
   if (!document.getElementById("sort").checked) {
     //現在のページ番号
     var index = Number("<?= $this->Paginator->params()["page"] ?>");
@@ -370,7 +370,7 @@ function openAdd(){
 
 //オートメッセージ編集
 function openEdit(id){
-  //オートメッセージ設定並べ替えチェックボックスが入っているときはリンク無効とする
+  //トリガー設定並べ替えチェックボックスが入っているときはリンク無効とする
   if (!document.getElementById("sort").checked) {
     //現在のページ番号
     var index = Number("<?= $this->Paginator->params()["page"] ?>");
@@ -382,7 +382,7 @@ function openEdit(id){
   }
 }
 
-//オートメッセージ設定のソートモード
+//トリガー設定のソートモード
 function toggleSort(){
   if (!document.getElementById("sort").checked) {
     confirmSort();
@@ -398,7 +398,7 @@ function toggleSort(){
     document.getElementById("sortTextMessage").style.display="";
 
     //各ボタン及び動作をモード中は動かなくする
-    //オートメッセージ設定登録ボタン押下不可
+    //トリガー設定登録ボタン押下不可
     var addBtn = document.getElementById('tautomessages_add_btn');
     addBtn.classList.remove('disOffgreenBtn');
     addBtn.classList.add('disOffgrayBtn');
@@ -414,9 +414,9 @@ function toggleSort(){
   }
 }
 
-//オートメッセージ設定のソート順を保存
+//トリガー設定のソート順を保存
 var confirmSort = function(){
-  modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', 'オートメッセージ設定並び替えの保存', 'moment');
+  modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', 'トリガー設定並び替えの保存', 'moment');
   popupEvent.saveClicked = function(){
     saveToggleSort();
   }
@@ -429,7 +429,7 @@ var confirmSort = function(){
   });
 };
 
-//オートメッセージ設定ソートを保存
+//トリガー設定ソートを保存
 var saveToggleSort = toExecutableOnce(function(){
   var list = getSort();
   var sortNolist = getSortNo();
@@ -450,7 +450,7 @@ var saveToggleSort = toExecutableOnce(function(){
   });
 });
 
-//オートメッセージ設定のソート順を取得
+//トリガー設定のソート順を取得
 var getSort = function(){
   var list = [];
   $(".sortable tr").each(function(e){

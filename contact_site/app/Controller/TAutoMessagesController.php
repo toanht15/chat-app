@@ -652,7 +652,7 @@ class TAutoMessagesController extends WidgetSettingController
   }
 
   /**
-   * オートメッセージ設定ソート順更新
+   * トリガー設定ソート順更新
    *
    * */
   public function remoteSaveSort()
@@ -731,7 +731,7 @@ class TAutoMessagesController extends WidgetSettingController
             break;
           }
         } else {
-          // 送信されたオートメッセージ設定と現在DBに存在するオートメッセージ設定に差がある場合
+          // 送信されたトリガー設定と現在DBに存在するトリガー設定に差がある場合
           $this->TAutoMessage->rollback();
           $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
           return;
@@ -748,7 +748,7 @@ class TAutoMessagesController extends WidgetSettingController
   }
 
   /**
-   * オートメッセージ設定ソート順を現在のID順でセット
+   * トリガー設定ソート順を現在のID順でセット
    *
    * */
   public function remoteSetSort()
