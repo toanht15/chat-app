@@ -3693,7 +3693,7 @@
                 sinclo.diagramApi.executor.setDiagramId(
                     $(e.target).data('did'));
                 sinclo.chatApi.send(message);
-                return false;
+                return;
               }
               if (!(window.sincloInfo.widget.hasOwnProperty(
                   'chatRadioBehavior') &&
@@ -13140,11 +13140,51 @@
           div.style.textAlign = 'left';
           cs += ' effect_left';
           cs += ' diagram_msg';
+          if(customizeDesign.radioStyle === '1') {
+            cs += ' customWidth';
+          }
 
           li.className = cs;
-          li.innerHTML = messageHtml + buttonHtml;
+          li.innerHTML = messageHtml + buttonHtml.html;
 
           sinclo.chatApi.scDown();
+
+          if (customizeDesign.radioStyle === '1') {
+            $('#sinclo-radio-button-' + buttonHtml.timestamp).css('line-height', 0);
+            var radioTarget = $('#sinclo-radio-button-' + buttonHtml.timestamp + ' input[type="radio"]');
+            var radioLabelTarget = $('#sinclo-radio-button-' + buttonHtml.timestamp + ' sinclo-radio');
+            radioLabelTarget.css({
+              'background-color': customizeDesign.radioEntireBackgroundColor,
+              'display': 'block'
+            });
+            radioTarget.each(function() {
+              if ($(this).prop('checked')) {
+                $(this).parent().css('background-color', customizeDesign.radioEntireActiveColor);
+                $(this).parent().find('label').css('color', customizeDesign.radioActiveTextColor);
+              } else {
+                $(this).parent().find('label').css('color', customizeDesign.radioTextColor);
+              }
+            });
+            radioTarget.on('change', function() {
+              radioTarget.each(function() {
+                if ($(this).prop('checked')) {
+                  if (customizeDesign.radioStyle !== '1') {
+                    $(this).parent().css('background-color', 'transparent');
+                  } else {
+                    $(this).parent().css('background-color', customizeDesign.radioEntireActiveColor);
+                    $(this).parent().find('label').css('color', customizeDesign.radioActiveTextColor);
+                  }
+                } else {
+                  if (customizeDesign.radioStyle !== '1') {
+                    $(this).parent().css('background-color', 'transparent');
+                  } else {
+                    $(this).parent().css('background-color', customizeDesign.radioEntireBackgroundColor);
+                    $(this).parent().find('label').css('color', customizeDesign.radioTextColor);
+                  }
+                }
+              });
+            });
+          }
 
           if (Number(currentNode.attrs.actionParam.btnType) === 2) {
             // ボタンの場合のイベントハンドラはここ
@@ -13183,6 +13223,7 @@
         getHtml: function(currentNode, selectionMap, labels, customizeDesign) {
           var self = sinclo.diagramApi;
           var html = '';
+          var firstTimestamp = 0;
           Object.keys(labels).forEach(function(nodeId, idx, arr) {
             var timestamp = (new Date()).getTime();
             var did = check.isset(currentNode.diagramId) ?
@@ -13202,21 +13243,31 @@
               switch (Number(currentNode.attrs.actionParam.btnType)) {
                 case 1:
                   // ラジオボタン
-                  var name = 'sinclo-radio-' + timestamp;
+                  var name = 'sinclo-radio-button-' + timestamp;
                   var style = self.branch.createRadioButtonStyle(
-                      customizeDesign, '#' + name);
-                  html += style;
+                      customizeDesign, name);
+                  var radioStyle = customizeDesign.radioStyle === '1' ?
+                      'buttonStyle' :
+                      'labelStyle';
+                  if (idx === 0) {
+                    firstTimestamp = timestamp;
+                    html += '<div id="' + name + '" class="' + radioStyle + '">';
+                    html += style;
+                  }
                   html += '<sinclo-radio>';
                   html += '<input type="radio" name="sinclo-radio-' +
                       timestamp +
-                      '" id="sinclo-radio-' + timestamp +
+                      '" id="sinclo-radio-btn-' + timestamp +
                       '" class="sinclo-chat-radio" value="' + message +
                       '" data-did="' + did +
                       '" data-nid="' + nid +
                       '" data-next-nid="' + selectionMap[nodeId] + '">';
-                  html += '<label for="sinclo-radio-' + timestamp + '">' +
+                  html += '<label for="sinclo-radio-btn-' + timestamp + '">' +
                       message + '</label>';
                   html += '</sinclo-radio>' + '\n';
+                  if (idx === arr.length - 1) {
+                    html += '</div>';
+                  }
                   break;
                 case 2:
                   // ボタン
@@ -13225,6 +13276,7 @@
                   var style = self.branch.createButtonUIStyle(customizeDesign,
                       '#' + name);
                   if (idx === 0) {
+                    firstTimestamp = timestamp;
                     html += '<div id="' + name + '">';
                     html += style;
                   }
@@ -13240,28 +13292,56 @@
               }
             }
           });
-          return html;
+          return {
+            timestamp: firstTimestamp,
+            html: html
+          };
         },
         createRadioButtonStyle: function(settings, name) {
           var style = '';
-          if (settings.isCustomize) {
-            style = '<style>';
+          var selectionDistance = settings.radioSelectionDistance ?
+              settings.radioSelectionDistance :
+              4;
+
+          style = '<style>';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio [type="radio"] + label:before {background-color: ' +
+              settings.radioBackgroundColor + ' !important;}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
+              settings.radioActiveColor + ' !important;}';
+
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio:first-of-type {margin-top: 4px !important}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio {margin-top: ' +
+              selectionDistance + 'px !important;}';
+
+          if (settings.radioNoneBorder) {
             style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"] + label:before {background-color: ' +
-                settings.customDesign.radioBackgroundColor + ' !important;}';
+                ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+          } else {
             style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
-                settings.customDesign.radioActiveColor + ' !important;}';
-            if (settings.radioNoneBorder) {
-              style += '#sincloBox ul#chatTalk #' + name +
-                  ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
-            } else {
-              style += '#sincloBox ul#chatTalk #' + name +
-                  ' sinclo-radio [type="radio"] + label:before {border-color: ' +
-                  settings.customDesign.radioBorderColor + '!important;}';
-            }
-            style += '</style>';
+                ' sinclo-radio [type="radio"] + label:before {border-color: ' +
+                settings.radioBorderColor + '!important;}';
           }
+
+          if (Number(settings.radioStyle) !== 1) {
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
+          } else {
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio {padding: 8px;}';
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio [type="radio"] + label {display: inline !important;}';
+            if (!check.smartphone()) {
+              style += '#sincloBox ul#chatTalk #' + name +
+                  ' sinclo-radio [type="radio"]:checked + label:after {top: 9px !important;}';
+              style += '#sincloBox ul#chatTalk #' + name +
+                  ' sinclo-radio [type="radio"] + label:before {top: 2px !important;}';
+            }
+          }
+          style += '</style>';
           return style;
         },
         createButtonUIStyle: function(settings, id) {
