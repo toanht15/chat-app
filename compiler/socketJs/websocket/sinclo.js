@@ -13225,7 +13225,8 @@
           var html = '';
           var firstTimestamp = 0;
           Object.keys(labels).forEach(function(nodeId, idx, arr) {
-            var timestamp = (new Date()).getTime();
+            var timestamp = common.makeToken();
+            console.log(timestamp);
             var did = check.isset(currentNode.diagramId) ?
                 currentNode.diagramId :
                 self.common.getDiagramId();
