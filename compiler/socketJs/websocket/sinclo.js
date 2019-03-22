@@ -13257,7 +13257,7 @@
                   }
                   html += '<sinclo-radio>';
                   html += '<input type="radio" name="sinclo-radio-' +
-                      timestamp +
+                      firstTimestamp +
                       '" id="sinclo-radio-btn-' + timestamp +
                       '" class="sinclo-chat-radio" value="' + message +
                       '" data-did="' + did +
