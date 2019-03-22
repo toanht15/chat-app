@@ -9284,6 +9284,9 @@
         self._unsetBaseObj();
         self._unsetUploadedFileData();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
+        if(sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
+          sinclo.diagramApi.callScenario.goToNextNode();
+        }
       },
       isProcessing: function() {
         var self = sinclo.scenarioApi;
@@ -12896,14 +12899,14 @@
           for (var i = 0; i < itemIds.length; i++) {
             for (var nodeIndex = 0; nodeIndex <
             baseData[self.storage._lKey.diagrams][self.common.getDiagramId()].length; nodeIndex++) {
-              if (baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['id'] ===
-                  itemIds[i] &&
-                  baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nodeType'] ===
-                  'childPortNode') {
+              if (baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['id'] === itemIds[i]
+                  && baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode'
+                  && baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'] !== '') {
                 map[itemIds[i]] = baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'];
               }
             }
           }
+          console.log(map);
           return map;
         },
         getLabelMap: function(currentNode, idKeys) {
@@ -13210,14 +13213,41 @@
         }
       },
       callScenario: {
+        _lKey: {
+          callbackEndScenario: 'sinclo:notifyEndScenario'
+        },
         doAction: function() {
           console.log('<><><><><> CALL SCENARIO <><><><><>');
           var self = sinclo.diagramApi;
           var currentNode = self.storage.getCurrentNode();
           var scenarioId = currentNode.attrs.actionParam.scenarioId;
+          if(currentNode.attrs.actionParam.callbackToDiagram) {
+            self.callScenario.beginWaitEndScenario();
+          }
           emit('getScenario', {'scenarioId': scenarioId});
           // 後続のnodeは呼び出しなしのため、チャットツリーは終了する
           self.common._saveProcessingState(false);
+        },
+        beginWaitEndScenario: function() {
+          var self = sinclo.diagramApi;
+          self.storage.set(self.callScenario._lKey.callbackEndScenario, true);
+        },
+        endWaitEndScenario: function() {
+          var self = sinclo.diagramApi;
+          self.storage.set(self.callScenario._lKey.callbackEndScenario, false);
+        },
+        isWaitingEndScenario: function() {
+          var self = sinclo.diagramApi;
+          var result = self.storage.get(self.callScenario._lKey.callbackEndScenario);
+          return result && ((typeof result === 'string' && result === true) || (typeof result === 'boolean' && result))
+        },
+        goToNextNode: function() {
+          var self = sinclo.diagramApi;
+          var currentNode = self.storage.getCurrentNode();
+          var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+          self.callScenario.endWaitEndScenario();
+          self.executor.setNext(self.common.getDiagramId(), nextNodeId);
+          self.executor.execute();
         }
       },
       jumpNode: {
