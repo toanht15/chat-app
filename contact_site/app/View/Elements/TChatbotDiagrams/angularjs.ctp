@@ -37,7 +37,8 @@
               && $scope.compareArray($scope.speakTextList, target.attr("actionParam/text"));
         },
         scenario: function(target){
-          return $scope.selectedScenario.key === target.attr("actionParam/scenarioId");
+          return $scope.selectedScenario.key === target.attr("actionParam/scenarioId")
+              && $scope.callbackToDiagram === target.attr("actionParam/callbackToDiagram");
         },
         jump: function(target){
           return $scope.jumpTarget.key === target.attr("actionParam/targetId");
@@ -881,16 +882,56 @@
               $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 30));
               $scope.currentEditCell.attr('nodeBasicInfo/tooltip', $scope.selectedScenario.value);
             }
+            if($scope.callbackToDiagram) {
+              $scope.currentEditCellParent.addOutPort('out');
+              $scope.currentEditCellParent.attr('.outCover', {
+                fill: '#82c0cd',
+                stroke: false,
+                height: 33,
+                width: 2,
+                x: 250,
+                y: 40
+              });
+              $scope.currentEditCellParent.changeOutGroup({
+                attrs: {
+                  '.port-body': {
+                    fill: '#c0c0c0',
+                    height: 33,
+                    width: 33,
+                    stroke: false,
+                    rx: 5,
+                    ry: 5,
+                    'fill-opacity': "0.9"
+                  },
+                  '.port-label': {
+                    'font-size': 0
+                  },
+                  type: 'scenario'
+                },
+                position: {
+                  name: 'absolute',
+                  args: {
+                    x: 248,
+                    y: 23,
+                  }
+                },
+                z: 0,
+                markup: '<rect class="port-body"/>'
+              });
+            } else {
+              $scope.currentEditCellParent.removeOutPort('out');
+            }
           },
           getData: function(){
             return {
-              scenarioId: $scope.selectedScenario.key
+              scenarioId: $scope.selectedScenario.key,
+              callbackToDiagram: $scope.callbackToDiagram
             };
           },
           validation: function(){
             $scope.scenarioIsEmpty = $scope.selectedScenario.key === "";
             return $scope.scenarioIsEmpty;
-          }
+          },
         },
         jump: {
           setView: function(){
@@ -1084,6 +1125,7 @@
 
       function createScenarioHtml(nodeData) {
         $scope.selectedScenario.key = nodeData.scenarioId;
+        $scope.callbackToDiagram = nodeData.callbackToDiagram;
         return $('<scenario-modal></scenario-modal>');
       }
 
@@ -2248,6 +2290,9 @@
           '<label for=\'scenario\'>シナリオ名</label>' +
           '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key">' +
           '</select>' +
+          '</div>' +
+          '<div class="callbackToDiagramWrap">' +
+          '<label for="callbackToDiagram"><input type="checkbox" name=\'callbackToDiagram\' id=\'callbackToDiagram\'ng-model="callbackToDiagram">終了後、このチャットツリーに戻る</label>' +
           '</div>' +
           '<div class="scenario_valid_margin">' +
           '<span class="diagram_valid" ng-show="scenarioIsEmpty">シナリオを選択してください</span>' +

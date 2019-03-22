@@ -1630,6 +1630,11 @@
           }
         }
 
+        .callbackToDiagramWrap {
+          margin: 5px 25px 5px 119px;
+          display: inline-block;
+        }
+
         #jump_modal {
           select#jumpTargetNode {
             width: 200px;
