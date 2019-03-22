@@ -13270,8 +13270,6 @@
                   }
                   break;
                 case 2:
-                  // ボタン
-                  var timestamp = (new Date()).getTime();
                   var name = 'sinclo-buttonUI_' + timestamp;
                   var style = self.branch.createButtonUIStyle(customizeDesign,
                       '#' + name);
