@@ -12837,23 +12837,15 @@
           var cells = self.storage.get(self.storage._lKey.diagrams,
               Number(did));
           var target = 'branch';
-          for (var i = 0; i < cells.length; i++) {
-            if (cells[i].id === nid) {
-              target = cells[i].attrs.nodeBasicInfo.nodeType;
-            }
-          }
+          target = cells[nid].attrs.nodeBasicInfo.nodeType;
           return self.messageType.customer[target];
         },
         getDiagramMessageType: function(did, nid) {
           var self = sinclo.diagramApi;
           var cells = self.storage.get(self.storage._lKey.diagrams,
               Number(did));
-          var target = 'branch';
-          for (var i = 0; i < cells.length; i++) {
-            if (cells[i].id === nid) {
-              target = cells[i].attrs.nodeBasicInfo.nodeType;
-            }
-          }
+          debugger;
+          var target = cells[nid].attrs.nodeBasicInfo.nodeType;
           return self.messageType.message[target];
         },
         unset: function(key) {
@@ -12917,13 +12909,9 @@
           var self = sinclo.diagramApi;
           var targetNode = {};
           var baseData = self.storage.get(self.storage._lKey.diagrams, did);
-          Object.keys(baseData).some(function(idx, arrIdx, arr) {
-            var node = baseData[idx];
-            if (node.id.indexOf(nodeId) !== -1) {
-              targetNode = node;
-              return true;
-            }
-          });
+          if (baseData[nodeId]) {
+            targetNode = baseData[nodeId];
+          }
           return targetNode;
         }
       },
@@ -13011,9 +12999,9 @@
             self.storage.setBaseObj(self.defaultVal);
           }
           self.executor.setDiagramId(id);
-          self.storage.set(self.storage._lKey.diagrams, data.cells);
+          self.storage.set(self.storage._lKey.diagrams, data);
           self.common._saveProcessingState(true);
-          var beginNode = self.common.getStartNode(data.cells);
+          var beginNode = self.common.getStartNode(data);
           self.storage.set(self.storage._lKey.messageInterval,
               beginNode.attrs.nodeBasicInfo.messageIntervalSec);
           self.executor.setNext(id, beginNode.attrs.nodeBasicInfo.nextNodeId);
@@ -13021,8 +13009,8 @@
         getStartNode: function(obj) {
           var self = sinclo.diagramApi;
           var node = {};
-          Object.keys(obj).some(function(index, idx, arr) {
-            node = obj[index];
+          Object.keys(obj).some(function(uuid) {
+            node = obj[uuid];
             if (self.common.isStartNode(node)) {
               return true;
             }
@@ -13105,20 +13093,11 @@
           var map = {};
           var baseData = self.storage.getBaseObj();
           for (var i = 0; i < itemIds.length; i++) {
-            for (var nodeIndex = 0; nodeIndex <
-            baseData[self.storage._lKey.diagrams][self.common.getDiagramId()].length; nodeIndex++) {
-              if (baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['id'] ===
-                  itemIds[i]
-                  &&
-                  baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nodeType'] ===
-                  'childPortNode'
-                  &&
-                  baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId']
-                  &&
-                  baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'] !== '') {
-                map[itemIds[i]] = baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'];
-                break;
-              }
+            var targetNode = baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][itemIds[i]];
+            if (targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode'
+                && targetNode['attrs']['nodeBasicInfo']['nextNodeId']
+                && targetNode['attrs']['nodeBasicInfo']['nextNodeId'] !== '') {
+              map[itemIds[i]] = targetNode['attrs']['nodeBasicInfo']['nextNodeId'];
             }
           }
           console.log(map);
@@ -13131,22 +13110,11 @@
           for (var i = 0; i < idKeys.length; i++) {
             if(idKeys[i] === undefined) break;
             var found = false;
-            for (var nodeIndex = 0; nodeIndex <
-            baseData[self.storage._lKey.diagrams][self.common.getDiagramId()].length; nodeIndex++) {
-              if (baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['id'] ===
-                  idKeys[i]
-                  &&
-                  baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nodeType'] ===
-                  'childPortNode'
-                  &&
-                  baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['tooltip'] !==
-                  '') {
-                found = true;
-                map[idKeys[i]] = baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['tooltip'];
-                break;
-              }
-            }
-            if(!found) {
+            var targetNode = baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][idKeys[i]];
+            if (targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode'
+                && targetNode['attrs']['nodeBasicInfo']['tooltip']) {
+              map[idKeys[i]] = targetNode['attrs']['nodeBasicInfo']['tooltip'];
+            } else {
               map[idKeys[i]] = '';
             }
           }
