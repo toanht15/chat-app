@@ -4822,12 +4822,25 @@ io.sockets.on('connection', function(socket) {
         }
         if (row.length !== 0) {
           result = JSON.parse(row[0].activity);
+          // そのままのデータだとクライアント側の処理のパフォーマンスが悪いため
+          // UUIDでデータを参照できるよう加工する
+          var sendObj = {};
+          for(let i=0; i < result.cells.length; i++) {
+            let cell = result.cells[i];
+            sendObj[cell['id']] = {
+              id: cell['id'],
+              parent: cell['parent'],
+              type: cell['type'],
+              embeds: cell['embeds'],
+              attrs: cell['attrs']
+            }
+          }
         }
         if (ack) {
-          ack({id: obj.scenarioId, activity: result});
+          ack({id: obj.scenarioId, activity: sendObj});
         } else {
           emit.toMine('resGetChatDiagram',
-              {id: obj.diagramId, activity: result}, socket);
+              {id: obj.diagramId, activity: sendObj}, socket);
         }
       });
   });
