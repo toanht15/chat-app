@@ -215,7 +215,7 @@
           '<img ng-src="{{widget.settings[\'chatbot_icon\']}}" alt="無人対応アイコンに設定している画像">' +
           '</div>' +
           '<i ng-if="widget.isBotIconIcon" class="fal {{widget.settings[\'chatbot_icon\']}}" ng-class="{' +
-          'icon_border: false;' +
+          'icon_border: false' +
           '}"></i>' +
           '</div>' +
           '<li ng-show="branchText || branchSelectionList[0]" class="sinclo_re chat_left details" ng-class="{' +
