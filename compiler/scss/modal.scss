@@ -1790,7 +1790,7 @@
           border-right: 1px solid #909090;
           .scroll-wrapper {
             max-height: 500px;
-            overflow-y: scroll;
+            overflow-y: auto;
           }
           #branch_modal_head {
             padding: 0 0 0 40px;
