@@ -36,7 +36,8 @@ class CreateTableTChatbotDiagrams extends CakeMigration
             'charset' => 'utf8'
           ),
           'activity' => array(
-            'type' => 'mediumtext',
+              'type' => 'text',
+              'limit' => 16777215,
             'null' => true,
             'default' => null,
             'collate' => 'utf8_general_ci',
