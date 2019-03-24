@@ -398,7 +398,7 @@ function constantNode(posX, posY) {
             '.port-label': {
               'font-size': 0
             },
-            type: e
+              type: nodeType
           },
           position: {
             name: 'absolute',
