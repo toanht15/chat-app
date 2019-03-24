@@ -80,7 +80,19 @@ class TChatbotDiagramsController extends WidgetSettingController
     $this->_viewElement();
   }
 
-  public function save()
+    public function save()
+    {
+        try {
+            $this->executeSave();
+            $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+            $this->redirect(['action' => 'index']);
+        } catch (Exception $e) {
+            $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+            $this->redirect('/TChatbotDiagrams/add');
+        }
+    }
+
+    private function executeSave()
   {
     if ($this->request->is('post')) {
       $this->TChatbotDiagram->create();
