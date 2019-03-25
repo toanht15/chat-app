@@ -935,6 +935,9 @@
         var html = '';
         if(buttonType === '1') {
           html = $scope.simulatorSettings.createBranchRadioMessage(nodeId, message, selection, labels, {customDesign: customDesign});
+          if(customDesign.radioStyle === '1') {
+            $(divElm).find('li.sinclo_re.chat_left').addClass('widthCustom');
+          }
         } else {
           html = $scope.simulatorSettings.createBranchButtonMessage(nodeId, message, selection, labels, {customDesign: customDesign});
         }
