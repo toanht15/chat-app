@@ -2110,7 +2110,18 @@
        */
       $scope.$on('openSimulator', function(event, activity) {
         var diagrams = activity;
-        $scope.diagramSimulatorService.setActionList = diagrams;
+        var obj = {};
+        for(var i=0; i < diagrams.cells.length; i++) {
+          var cell = diagrams.cells[i];
+          obj[cell['id']] = {
+            id: cell['id'],
+            parent: cell['parent'],
+            type: cell['type'],
+            embeds: cell['embeds'],
+            attrs: cell['attrs']
+          }
+        }
+        $scope.diagramSimulatorService.setActionList = obj;
         var defaultHeight = 101;
         if (document.getElementById('maximum_description') != null) {
           defaultHeight += 40;
