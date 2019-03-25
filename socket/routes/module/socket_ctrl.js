@@ -1443,7 +1443,7 @@ io.sockets.on('connection', function(socket) {
               // Sorryメッセージを送る
               var obj = d;
               obj.chatMessage = ret.message;
-              obj.messageType = chatApi.cnst.observeTfype.sorry;
+              obj.messageType = chatApi.cnst.observeType.sorry;
               obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
               obj.isDiagramMessage = false;
               chatApi.set(obj);
