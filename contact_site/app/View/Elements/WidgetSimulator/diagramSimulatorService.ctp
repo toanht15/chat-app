@@ -145,11 +145,27 @@
         console.info('successed get scenario detail.');
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
         $rootScope.$broadcast('receiveScenario', activity);
+        if(node.attrs.actionParam.callbackToDiagram) {
+          self.afterScenarioNextNodeId = node.attrs.nodeBasicInfo.nextNodeId;
+          self.finishProcessListener = $rootScope.$on('finishScenarioProcess', self.handleEndScenarioProcess);
+        }
       }).fail(function(jqXHR, textStatus, errorThrown) {
         // エラー情報を出力する
         console.warn('failed get scenario detail');
         console.error(errorThrown);
       });
+    };
+
+    self.handleEndScenarioProcess = function (event) {
+      if(self.afterScenarioNextNodeId) {
+        if(self.finishProcessListener) {
+          self.finishProcessListener();
+        }
+        var nextNode = self.findNodeById(self.afterScenarioNextNodeId);
+        self.afterScenarioNextNodeId = null;
+        self.currentNodeId = nextNode.id;
+        self.doAction();
+      }
     };
 
     $rootScope.$on('finishAddTextMessage', function(event, nextNodeId){
