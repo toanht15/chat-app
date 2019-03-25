@@ -211,7 +211,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 41:
         $obj = json_decode($chatLog['message'], TRUE);
         $chatMessage = (strcmp($obj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatMessage);
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'], $chatMessage);
         break;
       case 42:
         $obj = json_decode($chatLog['message'], TRUE);
@@ -249,7 +249,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         break;
       case 300:
         $chatLogObj = json_decode($chatLog['message'], TRUE);
-        $chatMessage = (strcmp($chatLogObj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
+        $chatMessage = (strcmp($chatLogObj['message'], "") === 0) ? "（質問内容なし）" : $chatLogObj['message'];
         $message = $this->generateDiagramBranchMessageBlockStr($chatLog['created'],$chatMessage);
         break;
       case 301:
@@ -257,7 +257,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         break;
       case 302:
         $chatLogObj = json_decode($chatLog['message'], TRUE);
-        $chatMessage = (strcmp($chatLogObj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
+        $chatMessage = (strcmp($chatLogObj['message'], "") === 0) ? "（質問内容なし）" : $chatLogObj['message'];
         $message = $this->generateDiagramTextMessageBlockStr($chatLog['created'],$chatMessage);
         break;
       case 303:
