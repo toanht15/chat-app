@@ -1288,6 +1288,8 @@ class TAutoMessagesController extends WidgetSettingController
     // アクション種別
     if($this->coreSettings[C_COMPANY_USE_CHATBOT_TREE_EDITOR]) {
       $this->set('outMessageActionType', Configure::read('outMessageActionTypePrioritizeDiagram'));
+    } else if($this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) {
+      $this->set('outMessageActionType', Configure::read('outMessageActionTypePrioritizeScenario'));
     } else {
       $this->set('outMessageActionType', Configure::read('outMessageActionType'));
     }
