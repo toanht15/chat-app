@@ -1415,7 +1415,7 @@ io.sockets.on('connection', function(socket) {
             //通知された場合
             if (ret.opFlg === true && d.notifyToCompany) {
               ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, 3, insertData.created);
-              if (d.messageType === 1 && insertData.message_read_flg != 1) {
+              if ((d.messageType === 1 || d.messageType === 303) && insertData.message_read_flg != 1) {
                 sincloCore[d.siteKey][d.tabId].chatUnreadId = results.insertId;
                 sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
               }
@@ -1443,7 +1443,7 @@ io.sockets.on('connection', function(socket) {
               // Sorryメッセージを送る
               var obj = d;
               obj.chatMessage = ret.message;
-              obj.messageType = chatApi.cnst.observeType.sorry;
+              obj.messageType = chatApi.cnst.observeTfype.sorry;
               obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
               obj.isDiagramMessage = false;
               chatApi.set(obj);
