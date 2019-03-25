@@ -286,7 +286,7 @@ function openConfirmDialog(){
     index = index - 1;
   }
   //modalOpen.call(window, "選択された定型文を削除します。<br/><br/>よろしいですか？<br/>", 'p-dictionary-del', '削除', 'moment');
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'トリガー設定', 'moment');
+  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'トリガー設定（条件設定）', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
     $.ajax({
       type: 'post',
@@ -318,7 +318,7 @@ function openCopyDialog(){
   for (var i = 0; i < list.length; i++){
     selectedList.push(Number(list[i].value));
   }
-  modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', 'トリガー設定', 'moment');
+  modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', 'トリガー設定（条件設定）', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
     loading.load.start();
     $.ajax({

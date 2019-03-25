@@ -8,7 +8,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 
   <div id='tautomessages_title'>
     <div class="fLeft"><i class="fal fa-comments fa-2x"></i></div>
-    <h1>トリガー設定</h1>
+    <h1>トリガー設定（条件設定）</h1>
   </div>
 
   <div id='tautomessages_menu' class="p20trl">
@@ -305,7 +305,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         </tr>
       <?php endforeach; ?>
       <?php if ( count($settingList) === 0 ) : ?>
-        <tr><td colspan="6" class="tCenter" style="letter-spacing: 2px">トリガー設定がありません</td></tr>
+        <tr><td colspan="6" class="tCenter" style="letter-spacing: 2px">トリガー設定（条件設定）がありません</td></tr>
       <?php endif; ?>
       </tbody>
     </table>

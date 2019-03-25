@@ -5456,7 +5456,7 @@
           style += '#sincloBox ul#chatTalk #' + name +
               ' sinclo-radio {padding: 8px;}';
           style += '#sincloBox ul#chatTalk #' + name +
-              ' sinclo-radio [type="radio"] + label {display: inline !important;}';
+              ' sinclo-radio [type="radio"] + label {display: block !important;}';
           if (!check.smartphone()) {
             style += '#sincloBox ul#chatTalk #' + name +
                 ' sinclo-radio [type="radio"]:checked + label:after {top: 9px !important;}';
@@ -13332,7 +13332,7 @@
             style += '#sincloBox ul#chatTalk #' + name +
                 ' sinclo-radio {padding: 8px;}';
             style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"] + label {display: inline !important;}';
+                ' sinclo-radio [type="radio"] + label {display: block !important;}';
             if (!check.smartphone()) {
               style += '#sincloBox ul#chatTalk #' + name +
                   ' sinclo-radio [type="radio"]:checked + label:after {top: 9px !important;}';

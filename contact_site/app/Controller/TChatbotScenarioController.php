@@ -1049,6 +1049,7 @@ sinclo@medialink-ml.co.jp
     }
     $this->MMailTransmissionSetting->set([
       'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'from_address' => 'test@example.com',
       'from_name' => $saveData->fromName,
       'to_address' => $toAddresses,
       'subject' => $saveData->subject
