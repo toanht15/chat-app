@@ -110,6 +110,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         // 呼び出し元情報
         $callerAutoMessage = count($val['callerInfo']['TAutoMessage']) > 0 ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
         $callerScenario = count($val['callerInfo']['TChatbotScenario']) > 0 ? implode(', ', $val['callerInfo']['TChatbotScenario']) : '';
+        $callerDiagram = count($val['callerInfo']['TChatbotDiagram']) > 0 ? implode(', ', $val['callerInfo']['TChatbotDiagram']) : '';
 
         $no = $prevCnt + h($key+1);
         ?>
@@ -121,7 +122,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           <td class="tCenter" width=" 5%"><?=$no?></td>
           <td class="tCenter scenarioTitle" width="25%"><?= $val['TChatbotScenario']['name']; ?></td>
           <td class="p10x" width="75%">
-            <?php if ($callerAutoMessage === '' && $callerScenario === ''): ?>
+            <?php if ($callerAutoMessage === '' && $callerScenario === '' && $callerDiagram === ''): ?>
               <p>（未設定）</p>
             <?php else: ?>
               <?php if ($callerAutoMessage !== ''): ?>
@@ -129,6 +130,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               <?php endif; ?>
               <?php if ($callerScenario !== ''): ?>
                 <p><span class="callerTypeLabel typeScenario">シナリオ</span><span><?= $callerScenario; ?></span></p>
+              <?php endif; ?>
+              <?php if ($callerDiagram !== ''): ?>
+                <p><span class="callerTypeLabel typeDiagram">チャットツリー</span><span><?= $callerDiagram; ?></span></p>
               <?php endif; ?>
             <?php endif; ?>
           </td>
