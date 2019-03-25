@@ -214,7 +214,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       getMessage: function(obj){
         // オートメッセージの取得
         this.getMessageToken = makeToken();
-        emit('getAutoChatMessages', {userId: obj.userId, mUserId: myUserId, tabId: obj.tabId, chatToken: this.getMessageToken});
+        emit('getAutoChatMessages', {userId: obj.userId, mUserId: myUserId, tabId: obj.tabId, sincloSessionId: obj.sincloSessionId, chatToken: this.getMessageToken});
       },
       openFileUploadDialog: function() {
 
@@ -1954,22 +1954,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         content += $scope.createTextOfMessage(chat, message);
       }
       else if ( Number(type) === chatApi.messageType.diagram.message.branch ) {
-        var json = JSON.parse(message);
+        var obj = isJSON(message) ? JSON.parse(message) : message;
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
         content = "<span class='cName'>チャットツリーメッセージ(分岐)</span>";
-        content += $scope.createTextOfMessage(chat, json.message);
+        content += $scope.createTextOfMessage(chat, obj.message);
       }
       else if ( Number(type) === chatApi.messageType.diagram.message.text ) {
-        var json = JSON.parse(message);
+        var obj = isJSON(message) ? JSON.parse(message) : message;
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
         content = "<span class='cName'>チャットツリーメッセージ(テキスト発言)</span>";
-        content += $scope.createTextOfMessage(chat, json.message);
+        content += $scope.createTextOfMessage(chat, obj.message);
       }
       else if ( Number(type) === chatApi.messageType.diagram.customer.operator ) {
         // 未修正ログは表示しない

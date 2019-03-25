@@ -3526,6 +3526,7 @@ io.sockets.on('connection', function(socket) {
   // 一括：チャットデータ取得
   socket.on('getChatMessage', function(d) {
     var obj = JSON.parse(d);
+
     chatApi.get(obj);
   });
 
@@ -3561,15 +3562,17 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(d);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
+    var sincloSessionId = getSessionId(obj.siteKey, obj.tabId, 'sincloSessionId');
     obj.messageType = chatApi.cnst.observeType.auto;
     obj.sendTo = socket.id;
+    obj.sincloSessionId = sincloSessionId;
     emit.toUser('sendReqAutoChatMessages', obj, sId);
 
     // ユーザーがチャット中の場合
     if (getSessionId(obj.siteKey, obj.tabId, 'chatSessionId')) {
       var sessionId = getSessionId(obj.siteKey, obj.tabId, 'chatSessionId');
       emit.toUser('reqTypingMessage',
-          {siteKey: obj.siteKey, from: obj.mUserId, tabId: obj.tabId},
+          {siteKey: obj.siteKey, from: obj.mUserId, tabId: obj.tabId, sincloSessionId: sincloSessionId},
           sessionId);
     }
   });
@@ -3598,6 +3601,7 @@ io.sockets.on('connection', function(socket) {
     ret.chatToken = obj.chatToken;
     ret.tabId = obj.tabId;
     ret.historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
+    ret.sincloSessionId = getSessionId(obj.siteKey, obj.tabId, 'sincloSessionId');
     emit.toUser('resAutoChatMessages', ret, obj.sendTo);
   });
 
