@@ -12,10 +12,10 @@
  * @property TChatbotScenarioSendFile $TChatbotScenarioSendFile
  */
 
-App::uses('FileAppController', 'Controller');
+App::uses('WidgetSettingController', 'Controller');
 App::uses('ChatbotScenarioException', 'Lib/Error');
 
-class TChatbotScenarioController extends FileAppController {
+class TChatbotScenarioController extends WidgetSettingController {
 
   const CALL_SELF_SCENARIO_NAME = "（このシナリオ）";
 
@@ -34,21 +34,6 @@ class TChatbotScenarioController extends FileAppController {
   ];
 
   public $coreSettings = null;
-  public $styleSetting = [
-    'common' => [
-      'show_timing', 'max_show_timing_site', 'max_show_timing_page',
-      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
-      'show_main_image', 'main_image', 'show_chatbot_icon' ,'chatbot_icon_type' ,'chatbot_icon' ,'show_operator_icon', 'operator_icon_type','operator_icon', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext','widget_custom_height','widget_custom_width',
-      /* カラー設定start */
-      'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
-      'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
-      'message_box_text_color','message_box_text_size','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_text_size','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
-      'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
-      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_scroll_view_setting','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
-    ],
-    'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_arrow_position', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
-  ];
 
   const SCENARIO_VARIABLES_TEMPLATE = "※このメールはお客様の設定によりsincloから自動送信されました。
 
@@ -211,7 +196,7 @@ sinclo@medialink-ml.co.jp
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
     $scenarioList = array_merge($scenarioList, $this->_findScenarioByActionType(C_SCENARIO_ACTION_BRANCH_ON_CONDITION));
     $callerInfo = $this->_getScenarioCallerInfo($scenarioId, $scenarioList);
-    if (!empty($callerInfo['TAutoMessage']) || !$this->isDeletableScenario($callerInfo['TChatbotScenario'])) {
+    if (!empty($callerInfo['TAutoMessage']) || !empty($callerInfo['TChatbotDiagram']) || !$this->isDeletableScenario($callerInfo['TChatbotScenario'])) {
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
       return;
     }
@@ -1259,176 +1244,6 @@ sinclo@medialink-ml.co.jp
       )
     ));
     $this->set('chatbotScenarioAddCustomerInformationList', $chatbotScenarioAddCustomerInformationList);
-  }
-
-  /**
-   * ウィジェット設定を取得し、シミュレーター表示用にパラメーターを設定する
-   * @return $inputData['MWidgetSetting'] シミュレーター表示用にパラメーターを設定したもの
-   */
-  private function _getWidgetSettings() {
-    $inputData = [];
-    $ret = $this->MWidgetSetting->coFind('first');
-    $inputData = $ret['MWidgetSetting'];
-
-    // 表示ウィジェットのセット
-    $inputData = $this->_setShowTab($inputData);
-
-    // 詳細設定
-    if ( isset($ret['MWidgetSetting']['style_settings']) ) {
-      $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
-      $inputData = $this->_setStyleSetting($inputData, $json);
-    }
-    if(array_key_exists ('re_border_color',$json)){
-      if($json['re_border_color'] === 'none'){
-        $this->set('re_border_color_flg', false);
-        $inputData['re_border_color'] = 'なし';
-        $inputData['re_border_none'] = true;
-      }
-      else{
-        $this->set('re_border_color_flg', true);
-      }
-    }
-    else{
-      //初回読み込み時
-      $this->set('re_border_color_flg', true);
-    }
-    if(array_key_exists ('se_border_color',$json)){
-      if($json['se_border_color'] === 'none'){
-        $this->set('se_border_color_flg', false);
-        $inputData['se_border_color'] = 'なし';
-        $inputData['se_border_none'] = true;
-      }
-      else{
-        $this->set('se_border_color_flg', true);
-      }
-    }
-    else{
-      //初回読み込み時
-      $this->set('se_border_color_flg', true);
-    }
-    if(array_key_exists ('message_box_border_color',$json)){
-      if($json['message_box_border_color'] === 'none'){
-        $this->set('message_box_border_color_flg', false);
-        $inputData['message_box_border_color'] = 'なし';
-        $inputData['message_box_border_none'] = true;
-      }
-      else{
-        $this->set('message_box_border_color_flg', true);
-      }
-    }
-    else{
-      $this->set('message_box_border_color_flg', true);
-    }
-    //ウィジェット外枠線
-    if(array_key_exists ('widget_border_color',$json)){
-      if($json['widget_border_color'] === 'none'){
-        $this->set('widget_border_color_flg', false);
-        $inputData['widget_border_color'] = 'なし';
-        $inputData['widget_outside_border_none'] = true;
-      }
-      else{
-        $this->set('widget_border_color_flg', true);
-      }
-    }
-    else{
-      $this->set('widget_border_color_flg', true);
-    }
-    //ウィジェット内枠線
-    if(array_key_exists ('widget_inside_border_color',$json)){
-      if($json['widget_inside_border_color'] === 'none'){
-        $this->set('widget_inside_border_color_flg', false);
-        $inputData['widget_inside_border_color'] = 'なし';
-        $inputData['widget_inside_border_none'] = true;
-      }
-      else{
-        $this->set('widget_inside_border_color_flg', true);
-      }
-    }
-    else{
-      $this->set('widget_inside_border_color_flg', true);
-    }
-    //仕様変更常に高度な設定の設定値が反映されるようにする
-    if(array_key_exists ('color_setting_type',$json)){
-      if($json['color_setting_type'] === '1'){
-        $inputData['color_setting_type'] = '0';
-      }
-    }
-
-    $titleLength = 12;
-    $subTitleLength = 15;
-    $descriptionLength = 15;
-    switch ($inputData['widget_size_type']) {
-      //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
-      case '1': //小
-        $titleLength = 12;
-        $subTitleLength = 15;
-        $descriptionLength = 15;
-        break;
-      case '2': //中
-        $titleLength = 16;
-        $subTitleLength = 20;
-        $descriptionLength = 20;
-        break;
-      case '3': //大
-        $titleLength = 19;
-        $subTitleLength = 24;
-        $descriptionLength = 24;
-        break;
-    }
-
-    return $inputData;
-  }
-
-  /**
-   * JSON形式で取得した値をオブジェクト形式に変換
-   *
-   * @param $jsonData JSON JSON形式のデータ
-   * @return $settings オブジェクト JSON形式のデータをオブジェクトに変換したもの
-   *
-   * */
-  private function _settingToObj($jsonData){
-    $settings = [];
-
-    // キーの管理用変数のキーと値を入れ替える
-    $styleColumns = array_flip($this->MWidgetSetting->styleColumns);
-
-    // JSONからオブジェクトに変更
-    $json = json_decode($jsonData);
-
-    // 保持していた設定ごとループ処理
-    foreach($json as $key => $val){
-      // 設定名が管理しているキーである場合、値を $settings にセット
-      if ( isset($styleColumns[$key]) ) {
-      $settings[$styleColumns[$key]] = $val;
-      }
-    }
-
-    return $settings;
-  }
-
-  /**
-   * デフォルトで表示するタブを選定
-   * @param $d ($inputData)
-   * @return $d ($inputData)
-   * */
-  private function _setShowTab($d){
-    // チャットのみ
-    if ( $this->coreSettings[C_COMPANY_USE_CHAT] && !$this->coreSettings[C_COMPANY_USE_SYNCLO] ) {
-      $d['widget']['showTab'] = "chat";
-    }
-    // 画面・資料同期のみ
-    else if ( ($this->coreSettings[C_COMPANY_USE_SYNCLO] || (isset($this->coreSettings[C_COMPANY_USE_DOCUMENT]) && $this->coreSettings[C_COMPANY_USE_DOCUMENT]) ) && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
-      $d['widget']['showTab'] = "call";
-    }
-    // どちらも
-    else {
-      // チャットがデフォルト
-      $d['widget']['showTab'] = "chat";
-      if ( isset($this->request->params['named']['showTab']) && strcmp($this->request->params['named']['showTab'], "call") === 0 ) {
-      $d['widget']['showTab'] = "call";
-      }
-    }
-    return $d;
   }
 
   /**
