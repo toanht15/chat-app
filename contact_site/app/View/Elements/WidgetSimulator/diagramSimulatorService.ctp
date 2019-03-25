@@ -15,15 +15,15 @@
       self.beginNodeId = '';
       self.currentNodeId = '';
 
-      for(var i=0; i < self.setActionList.cells.length; i++) {
-        if(self.setActionList.cells[i].type !== 'devs.Model') continue;
-        var node = self.setActionList.cells[i];
+      Object.keys(self.setActionList).some(function(uuid, index, arr){
+        if(self.setActionList[uuid].type !== 'devs.Model') return false;
+        var node = self.setActionList[uuid];
         if(node.attrs.nodeBasicInfo.nodeType === 'start') {
           self.beginNodeId = node.id;
           self.currentNodeId = node.attrs.nodeBasicInfo.nextNodeId;
+          return true;
         }
-        break;
-      }
+      });
       // シミュレーション上のメッセージをクリアする
       $rootScope.$broadcast('removeMessage');
     };
@@ -33,7 +33,6 @@
      * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
      */
     self.doAction = function() {
-      debugger;
       if (true) {
         // メッセージ間隔
         var actionNode = self.findNodeById(self.currentNodeId);
@@ -94,15 +93,7 @@
     };
 
     self.findNodeById = function(nodeId) {
-      var targetNode = {};
-      Object.keys(self.setActionList.cells).some(function(idx, arrIdx, arr){
-        var node = self.setActionList.cells[idx];
-        if(node.id.indexOf(nodeId) !== -1) {
-          targetNode = node;
-          return true;
-        }
-      });
-      return targetNode;
+      return self.setActionList[nodeId];
     };
 
     self.isMatch = function(targetValue, condition) {
@@ -170,16 +161,15 @@
     self.getBranchSelection = function(node) {
       var itemIds = node.embeds;
       var map = {};
-      var baseData = self.setActionList.cells;
+      var baseData = self.setActionList;
       for (var i = 0; i < itemIds.length; i++) {
-        for (var nodeIndex = 0; nodeIndex <
-        baseData.length; nodeIndex++) {
-          if(baseData[nodeIndex]['type'] !== 'devs.Model') continue;
-          console.log('baseData.id:%s itemId:%s baseData.attrs.nodeBasicInfo.nodeType: %s', baseData[nodeIndex]['id'], itemIds[i], baseData[nodeIndex]['attrs']['nodeBasicInfo']['nodeType']);
-          if (baseData[nodeIndex]['id'] === itemIds[i]
-          && baseData[nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId']) {
-            map[itemIds[i]] = baseData[nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'];
-          }
+        var targetNode = baseData[itemIds[i]];
+        if(targetNode['type'] !== 'devs.Model') continue;
+        console.log('baseData.id:%s itemId:%s baseData.attrs.nodeBasicInfo.nodeType: %s', targetNode['id'], itemIds[i], targetNode['attrs']['nodeBasicInfo']['nodeType']);
+        if (targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode'
+            && targetNode['attrs']['nodeBasicInfo']['nextNodeId']
+            && targetNode['attrs']['nodeBasicInfo']['nextNodeId'] !== '') {
+          map[itemIds[i]] = targetNode['attrs']['nodeBasicInfo']['nextNodeId'];
         }
       }
       return map;
@@ -188,8 +178,16 @@
     self.getBranchLabels = function(node, idKeys) {
       var labels = node.attrs.actionParam.selection;
       var map = {};
-      for (var i = 0; i < labels.length; i++) {
-        map[idKeys[i]] = labels[i];
+      var baseData = self.setActionList;
+      for (var i = 0; i < idKeys.length; i++) {
+        if(idKeys[i] === undefined) break;
+        var targetNode = baseData[idKeys[i]];
+        if (targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode'
+            && targetNode['attrs']['nodeBasicInfo']['tooltip']) {
+          map[idKeys[i]] = targetNode['attrs']['nodeBasicInfo']['tooltip'];
+        } else {
+          map[idKeys[i]] = '';
+        }
       }
       return map;
     };
