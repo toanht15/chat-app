@@ -66,6 +66,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("standalone.css");
     echo $this->Html->css("light.min");
     echo $this->Html->css("solid.min");
+    echo $this->Html->css('fontawesome.min');
     echo $this->Html->css('fontawesome-all.min');
     echo $this->Html->css("//cdnjs.cloudflare.com/ajax/libs/cropper/1.0.0/cropper.min.css");
   ?>
