@@ -1536,7 +1536,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var widgetSize = '4'; //リアルタイムモニタ詳細画面
       for (var i = 0; strings.length > i; i++) {
         if(strings[i].match(/(<div |<\/div>)/)) {
-          content += strings[i];
+          custom += strings[i];
           continue;
         }
         var str = escape_html(strings[i]);
