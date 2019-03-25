@@ -794,9 +794,17 @@ $config['outMessageTriggerList'] = array(
 /* オートメッセージ － アクション種別 */
 $config['outMessageActionType'] = array(
   C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
+  C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM => "チャットツリーを呼び出す",
   C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す",
-  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "トリガーを呼び出す",
-  C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM => "チャットツリーを呼び出す"
+  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "別のトリガーを呼び出す"
+);
+
+/* オートメッセージ － アクション種別 */
+$config['outMessageActionTypePrioritizeDiagram'] = array(
+  C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM => "チャットツリーを呼び出す",
+  C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す",
+  C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
+  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "別のトリガーを呼び出す"
 );
 
 /* オートメッセージ － ウィジェット種別 */
