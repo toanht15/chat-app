@@ -1286,7 +1286,11 @@ class TAutoMessagesController extends WidgetSettingController
     // 条件リスト
     $this->set('outMessageTriggerList', $this->outMessageTriggerList);
     // アクション種別
-    $this->set('outMessageActionType', Configure::read('outMessageActionType'));
+    if($this->coreSettings[C_COMPANY_USE_CHATBOT_TREE_EDITOR]) {
+      $this->set('outMessageActionType', Configure::read('outMessageActionTypePrioritizeDiagram'));
+    } else {
+      $this->set('outMessageActionType', Configure::read('outMessageActionType'));
+    }
     // ウィジェット種別
     $this->set('outMessageWidgetOpenType', Configure::read('outMessageWidgetOpenType'));
     // テキストエリア
