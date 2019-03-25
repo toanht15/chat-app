@@ -53,6 +53,7 @@
   .diagram_preview_area li.all-round { border-radius: 12px!important; }
   .diagram_preview_area li.sinclo_re.no-wrap span.sinclo-text-line { display: block; padding: 0 15px; }
   .diagram_preview_area li.sinclo_re {  background-color: {{widget.makeFaintColor()}}; font-size: {{widget.settings['re_text_size']}}px; }
+  .diagram_preview_area li.sinclo_re.customWidth { width: 90%; }
   .diagram_preview_area li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
   .diagram_preview_area li.sinclo_re span.sinclo-text-line{ display: inline-block; color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
   .diagram_preview_area li.sinclo_re a { color: {{widget.settings['re_text_color']}}; background-color: {{widget.makeFaintColor()}};}
@@ -224,7 +225,8 @@
           'balloonType: widget.settings[\'chat_message_design_type\'] == 2,' +
           'middleSize: widget.settings[\'widget_size_type\'] == 2,' +
           'largeSize: widget.settings[\'widget_size_type\'] == 3 || widget.settings[\'widget_size_type\'] == 4,' +
-          'customSize: widget.settings[\'widget_size_type\'] == 5' +
+          'customSize: widget.settings[\'widget_size_type\'] == 5,' +
+          'customWidth: radioStyle == \'1\'' +
           '}">' +
           '<span ng-if="widget.settings[\'show_automessage_name\'] === \'1\'" class="cName details">{{widget.settings[\'sub_title\']}}</span>' +
           '<span class="details preview_text_span_branch">' +
