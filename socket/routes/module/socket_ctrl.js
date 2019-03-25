@@ -1445,6 +1445,7 @@ io.sockets.on('connection', function(socket) {
               obj.chatMessage = ret.message;
               obj.messageType = chatApi.cnst.observeType.sorry;
               obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
+              obj.isDiagramMessage = false;
               chatApi.set(obj);
             }
           });
