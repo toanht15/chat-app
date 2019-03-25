@@ -5932,6 +5932,14 @@ ul.naviBtn {
   margin: 15px 15px 72px 15px;
   $list-color: #ECF4DA;
 
+  #tautomessages_title {
+    display: flex;
+    align-items: center;
+    div.fLeft {
+      margin-right: 0;
+    }
+  }
+
   #tautomessages_menu {
     height: 85px;
     /*img[class$='Btn'] {
@@ -7497,6 +7505,9 @@ ul.naviBtn {
           }
           &.typeScenario {
             background-color: #EDBF35;
+          }
+          &.typeDiagram {
+            background-color: #E44EA1;
           }
 
           & + span {
