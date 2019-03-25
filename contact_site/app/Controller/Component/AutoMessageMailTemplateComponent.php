@@ -12,6 +12,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const SEND_NAME_CONSUMER = '訪問者';
   const SEND_NAME_CONSUMER_SCENARIO_HEARING = '訪問者（ヒアリング回答）';
   const SEND_NAME_CONSUMER_SCENARIO_SELECTION = '訪問者（選択肢回答）';
+  const SEND_NAME_CONSUMER_DIAGRAM_BRANCH_MESSAGE = 'チャットツリーメッセージ（分岐回答）';
   const SEND_NAME_OPERATOR = 'オペレータ';
   const SEND_NAME_AUTO_MESSAGE = '自動応答';
   const SEND_NAME_SORRY_MESSAGE = '自動応答（sorry）';
@@ -26,6 +27,8 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const SEND_NAME_SCENARIO_RETURN_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング解析結果）';
   const SEND_NAME_SCENARIO_MODIFY_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング内容修正）';
   const SEND_NAME_SCENARIO_HEARING_REINPUT = 'シナリオメッセージ(ヒアリング再回答)';
+  const SEND_NAME_DIAGRAM_BRANCH_MESSAGE = 'チャットツリーメッセージ（分岐）';
+  const SEND_NAME_DIAGRAM_TEXT_MESSAGE = 'チャットツリーメッセージ（テキスト発言）';
 
   const REPLACE_TARGET_AUTO_MESSAGE_BLOCK_DELIMITER = '##AUTO_MESSAGE_BLOCK##';
 
@@ -206,10 +209,14 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         $message = $this->generateScenarioReturnBulkHearingBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 41:
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']['message']);
+        $obj = json_decode($chatLog['message'], TRUE);
+        $chatMessage = (strcmp($obj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatMessage);
         break;
       case 42:
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']['message']);
+        $obj = json_decode($chatLog['message'], TRUE);
+        $chatMessage = (strcmp($obj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'], $chatMessage);
         break;
       case 45:
       case 46:
@@ -217,14 +224,14 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 52:
       case 55:
         $obj = json_decode($chatLog['message'], TRUE);
-        $chatMessage = empty($obj['message']) ? "（質問内容なし）" : $obj['message'];
+        $chatMessage = (strcmp($obj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
         $message = $this->generateScenarioHearingBlockStr($chatLog['created'], $chatMessage);
         break;
       case 43:
       case 47:
       case 50:
       case 53:
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'], $chatLog['message']);
         break;
       case 44:
       case 48:
@@ -239,6 +246,22 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         $message = $this->generateAutoMessageBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 90:
+        break;
+      case 300:
+        $chatLogObj = json_decode($chatLog['message'], TRUE);
+        $chatMessage = (strcmp($chatLogObj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
+        $message = $this->generateDiagramBranchMessageBlockStr($chatLog['created'],$chatMessage);
+        break;
+      case 301:
+        $message = $this->generateDiagramConsumerBranchMessageBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 302:
+        $chatLogObj = json_decode($chatLog['message'], TRUE);
+        $chatMessage = (strcmp($chatLogObj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
+        $message = $this->generateDiagramTextMessageBlockStr($chatLog['created'],$chatMessage);
+        break;
+      case 303:
+        // オペレータ呼び出し用の空メッセージのため修正
         break;
       case 998:
         $message = $this->generateOperatorEnteredBlockStr($chatLog['created'],$user['display_name']);
@@ -447,6 +470,27 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     $content = json_decode($content, TRUE);
     $message .= "ダウンロードＵＲＬ：".$content['downloadUrl']."\n";
     $message .= "コメント：\n".$content['comment']."\n";
+    return $message;
+  }
+
+  protected function generateDiagramBranchMessageBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_DIAGRAM_BRANCH_MESSAGE);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateDiagramConsumerBranchMessageBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_CONSUMER_DIAGRAM_BRANCH_MESSAGE);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateDiagramTextMessageBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_DIAGRAM_TEXT_MESSAGE);
+    $message .= $this->createMessageContent($content);
     return $message;
   }
 
