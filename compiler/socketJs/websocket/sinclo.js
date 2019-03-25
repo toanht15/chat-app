@@ -8534,26 +8534,29 @@
             }
           }
         } else if (String(type) === '3') {
-          console.log('CALL AUTO MESSAGE!!!!!! ' + callId);
-          // 設定ごと
-          var targetAutomessage = null;
-          for (var i = 0; window.sincloInfo.messages.length > i; i++) {
-            if (Number(window.sincloInfo.messages[i].id) === Number(callId)) {
-              targetAutomessage = window.sincloInfo.messages[i];
-              break;
+          if(!sinclo.scenarioApi.isProcessing()) {
+            console.log('CALL AUTO MESSAGE!!!!!! ' + callId);
+            // 設定ごと
+            var targetAutomessage = null;
+            for (var i = 0; window.sincloInfo.messages.length > i; i++) {
+              if (Number(window.sincloInfo.messages[i].id) === Number(callId)) {
+                targetAutomessage = window.sincloInfo.messages[i];
+                break;
+              }
             }
-          }
-          if (targetAutomessage) {
-            // 再帰呼び出し
-            sinclo.trigger.setAction(targetAutomessage.id,
-                targetAutomessage.action_type, targetAutomessage.activity,
-                targetAutomessage.send_mail_flg,
-                targetAutomessage.scenario_id,
-                targetAutomessage.call_automessage_id, true);
+            if (targetAutomessage) {
+              // 再帰呼び出し
+              sinclo.trigger.setAction(targetAutomessage.id,
+                  targetAutomessage.action_type, targetAutomessage.activity,
+                  targetAutomessage.send_mail_flg,
+                  targetAutomessage.scenario_id,
+                  targetAutomessage.call_automessage_id, true);
+            }
           }
         } else if (String(type) === '4') {
           console.log('CHAT DIAGRAM TRIGGERED!!!!!! ' + diagramId);
-          if (window.sincloInfo.contract.chatbotTreeEditor && diagramId) {
+          if (window.sincloInfo.contract.chatbotTreeEditor && diagramId
+            && !sinclo.scenarioApi.isProcessing()) {
             emit('getChatDiagram', {'diagramId': diagramId});
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
@@ -13507,9 +13510,11 @@
           if (currentNode.attrs.actionParam.callbackToDiagram) {
             self.callScenario.beginWaitEndScenario();
           }
-          emit('getScenario', {'scenarioId': scenarioId});
-          // 後続のnodeは呼び出しなしのため、チャットツリーは終了する
-          self.common._saveProcessingState(false);
+          common.chatBotTypingCall({messageType: self.messageType.message.text});
+          self.executor.wait(self.executor.getIntervalTimeSec()).
+              then(function() {
+                emit('getScenario', {'scenarioId': scenarioId});
+              });
         },
         beginWaitEndScenario: function() {
           var self = sinclo.diagramApi;
