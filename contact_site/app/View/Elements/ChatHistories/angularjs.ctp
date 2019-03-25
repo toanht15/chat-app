@@ -335,7 +335,8 @@
                 text: 302
               },
               customer: {
-                branch: 301
+                branch: 301,
+                operator: 303
               }
             }
           }
@@ -1274,6 +1275,9 @@
             content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
                 $scope.createTextOfMessage(chat, messageObj.message) + '</span>';
           }
+        } else if (type === chatApi.messageType.diagram.customer.operator) {
+          // 何も表示しない
+          return;
         } else {
           cn = 'sinclo_etc';
           div.style.borderBottom = '1px solid #bfbfbf';
