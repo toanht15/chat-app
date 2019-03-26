@@ -154,8 +154,11 @@ class TChatbotDiagramsController extends WidgetSettingController
         'm_companies_id' => $this->userInfo['MCompany']['id'],
         'name' => $this->request->data['TChatbotDiagram']['name'],
         'activity' => $this->request->data['TChatbotDiagram']['activity'],
-        'sort' => $nextSort
       );
+
+      if(!empty($nextSort)) {
+        $saveData['sort'] = $nextSort;
+      }
 
       if(!empty($this->request->data['TChatbotDiagram']['id'])) {
         $saveData['id'] = $this->request->data['TChatbotDiagram']['id'];
