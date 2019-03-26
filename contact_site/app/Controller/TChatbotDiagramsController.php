@@ -146,6 +146,8 @@ class TChatbotDiagramsController extends WidgetSettingController
           'conditions' => ['TChatbotDiagram.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
         ]);
         $nextPage = floor((intval($count[0]['count']) + 99) / 100);
+      } else {
+        $this->TChatbotDiagram->read(null, $this->request->data['TChatbotDiagram']['id']);
       }
 
       $transaction = $this->TransactionManager->begin();
@@ -160,15 +162,11 @@ class TChatbotDiagramsController extends WidgetSettingController
         $saveData['sort'] = $nextSort;
       }
 
-      if(!empty($this->request->data['TChatbotDiagram']['id'])) {
-        $saveData['id'] = $this->request->data['TChatbotDiagram']['id'];
-      }
-
       try {
         if(!$this->TChatbotDiagram->save($saveData)) {
           throw new Exception('保存に失敗しました');
         }
-        $insertId = $this->TChatbotDiagram->getLastInsertId() ? $this->TChatbotDiagram->getLastInsertId() : $saveData['id'];
+        $insertId = $this->TChatbotDiagram->getLastInsertId() ? $this->TChatbotDiagram->getLastInsertId() : $this->request->data['TChatbotDiagram']['id'];
         $this->insertNodeNameTable($insertId, json_decode($this->request->data['TChatbotDiagram']['activity'], TRUE));
 
         $this->TransactionManager->commitTransaction($transaction);
