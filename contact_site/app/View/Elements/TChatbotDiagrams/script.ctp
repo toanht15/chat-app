@@ -217,7 +217,7 @@ $(document).ready(function(){
     var sortNoList = getArrayForSort("sort");
     $.ajax({
       type: "POST",
-      url: "<?= $this->Html->url(['controller' => 'TChatbotScenario', 'action' => 'remoteSaveSort']) ?>",
+      url: "<?= $this->Html->url(['controller' => 'TChatbotDiagrams', 'action' => 'changeSort']) ?>",
       data: {
         list: idList,
         sortNoList: sortNoList

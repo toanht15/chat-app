@@ -37,6 +37,11 @@
         // メッセージ間隔
         var actionNode = self.findNodeById(self.currentNodeId);
 
+        if(!actionNode) {
+          chatbotTypingRemove();
+          return;
+        }
+
         var time = 2;
         if(self.callFirst
             || actionNode.attrs.nodeBasicInfo.nodeType === 'scenario'
@@ -73,6 +78,8 @@
               self.doAction();
               break;
             case 'operator': // オペレータ呼び出し
+              clearChatbotTypingTimer();
+              chatbotTypingRemove();
               break;
             case 'cv': //CVポイント
               var nextNode = self.findNodeById(actionNode.attrs.nodeBasicInfo.nextNodeId);

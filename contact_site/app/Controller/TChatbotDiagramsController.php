@@ -398,7 +398,7 @@ class TChatbotDiagramsController extends WidgetSettingController
     if (!empty($this->params->data['list'])) {
       $this->TChatbotDiagram->begin();
       $list = $this->params->data['list'];
-      $sortNoList = $this->params->data['sortNolist'];
+      $sortNoList = $this->params->data['sortNoList'];
       sort($sortNoList);
       /* 現在の並び順を取得 */
       $params = $this->paginate['TChatbotDiagram'];
