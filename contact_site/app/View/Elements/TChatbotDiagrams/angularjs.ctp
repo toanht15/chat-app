@@ -1904,7 +1904,7 @@
         }).then(function(){
           $scope.currentTop = $('#popup-frame').offset().top;
           $timeout(function(){
-            //popupEvent.resize();
+            popupEvent.resize();
             $scope.popupFix();
           });
         });
