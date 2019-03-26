@@ -1257,7 +1257,7 @@ sinclo@medialink-ml.co.jp
 
     // 呼び出し元オートメッセージ情報を取得する
     $callerInfo['TAutoMessage'] = $this->TAutoMessage->coFind('list', [
-      'fileds' => ['id', 'name'],
+      'fileds' => ['DISTINCT id', 'name'],
       'order' => [
         'TAutoMessage.sort' => 'asc',
         'TAutoMessage.id' => 'asc'
@@ -1270,7 +1270,7 @@ sinclo@medialink-ml.co.jp
     ]);
 
     $callerInfo['TChatbotDiagram'] = $this->TChatbotDiagram->coFind('list', array(
-      'fields' => array('id', 'name'),
+      'fields' => array('DISTINCT id', 'name'),
       'order' => array(
         'TChatbotDiagram.sort' => 'asc',
         'TChatbotDiagram.id' => 'asc'

@@ -1673,6 +1673,8 @@
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.top {border-top-left-radius: 8px; border-top-right-radius: 8px}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.bottom {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
+        style += '#sincloBox #' + buttonUIName +
+            ' span.sinclo-text-line { margin: 4px 0; }';
         if (message) {
           style += ' #sincloBox #' + buttonUIName + ' {margin-top: 8px}';
         }
