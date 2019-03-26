@@ -1953,7 +1953,7 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1.5em; font-size: ' +
               (12 * ratio) + 'px; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: ' +
-              (11 * ratio) / 2 + 'px; margin-top: -' + (11 * ratio) / 2 +
+              ((11 * ratio) / 2 - 7) + 'px; margin-top: -' + (11 * ratio) / 2 +
               'px; left: ' + (0 * ratio) + 'px; width: ' + (11 * ratio) +
               'px; height: ' + (11 * ratio) + 'px; border: 1px solid ' +
               chatContentTextColor +
