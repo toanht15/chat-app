@@ -321,6 +321,9 @@
                 if(frame.hasClass("p_diagrams_branch")){
                   $scope.titleHandler($scope.branchTitle, "分岐");
                   $scope.changeTextTrigger($("textarea.for_modal"), true, $scope.branchText, "branch");
+                  $('#popup-frame').css('height','80%');
+                  $('#popup-content').css('height','100%');
+                  popupEvent.resize = function() {};
                 }else if(frame.hasClass("p_diagrams_text")){
                   $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
                   var elements = $("textarea.for_modal");
@@ -328,6 +331,15 @@
                     if($scope.speakTextList[i] === "") continue;
                     $scope.changeTextTrigger($(elements[i]), true, $scope.speakTextList[i], i);
                   }
+                  $('#popup-frame').css('height','');
+                  $('#popup-content').css('height','auto');
+
+                  popupEvent.resize = function() {
+                    debugger;
+                    var contHeight = $('#popup-content').height();
+                    $('#popup-frame').css('top', 0).css('height', contHeight);
+                    $scope.popupFix();
+                  };
                 }
 
                 $scope.popupHandler();
@@ -1861,7 +1873,7 @@
       $scope.popupFix = function(){
         var popup = $('#popup-frame');
         popup.offset({
-          top: typeof $scope.currentTop === "number" ? $scope.currentTop : window.innerHeight / 2 - popup.height() / 2,
+          top: window.innerHeight / 2 - popup.height() / 2,
           left: popup.offset().left
         });
       };
@@ -1892,7 +1904,7 @@
         }).then(function(){
           $scope.currentTop = $('#popup-frame').offset().top;
           $timeout(function(){
-            popupEvent.resize();
+            //popupEvent.resize();
             $scope.popupFix();
           });
         });

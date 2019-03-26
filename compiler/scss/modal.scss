@@ -1779,17 +1779,22 @@
       /* 分岐のモーダル */
       &.p_diagrams_branch {
         width: 870px;
+        #popup-title {
+          height: 43px;
+        }
         #popup-main {
           padding: 0!important;
+          height: calc(100% - 112px);
         }
         #branch_modal {
           display: flex;
+          height: 100%;
         }
         #branch_modal_editor {
           width: 500px;
           border-right: 1px solid #909090;
           .scroll-wrapper {
-            max-height: 500px;
+            height: calc(100% - 66px);
             overflow-y: auto;
           }
           #branch_modal_head {
@@ -1947,15 +1952,12 @@
         }
         #branch_modal_preview {
           width: 370px;
-          .diagram_preview_area {
-            max-height: 500px;
-          }
         }
         #popup-button {
           display:flex;
           justify-content: space-around;
           align-items: start;
-          height: auto!important;
+          height: 10%!important;
           border-top: 1px solid #909090;
           .textBtn {
             width: 70px;
