@@ -1270,7 +1270,7 @@ sinclo@medialink-ml.co.jp
     ]);
 
     $callerInfo['TChatbotDiagram'] = $this->TChatbotDiagram->coFind('list', array(
-      'fields' => array('DISTINCT id', 'name'),
+      'fields' => array('id', 'name'),
       'order' => array(
         'TChatbotDiagram.sort' => 'asc',
         'TChatbotDiagram.id' => 'asc'
