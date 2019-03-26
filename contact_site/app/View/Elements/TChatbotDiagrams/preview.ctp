@@ -31,7 +31,7 @@
   #popup #popup-frame-base #popup-frame.p_diagrams_branch #branch_modal #branch_modal_preview {width: {{widget.settings['widget_custom_width']}}px}
 </style>
 <style>
-  .diagram_preview_area { width: 100%; list-style-type: none; margin: 0; overflow-y: auto;}
+  .diagram_preview_area { width: 100%; list-style-type: none; margin: 0; overflow-y: auto; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica,Helvetica Neue,Arial,Verdana;}
   .diagram_preview_area { background-color: {{widget.settings['chat_talk_background_color']}}; height: calc(100% - 66px)}
   .diagram_preview_area .iconDiv {display: flex}
   .diagram_preview_area .iconDiv.arrowBottom { align-items: flex-end;}

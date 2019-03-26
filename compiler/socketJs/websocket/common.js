@@ -1438,7 +1438,7 @@ var socket, // socket.io
         /* ヒアリング */
         html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
         html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
-        html += '#sincloBox ul#chatTalk li.sinclo_re.customWidth {width: 95%}';
+        html += '#sincloBox ul#chatTalk li.sinclo_re.customWidth {width: 93%}';
 
         /* ファイル受信  */
         var previewFileClasses = '#sincloBox #chatTalk li.sinclo_se';
