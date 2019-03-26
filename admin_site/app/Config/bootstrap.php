@@ -131,3 +131,4 @@ Configure::load("chatBasicDefaultConfiguration");
 Configure::load("mailTemplateDefaultConfiguration");
 Configure::load("scenarioDefaultConfiguration");
 Configure::load("customerInformationDefaultConfiguration");
+Configure::load("diagramDefaultConfiguration");
