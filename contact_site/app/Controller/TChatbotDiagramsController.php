@@ -69,13 +69,15 @@ class TChatbotDiagramsController extends WidgetSettingController
     if (empty($id)) {
 
     } else {
-      $data = $this->TChatbotDiagram->find('first', array(
-        'conditions' => array(
-          'id' => $id,
-          'm_companies_id' => $this->userInfo['MCompany']['id']
-        )
-      ));
-      $this->request->data = $data;
+      if(empty($this->request->data['TChatbotDiagram'])) {
+        $data = $this->TChatbotDiagram->find('first', array(
+          'conditions' => array(
+            'id' => $id,
+            'm_companies_id' => $this->userInfo['MCompany']['id']
+          )
+        ));
+        $this->request->data = $data;
+      }
     }
     $this->_viewElement();
   }
@@ -88,7 +90,7 @@ class TChatbotDiagramsController extends WidgetSettingController
             $this->redirect(['action' => 'index']);
         } catch (Exception $e) {
             $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
-            $this->redirect('/TChatbotDiagrams/add');
+            $this->setAction('add', $this->request->data['TChatbotDiagram']['id']);
         }
     }
 

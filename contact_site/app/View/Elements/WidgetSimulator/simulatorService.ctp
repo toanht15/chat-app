@@ -1620,6 +1620,8 @@
         style += '#sincloBox #' + radioName + ' span.sinclo-radio:first-of-type {margin-top: 4px !important}';
         style += '#sincloBox #' + radioName + ' span.sinclo-radio {margin-top: ' +
             settings.customDesign.radioSelectionDistance + 'px !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-text-line {margin-top: ' +
+            settings.customDesign.radioSelectionDistance + 'px}';
         if (settings.radioNoneBorder) {
           style += '#sincloBox #' + radioName +
               ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
@@ -1644,9 +1646,9 @@
           } else {
             var message = option.value ? option.value : option;
             html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
-                key + '\' class=\'sinclo-chat-radio\' value=\'' + message + '\' data-nid=\'' + nodeId +
-                '\' data-next-nid=\'' + selection[key] + '\'>';
-            html += '<label for=\'' + radioName + '-' + key + '\'>' + message + '</label></span>' + "\n";
+                option.uuid + '\' class=\'sinclo-chat-radio\' value=\'' + message + '\' data-nid=\'' + nodeId +
+                '\' data-next-nid=\'' + selection[option.uuid] + '\'>';
+            html += '<label for=\'' + radioName + '-' + option.uuid + '\'>' + message + '</label></span>' + "\n";
           }
         });
         html += '</select>';
@@ -1668,9 +1670,11 @@
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {color: ' + settings.customDesign.buttonUITextColor + '}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:focus {outline: none}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
-        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
-        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.top {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.bottom {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
+        style += '#sincloBox #' + buttonUIName +
+            ' span.sinclo-text-line { margin: 4px 0; }';
         if (message) {
           style += ' #sincloBox #' + buttonUIName + ' {margin-top: 8px}';
         }
@@ -1701,12 +1705,22 @@
         var selfobj = this;
         angular.forEach(labels, function(option, key) {
           if (!option || option === '') return false;
+          var isPrevMessage = (Number(key) > 0 && Number(labels[Number(key) - 1].type) === 2);
+          var isNextMessage = (Number(key) < Object.keys(labels).length - 1 && Number(labels[Number(key) + 1].type) === 2);
+          var isEnd = (Number(key) === Object.keys(labels).length - 1);
+          var addClass = '';
+          if(Number(key) === 0 || isPrevMessage) {
+            addClass += 'top';
+          }
+          if(isNextMessage || isEnd) {
+            addClass += ' bottom';
+          }
           if (option.type && option.value && Number(option.type) === 2) {
             html += selfobj.createMessage(option.value, nodeId);
           } else {
             var message = option.value ? option.value : option;
-            html += '<button onclick="return false;" class="sinclo-button-ui" data-nid=\'' + nodeId +
-                '\' data-next-nid=\'' + selection[key] + '\'>' + message + '</button>';
+            html += '<button onclick="return false;" class="sinclo-button-ui ' + addClass + '" data-nid=\'' + nodeId +
+                '\' data-next-nid=\'' + selection[option.uuid] + '\'>' + message + '</button>';
           }
         });
         html += '</div>';

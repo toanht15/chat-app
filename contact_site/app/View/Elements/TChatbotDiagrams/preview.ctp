@@ -56,6 +56,7 @@
   .diagram_preview_area li.sinclo_re.customWidth { width: 90%; }
   .diagram_preview_area li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
   .diagram_preview_area li.sinclo_re span.sinclo-text-line{ display: inline-block; color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
+  .diagram_preview_area li.sinclo_re span.sinclo-text-line.between{ margin-top:{{radioSelectionDistance}}px }
   .diagram_preview_area li.sinclo_re a { color: {{widget.settings['re_text_color']}}; background-color: {{widget.makeFaintColor()}};}
   .diagram_preview_area li.sinclo_re.notNone { border: 1px solid {{widget.getTalkBorderColor('re')}}; }
   .diagram_preview_area li.sinclo_re.balloonType:not(.no-wrap) { margin-left: 10px; padding-right: 15px; border-bottom-left-radius: 0px; }
@@ -244,7 +245,7 @@
           'hasBackground: radioStyle === \'1\'' +
           '}">{{content.value}}</label>' +
           '</div>' +
-          '<span class="sinclo-text-line" ng-if="content.type == 2">' +
+          '<span class="sinclo-text-line between" ng-if="content.type == 2">' +
           '{{content.value}}' +
           '</span>' +
           '</span>' +
@@ -260,7 +261,7 @@
           'noneBorder: outButtonUINoneBorder,' +
           'hasBorder: !outButtonUINoneBorder' +
           '}" onclick="return false;" finisher>{{content.value}}</button>' +
-          '<span class="sinclo-text-line" ng-if="content.type == 2">' +
+          '<span class="sinclo-text-line between" ng-if="content.type == 2">' +
           '{{content.value}}' +
           '</span>' +
           '</div>' +

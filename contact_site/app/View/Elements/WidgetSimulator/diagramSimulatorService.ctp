@@ -180,11 +180,12 @@
       var baseData = self.setActionList;
       for (var i = 0; i < itemIds.length; i++) {
         var targetNode = baseData[itemIds[i]];
-        if(targetNode['type'] !== 'devs.Model') continue;
+        if(targetNode['type'] !== 'devs.Model' && targetNode['type'] !== 'basic.Rect') continue;
         console.log('baseData.id:%s itemId:%s baseData.attrs.nodeBasicInfo.nodeType: %s', targetNode['id'], itemIds[i], targetNode['attrs']['nodeBasicInfo']['nodeType']);
-        if (targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode'
+        if ((targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode'
             && targetNode['attrs']['nodeBasicInfo']['nextNodeId']
-            && targetNode['attrs']['nodeBasicInfo']['nextNodeId'] !== '') {
+            && targetNode['attrs']['nodeBasicInfo']['nextNodeId'] !== '')
+            || targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childTextNode') {
           map[itemIds[i]] = targetNode['attrs']['nodeBasicInfo']['nextNodeId'];
         }
       }
@@ -198,11 +199,15 @@
       for (var i = 0; i < idKeys.length; i++) {
         if(idKeys[i] === undefined) break;
         var targetNode = baseData[idKeys[i]];
-        if (targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode'
+        if ((targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode' || targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childTextNode')
             && targetNode['attrs']['nodeBasicInfo']['tooltip']) {
-          map[idKeys[i]] = targetNode['attrs']['nodeBasicInfo']['tooltip'];
-        } else {
-          map[idKeys[i]] = '';
+          for(var j=0; j < labels.length; j++) {
+            if(labels[j].value === targetNode['attrs']['nodeBasicInfo']['tooltip']) {
+              labels[j]['uuid'] = idKeys[i];
+              map[j] = labels[j];
+              break;
+            }
+          }
         }
       }
       return map;
