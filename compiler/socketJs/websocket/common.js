@@ -1412,7 +1412,7 @@ var socket, // socket.io
             ' width: ' +
             (Number(chatPosition.re.textSize)) + 'px; height: ' +
             (Number(chatPosition.re.textSize)) +
-            'px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; } ';
+            'px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; margin-top:0px!important } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: ' +
             Math.ceil((Number(chatPosition.re.textSize) / 2)) + 'px; left: ' +
             ((chatPosition.re.textSize / 2 -
@@ -1953,7 +1953,7 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1.5em; font-size: ' +
               (12 * ratio) + 'px; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: ' +
-              (11 * ratio) / 2 + 'px; margin-top: -' + (11 * ratio) / 2 +
+              ((11 * ratio) / 2 - 7) + 'px; margin-top: -' + (11 * ratio) / 2 +
               'px; left: ' + (0 * ratio) + 'px; width: ' + (11 * ratio) +
               'px; height: ' + (11 * ratio) + 'px; border: 1px solid ' +
               chatContentTextColor +
@@ -1967,9 +1967,9 @@ var socket, // socket.io
 
           html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio { font-size: ' + (12 * ratio) + 'px;}';
           html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label { font-size: ' + (12 * ratio) + 'px;}';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label:before {top: ' + ((11 * ratio) / 2 - 1) + 'px; ' +
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label:before {top: ' + ((11 * ratio) / 2 - 7) + 'px; ' +
               ' left: 0; width: ' + (12 * ratio) + 'px; height: ' + (12 * ratio) + 'px; }';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label:after {top: ' + (11 * ratio) / 2 + 'px; ' +
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label:after {top: ' + ((19 * ratio) / 2 - 4 ) + 'px; ' +
               ' left: ' + ((11 * ratio) / 4 + 1) + 'px; margin-top: ' + (0 - (11 * ratio) / 4) + 'px; width: 9px; height: 9px; }';
 
 
