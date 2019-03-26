@@ -2092,6 +2092,29 @@
       };
       /* =========================== */
 
+      // シナリオ設定の削除
+      this.removeAct = function(lastPage) {
+        // アラート表示を行わないように、フラグを戻す
+        $scope.changeFlg = false;
+
+        modalOpen.call(window, '削除します、よろしいですか？', 'p-confirm', 'チャットツリー設定', 'moment');
+        popupEvent.closePopup = function() {
+          $.ajax({
+            type: 'post',
+            data: {
+              id: document.getElementById('TChatbotDiagramId').value
+            },
+            cache: false,
+            url: "<?= $this->Html->url('/TChatbotDiagrams/remoteDeleteBy') ?>",
+            success: function() {
+              // 一覧ページへ遷移する
+              var url = "<?= $this->Html->url('/TChatbotDiagrams/index') ?>";
+              location.href = url + '/page:' + lastPage;
+            }
+          });
+        };
+      };
+
     }]);
 
   sincloApp.controller('DialogController', [
