@@ -105,7 +105,7 @@ class TChatbotDiagramsController extends WidgetSettingController
         $nextPage = '1';
       }
 
-      if (empty($saveData['TChatbotDiagram']['id'])) {
+      if (empty($this->request->data['TChatbotDiagram']['id'])) {
         $params = [
           'fields' => [
             'TChatbotDiagram.sort'
