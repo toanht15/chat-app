@@ -704,6 +704,7 @@
             htmlCreator = createJumpHtml;
             modalName = 'ジャンプ';
             modalClass = 'p_const_diagrams';
+            contentObj['value'] = $scope.currentEditCell.attr('nodeBasicInfo/tooltip');
             break;
           case 'link':
             htmlCreator = createLinkHtml;
@@ -1135,6 +1136,7 @@
       function createJumpHtml(nodeData) {
         nodeEditHandler.typeJump.createJumpArray();
         $scope.jumpTarget.key = nodeData.targetId;
+        $scope.jumpTarget.value = nodeData.value;
         return $('<jump-modal></jump-modal>');
       }
 
