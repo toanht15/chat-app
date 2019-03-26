@@ -233,6 +233,7 @@ class TChatbotDiagramsController extends WidgetSettingController
     $errorMessage = [];
     //コピー元のオートメッセージリストの数だけ繰り返し
     $res = true;
+    $transaction = $this->TransactionManager->begin();
     foreach ($copyData as $value) {
       $this->TChatbotDiagram->create();
       $saveData = [];
@@ -276,20 +277,28 @@ class TChatbotDiagramsController extends WidgetSettingController
       $saveData['TChatbotDiagram']['del_flg'] = $value['TChatbotDiagram']['del_flg'];
 
       $this->TChatbotDiagram->set($saveData);
-      $this->TChatbotDiagram->begin();
 
       if (!$this->TChatbotDiagram->validates()) {
         $res = false;
         $errorMessage = $this->TChatbotDiagram->validationErrors;
-        $this->TChatbotDiagram->rollback();
+        $this->TransactionManager->rollbackTransaction($transaction);
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+        return false;
       } else {
         if ($this->TChatbotDiagram->save($saveData, false)) {
-          $this->TChatbotDiagram->commit();
-          $this->Session->delete('dstoken');
-          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+          $insertId = $this->TChatbotDiagram->getLastInsertId();
+          $this->insertNodeNameTable($insertId, json_decode($saveData['TChatbotDiagram']['activity'], TRUE));
+        } else {
+          $errorMessage = $this->TChatbotDiagram->validationErrors;
+          $this->TransactionManager->rollbackTransaction($transaction);
+          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+          return false;
         }
       }
     }
+    $this->TransactionManager->commitTransaction($transaction);
+    $this->Session->delete('dstoken');
+    $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
   }
 
   /* *
