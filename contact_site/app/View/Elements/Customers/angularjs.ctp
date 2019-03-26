@@ -111,6 +111,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         cogmo: {
           message: 81,
           feedback: 82
+        },
+        diagram: {
+          message: {
+            branch: 300,
+            text: 302
+          },
+          customer: {
+            branch: 301,
+            operator: 303
+          }
         }
       },
       init: function(sendPattern){
@@ -204,7 +214,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       getMessage: function(obj){
         // オートメッセージの取得
         this.getMessageToken = makeToken();
-        emit('getAutoChatMessages', {userId: obj.userId, mUserId: myUserId, tabId: obj.tabId, chatToken: this.getMessageToken});
+        emit('getAutoChatMessages', {userId: obj.userId, mUserId: myUserId, tabId: obj.tabId, sincloSessionId: obj.sincloSessionId, chatToken: this.getMessageToken});
       },
       openFileUploadDialog: function() {
 
@@ -1526,7 +1536,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var widgetSize = '4'; //リアルタイムモニタ詳細画面
       for (var i = 0; strings.length > i; i++) {
         if(strings[i].match(/(<div |<\/div>)/)) {
-          content += strings[i];
+          try {
+            custom += strings[i].replace(/<[^>]*>/g, '');
+          } catch(e) {}
           continue;
         }
         var str = escape_html(strings[i]);
@@ -1739,7 +1751,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         || type === chatApi.messageType.scenario.customer.reInputText || type === chatApi.messageType.scenario.customer.reInputRadio
         || type === chatApi.messageType.scenario.customer.reInputPulldown || type === chatApi.messageType.scenario.customer.reInputCalendar
         || type === chatApi.messageType.scenario.customer.reInputCarousel || type === chatApi.messageType.scenario.customer.reInputButton
-        || type === chatApi.messageType.scenario.customer.reInputButtonUI || type === chatApi.messageType.scenario.customer.reInputCheckbox) {
+        || type === chatApi.messageType.scenario.customer.reInputButtonUI || type === chatApi.messageType.scenario.customer.reInputCheckbox
+        || type === chatApi.messageType.diagram.customer.branch) {
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
@@ -1941,6 +1954,28 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>自動応答</span>";
         content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( Number(type) === chatApi.messageType.diagram.message.branch ) {
+        var obj = isJSON(message) ? JSON.parse(message) : message;
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>チャットツリーメッセージ(分岐)</span>";
+        content += $scope.createTextOfMessage(chat, obj.message);
+      }
+      else if ( Number(type) === chatApi.messageType.diagram.message.text ) {
+        var obj = isJSON(message) ? JSON.parse(message) : message;
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>チャットツリーメッセージ(テキスト発言)</span>";
+        content += $scope.createTextOfMessage(chat, obj.message);
+      }
+      else if ( Number(type) === chatApi.messageType.diagram.customer.operator ) {
+        // 未修正ログは表示しない
+        return;
       }
       else  {
         cn = "sinclo_etc";
@@ -2643,6 +2678,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           socket.emit('getChatMessage', {
             siteKey: obj.siteKey,
             tabId: obj.tabId,
+            sincloSessionId: obj.sincloSessionId,
             getMessageToken: chatApi.getMessageToken
           });
           for (var key in obj.messages) {

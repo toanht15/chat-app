@@ -5932,6 +5932,14 @@ ul.naviBtn {
   margin: 15px 15px 72px 15px;
   $list-color: #ECF4DA;
 
+  #tautomessages_title {
+    display: flex;
+    align-items: center;
+    div.fLeft {
+      margin-right: 0;
+    }
+  }
+
   #tautomessages_menu {
     height: 85px;
     /*img[class$='Btn'] {
@@ -5956,7 +5964,7 @@ ul.naviBtn {
           display: table-cell;
           vertical-align: middle;
           #importExcelBtn {
-            width: 20em;
+            width: 17em;
             height: 30px;
             padding: 0.25em 0.5em;
             padding-top: 6px;
@@ -6122,6 +6130,9 @@ ul.naviBtn {
       }
       &.actionValueCallAutomessageLabel {
         background-color: #d251c4;
+      }
+      &.actionValueSelectDiagramLabel {
+        background-color: #E44EA1;
       }
     }
 
@@ -6588,7 +6599,7 @@ ul.naviBtn {
             flex-grow: 1;
           }
 
-          #TAutoMessageTChatbotScenarioId {
+          #TAutoMessageTChatbotScenarioId, #TAutoMessageTChatbotDiagramId {
             padding: 5px;
             &:disabled {
               color: #CCCCCC;
@@ -7180,6 +7191,241 @@ ul.naviBtn {
   }
 }
 
+/* チャットツリー設定 */
+#t_chatbot_diagrams_idx {
+  min-width: 950px!important;
+  .diagram_tooltip {
+    background-color: #FFFFFF;
+    max-width: 300px;
+    letter-spacing: 0.1em;
+    line-height: 1.5em;
+    padding: 0.5em;
+    margin: 0;
+    position: fixed;
+    border-radius: 3px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    z-index: 50;
+    li {
+      white-space: pre-line;
+    }
+  }
+  .questionBtn {
+    border-radius: 20px;
+    width: 1.3em;
+    height: 1.3em;
+    font-size: 12px!important;
+    line-height: 12px;
+    padding: 0.1em;
+  }
+  #t_chatbot_diagrams_header {
+    display: grid;
+    display: -ms-grid;
+    -ms-grid-columns: 1fr 200px;
+    grid-template-columns: 1fr 200px;
+    border-bottom: 1px solid #8B8B8B;
+    #t_chatbot_diagrams_entry {
+      ul:not(#chatTalk) {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        li {
+          display: flex;
+          label{
+            display: flex;
+            align-items: center;
+            min-width: 134px;
+            span {
+              margin-left: 10px;
+            }
+          }
+          div.input.text {
+            margin-left: 20px;
+            min-width: 244px;
+          }
+          div.input.number {
+            min-width: 120px;
+          }
+        }
+      }
+      ul li:not(:first-child) {
+        margin-left: 50px;
+      }
+      .fotterBtnArea {
+        padding: 6px 0;
+        z-index: 5;
+      }
+    }
+    #diagrams_simulator_btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      span.blueBtn {
+        background-color: #4bacc6;
+        border-color: #4bacc6;
+        padding: 0.5em 1.4em;
+        text-align: center;
+        display: inline-block;
+      }
+      span.blueBtn:hover {
+        background-color: #4c9db3;
+        border-color: #4c9db3;
+      }
+    }
+  }
+  #canvas_scale_controller {
+    position: fixed;
+    top: 220px;
+    left: 260px;
+    z-index: 4;
+  }
+  #t_chatbot_diagrams_body {
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 120px 1fr;
+    grid-template-columns: 125px 1fr;
+    height: calc(100vh - 225px);
+    overflow-y: hidden;
+    #diagrams_side_bar {
+      -ms-grid-column: 1;
+      border-right: 1px solid #8B8B8B;
+      padding: 10px;
+      z-index: 4;
+      overflow-y: auto;
+      .form_subtitle {
+        border-bottom: 3px solid #C3D69B;
+        padding-right: 3px;
+        text-align: center;
+        padding-bottom: 10px;
+        font-size: 13px;
+      }
+      #node_list {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        height: calc(100% - 180px);
+        min-height: 555px;
+        >i {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #ffffff;
+          font-size: 22px;
+          background-color: #99cc66;
+          width: 45px;
+          height: 45px;
+          border-radius: 25%;
+          cursor: pointer;
+        }
+        >p{
+          font-size: 12px;
+          margin-top:2px;
+          margin-bottom: 15px;
+        }
+        .branch {
+          background-color: #c73576;
+        }
+        .text {
+          background-color: #D48BB3;
+        }
+        .scenario {
+          background-color: #82c0cd;
+        }
+        .jump {
+          background-color: #c8d627;
+        }
+        .link {
+          background-color: #845d9e;
+        }
+        .operator {
+          background-color: #98B5E0;
+        }
+        .cv {
+          background-color: #A2CCBA;
+        }
+      }
+    }
+    #canvas {
+      -ms-grid-column: 2;
+      overflow: hidden;
+      z-index: 1;
+      svg {
+        cursor: move;
+      }
+    }
+  }
+
+  /* simulator */
+  #tchatbotdiagrams_simulator_wrapper {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 7;
+
+    #simulator_popup {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #FFFFFF;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+
+      #simulator_popup_header {
+        h2 {
+          font-size: 15px;
+          padding: 0.5em;
+          margin: 0;
+          background-color: $main-color;
+          color: #FFFFFF;
+          display: block;
+        }
+
+        div {
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 0.4em;
+
+          .closeBtn {
+            position: initial;
+            top: initial;
+            right: initial;
+            margin: 0;
+            width: 25px;
+            height: 25px;
+            padding: 1.5px;
+            border-radius: 50px;
+          }
+        }
+      }
+
+      #simulator_popup_body {
+        padding: 14px;
+      }
+
+      #simulator_popup_footer {
+        display: flex;
+        justify-content: space-around;
+        padding: 0px 14px 14px 14px;
+
+        a {
+          width: 75px;
+        }
+      }
+    }
+  }
+}
+
+/* SVGの矢印用 */
+.joint-link.joint-theme-default .link-tools .tool-remove circle.diagram{
+  fill: #D69B9B;
+}
+
 /* チャットボットシナリオ設定 */
 #tchatbotscenario_idx {
   &.entry-wrapper {
@@ -7255,10 +7501,13 @@ ul.naviBtn {
           text-align: center;
 
           &.typeAutoMessage {
-            background-color: #9BBBD6;
+            background-color: #B2D251;
           }
           &.typeScenario {
-            background-color: #9BD6D1;
+            background-color: #EDBF35;
+          }
+          &.typeDiagram {
+            background-color: #E44EA1;
           }
 
           & + span {
@@ -9211,6 +9460,87 @@ ul.naviBtn {
     }
   }
 
+  .questionBalloon {
+    display: inline-block;
+    margin-left: 6px;
+    text-align: center;
+
+    .questionBtn {
+      border-radius: 20px;
+      width: 1.3em;
+      height: 1.3em;
+      font-size: 12px !important;
+      line-height: 12px;
+      padding: 0.1em;
+    }
+  }
+}
+
+/* チャットツリー設定 */
+#TChatbotDiagram_idx {
+  #TChatbotDiagram_menu {
+    height: 85px;
+    .pointer {
+      position: absolute;
+      top: 138px;
+      left: 31px;
+    }
+  }
+  .callerTypeLabel {
+    display: inline-block;
+    padding: 4px 2px;
+    margin-right: 8px;
+    border-radius: 5px;
+    width: 10em;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+
+    &.typeAutoMessage {
+      background-color: #B2D251;
+    }
+    &.typeScenario {
+      background-color: #EDBF35;
+    }
+
+    & + span {
+      line-height: 2;
+    }
+  }
+  #TChatbotDiagram_list {
+    input[type='checkbox'] {
+      display: none;
+    }
+    input[type='checkbox'] + label {
+      width: 20px;
+      height: 20px;
+      display: block;
+      margin: 0 auto;
+      background-color: #FFF;
+      padding: 1px;
+      border: 1px solid #828282;
+      cursor: pointer;
+    }
+    input[type='checkbox']:checked + label {
+      background-color: #C3D69B;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid #FFF;
+    }
+
+    input[type='checkbox']:checked + label:after {
+      content: "";
+      font-weight: bold;
+      border-right: 4px solid #FFF;
+      border-bottom: 4px solid #FFF;
+      width: 6px;
+      height: 10px;
+      position: absolute;
+      top: 0;
+      right: 4px;
+      transform: rotate(45deg);
+    }
+  }
   .questionBalloon {
     display: inline-block;
     margin-left: 6px;

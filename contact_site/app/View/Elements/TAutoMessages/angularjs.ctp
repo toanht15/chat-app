@@ -497,7 +497,7 @@ sincloApp.directive('ngShowonhover',function() {
 });
 
 function removeAct(lastPage){
-    modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
+    modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'トリガー設定（条件設定）', 'moment');
     popupEvent.closePopup = function(){
       loading.load.start();
         $.ajax({

@@ -1327,7 +1327,7 @@
                 if (typeof hearing.settings.customDesign.radioActiveTextColor === 'undefined') {
                   hearing.settings.customDesign.radioActiveTextColor = $scope.widget.settings.re_text_color;
                 }
-                
+
                 if (typeof hearing.settings.customDesign.radioSelectionDistance === 'undefined') {
                   hearing.settings.customDesign.radioSelectionDistance = 4;
                 }
@@ -1695,10 +1695,6 @@
         };
 
       };
-
-      $scope.$on('setRestoreStatus', function(event, actionIndex, hearingIndex, status) {
-        $scope.setActionList[actionIndex].hearings[hearingIndex].canRestore = status;
-      });
 
       $scope.showExtendedConfigurationWarningPopup = function(obj) {
         modalOpen.call(window,
@@ -3136,15 +3132,15 @@
     '$scope',
     '$timeout',
     'SimulatorService',
-    'LocalStorageService',
-    function($scope, $timeout, SimulatorService, LocalStorageService) {
+    'ScenarioSimulatorService',
+    'DiagramSimulatorService',
+    function($scope, $timeout, SimulatorService, ScenarioSimulatorService, DialogSimulatorService) {
       //thisを変数にいれておく
       var self = this;
-      $scope.setActionList = [];
-      $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType,
-        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
 
-      $scope.widget = SimulatorService;
+      $scope.scenarioSimulatorService = ScenarioSimulatorService;
+      $scope.dialogSimulatorService = DialogSimulatorService;
+      $scope.scenarioSimulatorService.widget = SimulatorService;
 
       /**
        * シミュレーションの起動(ダイアログ表示)
@@ -3152,7 +3148,8 @@
        */
       $scope.$on('openSimulator', function(event, activity) {
         var scenarios = JSON.parse(activity).scenarios;
-        $scope.setActionList = scenarios;
+        $scope.actionListOrigin = scenarios;
+        $scope.scenarioSimulatorService.setActionList = scenarios;
         var defaultHeight = 101;
         if (document.getElementById('maximum_description') != null) {
           defaultHeight += 40;
@@ -3165,7 +3162,8 @@
             width: $('#sincloBox').outerWidth() + 28 + 'px',
             height: $('#sincloBox').outerHeight() + defaultHeight + 'px'
           });
-          $scope.actionInit();
+          $scope.scenarioSimulatorService.actionInit();
+          $scope.scenarioSimulatorService.doAction();
         }, 0);
       });
 
@@ -3180,526 +3178,17 @@
         });
       });
 
-      // next hearing action
-      $scope.$on('nextHearingAction', function() {
-        $scope.setActionList[$scope.actionStep].hearings[$scope.hearingIndex].skipped = true;
-        $scope.hearingIndex++;
-        var actionDetail = $scope.setActionList[$scope.actionStep];
-        if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-            !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
-          $scope.hearingIndex = 0;
-          self.disableHearingInput($scope.actionStep);
-          $scope.actionStep++;
-        }
-        $scope.doAction();
-      });
-
-      // シミュレーションで受け付けた受信メッセージ
-      $scope.$on('receiveVistorMessage', function(event, message, prefix) {
-        // 対応するアクションがない場合は何もしない
-        if (typeof $scope.setActionList[$scope.actionStep] === 'undefined') {
-          return;
-        }
-
-        if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
-          var actionDetail = $scope.setActionList[$scope.actionStep];
-
-          if ($scope.hearingIndex < actionDetail.hearings.length) {
-            // 入力された文字列を改行ごとに分割し、適切な入力かチェックする
-            var inputType = actionDetail.hearings[$scope.hearingIndex].inputType;
-            var regex = new RegExp($scope.inputTypeList[inputType].rule.replace(/^\/(.+)\/$/, '$1'));
-            var isMatched = message.split(/\r\n|\n/).every(function(string) {
-              return string.length >= 1 ? regex.test(string) : true;
-            });
-            if (isMatched) {
-              // 変数の格納
-              var storageParam = [];
-              LocalStorageService.setItem('chatbotVariables', [
-                {
-                  key: actionDetail.hearings[$scope.hearingIndex].variableName,
-                  value: message
-                }]);
-              // 次のアクション
-              $scope.hearingIndex++;
-              if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-                  !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
-                $scope.hearingIndex = 0;
-                self.disableHearingInput($scope.actionStep);
-                $scope.actionStep++;
-              }
-            } else {
-              // 入力エラー
-              $scope.hearingInputResult = false;
-            }
-          } else if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length) &&
-              $scope.replaceVariable(actionDetail.cancel) === message) {
-            // 最初から入力し直し
-            $scope.hearingIndex = 0;
-          } else {
-            // 次のアクション
-            $scope.hearingIndex++;
-            if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-                !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
-              $scope.hearingIndex = 0;
-              self.disableHearingInput($scope.actionStep);
-              $scope.actionStep++;
-            }
-          }
-          $scope.doAction();
-        } else if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-          // 選択肢
-          var storageParam = [];
-          LocalStorageService.setItem('chatbotVariables', [
-            {
-              key: $scope.setActionList[$scope.actionStep].selection.variableName,
-              value: message
-            }]);
-          $scope.actionStep++;
-          $scope.doAction();
-        } else if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
-          $scope.actionStep++;
-          $scope.doAction();
-        } else if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
-          chatBotTyping();
-          $.post("<?=$this->Html->url(['controller' => 'CompanyData', 'action' => 'parseSignature'])?>",
-              JSON.stringify({
-                'accessToken': 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK',
-                'targetText': message
-              }), null, 'json').done(function(result) {
-            setTimeout(function() {
-              $scope.$broadcast('addReForm', {
-                prefix: 'action' + $scope.actionStep + '_bulk-hearing',
-                isConfirm: true,
-                bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
-                resultData: result
-              });
-              $scope.$broadcast('switchSimulatorChatTextArea', false);
-              chatBotTypingRemove();
-            }, parseInt($scope.setActionList[$scope.actionStep].messageIntervalTimeSec, 10) * 1000);
-          });
-        }
-      });
-
-      $scope.$on('pressFormOK', function(event, message) {
-        $('#chatTalk > div:last-child').fadeOut('fast').promise().then(function() {
-          var saveValue = [];
-          Object.keys(message).forEach(function(elm) {
-            saveValue.push({
-              key: elm,
-              value: message[elm].value
-            });
-          });
-          $scope.$broadcast('addReForm', {
-            prefix: 'action' + $scope.actionStep + '_bulk-hearing',
-            isConfirm: false,
-            bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
-            resultData: {data: message}
-          });
-          LocalStorageService.setItem('chatbotVariables', saveValue);
-          $scope.actionStep++;
-          $scope.doAction();
-        });
-      });
-
-      $scope.addVisitorHearingMessage = function(message) {
-        var actionDetail = $scope.setActionList[$scope.actionStep];
-
-        if ($scope.hearingIndex < actionDetail.hearings.length) {
-          var uiType = actionDetail.hearings[$scope.hearingIndex].uiType;
-
-          if (uiType === '1' || uiType === '2') {
-            // 入力された文字列を改行ごとに分割し、適切な入力かチェックする
-            var inputType = actionDetail.hearings[$scope.hearingIndex].inputType;
-            var regex = new RegExp($scope.inputTypeList[inputType].rule.replace(/^\/(.+)\/$/, '$1'));
-            var isMatched = message.split(/\r\n|\n/).every(function(string) {
-              return string.length >= 1 ? regex.test(string) : true;
-            });
-            if (isMatched) {
-              LocalStorageService.setItem('chatbotVariables', [
-                {
-                  key: actionDetail.hearings[$scope.hearingIndex].variableName,
-                  value: message
-                }]);
-              // 次のアクション
-              $scope.hearingIndex++;
-              if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-                  !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
-                $scope.hearingIndex = 0;
-                $scope.actionStep++;
-              }
-            } else {
-              // 入力エラー
-              $scope.hearingInputResult = false;
-            }
-          } else {
-            LocalStorageService.setItem('chatbotVariables', [
-              {
-                key: actionDetail.hearings[$scope.hearingIndex].variableName,
-                value: message
-              }]);
-            // 次のアクション
-            $scope.hearingIndex++;
-            if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-                !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
-              $scope.hearingIndex = 0;
-              self.disableHearingInput($scope.actionStep);
-              $scope.actionStep++;
-            }
-          }
-        } else if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length) &&
-            $scope.replaceVariable(actionDetail.cancel) === message) {
-          angular.forEach(actionDetail.hearings, function(hearing) {
-            hearing.canRestore = true;
-          });
-          // 最初から入力し直し
-          $scope.hearingIndex = 0;
-        } else {
-          // 次のアクション
-          $scope.hearingIndex++;
-          if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-              !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
-            $scope.hearingIndex = 0;
-            self.disableHearingInput($scope.actionStep);
-            $scope.actionStep++;
-          }
-        }
-        $scope.doAction();
-      };
-
-      // handle hearing re-select
-      $scope.reSelectionHearing = function(message, actionStep, hearingIndex) {
-        $scope.hearingIndex = hearingIndex;
-        $scope.actionStep = actionStep;
-        var actionDetail = $scope.setActionList[actionStep];
-        var uiType = actionDetail.hearings[hearingIndex].uiType;
-        // テキストタイプ
-        if (uiType === '1' || uiType === '2') {
-          // 入力された文字列を改行ごとに分割し、適切な入力かチェックする
-          var inputType = actionDetail.hearings[hearingIndex].inputType;
-          var regex = new RegExp($scope.inputTypeList[inputType].rule.replace(/^\/(.+)\/$/, '$1'));
-          var isMatched = message.split(/\r\n|\n/).every(function(string) {
-            return string.length >= 1 ? regex.test(string) : true;
-          });
-          if (isMatched) {
-            // 変数の格納
-            LocalStorageService.setItem('chatbotVariables', [
-              {
-                key: actionDetail.hearings[hearingIndex].variableName,
-                value: message
-              }]);
-            // 次のアクション
-            $scope.hearingIndex++;
-            if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-                !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
-              $scope.hearingIndex = 0;
-              self.disableHearingInput($scope.actionStep);
-              $scope.actionStep++;
-            }
-          } else {
-            // 入力エラー
-            $scope.hearingInputResult = false;
-          }
-        } else {
-          // 変数の格納
-          LocalStorageService.setItem('chatbotVariables', [
-            {
-              key: actionDetail.hearings[hearingIndex].variableName,
-              value: message
-            }]);
-          // 次のアクション
-          $scope.hearingIndex++;
-          if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
-              !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
-            $scope.hearingIndex = 0;
-            self.disableHearingInput($scope.actionStep);
-            $scope.actionStep++;
-          }
-        }
-
-        $scope.doAction();
-      };
-
       // シミュレーションの終了(ダイアログ非表示)
       $scope.closeSimulator = function() {
-        $scope.actionStop();
+        $scope.scenarioSimulatorService.actionStop();
         $('#tchatbotscenario_simulator_wrapper').hide();
-      };
-
-      // アクションの開始
-      $scope.actionInit = function() {
-        $scope.actionStep = 0;
-        $scope.hearingIndex = 0;
-        $scope.sendFileIndex = 0;
-        $scope.firstActionFlg = true;
-        $scope.actionTimer;
-        $scope.hearingInputResult = true;
-
-        // シミュレーション上のメッセージをクリアする
-        $scope.$broadcast('removeMessage');
-        $scope.doAction();
-      };
-
-      $scope.$watch('actionStep', function() {
-        $scope.widget.setCurrentActionStep($scope.actionStep);
-      });
-
-      $scope.$watch('hearingIndex', function() {
-        $scope.widget.setCurrentHearingIndex($scope.hearingIndex);
-      });
-
-      // アクションの停止
-      $scope.actionStop = function() {
-        $timeout.cancel($scope.simulatorTimer);
       };
 
       // アクションのクリア(アクションを最初から実行し直す)
       $scope.actionClear = function() {
-        $scope.actionStop();
-        $scope.actionInit();
-        $scope.setActionList = $scope.actionListOrigin;
-      };
-
-      /**
-       * アクションの実行
-       * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
-       */
-      $scope.receiveFileEventListener = null;
-      $scope.firstActionFlg = true;
-      $scope.doAction = function(setTime) {
-        if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' &&
-            typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
-          var actionDetail = $scope.setActionList[$scope.actionStep];
-          // メッセージ間隔
-          var time = parseInt(actionDetail.messageIntervalTimeSec, 10) * 1000;
-          console.log($scope.actionStep);
-          var branchOnConditon = false;
-
-          //条件分岐の場合は複雑な時間指定が必要になるので括りだしておく
-          if (actionDetail.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
-            branchOnConditon = true;
-            var value = LocalStorageService.getItem('chatbotVariables', actionDetail.referenceVariable);
-            for (var i = 0; i < actionDetail.conditionList.length; i++) {
-              if ($scope.isMatch(value, actionDetail.conditionList[i])) {
-                if (actionDetail.conditionList[i].actionType == '1') {
-                  if ($scope.actionStep !== 0) {
-                    chatBotTyping();
-                  } else {
-                    time = 0;
-                  }
-                  break;
-                }
-              } else if (actionDetail.elseEnabled) {
-                if (actionDetail.elseAction.actionType == '1') {
-                  if ($scope.actionStep !== 0) {
-                    chatBotTyping();
-                  } else {
-                    time = 0;
-                  }
-                  break;
-                }
-              }
-              time = setTime || '0';
-            }
-          }
-
-          if (!branchOnConditon) {
-            if (time == 0 || !!setTime ||
-                ($scope.actionStep === 0 && $scope.hearingIndex === 0 && $scope.firstActionFlg) ||
-                actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||
-                actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> ||
-                actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> ||
-                actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> ||
-                actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?> ||
-                actionDetail.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?> ||
-                actionDetail.actionType == <?= C_SCENARIO_ACTION_CONTROL_VARIABLE ?>) {
-              time = setTime || '0';
-              $scope.firstActionFlg = false;
-            } else {
-              chatBotTyping();
-            }
-          }
-
-          if (actionDetail.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?> ) {
-            chatBotTypingRemove();
-            time = 850;
-          }
-
-          $timeout.cancel($scope.actionTimer);
-          $scope.actionTimer = $timeout(function() {
-            if (actionDetail.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
-              // テキスト発言
-              chatBotTypingRemove();
-              $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message),
-                  'action' + $scope.actionStep);
-              $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
-              $scope.actionStep++;
-              $scope.doAction();
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
-              // ヒアリング
-              $scope.doHearingAction(actionDetail);
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-              // 選択肢
-              var messageList = [$scope.replaceVariable(actionDetail.message)];
-              angular.forEach(actionDetail.selection.options, function(option) {
-                messageList.push('[] ' + option);
-              });
-              $scope.$broadcast('addReMessage', $scope.replaceVariable(messageList.join('\n')),
-                  'action' + $scope.actionStep);
-              $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
-              // メール送信
-              $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
-              $scope.actionStep++;
-              $scope.doAction();
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
-              self.getScenarioDetail(actionDetail.scenarioId, actionDetail.executeNextAction);
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
-              self.callExternalApi(actionDetail);
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
-              // ファイル送信
-              chatBotTypingRemove();
-              if ($scope.sendFileIndex == 0 && !!actionDetail.message) {
-                $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message),
-                    'action' + $scope.actionStep);
-                $scope.sendFileIndex++;
-                $scope.doAction();
-              } else {
-                $scope.$broadcast('addReFileMessage', actionDetail.file);
-                $scope.sendFileIndex = 0;
-                $scope.actionStep++;
-                $scope.doAction();
-              }
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
-              // 属性値取得
-              $scope.actionStep++;
-              $scope.doAction();
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
-              // 訪問ユーザ登録
-              $scope.actionStep++;
-              $scope.doAction();
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
-              // ファイル受信
-              chatBotTypingRemove();
-              if (actionDetail.dropAreaMessage) {
-                $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled,
-                    actionDetail.cancelLabel, actionDetail.receiveFileType, actionDetail.extendedReceiveFileExtensions);
-                $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
-                if ($scope.receiveFileEventListener) {
-                  $scope.receiveFileEventListener();
-                }
-                $scope.receiveFileEventListener = $scope.$on('onErrorSelectFile', function() {
-                  var message = actionDetail.errorMessage;
-                  $scope.$broadcast('addReErrorMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
-                });
-              }
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
-              // 条件分岐
-              chatBotTypingRemove();
-              $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
-              var value = LocalStorageService.getItem('chatbotVariables', actionDetail.referenceVariable);
-              for (var i = 0; i < actionDetail.conditionList.length; i++) {
-                if ($scope.isMatch(value, actionDetail.conditionList[i])) {
-                  $scope.doBranchOnCondAction(actionDetail.conditionList[i]);
-                  if (actionDetail.conditionList[i] == '1') {
-                    chatBotTyping();
-                  }
-                  return;
-                }
-              }
-              // どの条件にもマッチしなかった場合
-              if (actionDetail.elseEnabled) {
-                $scope.doBranchOnCondAction(actionDetail.elseAction);
-              } else {
-                $scope.actionStep++;
-                $scope.doAction();
-              }
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
-              chatBotTypingRemove();
-              $scope.doBulkHearingAction(actionDetail);
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
-              $scope.actionStep++;
-              $scope.doAction();
-            } else if (actionDetail.actionType == <?= C_SCENARIO_ACTION_CONTROL_VARIABLE ?>) {
-              self.doControlVariable(actionDetail);
-            }
-          }, time);
-        } else {
-          setTimeout(chatBotTypingRemove, 801);
-          $scope.actionStop();
-        }
-      };
-
-      $scope.isMatch = function(targetValue, condition) {
-        switch (Number(condition.matchValueType)) {
-          case 1: // いずれかを含む場合
-            return $scope.matchCaseInclude(targetValue, $scope.splitMatchValue(condition.matchValue), condition.matchValuePattern);
-          case 2: // いずれも含まない場合
-            return $scope.matchCaseExclude(targetValue, $scope.splitMatchValue(condition.matchValue), condition.matchValuePattern);
-          default:
-            return false;
-        }
-      };
-
-      $scope.doBranchOnCondAction = function(condition, callback) {
-        switch (Number(condition.actionType)) {
-          case 1:
-            $scope.$broadcast('addReMessage', $scope.replaceVariable(condition.action.message),
-                'action' + $scope.actionStep);
-            $scope.actionStep++;
-            $scope.doAction();
-            break;
-          case 2:
-            // シナリオ呼び出し
-            var targetScenarioId = condition.action.callScenarioId;
-            console.log('targetScenarioId : %s', targetScenarioId);
-            if (targetScenarioId === 'self') {
-              var activity = {};
-              activity.scenarios = $scope.actionListOrigin;
-              $scope.setActionList = $scope.setCalledScenario(activity, condition.action.executeNextAction == 1);
-              $scope.doAction();
-            } else {
-              self.getScenarioDetail(targetScenarioId, condition.action.executeNextAction == 1);
-            }
-            break;
-          case 3:
-            $scope.actionStop();
-            // シナリオ終了
-            break;
-          case 4:
-            $scope.actionStep++;
-            $scope.doAction();
-            // 何もしない（次のアクションへ）
-            break;
-        }
-      };
-
-      $scope.splitMatchValue = function(val) {
-        var splitedArray = [];
-        val.split('"').forEach(function(currentValue, index, array) {
-          if (array.length > 1) {
-            if (index !== 0 && index % 2 === 1) {
-              // 偶数個：そのまま文字列で扱う
-              if (currentValue !== '') {
-                splitedArray.push(currentValue);
-              }
-            } else {
-              if (currentValue) {
-                var trimValue = currentValue.trim(),
-                    splitValue = trimValue.replace(/　/g, ' ').split(' ');
-                splitedArray = splitedArray.concat($.grep(splitValue, function(e) {
-                  return e !== '';
-                }));
-              }
-            }
-          } else {
-            var trimValue = currentValue.trim(),
-                splitValue = trimValue.replace(/　/g, ' ').split(' ');
-            splitedArray = splitedArray.concat($.grep(splitValue, function(e) {
-              return e !== '';
-            }));
-          }
-        });
-        return splitedArray;
+        $scope.scenarioSimulatorService.actionStop();
+        $scope.scenarioSimulatorService.actionInit();
+        $scope.scenarioSimulatorService.setActionList = $scope.actionListOrigin;
       };
 
       $scope.matchCaseInclude = function(val, words, pattern) {

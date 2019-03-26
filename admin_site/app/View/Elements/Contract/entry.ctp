@@ -104,6 +104,7 @@
     <?= $this->Form->input('MCompany.options.chatbotScenario', array('type' => 'checkbox', 'default' => false, 'label'=>'シナリオ設定', 'div' => ['id' => 'chatbotScenario'])) ?>
     <?= $this->Form->input('MCompany.options.laCoBrowse', array('type' => 'checkbox', 'default' => false, 'label'=>'画面キャプチャ共有', 'div' => ['id' => 'laCoBrowse'])) ?>
     <?= $this->Form->input('MCompany.la_limit_users', array('type' => 'number', 'default' => 0, 'label'=>'最大セッション数：', 'div' => ['id' => 'laLimitUsers'])) ?>
+    <?= $this->Form->input('MCompany.options.chatbotTreeEditor', array('type' => 'checkbox', 'default' => false, 'label'=>'チャットツリー設定', 'div' => ['id' => 'chatbotTreeEditor'])) ?>
     </div>
   </li>
   <!-- /* 契約ID数 */ -->

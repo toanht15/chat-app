@@ -355,8 +355,8 @@ class ChatHistoriesController extends AppController
     $ret = [];
     $this->log("BEGIN getOldChat : " . $this->getDateWithMilliSec(), LOG_DEBUG);
     if (!empty($this->params->query['historyId'])) {
-      $params = [
-        'fields' => [
+      $params = array(
+        'fields' => array(
           'THistoryChatLog.id',
           'THistoryChatLog.t_histories_id',
           'THistoryChatLog.m_users_id',
@@ -371,27 +371,27 @@ class ChatHistoriesController extends AppController
           'THistoryChatLog.hide_flg',
           'THistoryChatLog.created',
           'DeleteMUser.display_name',
-        ],
-        'joins' => [
-          [
+        ),
+        'joins' => array(
+          array(
             'type' => 'LEFT',
             'table' => 'm_users',
             'alias' => 'DeleteMUser',
-            'conditions' => [
+            'conditions' => array(
               'THistoryChatLog.deleted_user_id = DeleteMUser.id',
               'DeleteMUser.m_companies_id' => $this->userInfo['MCompany']['id'],
               'THistoryChatLog.delete_flg' => 1,
-            ]
-          ]
-        ],
-        'conditions' => [
+            )
+          )
+        ),
+        'conditions' => array(
           'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
           'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
 //          'THistoryChatLog.hide_flg' => 0,
-        ],
+        ),
         'order' => 'created',
         'recursive' => -1
-      ];
+      );
       $chatLog = $this->THistoryChatLog->find('all', $params);
       $permissionLevel = array('permissionLevel' => $this->userInfo['permission_level']);
       $unionRet = [];
@@ -961,6 +961,26 @@ class ChatHistoriesController extends AppController
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
           }
           if ($val['THistoryChatLog']['message_type'] == 90) {
+            // 何も表示しない
+            continue;
+          }
+          if ($val['THistoryChatLog']['message_type'] == 300) {
+            $row['transmissionKind'] = 'チャットツリーメッセージ（分岐）';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+            $json = json_decode($val['THistoryChatLog']['message']);
+            $val['THistoryChatLog']['message'] = $json->message;
+          }
+          if ($val['THistoryChatLog']['message_type'] == 301) {
+            $row['transmissionKind'] = 'チャットツリーメッセージ（分岐回答）';
+            $row['transmissionPerson'] = '';
+          }
+          if ($val['THistoryChatLog']['message_type'] == 302) {
+            $row['transmissionKind'] = 'チャットツリーメッセージ（テキスト発言）';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+            $json = json_decode($val['THistoryChatLog']['message']);
+            $val['THistoryChatLog']['message'] = $json->message;
+          }
+          if ($val['THistoryChatLog']['message_type'] == 303) {
             // 何も表示しない
             continue;
           }

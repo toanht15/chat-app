@@ -54,13 +54,13 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </a>
         </span>
       </div>
-      <!-- オートメッセージ設定の並び替えモード -->
+      <!-- 設定の並び替えモード -->
       <div class="tabpointer">
         <label class="pointer">
           <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText"> 並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; float: right; position: relative; top: 0px; left: 0px;">（！）並び替え中（保存する場合はチェックを外してください）</span>
         </label>
       </div>
-      <!-- オートメッセージ設定の並び替えモード -->
+      <!-- 設定の並び替えモード -->
     </div>
     <!-- 検索窓 -->
     <div id="paging" class="fRight">
@@ -91,7 +91,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
         <th width=" 5%">No</th>
         <th width="25%">名称</th>
-        <th width="75%">呼び出し元<div class="questionBalloon"><icon class="questionBtn commontooltip" data-text="オートメッセージ設定やシナリオ設定のアクションから、呼び出し設定を利用できます">?</icon></div></th>
+        <th width="75%">呼び出し元<div class="questionBalloon"><icon class="questionBtn commontooltip" data-text="トリガー設定やシナリオ設定のアクションから、呼び出し設定を利用できます">?</icon></div></th>
       </tr>
       </thead>
 <!--
@@ -110,6 +110,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         // 呼び出し元情報
         $callerAutoMessage = count($val['callerInfo']['TAutoMessage']) > 0 ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
         $callerScenario = count($val['callerInfo']['TChatbotScenario']) > 0 ? implode(', ', $val['callerInfo']['TChatbotScenario']) : '';
+        $callerDiagram = count($val['callerInfo']['TChatbotDiagram']) > 0 ? implode(', ', $val['callerInfo']['TChatbotDiagram']) : '';
 
         $no = $prevCnt + h($key+1);
         ?>
@@ -121,7 +122,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           <td class="tCenter" width=" 5%"><?=$no?></td>
           <td class="tCenter scenarioTitle" width="25%"><?= $val['TChatbotScenario']['name']; ?></td>
           <td class="p10x" width="75%">
-            <?php if ($callerAutoMessage === '' && $callerScenario === ''): ?>
+            <?php if ($callerAutoMessage === '' && $callerScenario === '' && $callerDiagram === ''): ?>
               <p>（未設定）</p>
             <?php else: ?>
               <?php if ($callerAutoMessage !== ''): ?>
@@ -129,6 +130,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               <?php endif; ?>
               <?php if ($callerScenario !== ''): ?>
                 <p><span class="callerTypeLabel typeScenario">シナリオ</span><span><?= $callerScenario; ?></span></p>
+              <?php endif; ?>
+              <?php if ($callerDiagram !== ''): ?>
+                <p><span class="callerTypeLabel typeDiagram">チャットツリー</span><span><?= $callerDiagram; ?></span></p>
               <?php endif; ?>
             <?php endif; ?>
           </td>

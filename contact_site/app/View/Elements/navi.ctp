@@ -215,7 +215,10 @@ if( strtolower($iconMainColor) === "#b2d251") {
       <div class="submenulist">
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('オートメッセージ設定', 'fa-comments', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('トリガー設定（条件設定）', 'far fa-play-circle', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']], true) ?>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('チャットツリー設定', 'fa-sitemap fa-rotate-270', ['href' => ['controller' => 'TChatbotDiagrams', 'action' => 'index']], true) ?>
         </div>
         <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('シナリオ設定', 'fa-code-merge', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']], true) ?>

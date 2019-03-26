@@ -67,6 +67,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("light.min");
     echo $this->Html->css("solid.min");
     echo $this->Html->css('fontawesome.min');
+    echo $this->Html->css('fontawesome-all.min');
     echo $this->Html->css("//cdnjs.cloudflare.com/ajax/libs/cropper/1.0.0/cropper.min.css");
   ?>
   <?php
@@ -152,6 +153,29 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("openclose.js");
     }
   if (strcmp($this->name, 'TChatbotScenario') === 0) {
+    echo $this->Html->css("jquery.atwho.css");
+    echo $this->Html->script("jquery.caret.js");
+    echo $this->Html->script("jquery.atwho.js");
+    echo $this->Html->script("canvas-toBlob.js"); // support toBlob() in IE
+    echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js");
+    echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/angular-slick-carousel/3.1.7/angular-slick.js");
+    echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.js");
+    echo $this->Html->css("https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.css");
+  }
+  if (strcmp($this->name,'TChatbotDiagrams') === 0) {
+    echo $this->Html->css('https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css"');
+    echo $this->Html->css('jquery-ui.css');
+    echo $this->Html->css('joint.ui.halo.css');
+    echo $this->Html->css('joint.ui.navigator.css');
+    echo $this->Html->css('joint.ui.paperScroller.css');
+    echo $this->Html->script("https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js");
+    echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js");
+    echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js");
+    echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js");
+    echo $this->Html->script("joint.ui.halo.js");
+    echo $this->Html->script('joint.ui.navigator.js');
+    echo $this->Html->script('joint.ui.paperScroller.js');
+    // need scenario simulator
     echo $this->Html->css("jquery.atwho.css");
     echo $this->Html->script("jquery.caret.js");
     echo $this->Html->script("jquery.atwho.js");

@@ -1,6 +1,8 @@
 <?php echo $this->element('TChatbotScenario/angularjs'); ?>
 <?php echo $this->element('TChatbotScenario/localStorageService'); ?>
 <?php echo $this->element('WidgetSimulator/simulatorService'); ?>
+<?php echo $this->element('WidgetSimulator/scenarioSimulatorService'); ?>
+<?php echo $this->element('WidgetSimulator/diagramSimulatorService'); ?>
 <script type="text/javascript">addTooltipEvent();</script>
 <div ng-app="sincloApp" ng-controller="MainController as main" ng-cloak style="height: 100%;" id="tchatbotscenario_form">
   <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
@@ -10,6 +12,7 @@
   <?=$this->Form->input('scenarioList', ['type' => 'hidden','value' => json_encode($this->data['scenarioList'])])?>
   <?=$this->Form->input('scenarioListForBranchOnCond', ['type' => 'hidden','value' => json_encode($this->data['scenarioListForBranchOnCond'])])?>
   <?=$this->Form->input('leadList', ['type' => 'hidden','value' => json_encode($this->data['leadList'])])?>
+  <?=$this->Form->input('chatbotDiagramList', ['type' => 'hidden','value' => json_encode($this->data['chatbotDiagramList'])])?>
   <section id="tchatbotscenario_form_basic_settings" class="p10x">
     <h3 class="tchatbotscenario_form_subtitle">基本設定</h3>
     <ul>

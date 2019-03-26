@@ -1412,7 +1412,7 @@ var socket, // socket.io
             ' width: ' +
             (Number(chatPosition.re.textSize)) + 'px; height: ' +
             (Number(chatPosition.re.textSize)) +
-            'px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; } ';
+            'px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; margin-top:0px!important } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: ' +
             Math.ceil((Number(chatPosition.re.textSize) / 2)) + 'px; left: ' +
             ((chatPosition.re.textSize / 2 -
@@ -1434,11 +1434,11 @@ var socket, // socket.io
             colorList['chatMessageBackgroundColor'] + ';}';
 
         html += '     #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + Number(chatPosition.re.textSize) + 'px;}';
-        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + Number(chatPosition.re.textSize) + 'px; height: ' + Number(chatPosition.re.textSize) + 'px;}';
+        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (Number(chatPosition.re.textSize) + 2) + 'px; height: ' + (Number(chatPosition.re.textSize) + 2) + 'px;}';
         /* ヒアリング */
         html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
         html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
-        html += '#sincloBox ul#chatTalk li.sinclo_re.customWidth {width: 95%}';
+        html += '#sincloBox ul#chatTalk li.sinclo_re.customWidth {width: 93%}';
 
         /* ファイル受信  */
         var previewFileClasses = '#sincloBox #chatTalk li.sinclo_se';
@@ -1611,6 +1611,9 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re select {cursor: pointer;}';
         /* flatpickr カスタム値の方が強いため基本important指定 */
         html += '#sincloBox #chatTalk li.sinclo_re div.flatpickr-calendar.disable { pointer-events: none!important; opacity: 0.5!important; }';
+
+        /* diagram - button */
+        html += '#sincloBox #chatTalk li.sinclo_re.diagram_msg button { border: 0; border-radius: 0; }';
 
         if (colorList['widgetInsideBorderNone'] === 1) {
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
@@ -4291,6 +4294,9 @@ var socket, // socket.io
           $('#sincloBanner').
           css('bottom', screen.height - window.innerHeight + 5 + 'px');
         }
+        if (window.sincloInfo.contract.chat) {
+          sinclo.chatApi.scDown();
+        }
       },
       hide: function() {
         sincloBox.style.display = 'none';
@@ -5032,8 +5038,7 @@ var socket, // socket.io
     chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
     chatBotTypingCall: function(obj) {
-      console.log('sinclo.scenarioApi._bulkHearing.isInMode() %s',
-          sinclo.scenarioApi._bulkHearing.isInMode());
+      console.log("common.chatBotTypingCall: %s", JSON.stringify(obj));
       if (!common.chatBotTypingDelayTimer || obj.messageType ===
           sinclo.chatApi.messageType.sorry) {
         common.chatBotTypingDelayTimer = setTimeout(function() {
@@ -5107,6 +5112,9 @@ var socket, // socket.io
         if (!sinclo.scenarioApi.isProcessing()) {
           return;
         }
+      } else if (obj.messageType === sinclo.diagramApi.messageType.message.text
+        || obj.messageType === sinclo.diagramApi.messageType.message.branch) {
+        // 表示する
       } else if (!sinclo.scenarioApi.isProcessing()) {
         return;
       }
@@ -7016,6 +7024,13 @@ var socket, // socket.io
       sinclo.scenarioApi.begin();
     }); // socket-on: sendChatResult
 
+    // 新着チャット
+    socket.on('resGetChatDiagram', function(d) {
+      var obj = common.jParse(d);
+      sinclo.diagramApi.common.init(obj.id, obj.activity);
+      sinclo.diagramApi.executor.execute();
+    }); // socket-on: sendChatResult
+
     // チャット入力状況受信
     socket.on('receiveTypeCond', function(d) {
       sinclo.chatApi.createTypingMessage(d);
@@ -7184,7 +7199,7 @@ function emit(evName, data, callback) {
       'sendAutoChat' || evName === 'sendChat' ||
       evName === 'storeScenarioMessage' || evName === 'saveCustomerInfoValue' ||
       evName === 'beginBulkHearing' || evName === 'sendParseSignature'
-      || evName === 'hideScenarioMessages') {
+      || evName === 'hideScenarioMessages' || evName === 'storeDiagramMessage') {
     data.userId = userInfo.userId;
   }
   if (evName === 'connectSuccess' || evName === 'sendWindowInfo' || evName ===

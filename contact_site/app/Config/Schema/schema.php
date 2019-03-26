@@ -1,4 +1,4 @@
-<?php 
+<?php
 class AppSchema extends CakeSchema {
 
 	public function before($event = array()) {
@@ -46,10 +46,12 @@ class AppSchema extends CakeSchema {
 		'administrator_mail_address' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '管理者情報メールアドレス', 'charset' => 'utf8'),
 		'installation_site_name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 100, 'collate' => 'utf8_general_ci', 'comment' => '設置サイト名', 'charset' => 'utf8'),
 		'installation_url' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 200, 'collate' => 'utf8_general_ci', 'comment' => '設置サイトURL', 'charset' => 'utf8'),
+		'website' => array('type' => 'string', 'null' => true, 'length' => 200, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'admin_password' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 100, 'collate' => 'utf8_general_ci', 'comment' => 'スーパー管理者用パスワード', 'charset' => 'utf8'),
 		'telephone_number' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'comment' => '電話番号', 'charset' => 'utf8'),
 		'note' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '備考', 'charset' => 'utf8'),
 		'memo' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'free_scenario_add' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
 		'del_flg' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => '削除フラグ'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null, 'comment' => '登録日'),
 		'created_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => '登録実行ユーザ'),
@@ -140,6 +142,7 @@ class AppSchema extends CakeSchema {
 		'deleted_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => '削除実行ユーザ'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'm_companies_id_visitors_id_idx' => array('column' => array('m_companies_id', 'visitors_id'), 'unique' => 1),
 			'm_companies_id_idx' => array('column' => array('m_companies_id', 'visitors_id'), 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
@@ -378,12 +381,14 @@ class AppSchema extends CakeSchema {
 		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => '企業ID'),
 		'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 50, 'collate' => 'utf8_general_ci', 'comment' => 'オートメッセージ名称', 'charset' => 'utf8'),
 		'trigger_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'トリガーの種類'),
-		'activity' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'オートメッセージ設定内容', 'charset' => 'utf8'),
+		'activity' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'トリガー設定内容', 'charset' => 'utf8'),
 		'action_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'アクションの種類'),
 		'send_mail_flg' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'm_mail_transmission_settings_id' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
 		'm_mail_template_id' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
 		't_chatbot_scenario_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => 'チャットボットシナリオID'),
+		'call_automessage_id' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => 'action_type=3の場合に呼び出すオートメッセージID'),
+		't_chatbot_diagram_id' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
 		'active_flg' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '0:有効、1:無効'),
 		'del_flg' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => '削除フラグ'),
 		'sort' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => 'ソート順'),
@@ -416,6 +421,43 @@ class AppSchema extends CakeSchema {
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+	);
+
+	public $t_chatbot_diagram_node_names = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+		't_chatbot_diagram_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'type' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'node_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'node_name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 300, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'del_flg' => array('type' => 'boolean', 'null' => true, 'default' => null),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'created_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'deleted' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'deleted_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+	);
+
+	public $t_chatbot_diagrams = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+		'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'activity' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'del_flg' => array('type' => 'boolean', 'null' => true, 'default' => '0'),
+		'sort' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'created_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified_user_id' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
+		'deleted' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'daleted_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB', 'comment' => 'チャットツリー管理テーブル')
 	);
 
 	public $t_chatbot_scenario_send_files = array(
@@ -461,7 +503,7 @@ class AppSchema extends CakeSchema {
 		'visitors_id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'conversation_count' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'indexes' => array(
-			
+
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
@@ -469,9 +511,9 @@ class AppSchema extends CakeSchema {
 	public $t_custom_variables = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => 'ID'),
 		'm_companies_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => '企業ID'),
-		'variable_name' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'comment' => '変数名', 'charset' => 'utf8'),
+		'variable_name' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '変数名', 'charset' => 'utf8'),
 		'type' => array('type' => 'integer', 'null' => false, 'default' => '3', 'length' => 2, 'unsigned' => false, 'comment' => 'タイプ'),
-		'attribute_value' => array('type' => 'string', 'null' => false, 'length' => 500, 'collate' => 'utf8_general_ci', 'comment' => '属性値', 'charset' => 'utf8'),
+		'attribute_value' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 500, 'collate' => 'utf8_general_ci', 'comment' => '属性値', 'charset' => 'utf8'),
 		'comment' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'コメント', 'charset' => 'utf8'),
 		'delete_flg' => array('type' => 'boolean', 'null' => false, 'default' => null, 'comment' => '削除フラグ'),
 		'sort' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => 'ソート順'),
@@ -606,7 +648,7 @@ class AppSchema extends CakeSchema {
 		'ip_address' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 15, 'collate' => 'utf8_general_ci', 'comment' => 'IPアドレス', 'charset' => 'utf8'),
 		'tab_id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'collate' => 'utf8_general_ci', 'comment' => 'タブID', 'charset' => 'utf8'),
 		'user_agent' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 300, 'collate' => 'utf8_general_ci', 'comment' => 'ユーザーエージェント', 'charset' => 'utf8'),
-		'access_date' => array('type' => 'datetime', 'null' => true, 'default' => null, 'comment' => 'アクセス開始日時'),
+		'access_date' => array('type' => 'datetime', 'null' => true, 'default' => null, 'key' => 'index', 'comment' => 'アクセス開始日時'),
 		'out_date' => array('type' => 'datetime', 'null' => true, 'default' => null, 'comment' => 'アクセス終了日時'),
 		'referrer_url' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 300, 'collate' => 'utf8_general_ci', 'comment' => 'リファラー情報', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null, 'comment' => '登録日'),
@@ -622,6 +664,7 @@ class AppSchema extends CakeSchema {
 			'company_ip' => array('column' => array('m_companies_id', 'ip_address'), 'unique' => 0),
 			'company_access_date' => array('column' => array('m_companies_id', 'access_date'), 'unique' => 0),
 			'company_tab_id' => array('column' => array('m_companies_id', 'tab_id'), 'unique' => 0),
+			't_histories_access_date_id_index' => array('column' => array('access_date', 'id'), 'unique' => 0),
 			't_histories_m_companies_id_access_date_id_index' => array('column' => array('m_companies_id', 'access_date', 'id'), 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
@@ -702,14 +745,31 @@ class AppSchema extends CakeSchema {
 			'idx_t_history_chat_logs_achievement_flg_companies_id_users_id' => array('column' => array('achievement_flg', 'm_companies_id', 'm_users_id', 't_histories_id'), 'unique' => 0),
 			'idx_t_history_chat_logs_m_companies_id_visitors_id' => array('column' => array('m_companies_id', 'visitors_id', 't_histories_id', 'created'), 'unique' => 0),
 			'idx_m_companies_id_t_histories_id_t_history_stay_logs_id' => array('column' => array('m_companies_id', 't_histories_id', 't_history_stay_logs_id', 'message_type', 'notice_flg', 'created', 'message_read_flg', 'achievement_flg'), 'unique' => 0),
-			'idx_m_companies_id_message_type_notice_flg' => array('column' => array('m_companies_id', 'message_type', 'notice_flg'), 'unique' => 0),
 			'idx_t_history_chat_logs_m_companies_id_t_histories_id_created' => array('column' => array('m_companies_id', 't_histories_id', 'created'), 'unique' => 0),
 			'idx_t_history_chat_logs_m_companies_id_message_type_created' => array('column' => array('m_companies_id', 'message_type', 'created'), 'unique' => 0),
 			't_history_chat_logs_mcid_mt_nf_c_thid_index' => array('column' => array('m_companies_id', 't_histories_id', 'message_type', 'notice_flg', 'created'), 'unique' => 0),
 			't_history_chat_logs_mcid_thid_mt_c_index' => array('column' => array('m_companies_id', 't_histories_id', 'message_type', 'created'), 'unique' => 0),
-			't_history_chat_logs_mcid_thid_mt_md_index' => array('column' => array('m_companies_id', 't_histories_id', 'message_type', 'message_distinction'), 'unique' => 0)
+			't_history_chat_logs_mcid_thid_mt_md_index' => array('column' => array('m_companies_id', 't_histories_id', 'message_type', 'message_distinction'), 'unique' => 0),
+			'idx_m_companies_id_message_type_notice_flg' => array('column' => array('m_companies_id', 't_histories_id', 'message_type', 'notice_flg'), 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+	);
+
+	public $t_history_diagram_logs = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+		't_history_chat_logs_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+		't_chatbot_diagrams_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'source_node_id' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 45, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'target_node_id' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 45, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'del_flg' => array('type' => 'boolean', 'null' => true, 'default' => null),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'deleted' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'deleted_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB', 'comment' => 'チャットツリー履歴の管理テーブル')
 	);
 
 	public $t_history_link_count_logs = array(
@@ -757,6 +817,7 @@ class AppSchema extends CakeSchema {
 
 	public $t_history_stay_logs = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => 'ID'),
+		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'key' => 'index'),
 		't_histories_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index', 'comment' => '履歴ID'),
 		'title' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 100, 'key' => 'index', 'collate' => 'utf8_general_ci', 'comment' => 'ページタイトル', 'charset' => 'utf8'),
 		'url' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 300, 'key' => 'index', 'collate' => 'utf8_general_ci', 'comment' => 'URL', 'charset' => 'utf8'),
@@ -771,7 +832,8 @@ class AppSchema extends CakeSchema {
 			't_histories_id_idx' => array('column' => 't_histories_id', 'unique' => 0),
 			'idx_t_history_stay_logs_title_url' => array('column' => array('title', 'url'), 'unique' => 0, 'length' => array('url' => '255')),
 			'idx_t_history_stay_logs_title' => array('column' => 'title', 'unique' => 0),
-			'idx_t_history_stay_logs_url' => array('column' => 'url', 'unique' => 0, 'length' => array('url' => '255'))
+			'idx_t_history_stay_logs_url' => array('column' => 'url', 'unique' => 0, 'length' => array('url' => '255')),
+			'idx_t_history_stay_logs_m_companies_id_t_histories_id' => array('column' => array('m_companies_id', 't_histories_id'), 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);

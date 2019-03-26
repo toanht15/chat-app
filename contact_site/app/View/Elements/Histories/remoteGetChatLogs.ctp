@@ -341,6 +341,50 @@ $(function(){
         $imgTag = true;
       }
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 300) === 0 ) {
+      // pulldown and calendar
+      $className = "sinclo_auto";
+      $name = "チャットツリーメッセージ（分岐）";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+      $deleteMessage = str_replace(PHP_EOL, '', $json['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      $imgTag = false;
+    }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 301) === 0 ) {
+      // pulldown and calendar
+      $className = "sinclo_auto";
+      $name = "チャットツリーメッセージ（分岐回答）";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      $imgTag = false;
+    }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 302) === 0 ) {
+      // pulldown and calendar
+      $className = "sinclo_auto";
+      $name = "チャットツリーメッセージ（分岐）";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $json = json_decode($val['THistoryChatLog']['message'], true);
+      $deleteMessage = str_replace(PHP_EOL, '', $json['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      $imgTag = false;
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 90) === 0 ) {
       // 何も表示しない
       continue;

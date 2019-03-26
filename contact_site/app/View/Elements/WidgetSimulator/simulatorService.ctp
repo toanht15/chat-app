@@ -75,6 +75,12 @@
       get chatbotIconPath() {
         return this._settings['chatbot_icon'];
       },
+      get isBotIconImg() {
+        return this._settings['chatbot_icon'].match(/^fa/) === null;
+      },
+      get isBotIconIcon() {
+        return this._settings['chatbot_icon'].match(/^fa/) !== null;
+      },
       get operatorIconToggle() {
         return this._settings['show_operator_icon'];
       },
@@ -587,7 +593,7 @@
             str += '<label for=\'' + radioName + '-' + i + '\'>' + value + '</label></span>';
           }
           //リンク、電話番号、imgタグ
-          str = replaceVariable(str, isSmartphone, this._settings['widget_size_type']);
+          str = replaceVariable(str, isSmartphone, this._settings['widget_size_type'] + 'sim');
 
           if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
             content += '' + str + '\n';
@@ -1593,7 +1599,134 @@
       };
 
       return extensions[extension] || extensions['file'];
-    }
+    },
+
+      /* ===============
+         diagram methods
+         =============== */
+
+      createBranchRadioMessage: function(nodeId, message, selection, labels, settings) {
+        var messageHtml = this.createMessage(message, nodeId);
+        var suffix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
+        var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+        var radioName = 'sinclo-radio-' + index + suffix;
+        // style
+        var html = '<div id="' + radioName + '" style="line-height: 0!important; ">';
+        var style = '<style>';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {background-color: ' +
+            settings.customDesign.radioBackgroundColor + ' !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"]:checked + label:after {background: ' +
+            settings.customDesign.radioActiveColor + ' !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio:first-of-type {margin-top: 4px !important}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-radio {margin-top: ' +
+            settings.customDesign.radioSelectionDistance + 'px !important;}';
+        style += '#sincloBox #' + radioName + ' span.sinclo-text-line {margin-top: ' +
+            settings.customDesign.radioSelectionDistance + 'px}';
+        if (settings.radioNoneBorder) {
+          style += '#sincloBox #' + radioName +
+              ' span.sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+        } else {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label:before {border-color: ' +
+              settings.customDesign.radioBorderColor + '!important;}';
+        }
+
+        if (settings.customDesign.radioStyle !== '1') {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio [type="radio"] + label {background-color: transparent;}';
+        } else {
+          style += '#sincloBox #' + radioName + ' span.sinclo-radio {display: block!important; padding: 8px; color: ' + settings.customDesign.radioTextColor + ';}';
+        }
+        style += '</style>';
+        html += style;
+
+        var selfobj = this;
+        angular.forEach(labels, function(option, key) {
+          if (!option || option == '') return false;
+          if (option.type && option.value && Number(option.type) === 2) {
+            html += selfobj.createMessage(option.value, nodeId);
+          } else {
+            var message = option.value ? option.value : option;
+            html += '<span class=\'sinclo-radio\'><input type=\'radio\' name=\'' + radioName + '\' id=\'' + radioName + '-' +
+                option.uuid + '\' class=\'sinclo-chat-radio\' value=\'' + message + '\' data-nid=\'' + nodeId +
+                '\' data-next-nid=\'' + selection[option.uuid] + '\'>';
+            html += '<label for=\'' + radioName + '-' + option.uuid + '\'>' + message + '</label></span>' + "\n";
+          }
+        });
+        html += '</select>';
+        html += '</div>';
+
+        return messageHtml + html;
+      },
+
+      createBranchButtonMessage: function(nodeId, message, selection, labels, settings) {
+        var messageHtml = this.createMessage(message, nodeId);
+        var suffix = (typeof nodeId !== 'undefined' && nodeId !== '') ? nodeId + '-' : '';
+        var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+        var buttonUIName = 'sinclo-buttonUI-' + index + suffix;
+        var hasOldOptionValue = false;
+        var style = '<style>';
+        style += ' #sincloBox #' + buttonUIName + ' .sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {background-color: ' + settings.customDesign.buttonUIBackgroundColor + '}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {width: ' + this.getButtonUIWidth() + 'px;}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {color: ' + settings.customDesign.buttonUITextColor + '}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:focus {outline: none}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.top {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.bottom {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
+        style += '#sincloBox #' + buttonUIName +
+            ' span.sinclo-text-line { margin: 4px 0; }';
+        if (message) {
+          style += ' #sincloBox #' + buttonUIName + ' {margin-top: 8px}';
+        }
+        if (settings.outButtonUINoneBorder) {
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: none}';
+        } else {
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: 1px solid ' + settings.customDesign.buttonUIBorderColor +' }';
+        }
+        switch (Number(settings.customDesign.buttonUITextAlign)) {
+          case 1:
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: left}';
+            break;
+          case 2:
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: center}';
+            break;
+          case 3:
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: right}';
+            break;
+          default:
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {text-align: center}';
+            break;
+        }
+        style += '</style>';
+
+        var html = '<div id="' + buttonUIName + '">';
+        html += style;
+
+        var selfobj = this;
+        angular.forEach(labels, function(option, key) {
+          if (!option || option === '') return false;
+          var isPrevMessage = (Number(key) > 0 && Number(labels[Number(key) - 1].type) === 2);
+          var isNextMessage = (Number(key) < Object.keys(labels).length - 1 && Number(labels[Number(key) + 1].type) === 2);
+          var isEnd = (Number(key) === Object.keys(labels).length - 1);
+          var addClass = '';
+          if(Number(key) === 0 || isPrevMessage) {
+            addClass += 'top';
+          }
+          if(isNextMessage || isEnd) {
+            addClass += ' bottom';
+          }
+          if (option.type && option.value && Number(option.type) === 2) {
+            html += selfobj.createMessage(option.value, nodeId);
+          } else {
+            var message = option.value ? option.value : option;
+            html += '<button onclick="return false;" class="sinclo-button-ui ' + addClass + '" data-nid=\'' + nodeId +
+                '\' data-next-nid=\'' + selection[option.uuid] + '\'>' + message + '</button>';
+          }
+        });
+        html += '</div>';
+
+        return messageHtml + html;
+      }
 
   };
 });

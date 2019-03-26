@@ -149,15 +149,15 @@ function replaceVariable(str,isSmartphone,type){
   var className;
 
   //ウィジェットサイズが小の場合
-  if(type === '1' || isSmartphone) {
+  if(type === '1' || type === '1sim' || isSmartphone) {
     className = 'smallSizeImg';
   }
   //ウィジェットサイズが中の場合
-  else if(type === '2') {
+  else if(type === '2' || type === '2sim') {
     className = 'middleSizeImg';
   }
   //ウィジェットサイズが大の場合
-  else if(type === '3') {
+  else if(type === '3' || type === '3sim' || type === '4sim' || type === '5sim') {
     className = 'largeSizeImg';
   }
   //リアルタイムモニタ詳細画面の場合

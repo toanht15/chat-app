@@ -88,6 +88,14 @@
         $scope.addCheckbox(data);
       });
 
+      $scope.$on('addReDiagramBranchMessage', function(event, nodeId, buttonType, message, selection, labels, customDesign) {
+        $scope.addReDiagramBranchMessage(nodeId, buttonType, message, selection, labels, customDesign);
+      });
+
+      $scope.$on('addReDiagramTextMessage', function(event, nodeId, messages, nextNodeId, intervalSec) {
+        $scope.addReDiagramTextMessage(nodeId, messages, nextNodeId, intervalSec);
+      });
+
       $scope.$on('disableHearingInputFlg', function(event) {
         $scope.isHearingInput = false;
       });
@@ -915,6 +923,110 @@
         }
 
         self.autoScroll();
+      };
+
+      $scope.addReDiagramBranchMessage = function(nodeId, buttonType, message, selection, labels, customDesign) {
+        clearChatbotTypingTimer();
+        chatBotTypingRemove();
+        var gridElm = document.createElement("div");
+        $(gridElm).addClass("grid_balloon");
+        var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+        divElm.id = 'branch_question_' + (new Date()).getTime();
+        var html = '';
+        if(buttonType === '1') {
+          html = $scope.simulatorSettings.createBranchRadioMessage(nodeId, message, selection, labels, {customDesign: customDesign});
+          if(customDesign.radioStyle === '1') {
+            $(divElm).find('li.sinclo_re.chat_left').addClass('widthCustom');
+          }
+        } else {
+          html = $scope.simulatorSettings.createBranchButtonMessage(nodeId, message, selection, labels, {customDesign: customDesign});
+        }
+        divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
+
+        if (customDesign.radioStyle === '1') {
+          var radioTarget = $('#' + divElm.id + ' input[type="radio"]');
+          var radioLabelTarget = $('#' + divElm.id + ' .sinclo-radio');
+          radioLabelTarget.css('background-color', customDesign.radioEntireBackgroundColor);
+          radioTarget.each(function() {
+            if ($(this).prop('checked')) {
+              $(this).parent().css('background-color', customDesign.radioEntireActiveColor);
+              $(this).parent().find('label').css('color', customDesign.radioActiveTextColor);
+            } else {
+              $(this).parent().find('label').css('color', customDesign.radioTextColor);
+            }
+          });
+          radioTarget.on('change', function() {
+            radioTarget.each(function() {
+              if ($(this).prop('checked')) {
+                if (customDesign.radioStyle !== '1') {
+                  $(this).parent().css('background-color', 'transparent');
+                } else {
+                  $(this).parent().css('background-color', customDesign.radioEntireActiveColor);
+                  $(this).parent().find('label').css('color', customDesign.radioActiveTextColor);
+                }
+              } else {
+                if (customDesign.radioStyle !== '1') {
+                  $(this).parent().css('background-color', 'transparent');
+                } else {
+                  $(this).parent().css('background-color', customDesign.radioEntireBackgroundColor);
+                  $(this).parent().find('label').css('color', customDesign.radioTextColor);
+                }
+              }
+            });
+          });
+        }
+
+        self.autoScroll();
+        $timeout(function() {
+          $scope.$apply();
+        });
+      };
+
+      $scope.addReDiagramTextMessage = function(nodeId, messages, nextNodeId, intervalSec) {
+        for(var i=0; i < messages.length; i++) {
+          (function(idx) {
+              $timeout(function(){
+              chatBotTypingRemove();
+              // ベースとなる要素をクローンし、メッセージを挿入する
+              var prefix = 'text_' + (new Date()).getTime();
+              var gridElm = document.createElement("div");
+              $(gridElm).addClass("grid_balloon");
+
+              var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+               divElm.id = prefix + '_text';
+
+              var formattedMessage = $scope.simulatorSettings.createMessage(messages[idx], prefix);
+              divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
+              divElm.classList.add('diagram_msg');
+
+              // 要素を追加する
+              divElm.style.display = "";
+              if ($scope.needsIcon()) {
+                //チャットボットのアイコンを表示する場合は
+                //アイコンを含む要素を作成する。
+                gridElm = $scope.addIconImage(gridElm);
+              }
+
+              gridElm.appendChild(divElm);
+              document.getElementById('chatTalk').appendChild(gridElm);
+              if(idx === messages.length - 1) {
+                $scope.$emit('finishAddTextMessage',nextNodeId);
+              } else {
+                chatBotTyping();
+              }
+              self.autoScroll();
+            }, (idx) * intervalSec * 1000);
+          })(i);
+        }
       };
 
       /**
@@ -1949,6 +2061,8 @@
 
   var waitAnimationAddFlg = true;
 
+  var chatbotTimer = null;
+
   function chatBotTyping() {
     if (!waitAnimationAddFlg) return;
     waitAnimationAddFlg = false;
@@ -1985,7 +2099,6 @@
       } else if (Number( widgetSizeType ) === 1) {
         html += 'botNowTypingSmall\'>';
       } else if (Number( widgetSizeType )  === 5) {
-        console.log("なんかするヵ");
         html += 'botNowTypingLarge\'>';
       }
       html += '    <div class=\'reload_dot_left\'></div>';
@@ -1994,7 +2107,7 @@
     }
     html += '  </li>';
     html += '</div>';
-    setTimeout(function() {
+    chatbotTimer = setTimeout(function() {
       $('#chatTalk').append(html);
     }, 800);
     return;
@@ -2003,6 +2116,13 @@
   function chatBotTypingRemove() {
     waitAnimationAddFlg = true;
     $('div.botNowDiv').remove();
+  }
+
+  function clearChatbotTypingTimer() {
+    if(chatbotTimer) {
+      clearTimeout(chatbotTimer);
+      chatbotTimer = null;
+    }
   }
 
 </script>
