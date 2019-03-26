@@ -682,6 +682,7 @@
         if (elm.model.getAncestors()[0] != null) {
           type = elm.model.getAncestors()[0].attr('nodeBasicInfo/nodeType');
         }
+        var contentObj = $scope.currentEditCellParent.attr('actionParam');
         switch (type) {
           case 'branch':
             htmlCreator = createBranchHtml;
@@ -697,6 +698,7 @@
             htmlCreator = createScenarioHtml;
             modalName = 'シナリオ呼出';
             modalClass = 'p_const_diagrams';
+            contentObj['value'] = $scope.currentEditCell.attr('nodeBasicInfo/tooltip');
             break;
           case 'jump':
             htmlCreator = createJumpHtml;
@@ -724,7 +726,7 @@
 
         return {
           name: modalName,
-          content: htmlCreator($scope.currentEditCellParent.attr('actionParam')),
+          content: htmlCreator(contentObj),
           id: modalClass
         };
       }
@@ -1125,6 +1127,7 @@
 
       function createScenarioHtml(nodeData) {
         $scope.selectedScenario.key = nodeData.scenarioId;
+        $scope.selectedScenario.value = nodeData.value;
         $scope.callbackToDiagram = nodeData.callbackToDiagram;
         return $('<scenario-modal></scenario-modal>');
       }
