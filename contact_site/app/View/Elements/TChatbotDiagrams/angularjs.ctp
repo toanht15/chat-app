@@ -321,6 +321,9 @@
                 if(frame.hasClass("p_diagrams_branch")){
                   $scope.titleHandler($scope.branchTitle, "分岐");
                   $scope.changeTextTrigger($("textarea.for_modal"), true, $scope.branchText, "branch");
+                  $('#popup-frame').css('height','80%');
+                  $('#popup-content').css('height','100%');
+                  popupEvent.resize = function() {};
                 }else if(frame.hasClass("p_diagrams_text")){
                   $scope.titleHandler($scope.speakTextTitle, "テキスト発言");
                   var elements = $("textarea.for_modal");
@@ -559,7 +562,7 @@
             popupEventOverlap.closeNoPopupOverlap();
             $scope.$apply();
             $timeout(function() {
-              popupEvent.resize();
+              //popupEvent.resize();
               $scope.popupFix();
             })
           }
@@ -1163,9 +1166,9 @@
         $timeout(function(){
           $scope.resetSelectionHeight();
           $scope.handleButtonCSS();
-          popupEvent.resize();
+          //popupEvent.resize();
           $scope.selectionHeightHandler();
-          popupEvent.resize();
+          //popupEvent.resize();
           $scope.popupFix();
         })
       };
@@ -1854,7 +1857,7 @@
 
       $scope.$on('ngRepeatFinish', function(){
         $scope.handleButtonCSS();
-        popupEvent.resize();
+        //popupEvent.resize();
         $scope.popupFix();
       });
 
