@@ -95,13 +95,13 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <div id="importBtnAreaWrap">
         <div id="importBtnArea">
         <?= $this->Html->link(
-          'オートメッセージをエクセルで編集する',
+          'トリガーをエクセルで編集する',
           'javascript:void(0)',
           array('escape' => false,
             'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? " skyBlueBtn  commontooltip" : " grayBtn disabled commontooltip"),
             'id' => 'importExcelBtn',
             'disabled' => !$coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE],
-            'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "オートメッセージの設定をエクセルにエクスポートしたり、エクセルで編集した内容をインポートすることが可能です。" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
+            'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "トリガーの設定をエクセルにエクスポートしたり、エクセルで編集した内容をインポートすることが可能です。" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
             'data-balloon-position' => '50',
             'data-balloon-width' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? '460' : ''
           ));
