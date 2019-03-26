@@ -206,6 +206,7 @@ define('C_AUTO_TRIGGER_SEARCH_KEY', 7); // 検索キーワード
 define('C_AUTO_TRIGGER_SPEECH_CONTENT', 8); // 発言内容
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 9); // 最初の滞在ページ
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
+define('C_AUTO_TRIGGER_VISITOR_DEVICE', 11); // 訪問者の端末
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -675,7 +676,8 @@ $config['outMessageTriggerList'] = array(
     'key' => 'visit_cnt',
     'default' => array(
       "visitCnt" => "",
-      "visitCntCond" => 2
+      "visitCntCond" => "4",
+      "visitCntMax" => ""
     )
   ),
   // 発言内容
@@ -785,6 +787,17 @@ $config['outMessageTriggerList'] = array(
     'key' => 'operating_hours',
     'default' => array(
       "operatingHoursTime" => 1
+    )
+  ),
+  // 訪問者の端末
+  C_AUTO_TRIGGER_VISITOR_DEVICE => array(
+    'label' => 'サイト訪問者の端末',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'visitor_device',
+    'default' => array(
+      "pc" => false,
+      "smartphone" => false,
+      "tablet" => false
     )
   )
 );

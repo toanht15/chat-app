@@ -7743,7 +7743,7 @@
         console.log('setAndSettings key : ' + key + ' setting: ' + setting);
         var keys = Object.keys(setting.conditions);
         // 発言内容条件を一番最後にする
-        var arrayForSort = ['1', '2', '3', '4', '5', '6', '8', '9', '10', '7'];
+        var arrayForSort = ['1', '2', '3', '4', '5', '6', '8', '9', '10', '11', '7'];
         var tmpKey = [];
         arrayForSort.forEach(function(element, index, array) {
           if (keys.indexOf(element) >= 0) {
@@ -7830,6 +7830,11 @@
               break;
             case 10: // 営業時間
               this.judge.operating_hours(conditions[0], function(err, timer) {
+                if (err) ret = null;
+              });
+              break;
+            case 11: // 営業時間
+              this.judge.visitorDevice(conditions[0], function(err, timer) {
                 if (err) ret = null;
               });
               break;
@@ -7952,6 +7957,15 @@
             case 10: // 営業時間設定
               for (u = 0; u < conditions.length; u++) {
                 this.judge.operating_hours(conditions[u], function(err, timer) {
+                  if (!err) {
+                    ret = 0;
+                  }
+                });
+              }
+              break;
+            case 11: // 営業時間設定
+              for (u = 0; u < conditions.length; u++) {
+                this.judge.visitorDevice(conditions[u], function(err, timer) {
                   if (!err) {
                     ret = 0;
                   }
@@ -8805,6 +8819,17 @@
                 }
               }
             }
+          }
+        },
+        visitorDevice: function(cond, callback) {
+          if (!('pc' in cond) || !('smartphone' in cond) || !('tablet' in cond)) return callback(true, null);
+          var device = check.getDevice();
+          if ((device === 'pc' && cond.pc) ||
+              (device === 'smartphone' && cond.smartphone) ||
+              (device === 'tablet' && cond.tablet)) {
+            callback(false, 0);
+          } else {
+            callback(true, null);
           }
         }
       }

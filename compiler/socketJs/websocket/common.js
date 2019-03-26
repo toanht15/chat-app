@@ -1434,7 +1434,7 @@ var socket, // socket.io
             colorList['chatMessageBackgroundColor'] + ';}';
 
         html += '     #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + Number(chatPosition.re.textSize) + 'px;}';
-        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + Number(chatPosition.re.textSize) + 'px; height: ' + Number(chatPosition.re.textSize) + 'px;}';
+        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (Number(chatPosition.re.textSize) + 2) + 'px; height: ' + (Number(chatPosition.re.textSize) + 2) + 'px;}';
         /* ヒアリング */
         html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
         html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
@@ -5440,6 +5440,17 @@ var socket, // socket.io
     android: function() {
       var ua = navigator.userAgent.toLowerCase();
       return ua.indexOf('android') > 0;
+    },
+    getDevice: function() {
+      var ua = navigator.userAgent.toLowerCase();
+      if (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 ||
+          ua.indexOf('android') > 0 && ua.indexOf('mobile') > 0) {
+        return 'smartphone';
+      } else if (ua.indexOf('ipad') > 0 || ua.indexOf('android') > 0) {
+        return 'tablet';
+      } else {
+        return 'pc';
+      }
     },
     isset: function(a) {
       if (a === null || a === '' || a === undefined || String(a) === 'null' ||
