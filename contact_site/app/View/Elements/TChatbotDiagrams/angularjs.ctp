@@ -1140,7 +1140,7 @@
 
       function createScenarioHtml(nodeData) {
         $scope.selectedScenario.key = nodeData.scenarioId;
-        $scope.selectedScenario.value = nodeData.value;
+        $scope.selectedScenario.value = nodeData.value ? nodeData.value : "シナリオを選択してください";
         $scope.callbackToDiagram = nodeData.callbackToDiagram;
         return $('<scenario-modal></scenario-modal>');
       }
@@ -1148,7 +1148,7 @@
       function createJumpHtml(nodeData) {
         nodeEditHandler.typeJump.createJumpArray();
         $scope.jumpTarget.key = nodeData.targetId;
-        $scope.jumpTarget.value = nodeData.value;
+        $scope.jumpTarget.value = nodeData.value ? nodeData.value : "ジャンプ先を選択してください";
         return $('<jump-modal></jump-modal>');
       }
 
