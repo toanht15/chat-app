@@ -139,7 +139,6 @@ if (!isset($_SERVER['SERVER_NAME'])) {
     $_SERVER['SERVER_NAME'] = php_uname("n");
 }
 
-CakePlugin::load('WebSocket');
 CakePlugin::load('Migrations');
 
 Configure::load("myConst");

@@ -107,7 +107,7 @@
               'options' => $outMessageActionType
             ], [
               'entity' => 'actionType',
-              'default' => (!empty($this->data['TAutoMessage']['action_type'])) ? $this->data['TAutoMessage']['action_type'] : C_AUTO_ACTION_TYPE_SENDMESSAGE
+              'default' => (!empty($this->data['TAutoMessage']['action_type'])) ? $this->data['TAutoMessage']['action_type'] : (($coreSettings[C_COMPANY_USE_CHATBOT_TREE_EDITOR]) ? C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM : C_AUTO_ACTION_TYPE_SENDMESSAGE)
             ]); ?>
           </li>
           <!-- アクション -->

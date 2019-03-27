@@ -5932,6 +5932,14 @@ ul.naviBtn {
   margin: 15px 15px 72px 15px;
   $list-color: #ECF4DA;
 
+  #tautomessages_title {
+    display: flex;
+    align-items: center;
+    div.fLeft {
+      margin-right: 0;
+    }
+  }
+
   #tautomessages_menu {
     height: 85px;
     /*img[class$='Btn'] {
@@ -5956,7 +5964,7 @@ ul.naviBtn {
           display: table-cell;
           vertical-align: middle;
           #importExcelBtn {
-            width: 20em;
+            width: 17em;
             height: 30px;
             padding: 0.25em 0.5em;
             padding-top: 6px;
@@ -6121,7 +6129,7 @@ ul.naviBtn {
         background-color: #edbf35;
       }
       &.actionValueCallAutomessageLabel {
-        background-color: #4e7fd2;
+        background-color: #d251c4;
       }
       &.actionValueSelectDiagramLabel {
         background-color: #E44EA1;
@@ -7501,6 +7509,9 @@ ul.naviBtn {
           }
           &.typeScenario {
             background-color: #EDBF35;
+          }
+          &.typeDiagram {
+            background-color: #E44EA1;
           }
 
           & + span {

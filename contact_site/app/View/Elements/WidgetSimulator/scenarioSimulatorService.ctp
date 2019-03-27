@@ -446,6 +446,7 @@
       } else {
         setTimeout(chatBotTypingRemove, 801);
         self.actionStop();
+        $rootScope.$emit('finishScenarioProcess');
       }
     };
 

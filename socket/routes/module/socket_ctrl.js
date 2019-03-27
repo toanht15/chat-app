@@ -570,7 +570,7 @@ function getMessageTypeByUiType(type) {
       result = 22;
       break;
     case 3:
-      result = 22;
+      result = 55;
       break;
     case 4:
       result = 41;
@@ -689,7 +689,7 @@ function sendMail(autoMessageId, lastChatLogId, callback) {
       return;
     } else {
       console.log(
-          'オートメッセージ設定メール通知時にエラーが返却されました。 errorCode : ' + response.statusCode);
+          'トリガー設定メール通知時にエラーが返却されました。 errorCode : ' + response.statusCode);
       callback(false);
       return;
     }
@@ -697,7 +697,7 @@ function sendMail(autoMessageId, lastChatLogId, callback) {
 
   req.on('error', function(error) {
     console.log(
-        'オートメッセージ設定メール通知時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+        'トリガー設定メール通知時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
     callback(false);
     return;
   });
@@ -1415,7 +1415,7 @@ io.sockets.on('connection', function(socket) {
             //通知された場合
             if (ret.opFlg === true && d.notifyToCompany) {
               ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, 3, insertData.created);
-              if (d.messageType === 1 && insertData.message_read_flg != 1) {
+              if ((d.messageType === 1 || d.messageType === 303) && insertData.message_read_flg != 1) {
                 sincloCore[d.siteKey][d.tabId].chatUnreadId = results.insertId;
                 sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
               }
@@ -1445,6 +1445,7 @@ io.sockets.on('connection', function(socket) {
               obj.chatMessage = ret.message;
               obj.messageType = chatApi.cnst.observeType.sorry;
               obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
+              obj.isDiagramMessage = false;
               chatApi.set(obj);
             }
           });
@@ -1522,7 +1523,7 @@ io.sockets.on('connection', function(socket) {
                     var userId = Object.keys(scList[d.siteKey].user)[key];
                     //対応数がMAX人数か確認
                     if (scList[d.siteKey].user[userId] >
-                        scList[d.esiteKey].cnt[userId]) {
+                        scList[d.siteKey].cnt[userId]) {
                       addChatActiveUser(results.insertId, userId, d.siteKey);
                     }
                   }
@@ -3525,6 +3526,7 @@ io.sockets.on('connection', function(socket) {
   // 一括：チャットデータ取得
   socket.on('getChatMessage', function(d) {
     var obj = JSON.parse(d);
+
     chatApi.get(obj);
   });
 
@@ -3560,15 +3562,17 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(d);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
+    var sincloSessionId = getSessionId(obj.siteKey, obj.tabId, 'sincloSessionId');
     obj.messageType = chatApi.cnst.observeType.auto;
     obj.sendTo = socket.id;
+    obj.sincloSessionId = sincloSessionId;
     emit.toUser('sendReqAutoChatMessages', obj, sId);
 
     // ユーザーがチャット中の場合
     if (getSessionId(obj.siteKey, obj.tabId, 'chatSessionId')) {
       var sessionId = getSessionId(obj.siteKey, obj.tabId, 'chatSessionId');
       emit.toUser('reqTypingMessage',
-          {siteKey: obj.siteKey, from: obj.mUserId, tabId: obj.tabId},
+          {siteKey: obj.siteKey, from: obj.mUserId, tabId: obj.tabId, sincloSessionId: sincloSessionId},
           sessionId);
     }
   });
@@ -3597,6 +3601,7 @@ io.sockets.on('connection', function(socket) {
     ret.chatToken = obj.chatToken;
     ret.tabId = obj.tabId;
     ret.historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
+    ret.sincloSessionId = getSessionId(obj.siteKey, obj.tabId, 'sincloSessionId');
     emit.toUser('resAutoChatMessages', ret, obj.sendTo);
   });
 
@@ -4822,12 +4827,25 @@ io.sockets.on('connection', function(socket) {
         }
         if (row.length !== 0) {
           result = JSON.parse(row[0].activity);
+          // そのままのデータだとクライアント側の処理のパフォーマンスが悪いため
+          // UUIDでデータを参照できるよう加工する
+          var sendObj = {};
+          for(let i=0; i < result.cells.length; i++) {
+            let cell = result.cells[i];
+            sendObj[cell['id']] = {
+              id: cell['id'],
+              parent: cell['parent'],
+              type: cell['type'],
+              embeds: cell['embeds'],
+              attrs: cell['attrs']
+            }
+          }
         }
         if (ack) {
-          ack({id: obj.scenarioId, activity: result});
+          ack({id: obj.scenarioId, activity: sendObj});
         } else {
           emit.toMine('resGetChatDiagram',
-              {id: obj.diagramId, activity: result}, socket);
+              {id: obj.diagramId, activity: sendObj}, socket);
         }
       });
   });

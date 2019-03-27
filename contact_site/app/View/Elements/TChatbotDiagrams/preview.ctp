@@ -31,7 +31,7 @@
   #popup #popup-frame-base #popup-frame.p_diagrams_branch #branch_modal #branch_modal_preview {width: {{widget.settings['widget_custom_width']}}px}
 </style>
 <style>
-  .diagram_preview_area { width: 100%; list-style-type: none; margin: 0; overflow-y: auto;}
+  .diagram_preview_area { width: 100%; list-style-type: none; margin: 0; overflow-y: auto; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica,Helvetica Neue,Arial,Verdana;}
   .diagram_preview_area { background-color: {{widget.settings['chat_talk_background_color']}}; height: calc(100% - 66px)}
   .diagram_preview_area .iconDiv {display: flex}
   .diagram_preview_area .iconDiv.arrowBottom { align-items: flex-end;}
@@ -53,8 +53,10 @@
   .diagram_preview_area li.all-round { border-radius: 12px!important; }
   .diagram_preview_area li.sinclo_re.no-wrap span.sinclo-text-line { display: block; padding: 0 15px; }
   .diagram_preview_area li.sinclo_re {  background-color: {{widget.makeFaintColor()}}; font-size: {{widget.settings['re_text_size']}}px; }
+  .diagram_preview_area li.sinclo_re.customWidth { width: 90%; }
   .diagram_preview_area li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
   .diagram_preview_area li.sinclo_re span.sinclo-text-line{ display: inline-block; color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
+  .diagram_preview_area li.sinclo_re span.sinclo-text-line.between{ margin-top:{{radioSelectionDistance}}px }
   .diagram_preview_area li.sinclo_re a { color: {{widget.settings['re_text_color']}}; background-color: {{widget.makeFaintColor()}};}
   .diagram_preview_area li.sinclo_re.notNone { border: 1px solid {{widget.getTalkBorderColor('re')}}; }
   .diagram_preview_area li.sinclo_re.balloonType:not(.no-wrap) { margin-left: 10px; padding-right: 15px; border-bottom-left-radius: 0px; }
@@ -215,7 +217,7 @@
           '<img ng-src="{{widget.settings[\'chatbot_icon\']}}" alt="無人対応アイコンに設定している画像">' +
           '</div>' +
           '<i ng-if="widget.isBotIconIcon" class="fal {{widget.settings[\'chatbot_icon\']}}" ng-class="{' +
-          'icon_border: false;' +
+          'icon_border: false' +
           '}"></i>' +
           '</div>' +
           '<li ng-show="branchText || branchSelectionList[0]" class="sinclo_re chat_left details" ng-class="{' +
@@ -224,7 +226,8 @@
           'balloonType: widget.settings[\'chat_message_design_type\'] == 2,' +
           'middleSize: widget.settings[\'widget_size_type\'] == 2,' +
           'largeSize: widget.settings[\'widget_size_type\'] == 3 || widget.settings[\'widget_size_type\'] == 4,' +
-          'customSize: widget.settings[\'widget_size_type\'] == 5' +
+          'customSize: widget.settings[\'widget_size_type\'] == 5,' +
+          'customWidth: radioStyle == \'1\'' +
           '}">' +
           '<span ng-if="widget.settings[\'show_automessage_name\'] === \'1\'" class="cName details">{{widget.settings[\'sub_title\']}}</span>' +
           '<span class="details preview_text_span_branch">' +
@@ -242,7 +245,7 @@
           'hasBackground: radioStyle === \'1\'' +
           '}">{{content.value}}</label>' +
           '</div>' +
-          '<span class="sinclo-text-line" ng-if="content.type == 2">' +
+          '<span class="sinclo-text-line between" ng-if="content.type == 2">' +
           '{{content.value}}' +
           '</span>' +
           '</span>' +
@@ -258,7 +261,7 @@
           'noneBorder: outButtonUINoneBorder,' +
           'hasBorder: !outButtonUINoneBorder' +
           '}" onclick="return false;" finisher>{{content.value}}</button>' +
-          '<span class="sinclo-text-line" ng-if="content.type == 2">' +
+          '<span class="sinclo-text-line between" ng-if="content.type == 2">' +
           '{{content.value}}' +
           '</span>' +
           '</div>' +

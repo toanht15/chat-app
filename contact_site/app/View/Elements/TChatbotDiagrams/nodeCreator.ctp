@@ -122,7 +122,8 @@ function NodeFactory() {
       childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
       actionParam = {
-        scenarioId: ""
+        scenarioId: "",
+        callbackToDiagram: false
       };
       nodeSize = middleNode;
     } else if (type === "jump") {
@@ -397,7 +398,7 @@ function constantNode(posX, posY) {
             '.port-label': {
               'font-size': 0
             },
-            type: nodeType
+              type: nodeType
           },
           position: {
             name: 'absolute',
