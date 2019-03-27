@@ -68,6 +68,7 @@ define('C_COMPANY_USE_COGMO_ATTEND_API', 'useCogmoAttendApi');  // CogmoAttend�
 define('C_COMPANY_USE_MESSAGE_RANKING', 'useMessageRanking');  // メッセージランキング機能
 define('C_COMPANY_USE_ICON_SETTINGS', 'iconSettings');  // ボット・有人時のアイコン設定
 define('C_COMPANY_USE_CUSTOM_WIDGET_SIZE', 'customWidgetSize');  // ウィジェットサイズ「カスタム」
+define('C_COMPANY_USE_CHATBOT_TREE_EDITOR', 'chatbotTreeEditor');  // オプション：チャットツリー
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
@@ -212,6 +213,7 @@ define('C_AUTO_TRIGGER_VISITOR_DEVICE', 11); // 訪問者の端末
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
 define('C_AUTO_ACTION_TYPE_SELECTSCENARIO', 2);  // シナリオを呼び出す
 define('C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE', 3);  // オートメッセージを呼び出す
+define('C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM', 4);  // チャットツリーを呼び出す
 
 // オートメッセージ機能－ウィジェット種別コード
 define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
@@ -806,7 +808,8 @@ $config['outMessageTriggerList'] = array(
 $config['outMessageActionType'] = array(
   C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
   C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す",
-  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "オートメッセージを呼び出す"
+  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "オートメッセージを呼び出す",
+  C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM => "チャットツリーを呼び出す"
 );
 
 /* オートメッセージ － ウィジェット種別 */

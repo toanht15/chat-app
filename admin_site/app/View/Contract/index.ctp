@@ -108,6 +108,11 @@
                       echo '<p>【シナリオ設定】</p>';
                     }
                     break;
+                  case 'chatbotTreeEditor':
+                    if($enabled) {
+                      echo '<p>【チャットツリー設定】</p>';
+                    }
+                    break;
                 }
               }
             ?></td>

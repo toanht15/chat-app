@@ -570,7 +570,7 @@ function getMessageTypeByUiType(type) {
       result = 22;
       break;
     case 3:
-      result = 55;
+      result = 22;
       break;
     case 4:
       result = 41;
@@ -1212,6 +1212,25 @@ io.sockets.on('connection', function(socket) {
             date = new Date(date);
             setList[fullDateTime(date) + '_'] = scenarioMessages[i];
           }
+          var diagram = [];
+          if (obj.sincloSessionId in sincloCore[obj.siteKey] &&
+              'diagram' in sincloCore[obj.siteKey][obj.sincloSessionId]) {
+            var diagramArray = sincloCore[obj.siteKey][obj.sincloSessionId].diagram;
+            try {
+              diagram = sincloCore[obj.siteKey][obj.sincloSessionId].diagram;
+            } catch (e) {
+
+            }
+          }
+          for (var i = 0; i < diagram.length; i++) {
+            var date = diagram[i].created;
+            date = new Date(date);
+            // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
+            //   delete autoMessages[i].userName;
+            // }
+            setList[fullDateTime(date) +
+            '_'] = diagram[i];
+          }
           chatData.messages = objectSort(setList);
           obj.chat = chatData;
           console.log(chatData);
@@ -1228,7 +1247,7 @@ io.sockets.on('connection', function(socket) {
         m_companies_id: companyList[d.siteKey],
         visitors_id: d.userId,
         m_users_id: d.mUserId,
-        message: d.chatMessage,
+        message: (d.isDiagramMessage) ? d.chatMessage.message : d.chatMessage,
         message_type: d.messageType,
         message_distinction: d.messageDistinction,
         message_request_flg: d.messageRequestFlg,
@@ -1250,7 +1269,7 @@ io.sockets.on('connection', function(socket) {
                 new Date(d.created) :
                 new Date();
 
-            // オートメッセージとシナリオの場合は既読
+            // オートメッセージとシナリオとチャットツリーの場合は既読
             if (Number(insertData.message_type === 3) ||
                 Number(insertData.message_type === 22) ||
                 Number(insertData.message_type === 40) ||
@@ -1258,7 +1277,7 @@ io.sockets.on('connection', function(socket) {
               insertData.message_read_flg = 1;
               insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
               insertData.message_distinction = d.messageDistinction;
-            } else if ((Number(insertData.message_type) === 1 &&
+            } else if (((Number(insertData.message_type) === 1 || Number(insertData.message_type) === 303) &&
                 d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) ||
                 Number(insertData.message_type) === 12 ||
                 Number(insertData.message_type) === 13) {
@@ -1326,8 +1345,9 @@ io.sockets.on('connection', function(socket) {
         };
 
         // 担当者のいない消費者からのメッセージの場合
-        if (d.messageType === 1 &&
-            !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat')) {
+        if ((d.messageType === 1 &&
+            !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))
+        || (d.messageType === 303 && d.notifyToCompany && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))) {
           // 応対可能かチェック(対応できるのであれば trueが返る)
           chatApi.sendCheck(d, function(err, ret) {
             sendData.opFlg = ret.opFlg;
@@ -1454,11 +1474,9 @@ io.sockets.on('connection', function(socket) {
             userId: insertData.m_users_id,
             messageType: d.messageType,
             ret: true,
-            message: d.chatMessage,
+            message: (d.isDiagramMessage) ? d.chatMessage.message : d.chatMessage,
             siteKey: d.siteKey,
-            notifyToCompany: d.isScenarioMessage ?
-                !d.isScenarioMessage :
-                d.notifyToCompany
+            notifyToCompany: d.notifyToCompany
           };
 
           if (functionManager.isEnabled(d.siteKey,
@@ -1475,6 +1493,14 @@ io.sockets.on('connection', function(socket) {
           if (d.messageType === 1) {
             sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
           }
+        }
+
+        if(d.isDiagramMessage) {
+          var obj = d.chatMessage;
+          var sql = 'INSERT INTO t_history_diagram_logs VALUES (null,?,?,?,?,?,0,now(),NULL,NULL)';
+          pool.query(sql, [companyList[d.siteKey], results.insertId, obj.did, obj.sourceNodeId, obj.nextNodeId], (err, result) => {
+
+          });
         }
 
         //オペレータリクエスト件数
@@ -1496,7 +1522,7 @@ io.sockets.on('connection', function(socket) {
                     var userId = Object.keys(scList[d.siteKey].user)[key];
                     //対応数がMAX人数か確認
                     if (scList[d.siteKey].user[userId] >
-                        scList[d.siteKey].cnt[userId]) {
+                        scList[d.esiteKey].cnt[userId]) {
                       addChatActiveUser(results.insertId, userId, d.siteKey);
                     }
                   }
@@ -2769,7 +2795,8 @@ io.sockets.on('connection', function(socket) {
       sincloCore[obj.siteKey][obj.sincloSessionId] = {
         sessionIds: {},
         autoMessages: {},
-        scenario: {}
+        scenario: {},
+        diagram: []
       };
     }
     if ('timeoutTimer' in sincloCore[obj.siteKey][obj.tabId]) {
@@ -4773,6 +4800,133 @@ io.sockets.on('connection', function(socket) {
       default:
         scenarioLogger.info(joinMessage(obj.message, obj.data));
     }
+  });
+
+  // ============================================
+  // チャットツリーイベントハンドラ
+  // ============================================
+  socket.on('getChatDiagram', function(data, ack) {
+    var obj = JSON.parse(data);
+    var result = {};
+    pool.query(
+      'select activity from t_chatbot_diagrams where m_companies_id = ? and id = ?;',
+      [companyList[obj.siteKey], obj.diagramId],
+      function(err, row) {
+        if (err !== null && err !== '') {
+          if (ack) {
+            ack(result);
+          } else {
+            emit.toMine('resGetChatDiagram', result, socket);
+          }
+          return;
+        }
+        if (row.length !== 0) {
+          result = JSON.parse(row[0].activity);
+        }
+        if (ack) {
+          ack({id: obj.scenarioId, activity: result});
+        } else {
+          emit.toMine('resGetChatDiagram',
+              {id: obj.diagramId, activity: result}, socket);
+        }
+      });
+  });
+
+  socket.on('sendDiagramMessage', function(d, ack) {
+    var obj = JSON.parse(d);
+    var diagramData = obj;
+    diagramData.created = formatDateParse();
+    diagramData.sort = fullDateTime(new Date(diagramData.created));
+
+    var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
+    if (isset(sincloSession) && isset(sincloSession.diagram)) {
+      if (!isset(
+          sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
+        sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
+      }
+      sincloCore[obj.siteKey][obj.sincloSessionId].diagram.push(diagramData);
+    } else {
+      console.log(
+          'sendDiagramMessage::sincloSession : ' + diagramData.sincloSessionId +
+          'is null.');
+      return false;
+    }
+    if (!functionManager.isEnabled(obj.siteKey,
+        functionManager.keyList.monitorPollingMode)) {
+      emit.toCompany('resDiagramMessage', diagramData, obj.siteKey);
+    }
+    emit.toSameUser('resDiagramMessage', diagramData, obj.siteKey,
+        obj.sincloSessionId);
+    ack({data: diagramData});
+  });
+
+  socket.on('storeDiagramMessage', function(data, ack) {
+    var obj = JSON.parse(data);
+    //応対数検索、登録
+    getConversationCountUser(obj.userId, function(results) {
+      var messageDistinction;
+      if (results !== null) {
+        //カウント数が取れなかったとき
+        if (Object.keys(results) && Object.keys(results).length === 0) {
+          messageDistinction = 1;
+        }
+        //カウント数が取れたとき
+        else {
+          messageDistinction = results[0].conversation_count;
+        }
+
+        let messages = obj.message;
+        if(isset(sincloCore[obj.siteKey])
+            && isset(sincloCore[obj.siteKey][obj.sincloSessionId])
+            && isset(sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
+          messages = sincloCore[obj.siteKey][obj.sincloSessionId].diagram.concat(messages);
+          sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
+        }
+        messages.forEach(function(elm, index, arr) {
+          if (!isset(elm.created)) {
+            elm.created = new Date();
+            elm.sort = fullDateTime(elm.created);
+          }
+          elm.applied = true;
+
+          var ret = {
+            siteKey: obj.siteKey,
+            tabId: obj.tabId,
+            userId: obj.userId,
+            mUserId: null,
+            chatMessage: JSON.stringify(elm.message),
+            messageType: elm.messageType,
+            created: elm.created,
+            sort: elm.sort,
+            messageDistinction: messageDistinction,
+            achievementFlg: elm.requireCv ? -1 : null
+          };
+          chatApi.set(ret);
+        });
+      }
+      ack();
+    });
+  });
+
+  socket.on('addLastMessageToConversionFlg', function(d) {
+    var obj = JSON.parse(d);
+    pool.query(
+        'select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? order by created desc limit 0,1;',
+        [companyList[obj.siteKey], obj.historyId],
+        function(err, row) {
+          if (err !== null && err !== '') {
+            console.log('UPDATE lastMessage to cv is failed. historyId : ' +
+                obj.historyId);
+            return;
+          }
+          if (row.length !== 0) {
+            pool.query(
+                'update t_history_chat_logs set achievement_flg=0 where id = ?',
+                [row[0].id], function() {
+
+                });
+          }
+        });
   });
 
   // ============================================
