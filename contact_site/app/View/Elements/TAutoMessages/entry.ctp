@@ -59,7 +59,7 @@
                       <span class="removeArea"><i class="remove" ng-click="main.removeItem(itemType, itemId)"></i></span>
                       <span class="labelArea" ng-click="main.openList('#triggerItem_' + $id)">{{main.tmpList[itemType].label}}<i class="error" ng-if="!itemForm.$valid" ng-showonhover="{{itemType}}"></i></span>
                     </h4>
-                    <div>
+                    <div ng-class="{pb13: itemType === '2'}">
                       <?php echo $this->element('TAutoMessages/templates'); ?>
                     </div>
                   </ng-form>
