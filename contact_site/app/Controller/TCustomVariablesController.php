@@ -106,6 +106,7 @@ class TCustomVariablesController extends AppController {
     $saveData['TCustomVariable']['variable_name'] = $this->request->data['variable_name'];
     $saveData['TCustomVariable']['attribute_value'] = $this->request->data['attribute_value'];
     $saveData['TCustomVariable']['comment'] = $this->request->data['comment'];
+    $saveData['TCustomVariable']['delete_flg'] = 0;
     // const
     $this->TCustomVariable->set($saveData);
     $this->TCustomVariable->begin();
