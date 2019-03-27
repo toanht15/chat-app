@@ -6471,6 +6471,10 @@ ul.naviBtn {
                 }
               }
 
+              > items li.noPaddingBottom {
+                padding-bottom: 0;
+              }
+
             }
 
             div.balloon {

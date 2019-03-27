@@ -53,7 +53,7 @@
           <div id="setTriggerList" class="pl30 setClockPicker">
             <ul>
               <items ng-repeat="(itemType, list) in main.setItemList" ng-if="main.keys(main.setItemList)!==0">
-                <li ng-repeat="(itemId, setItem) in list track by $index" class="triggerItem selected" id="triggerItem_{{$id}}">
+                <li ng-repeat="(itemId, setItem) in list track by $index" ng-class="{noPaddingBottom: itemType === '11' || itemType === '2'}" class="triggerItem selected" id="triggerItem_{{$id}}">
                   <ng-form name="itemForm" ng-err-cnt novalidate>
                     <h4>
                       <span class="removeArea"><i class="remove" ng-click="main.removeItem(itemType, itemId)"></i></span>

@@ -8187,6 +8187,20 @@
           }
           return false;
         },
+        isValidStayCountCondition: function(condition, count) {
+          switch (Number(condition.visitCntCond)) {
+            case 1: // 一致
+              return (Number(condition.visitCnt) === Number(count));
+            case 2: // 以上
+              return (Number(condition.visitCnt) <= Number(count));
+            case 3: // 未満
+              return (Number(condition.visitCnt) > Number(count));
+            case 4: // 範囲
+              return (Number(condition.visitCntMax) > Number(count)) && (Number(condition.visitCnt) <= Number(count));
+            default:
+              return false;
+          }
+        },
         /**
          * @params int type 比較種別
          * @params int a キーワード
@@ -8399,8 +8413,7 @@
         stayCount: function(cond, callback) {
           if (!('visitCntCond' in cond) ||
               !('visitCnt' in cond)) return callback(true, null);
-          if (sinclo.trigger.common.numMatch(cond.visitCntCond,
-              userInfo.getStayCount(), cond.visitCnt)) {
+          if (sinclo.trigger.common.isValidStayCountCondition(cond, userInfo.getStayCount())) {
             callback(false, 0);
           } else {
             callback(true, null);
