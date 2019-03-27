@@ -1441,7 +1441,7 @@
                 }
               }
               if (!found && chat.id !== chat.chatId) {
-                // オートメッセージ設定で無効 or 削除された
+                // トリガー設定で無効 or 削除された
                 console.log('delete ' + chat.chatId);
                 window.sinclo.chatApi.autoMessages.delete(chat.chatId);
                 continue;
@@ -1527,7 +1527,7 @@
           if (key.indexOf('_') >= 0 && 'applied' in chat &&
               chat.applied) continue;
 
-          if(sinclo.scenarioApi.isProcessing()) {
+          if (sinclo.scenarioApi.isProcessing()) {
             try {
               if (!hasFirstHearingMessage &&
                   answerCount === 0) {
@@ -1536,13 +1536,14 @@
                 // 2回目以降のカウント0のデータがあればそれ以前のヒアリングのUIをdisableにする
                 sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
               }
-            } catch(e) {
+            } catch (e) {
 
             } finally {
-              if(hasFirstHearingMessage
-                 && sinclo.scenarioApi.isProcessing()
-                 && sinclo.scenarioApi._hearing.isHearingMode()
-                 && Number(sinclo.scenarioApi._hearing._getCurrentSeq()) === 0) {
+              if (hasFirstHearingMessage
+                  && sinclo.scenarioApi.isProcessing()
+                  && sinclo.scenarioApi._hearing.isHearingMode()
+                  && Number(sinclo.scenarioApi._hearing._getCurrentSeq()) ===
+                  0) {
                 // 1回目のヒアリングアクションが終了して2回目のヒアリングアクションに回答していない状態
                 sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
               }
@@ -2128,8 +2129,10 @@
               }
             }
             if (!sinclo.scenarioApi._bulkHearing.isInMode()
-            && obj.messageType !== sinclo.diagramApi.messageType.message.branch
-            && obj.messageType !== sinclo.diagramApi.messageType.message.text) {
+                && obj.messageType !==
+                sinclo.diagramApi.messageType.message.branch
+                && obj.messageType !==
+                sinclo.diagramApi.messageType.message.text) {
               common.chatBotTypingCall(obj);
             }
             return false;
@@ -2660,24 +2663,6 @@
       if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.button) {
         this.chatApi.addButton('hearing_msg sinclo_re',
-            JSON.parse(obj.message).message,
-            JSON.parse(obj.message).settings);
-        this.chatApi.scDown();
-        return false;
-      }
-
-      if (obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.buttonUI) {
-        this.chatApi.addButtonUI('hearing_msg sinclo_re',
-            JSON.parse(obj.message).message,
-            JSON.parse(obj.message).settings);
-        this.chatApi.scDown();
-        return false;
-      }
-
-      if (obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.checkbox) {
-        this.chatApi.addCheckbox('hearing_msg sinclo_re',
             JSON.parse(obj.message).message,
             JSON.parse(obj.message).settings);
         this.chatApi.scDown();
@@ -3708,7 +3693,7 @@
                 sinclo.diagramApi.executor.setDiagramId(
                     $(e.target).data('did'));
                 sinclo.chatApi.send(message);
-                return false;
+                return;
               }
               if (!(window.sincloInfo.widget.hasOwnProperty(
                   'chatRadioBehavior') &&
@@ -4587,7 +4572,7 @@
               content += strings[i];
               continue;
             }
-            var str         = check.escape_html(strings[i]);
+            var str = check.escape_html(strings[i]);
             var unEscapeStr = str.replace(/(&lt;)/g, '<').
                 replace(/(&gt;)/g, '>').
                 replace(/(&quot;)/g, '"').
@@ -4597,7 +4582,7 @@
             if (obj.cn.indexOf('sinclo_re') !== -1) {
               // ラジオボタン
               // TODO ラジオボタンがヒアリング中の場合はdisabledする必要がある。（別の箇所にその処理があるかも）
-              var radio         = str.indexOf('[]');
+              var radio = str.indexOf('[]');
               var selectedRadio = str.indexOf('[*]');
               if (radio > -1) {
                 var name = str.slice(radio + 2).trim();
@@ -4623,10 +4608,10 @@
 
             }
             // リンク
-            var link    = str.match(this.createAnchorTag._regList.linkReg);
+            var link = str.match(this.createAnchorTag._regList.linkReg);
             var linkTab = unEscapeStr.match(
                 this.createAnchorTag._regList.linkTabReg);
-            var option  = 'clickLink';
+            var option = 'clickLink';
             if (linkTab !== null) {
               //aタグが設定されているリンクの場合
               if (link !== null) {
@@ -4636,13 +4621,13 @@
                   null) {
                 //メールリンクの場合
                 option = 'clickMail';
-                link   = str.match(this.createAnchorTag._regList.mailLinkReg);
+                link = str.match(this.createAnchorTag._regList.mailLinkReg);
               }
               if (str.match(this.createAnchorTag._regList.telLinkReg) !==
                   null) {
                 //電話リンクの場合
                 option = 'clickTelno';
-                link   = str.match(this.createAnchorTag._regList.telLinkReg);
+                link = str.match(this.createAnchorTag._regList.telLinkReg);
               }
               str = sinclo.chatApi.createAnchorTag._linkText(option, link,
                   linkTab, unEscapeStr, str, className);
@@ -4668,21 +4653,21 @@
                     telno + '\');link(\'' + telno + '\',\'' + exceedLink +
                     '\',\'clickTelno\') href=\'tel:' + telno + '\'>' + telno +
                     '</a>';
-                str   = str.replace(tel[0], a);
+                str = str.replace(tel[0], a);
               } else {
                 // ただの文字列にする
                 var span = '<span class=\'telno\'>' + telno + '</span>';
-                str      = str.replace(tel[0], span);
+                str = str.replace(tel[0], span);
               }
             }
             if (obj.cn.indexOf('sinclo_re') !== 1) {
               //imgタグ
               var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
-              var img       = unEscapeStr.match(imgTagReg);
+              var img = unEscapeStr.match(imgTagReg);
               if (img !== null && link == null && linkTab == null) {
                 imgTag = '<div style=\'display:inline-block;width:100%;vertical-align:bottom;\'><img ' +
                     img[1] + ' class = ' + className + '></div>';
-                str    = unEscapeStr.replace(img[0], imgTag);
+                str = unEscapeStr.replace(img[0], imgTag);
               }
             }
             if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
@@ -4735,7 +4720,7 @@
             var radioList = li.querySelectorAll(
                 'input[name^=\'sinclo-radio\']');
             for (var i = 0; typeof radioList[i] !== "undefined"; i++) {
-              radioList[i].disabled                    = true;
+              radioList[i].disabled = true;
               radioList[i].parentElement.style.opacity = 0.5;
             }
           } else {
@@ -4796,15 +4781,29 @@
         li.innerHTML = messageHtml + radioButtonHtml;
 
         if (settings.radioStyle === '1') {
-          var radioTarget = $('#sinclo-radio-button' + chatList.children.length + ' input[type="radio"]');
-          var radioLabelTarget = $('#sinclo-radio-button' + chatList.children.length + ' sinclo-radio');
-          radioLabelTarget.css('background-color', settings.customDesign.radioEntireBackgroundColor);
+          var radioTarget = $(
+              '#sinclo-radio-button' + chatList.children.length +
+              ' input[type="radio"]');
+          var radioLabelTarget = $(
+              '#sinclo-radio-button' + chatList.children.length +
+              ' sinclo-radio');
+          radioLabelTarget.css('background-color',
+              settings.customDesign.radioEntireBackgroundColor);
           radioTarget.each(function() {
             if ($(this).prop('checked')) {
-              $(this).parent().css('background-color', settings.customDesign.radioEntireActiveColor);
-              $(this).parent().find('label').css('color', settings.customDesign.radioActiveTextColor);
+              $(this).
+                  parent().
+                  css('background-color',
+                      settings.customDesign.radioEntireActiveColor);
+              $(this).
+                  parent().
+                  find('label').
+                  css('color', settings.customDesign.radioActiveTextColor);
             } else {
-              $(this).parent().find('label').css('color', settings.customDesign.radioTextColor);
+              $(this).
+                  parent().
+                  find('label').
+                  css('color', settings.customDesign.radioTextColor);
             }
           });
           radioTarget.on('change', function() {
@@ -4813,15 +4812,27 @@
                 if (settings.radioStyle !== '1') {
                   $(this).parent().css('background-color', 'transparent');
                 } else {
-                  $(this).parent().css('background-color', settings.customDesign.radioEntireActiveColor);
-                  $(this).parent().find('label').css('color', settings.customDesign.radioActiveTextColor);
+                  $(this).
+                      parent().
+                      css('background-color',
+                          settings.customDesign.radioEntireActiveColor);
+                  $(this).
+                      parent().
+                      find('label').
+                      css('color', settings.customDesign.radioActiveTextColor);
                 }
               } else {
                 if (settings.radioStyle !== '1') {
                   $(this).parent().css('background-color', 'transparent');
                 } else {
-                  $(this).parent().css('background-color', settings.customDesign.radioEntireBackgroundColor);
-                  $(this).parent().find('label').css('color', settings.customDesign.radioTextColor);
+                  $(this).
+                      parent().
+                      css('background-color',
+                          settings.customDesign.radioEntireBackgroundColor);
+                  $(this).
+                      parent().
+                      find('label').
+                      css('color', settings.customDesign.radioTextColor);
                 }
               }
             });
@@ -5097,29 +5108,6 @@
                 $(this).
                     parent().
                     css('color', settings.customDesign.checkboxTextColor);
-              }
-            }
-          });
-        }
-
-        if (settings.checkboxStyle === '1') {
-          var checkboxTarget = $('#sinclo-checkbox' + chatList.children.length + ' input[type="checkbox"]');
-          checkboxTarget.each(function() {
-            if ($(this).prop('checked')) {
-              $(this).parent().css('background-color', settings.customDesign.checkboxEntireActiveColor);
-              $(this).parent().css('color', settings.customDesign.checkboxActiveTextColor);
-            }
-          });
-          checkboxTarget.on('change', function() {
-            if ($(this).prop('checked')) {
-              $(this).parent().css('background-color', settings.customDesign.checkboxEntireActiveColor);
-              $(this).parent().css('color', settings.customDesign.checkboxActiveTextColor);
-            } else {
-              if (settings.checkboxStyle !== '1') {
-                $(this).parent().css('background-color', 'transparent');
-              } else {
-                $(this).parent().css('background-color', settings.customDesign.checkboxEntireBackgroundColor);
-                $(this).parent().css('color', settings.customDesign.checkboxTextColor);
               }
             }
           });
@@ -5427,13 +5415,16 @@
         return html;
       },
       createRadioButtonHtml: function(settings, index, storedValue) {
-        // var style = sinclo.chatApi.createPulldownStyle(settings);
         var name = 'sinclo-radio-button' + index;
         var html = '';
         var storedValueIsFound = false;
-        var radioStyle = settings.radioStyle === '1' ? 'buttonStyle' : 'labelStyle';
+        var radioStyle = settings.radioStyle === '1' ?
+            'buttonStyle' :
+            'labelStyle';
         html += '<div id="' + name + '" class="' + radioStyle + '">';
-        var selectionDistance = settings.customDesign.radioSelectionDistance ? settings.customDesign.radioSelectionDistance : 4;
+        var selectionDistance = settings.customDesign.radioSelectionDistance ?
+            settings.customDesign.radioSelectionDistance :
+            4;
 
         var style = '<style>';
         style += '#sincloBox ul#chatTalk #' + name +
@@ -5443,8 +5434,10 @@
             ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
             settings.customDesign.radioActiveColor + ' !important;}';
 
-        style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio:first-of-type {margin-top: 4px !important}';
-        style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio {margin-top: ' +
+        style += '#sincloBox ul#chatTalk #' + name +
+            ' sinclo-radio:first-of-type {margin-top: 4px !important}';
+        style += '#sincloBox ul#chatTalk #' + name +
+            ' sinclo-radio {margin-top: ' +
             selectionDistance + 'px !important;}';
 
         if (settings.radioNoneBorder) {
@@ -5457,33 +5450,23 @@
         }
 
         if (settings.radioStyle !== '1') {
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
         } else {
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio {padding: 8px;}';
-          style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label {display: inline !important;}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio {padding: 8px;}';
           if (!check.smartphone()) {
-            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"]:checked + label:after {top: 9px !important;}';
-            style += '#sincloBox ul#chatTalk #' + name + ' sinclo-radio [type="radio"] + label:before {top: 2px !important;}';
-        html += '<div id="' + name + '">';
-        if (settings.radioCustomDesign) {
-          var style = '<style>';
-          style += '#sincloBox ul#chatTalk #' + name +
-              ' sinclo-radio [type="radio"] + label:before {background-color: ' +
-              settings.customDesign.radioBackgroundColor + ' !important;}';
-          style += '#sincloBox ul#chatTalk #' + name +
-              ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
-              settings.customDesign.radioActiveColor + ' !important;}';
-          if (settings.radioNoneBorder) {
             style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
-          } else {
+                ' sinclo-radio [type="radio"] + label {display: block !important;}';
             style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"] + label:before {border-color: ' +
-                settings.customDesign.radioBorderColor + '!important;}';
+                ' sinclo-radio [type="radio"]:checked + label:after {top: 9px !important;}';
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio [type="radio"] + label:before {top: 2px !important;}';
           }
-          style += '</style>';
-          html += style;
         }
+
+        style += '</style>';
+        html += style;
         settings.options.forEach(function(option, index) {
           html += '<sinclo-radio style="display: block;">';
           if (storedValue === option) {
@@ -5716,16 +5699,21 @@
         var borderColor = '#FFFFFF';
         var checkmarkColor = '#FFFFFF';
         if (settings.checkboxCustomDesign) {
-           borderColor = settings.customDesign.checkboxBorderColor;
-           checkmarkColor = settings.customDesign.checkboxCheckmarkColor;
+          borderColor = settings.customDesign.checkboxBorderColor;
+          checkmarkColor = settings.customDesign.checkboxCheckmarkColor;
         } else {
-           borderColor = sincloInfo.widget.mainColor;
-           checkmarkColor = sincloInfo.widget.mainColor;
+          borderColor = sincloInfo.widget.mainColor;
+          checkmarkColor = sincloInfo.widget.mainColor;
         }
-        var selectionDistance = settings.customDesign.checkboxSelectionDistance ? settings.customDesign.checkboxSelectionDistance : 4;
+        var selectionDistance = settings.customDesign.checkboxSelectionDistance ?
+            settings.customDesign.checkboxSelectionDistance :
+            4;
         var style = '<style>';
         style += '#sincloBox ' + id +
-            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' + selectionDistance + 'px;cursor: pointer; -webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' + sincloInfo.widget.reTextColor + ';}';
+            ' .sinclo-checkbox {display: block;position: relative;padding-left: 20px;margin-bottom: ' +
+            selectionDistance +
+            'px;cursor: pointer; -webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none; color: ' +
+            sincloInfo.widget.reTextColor + ';}';
         style += '#sincloBox ' + id +
             ' .sinclo-checkbox input {position: absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}';
         style += '#sincloBox ' + id +
@@ -5733,13 +5721,22 @@
             settings.customDesign.checkboxBackgroundColor + '}';
         if (check.smartphone()) {
           style += '#sincloBox ' + id +
-              ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (sincloInfo.widget.reTextSize - 8) + 'px;top: ' + (sincloInfo.widget.reTextSize - 11) + 'px;width: 3px;height: 6px;border: solid ' + checkmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+              ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' +
+              (sincloInfo.widget.reTextSize - 8) + 'px;top: ' +
+              (sincloInfo.widget.reTextSize - 11) +
+              'px;width: 3px;height: 6px;border: solid ' + checkmarkColor +
+              ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
         } else {
           style += '#sincloBox ' + id +
-              ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' + (sincloInfo.widget.reTextSize - 9) + 'px;top: ' + (sincloInfo.widget.reTextSize - 12) + 'px;width: 3px;height: 6px;border: solid ' + checkmarkColor + ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+              ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' +
+              (sincloInfo.widget.reTextSize - 9) + 'px;top: ' +
+              (sincloInfo.widget.reTextSize - 12) +
+              'px;width: 3px;height: 6px;border: solid ' + checkmarkColor +
+              ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
         }
 
-        style += '#sincloBox ' + id + ' .sinclo-checkbox input:checked ~ .checkmark {background-color: ' +
+        style += '#sincloBox ' + id +
+            ' .sinclo-checkbox input:checked ~ .checkmark {background-color: ' +
             settings.customDesign.checkboxActiveColor + '}';
         style += '#sincloBox ' + id +
             ' .sinclo-checkbox input:checked ~ .checkmark:after {display: block}';
@@ -5747,7 +5744,9 @@
             ' .sinclo-checkbox input:hover ~ .checkmark {background-color: ' +
             settings.customDesign.checkboxActiveColor + '}';
         style += '#sincloBox ' + id +
-            ' span.ok-button {width: 100px; height: 30px; line-height: 30px; cursor: pointer; margin: auto; margin-top: 10px; display: block; text-align:center; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + sincloInfo.widget.chatSendBtnBackgroundColor + '; color: ' + sincloInfo.widget.chatSendBtnTextColor + ';}';
+            ' span.ok-button {width: 100px; height: 30px; line-height: 30px; cursor: pointer; margin: auto; margin-top: 10px; display: block; text-align:center; justify-content: center; align-items: center; border-radius: 12px; background-color: ' +
+            sincloInfo.widget.chatSendBtnBackgroundColor + '; color: ' +
+            sincloInfo.widget.chatSendBtnTextColor + ';}';
         style += '#sincloBox ' + id + '{ display: block;}';
         if (settings.checkboxNoneBorder) {
           style += '#sincloBox ' + id +
@@ -5759,18 +5758,24 @@
         }
 
         if (settings.checkboxStyle !== '1') {
-          style += '#sincloBox ' + id + ' .sinclo-checkbox {background-color: transparent;}';
+          style += '#sincloBox ' + id +
+              ' .sinclo-checkbox {background-color: transparent;}';
           if (check.smartphone()) {
-            style += '#sincloBox ' + id + ' .sinclo-checkbox {padding-left: 25px;}';
+            style += '#sincloBox ' + id +
+                ' .sinclo-checkbox {padding-left: 25px;}';
           }
         } else {
           if (check.smartphone()) {
-            style += '#sincloBox ' + id + ' .sinclo-checkbox {padding: 8px 8px 8px 32px;}';
+            style += '#sincloBox ' + id +
+                ' .sinclo-checkbox {padding: 8px 8px 8px 32px;}';
           } else {
-            style += '#sincloBox ' + id + ' .sinclo-checkbox {padding: 8px 8px 8px 28px;}';
+            style += '#sincloBox ' + id +
+                ' .sinclo-checkbox {padding: 8px 8px 8px 28px;}';
           }
-          style += '#sincloBox ' + id + ' .sinclo-checkbox .checkmark {top: 9px;left: 8px; }';
-          style += '#sincloBox ' + id + ' .sinclo-checkbox {background-color: ' +
+          style += '#sincloBox ' + id +
+              ' .sinclo-checkbox .checkmark {top: 9px;left: 8px; }';
+          style += '#sincloBox ' + id +
+              ' .sinclo-checkbox {background-color: ' +
               settings.customDesign.checkboxEntireBackgroundColor + ';}';
           style += '#sincloBox ' + id + ' .sinclo-checkbox {color: ' +
               settings.customDesign.checkboxTextColor + ';}';
@@ -8543,26 +8548,29 @@
             }
           }
         } else if (String(type) === '3') {
-          console.log('CALL AUTO MESSAGE!!!!!! ' + callId);
-          // 設定ごと
-          var targetAutomessage = null;
-          for (var i = 0; window.sincloInfo.messages.length > i; i++) {
-            if (Number(window.sincloInfo.messages[i].id) === Number(callId)) {
-              targetAutomessage = window.sincloInfo.messages[i];
-              break;
+          if(!sinclo.scenarioApi.isProcessing()) {
+            console.log('CALL AUTO MESSAGE!!!!!! ' + callId);
+            // 設定ごと
+            var targetAutomessage = null;
+            for (var i = 0; window.sincloInfo.messages.length > i; i++) {
+              if (Number(window.sincloInfo.messages[i].id) === Number(callId)) {
+                targetAutomessage = window.sincloInfo.messages[i];
+                break;
+              }
             }
-          }
-          if (targetAutomessage) {
-            // 再帰呼び出し
-            sinclo.trigger.setAction(targetAutomessage.id,
-                targetAutomessage.action_type, targetAutomessage.activity,
-                targetAutomessage.send_mail_flg,
-                targetAutomessage.scenario_id,
-                targetAutomessage.call_automessage_id, true);
+            if (targetAutomessage) {
+              // 再帰呼び出し
+              sinclo.trigger.setAction(targetAutomessage.id,
+                  targetAutomessage.action_type, targetAutomessage.activity,
+                  targetAutomessage.send_mail_flg,
+                  targetAutomessage.scenario_id,
+                  targetAutomessage.call_automessage_id, true);
+            }
           }
         } else if (String(type) === '4') {
           console.log('CHAT DIAGRAM TRIGGERED!!!!!! ' + diagramId);
-          if (window.sincloInfo.contract.chatbotTreeEditor && diagramId) {
+          if (window.sincloInfo.contract.chatbotTreeEditor && diagramId
+            && !sinclo.scenarioApi.isProcessing()) {
             emit('getChatDiagram', {'diagramId': diagramId});
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
@@ -8604,6 +8612,20 @@
               break;
           }
           return false;
+        },
+        isValidStayCountCondition: function(condition, count) {
+          switch (Number(condition.visitCntCond)) {
+            case 1: // 一致
+              return (Number(condition.visitCnt) === Number(count));
+            case 2: // 以上
+              return (Number(condition.visitCnt) <= Number(count));
+            case 3: // 未満
+              return (Number(condition.visitCnt) > Number(count));
+            case 4: // 範囲
+              return (Number(condition.visitCntMax) > Number(count)) && (Number(condition.visitCnt) <= Number(count));
+            default:
+              return false;
+          }
         },
         /**
          * @params int type 比較種別
@@ -8817,8 +8839,7 @@
         stayCount: function(cond, callback) {
           if (!('visitCntCond' in cond) ||
               !('visitCnt' in cond)) return callback(true, null);
-          if (sinclo.trigger.common.numMatch(cond.visitCntCond,
-              userInfo.getStayCount(), cond.visitCnt)) {
+          if (sinclo.trigger.common.isValidStayCountCondition(cond, userInfo.getStayCount())) {
             callback(false, 0);
           } else {
             callback(true, null);
@@ -9002,7 +9023,8 @@
               && !sinclo.scenarioApi.isProcessing() &&
               !sinclo.scenarioApi.isWaitingInput() &&
               this.speechContentRegEx.length > 0) {
-            for (var index in this.speechContentRegEx) {
+            for (var index = 0; index <
+            this.speechContentRegEx.length; index++) {
               console.log(this.speechContentRegEx[index].id);
               if (sinclo.chatApi.triggeredAutoSpeechExists(
                   this.speechContentRegEx[index].id)) {
@@ -9504,6 +9526,9 @@
         self._unsetBaseObj();
         self._unsetUploadedFileData();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
+        if (sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
+          sinclo.diagramApi.callScenario.goToNextNode();
+        }
       },
       isProcessing: function() {
         var self = sinclo.scenarioApi;
@@ -11099,6 +11124,7 @@
             case '3': // ラジオボタン
               self._parent.set(self._parent._lKey.sendCustomerMessageType, 33);
               self._parent.set(self._parent._lKey.scenarioMessageType, 55);
+
               var params = {
                 type: '2',
                 uiType: uiType,
@@ -11208,6 +11234,7 @@
               }
               self._parent._showCheckbox(params, callback);
               break;
+
             default:
               self._parent.set(self._parent._lKey.sendCustomerMessageType, 12);
               self._parent.set(self._parent._lKey.scenarioMessageType, 22);
@@ -11621,7 +11648,8 @@
           sinclo.api.callFunction('sc',
               self._parent.get(self._parent._lKey.scenarioId));
           // 外部連携実装後に外す
-          emit('processSendMail', sendData, function(ev) {});
+          emit('processSendMail', sendData, function(ev) {
+          });
           self._parent.set(self._parent._lKey.isSentMail, true);
           if (self._parent._goToNextScenario()) {
             self._parent._process();
@@ -11948,10 +11976,12 @@
           switch (Number(condition.matchValueType)) {
             case 1: // いずれかを含む場合
               return self._matchCaseInclude(targetValue,
-                  self._splitMatchValue(condition.matchValue));
+                  self._splitMatchValue(condition.matchValue),
+                  condition.matchValuePattern);
             case 2: // いずれも含まない場合
               return self._matchCaseExclude(targetValue,
-                  self._splitMatchValue(condition.matchValue));
+                  self._splitMatchValue(condition.matchValue),
+                  condition.matchValuePattern);
             default:
               return false;
           }
@@ -12018,24 +12048,6 @@
               break;
             case 5:
               // リンク呼出
-              var url = condition.action.url,
-                  openType = condition.action.openType;
-              console.log('url : %s openType : %s', url, openType);
-              switch (Number(openType)) {
-                case 1:
-                  // ページ遷移
-                  location.href = url;
-                  break;
-                case 2:
-                  window.open(url);
-                  break;
-              }
-              if (self._parent._goToNextScenario()) {
-                self._parent._process();
-              }
-              break;
-            case 5:
-              // リンク呼出
               var childWindow = null,
                   openType = condition.action.openType;
               if (Number(openType) === 2) {
@@ -12058,6 +12070,24 @@
                   self._parent._process();
                 }
               });
+              break;
+            case 5:
+              // リンク呼出
+              var url = condition.action.url,
+                  openType = condition.action.openType;
+              console.log('url : %s openType : %s', url, openType);
+              switch (Number(openType)) {
+                case 1:
+                  // ページ遷移
+                  location.href = url;
+                  break;
+                case 2:
+                  window.open(url);
+                  break;
+              }
+              if (self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
               break;
           }
         },
@@ -12091,7 +12121,7 @@
           });
           return splitedArray;
         },
-        _matchCaseInclude: function(val, words) {
+        _matchCaseInclude: function(val, words, pattern) {
           console.log('_matchCaseInclude : %s <=> %s', words, val);
           var result = false;
           for (var i = 0; i < words.length; i++) {
@@ -12116,7 +12146,7 @@
           }
           return result;
         },
-        _matchCaseExclude: function(val, words) {
+        _matchCaseExclude: function(val, words, pattern) {
           for (var i = 0; i < words.length; i++) {
             if (words[i] === '') {
               if (words.length > 1 && i === words.length - 1) {
@@ -12125,7 +12155,14 @@
 
             } else {
               var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-              var preg = new RegExp(word);
+              var preg;
+              if (!pattern || pattern === '1') {
+                // 完全一致
+                preg = new RegExp('^' + word + '$');
+              } else {
+                // 部分一致
+                preg = new RegExp(word);
+              }
               exclusionResult = preg.test(val);
               if (exclusionResult) {
                 // 含んでいる場合はNG
@@ -12841,23 +12878,15 @@
           var cells = self.storage.get(self.storage._lKey.diagrams,
               Number(did));
           var target = 'branch';
-          for (var i = 0; i < cells.length; i++) {
-            if (cells[i].id === nid) {
-              target = cells[i].attrs.nodeBasicInfo.nodeType;
-            }
-          }
+          target = cells[nid].attrs.nodeBasicInfo.nodeType;
           return self.messageType.customer[target];
         },
         getDiagramMessageType: function(did, nid) {
           var self = sinclo.diagramApi;
           var cells = self.storage.get(self.storage._lKey.diagrams,
               Number(did));
-          var target = 'branch';
-          for (var i = 0; i < cells.length; i++) {
-            if (cells[i].id === nid) {
-              target = cells[i].attrs.nodeBasicInfo.nodeType;
-            }
-          }
+          debugger;
+          var target = cells[nid].attrs.nodeBasicInfo.nodeType;
           return self.messageType.message[target];
         },
         unset: function(key) {
@@ -12921,13 +12950,9 @@
           var self = sinclo.diagramApi;
           var targetNode = {};
           var baseData = self.storage.get(self.storage._lKey.diagrams, did);
-          Object.keys(baseData).some(function(idx, arrIdx, arr) {
-            var node = baseData[idx];
-            if (node.id.indexOf(nodeId) !== -1) {
-              targetNode = node;
-              return true;
-            }
-          });
+          if (baseData[nodeId]) {
+            targetNode = baseData[nodeId];
+          }
           return targetNode;
         }
       },
@@ -13015,9 +13040,9 @@
             self.storage.setBaseObj(self.defaultVal);
           }
           self.executor.setDiagramId(id);
-          self.storage.set(self.storage._lKey.diagrams, data.cells);
+          self.storage.set(self.storage._lKey.diagrams, data);
           self.common._saveProcessingState(true);
-          var beginNode = self.common.getStartNode(data.cells);
+          var beginNode = self.common.getStartNode(data);
           self.storage.set(self.storage._lKey.messageInterval,
               beginNode.attrs.nodeBasicInfo.messageIntervalSec);
           self.executor.setNext(id, beginNode.attrs.nodeBasicInfo.nextNodeId);
@@ -13025,8 +13050,8 @@
         getStartNode: function(obj) {
           var self = sinclo.diagramApi;
           var node = {};
-          Object.keys(obj).some(function(index, idx, arr) {
-            node = obj[index];
+          Object.keys(obj).some(function(uuid) {
+            node = obj[uuid];
             if (self.common.isStartNode(node)) {
               return true;
             }
@@ -13109,24 +13134,37 @@
           var map = {};
           var baseData = self.storage.getBaseObj();
           for (var i = 0; i < itemIds.length; i++) {
-            for (var nodeIndex = 0; nodeIndex <
-            baseData[self.storage._lKey.diagrams][self.common.getDiagramId()].length; nodeIndex++) {
-              if (baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['id'] ===
-                  itemIds[i] &&
-                  baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nodeType'] ===
-                  'childPortNode') {
-                map[itemIds[i]] = baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'];
-              }
+            var targetNode = baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][itemIds[i]];
+            if ((targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode'
+                && targetNode['attrs']['nodeBasicInfo']['nextNodeId']
+                && targetNode['attrs']['nodeBasicInfo']['nextNodeId'] !== '') || targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childTextNode') {
+              map[itemIds[i]] = targetNode['attrs']['nodeBasicInfo']['nextNodeId'];
             }
           }
+          console.log(map);
           return map;
         },
         getLabelMap: function(currentNode, idKeys) {
+          var self = sinclo.diagramApi;
           var labels = currentNode.attrs.actionParam.selection;
           var map = {};
-          for (var i = 0; i < labels.length; i++) {
-            map[idKeys[i]] = labels[i];
+          var baseData = self.storage.getBaseObj();
+          for (var i = 0; i < idKeys.length; i++) {
+            if(idKeys[i] === undefined) break;
+            var found = false;
+            var targetNode = baseData[self.storage._lKey.diagrams][self.common.getDiagramId()][idKeys[i]];
+            if ((targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode' || targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childTextNode')
+                && targetNode['attrs']['nodeBasicInfo']['tooltip']) {
+              for(var j=0; j < labels.length; j++) {
+                if(labels[j].value === targetNode['attrs']['nodeBasicInfo']['tooltip']) {
+                  labels[j]['uuid'] = idKeys[i];
+                  map[j] = labels[j];
+                  break;
+                }
+              }
+            }
           }
+          console.log(map);
           return map;
         },
         showMessage: function(
@@ -13148,11 +13186,51 @@
           div.style.textAlign = 'left';
           cs += ' effect_left';
           cs += ' diagram_msg';
+          if(customizeDesign.radioStyle === '1') {
+            cs += ' customWidth';
+          }
 
           li.className = cs;
-          li.innerHTML = messageHtml + buttonHtml;
+          li.innerHTML = messageHtml + buttonHtml.html;
 
           sinclo.chatApi.scDown();
+
+          if (customizeDesign.radioStyle === '1') {
+            $('#sinclo-radio-button-' + buttonHtml.timestamp).css('line-height', 0);
+            var radioTarget = $('#sinclo-radio-button-' + buttonHtml.timestamp + ' input[type="radio"]');
+            var radioLabelTarget = $('#sinclo-radio-button-' + buttonHtml.timestamp + ' sinclo-radio');
+            radioLabelTarget.css({
+              'background-color': customizeDesign.radioEntireBackgroundColor,
+              'display': 'block'
+            });
+            radioTarget.each(function() {
+              if ($(this).prop('checked')) {
+                $(this).parent().css('background-color', customizeDesign.radioEntireActiveColor);
+                $(this).parent().find('label').css('color', customizeDesign.radioActiveTextColor);
+              } else {
+                $(this).parent().find('label').css('color', customizeDesign.radioTextColor);
+              }
+            });
+            radioTarget.on('change', function() {
+              radioTarget.each(function() {
+                if ($(this).prop('checked')) {
+                  if (customizeDesign.radioStyle !== '1') {
+                    $(this).parent().css('background-color', 'transparent');
+                  } else {
+                    $(this).parent().css('background-color', customizeDesign.radioEntireActiveColor);
+                    $(this).parent().find('label').css('color', customizeDesign.radioActiveTextColor);
+                  }
+                } else {
+                  if (customizeDesign.radioStyle !== '1') {
+                    $(this).parent().css('background-color', 'transparent');
+                  } else {
+                    $(this).parent().css('background-color', customizeDesign.radioEntireBackgroundColor);
+                    $(this).parent().find('label').css('color', customizeDesign.radioTextColor);
+                  }
+                }
+              });
+            });
+          }
 
           if (Number(currentNode.attrs.actionParam.btnType) === 2) {
             // ボタンの場合のイベントハンドラはここ
@@ -13191,55 +13269,76 @@
         getHtml: function(currentNode, selectionMap, labels, customizeDesign) {
           var self = sinclo.diagramApi;
           var html = '';
-          Object.keys(labels).forEach(function(nodeId, idx, arr) {
-            var timestamp = (new Date()).getTime();
+          var firstTimestamp = 0;
+          Object.keys(labels).forEach(function(index, idx, arr) {
+            var timestamp = common.makeToken();
+            console.log(timestamp);
             var did = check.isset(currentNode.diagramId) ?
                 currentNode.diagramId :
                 self.common.getDiagramId();
             var nid = check.isset(currentNode.sourceNodeId) ?
                 currentNode.sourceNodeId :
                 self.common.getCurrentNodeId();
-            if (check.isset(labels[nodeId]['type']) &&
-                check.isset(labels[nodeId]['value']) &&
-                Number(labels[nodeId]['type']) === 2) {
-              html += sinclo.chatApi.createMessageHtml(labels[nodeId]['value']);
+            if (check.isset(labels[idx]['type']) &&
+                check.isset(labels[idx]['value']) &&
+                Number(labels[idx]['type']) === 2) {
+              html += sinclo.chatApi.createMessageHtml(labels[idx]['value']);
             } else {
-              var message = check.isset(labels[nodeId]['value']) ?
-                  labels[nodeId]['value'] :
-                  labels[nodeId];
+              var message = check.isset(labels[idx]['value']) ?
+                  labels[idx]['value'] :
+                  labels[idx];
               switch (Number(currentNode.attrs.actionParam.btnType)) {
                 case 1:
                   // ラジオボタン
-                  var name = 'sinclo-radio-' + timestamp;
+                  var name = 'sinclo-radio-button-' + timestamp;
                   var style = self.branch.createRadioButtonStyle(
-                      customizeDesign, '#' + name);
-                  html += style;
+                      customizeDesign, name);
+                  var radioStyle = customizeDesign.radioStyle === '1' ?
+                      'buttonStyle' :
+                      'labelStyle';
+                  if (idx === 0) {
+                    firstTimestamp = timestamp;
+                    html += '<div id="' + name + '" class="' + radioStyle + '">';
+                    html += style;
+                  }
                   html += '<sinclo-radio>';
                   html += '<input type="radio" name="sinclo-radio-' +
-                      timestamp +
-                      '" id="sinclo-radio-' + timestamp +
+                      firstTimestamp +
+                      '" id="sinclo-radio-btn-' + timestamp +
                       '" class="sinclo-chat-radio" value="' + message +
                       '" data-did="' + did +
                       '" data-nid="' + nid +
-                      '" data-next-nid="' + selectionMap[nodeId] + '">';
-                  html += '<label for="sinclo-radio-' + timestamp + '">' +
+                      '" data-next-nid="' + selectionMap[labels[idx]['uuid']] + '">';
+                  html += '<label for="sinclo-radio-btn-' + timestamp + '">' +
                       message + '</label>';
-                  html += '</sinclo-radio>';
+                  html += '</sinclo-radio>' + '\n';
+                  if (idx === arr.length - 1) {
+                    html += '</div>';
+                  }
                   break;
                 case 2:
-                  // ボタン
-                  var timestamp = (new Date()).getTime();
+                  var isPrevMessage = (idx > 0 && Number(labels[idx - 1].type) === 2);
+                  var isNextMessage = (idx < Object.keys(labels).length - 1 && Number(labels[idx + 1].type) === 2);
+                  var isEnd = (idx === Object.keys(labels).length - 1);
+                  var addClass = '';
+                  if(idx === 0 || isPrevMessage) {
+                    addClass += 'top';
+                  }
+                  if(isNextMessage || isEnd) {
+                    addClass += ' bottom';
+                  }
                   var name = 'sinclo-buttonUI_' + timestamp;
                   var style = self.branch.createButtonUIStyle(customizeDesign,
                       '#' + name);
                   if (idx === 0) {
+                    firstTimestamp = timestamp;
                     html += '<div id="' + name + '">';
                     html += style;
                   }
-                  html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui" data-did="' +
+                  html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui ' + addClass + '" data-did="' +
                       did +
                       '" data-nid="' + nid +
-                      '" data-next-nid="' + selectionMap[nodeId] + '">' +
+                      '" data-next-nid="' + selectionMap[labels[idx]['uuid']] + '">' +
                       message + '</button>';
                   if (idx === arr.length - 1) {
                     html += '</div>';
@@ -13248,28 +13347,58 @@
               }
             }
           });
-          return html;
+          return {
+            timestamp: firstTimestamp,
+            html: html
+          };
         },
         createRadioButtonStyle: function(settings, name) {
           var style = '';
-          if (settings.isCustomize) {
-            style = '<style>';
+          var selectionDistance = settings.radioSelectionDistance ?
+              settings.radioSelectionDistance :
+              4;
+
+          style = '<style>';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio [type="radio"] + label:before {background-color: ' +
+              settings.radioBackgroundColor + ' !important;}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
+              settings.radioActiveColor + ' !important;}';
+
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio:first-of-type {margin-top: 4px !important}';
+          style += '#sincloBox ul#chatTalk #' + name +
+              ' sinclo-radio {margin-top: ' +
+              selectionDistance + 'px !important;}';
+          style += '#sincloBox #' + name +
+              ' span.sinclo-text-line { margin-top: ' +
+              selectionDistance + 'px; }';
+          if (settings.radioNoneBorder) {
             style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"] + label:before {background-color: ' +
-                settings.customDesign.radioBackgroundColor + ' !important;}';
+                ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
+          } else {
             style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio [type="radio"]:checked + label:after {background: ' +
-                settings.customDesign.radioActiveColor + ' !important;}';
-            if (settings.radioNoneBorder) {
-              style += '#sincloBox ul#chatTalk #' + name +
-                  ' sinclo-radio [type="radio"] + label:before {border-color: transparent !important;}';
-            } else {
-              style += '#sincloBox ul#chatTalk #' + name +
-                  ' sinclo-radio [type="radio"] + label:before {border-color: ' +
-                  settings.customDesign.radioBorderColor + '!important;}';
-            }
-            style += '</style>';
+                ' sinclo-radio [type="radio"] + label:before {border-color: ' +
+                settings.radioBorderColor + '!important;}';
           }
+
+          if (Number(settings.radioStyle) !== 1) {
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
+          } else {
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio {padding: 8px;}';
+            if (!check.smartphone()) {
+              style += '#sincloBox ul#chatTalk #' + name +
+                  ' sinclo-radio [type="radio"] + label {display: block !important;}';
+              style += '#sincloBox ul#chatTalk #' + name +
+                  ' sinclo-radio [type="radio"]:checked + label:after {top: 9px !important;}';
+              style += '#sincloBox ul#chatTalk #' + name +
+                  ' sinclo-radio [type="radio"] + label:before {top: 2px !important;}';
+            }
+          }
+          style += '</style>';
           return style;
         },
         createButtonUIStyle: function(settings, id) {
@@ -13277,14 +13406,16 @@
           style += '#sincloBox ul#chatTalk ' + id +
               ' button.sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
           style += '#sincloBox ul#chatTalk ' + id +
-              ' button.sinclo-button-ui:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+              ' button.sinclo-button-ui.top {border-top-left-radius: 8px; border-top-right-radius: 8px}';
           style += '#sincloBox ul#chatTalk ' + id +
-              ' button.sinclo-button-ui:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+              ' button.sinclo-button-ui.bottom {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
           style += '#sincloBox ul#chatTalk ' + id +
               ' button.sinclo-button-ui {text-align: center}';
           style += '#sincloBox ul#chatTalk ' + id +
               ' button.sinclo-button-ui {width: ' +
               sinclo.chatApi.getButtonUIWidth() + 'px;}';
+          style += '#sincloBox ul#chatTalk ' + id +
+              ' span.sinclo-text-line { margin: 4px 0; }';
           if (settings.isCustomize) {
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui {background-color: ' +
@@ -13425,14 +13556,45 @@
         }
       },
       callScenario: {
+        _lKey: {
+          callbackEndScenario: 'sinclo:notifyEndScenario'
+        },
         doAction: function() {
           console.log('<><><><><> CALL SCENARIO <><><><><>');
           var self = sinclo.diagramApi;
           var currentNode = self.storage.getCurrentNode();
           var scenarioId = currentNode.attrs.actionParam.scenarioId;
-          emit('getScenario', {'scenarioId': scenarioId});
-          // 後続のnodeは呼び出しなしのため、チャットツリーは終了する
-          self.common._saveProcessingState(false);
+          if (currentNode.attrs.actionParam.callbackToDiagram) {
+            self.callScenario.beginWaitEndScenario();
+          }
+          common.chatBotTypingCall({messageType: self.messageType.message.text});
+          self.executor.wait(self.executor.getIntervalTimeSec()).
+              then(function() {
+                emit('getScenario', {'scenarioId': scenarioId});
+              });
+        },
+        beginWaitEndScenario: function() {
+          var self = sinclo.diagramApi;
+          self.storage.set(self.callScenario._lKey.callbackEndScenario, true);
+        },
+        endWaitEndScenario: function() {
+          var self = sinclo.diagramApi;
+          self.storage.set(self.callScenario._lKey.callbackEndScenario, false);
+        },
+        isWaitingEndScenario: function() {
+          var self = sinclo.diagramApi;
+          var result = self.storage.get(
+              self.callScenario._lKey.callbackEndScenario);
+          return result && ((typeof result === 'string' && result === true) ||
+              (typeof result === 'boolean' && result));
+        },
+        goToNextNode: function() {
+          var self = sinclo.diagramApi;
+          var currentNode = self.storage.getCurrentNode();
+          var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+          self.callScenario.endWaitEndScenario();
+          self.executor.setNext(self.common.getDiagramId(), nextNodeId);
+          self.executor.execute();
         }
       },
       jumpNode: {

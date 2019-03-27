@@ -6,7 +6,8 @@
  * Time: 21:13
  */
 
-class WidgetSettingController extends AppController
+App::uses('FileAppController', 'Controller');
+class WidgetSettingController extends FileAppController
 {
   public $uses = array('MWidgetSetting');
   public $styleSetting = [

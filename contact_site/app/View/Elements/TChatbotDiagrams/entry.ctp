@@ -36,6 +36,7 @@
         'label' => false,
       )) ?>
       <?php if (!empty($errors['messageIntervalTimeSec'])) echo "<li class='error-message'>" . h($errors['messageIntervalTimeSec'][0]) . "</li>"; ?>
+      <input type="hidden" name="lastPage" value="<?= $lastPage?>">
     </li>
 
   </ul>
@@ -48,14 +49,14 @@
   <?= $this->Form->hidden('TChatbotDiagram.activity') ?>
   <?=$this->ngForm->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
   <div id="tchatbotscenario_actions" class="fotterBtnArea">
-    <?=$this->Html->link('戻る','/TChatbotDiagrams/index/page:', ['class'=>'whiteBtn btn-shadow'])?>
+    <?=$this->Html->link('戻る','/TChatbotDiagrams/index/page:'.$lastPage, ['class'=>'whiteBtn btn-shadow'])?>
     <a id="submitBtn" href="javascript:void(0)" class="greenBtn btn-shadow">保存</a>
     <?php
     $class = "";
-    if ( empty($this->data['TChatbotScenario']['id']) ) {
+    if ( empty($this->data['TChatbotDiagram']['id']) ) {
       $class = "redBtn vHidden";
     } else
-      if (count($this->data['callerInfo']['TAutoMessage']) >= 1 || count($this->data['callerInfo']['TChatbotScenario']) >= 1) {
+      if ((array_key_exists('TAutoMessage',$this->data['callerInfo']) && count($this->data['callerInfo']['TAutoMessage']) >= 1) || (array_key_exists('TChatbotScenario',$this->data['callerInfo']) && count($this->data['callerInfo']['TChatbotScenario']) >= 1)) {
         $class = "disOffgrayBtn disabled commontooltip";
       } else {
         $class = "redBtn";
@@ -65,8 +66,10 @@
       '削除',
       'javascript:void(0)',
       array('escape' => false,
-        'class' => 'btn-shadow redBtn',
+        'class' => 'btn-shadow ' . $class,
         'id' => 'tchatbotscenario_edit_remove_btn',
+        'data-text' => strpos($class, 'disabled') !== false ? '呼び出し元が設定されているため、<br>削除できません' : '',
+        'ng-click' => strpos($class, 'disabled') === false ? 'main.removeAct(' . $lastPage . ')' : '',
       )) ?>
   </div>
   <!-- シミュレーター -->

@@ -61,7 +61,9 @@ class ContractController extends AppController
     'TSendSystemMailSchedule',
     'MJobMailTemplate',
     'TChatbotScenario',
-    'TLeadListSetting'
+    'TLeadListSetting',
+    'TChatbotDiagram',
+    'TChatbotDiagramNodeName'
   );
 
   public $paginate = [
@@ -518,7 +520,8 @@ class ContractController extends AppController
       $this->addDefaultCustomerInformationSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
       $relationIdAssoc = $this->addDefaultScenarioMessage($addedCompanyInfo['id'], $companyInfo);
-      $this->addDefaultAutoMessages($addedCompanyInfo['id'], $companyInfo, $relationIdAssoc);
+      $relationDiagramId = $this->addDefaultDiagrams($addedCompanyInfo['id'], $companyInfo, $relationIdAssoc);
+      $this->addDefaultAutoMessages($addedCompanyInfo['id'], $companyInfo, $relationIdAssoc, $relationDiagramId);
       $this->addDefaultDictionaries($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultMailTemplate($addedCompanyInfo['id'], $companyInfo);
       $this->addCompanyJSFile($addedCompanyInfo['companyKey'], $addedCompanyInfo['core_settings']['laCoBrowse']);
@@ -843,7 +846,87 @@ class ContractController extends AppController
     $this->MWidgetSetting->save();
   }
 
-  private function addDefaultAutoMessages($m_companies_id, $companyInfo, $addedRelationScenarioIds)
+  private function addDefaultDiagrams($m_companies_id, $companyInfo, $addedRelationScenarioIds)
+  {
+    $addedRelationDiagramIds = array();
+    if (!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $diagrams = $this->TChatbotDiagram->find('all', [
+        'conditions' => array(
+          'm_companies_id' => $m_companies_id
+        )]
+    );
+    if (empty($diagrams)) {
+      $default = $this->getDefaultDiagramConfigurations();
+
+      foreach ($default as $index => $diagram) {
+        $this->TChatbotDiagram->create();
+
+        foreach($diagram['activity']['cells'] as $index => &$cell) {
+          // シナリオ呼び出し設定のIDを紐付ける
+          if(array_key_exists('attrs', $cell)
+          && array_key_exists('actionParam', $cell['attrs'])
+          && array_key_exists('targetScenarioIndex', $cell['attrs']['actionParam'])) {
+            $cell['attrs']['actionParam']['scenarioId'] = $addedRelationScenarioIds['index'][$cell['attrs']['actionParam']['targetScenarioIndex']];
+            unset($cell['attrs']['actionParam']['targetScenarioIndex']);
+          }
+        }
+
+        $data = array(
+          "m_companies_id" => $m_companies_id,
+          "name" => $diagram['name'],
+          "activity" => $this->convertActivityToJSON($diagram['activity']),
+          "del_flg" => 0,
+          "sort" => $diagram['sort']
+        );
+
+        $this->TChatbotDiagram->set($data);
+        if($this->TChatbotDiagram->save()) {
+          $insertId = $this->TChatbotDiagram->getLastInsertId();
+          $this->insertNodeNameTable($m_companies_id, $insertId, json_decode($data['activity'], TRUE));
+        }
+
+        array_push($addedRelationDiagramIds, $this->TChatbotDiagram->getLastInsertId());
+      }
+    }
+    return $addedRelationDiagramIds;
+  }
+
+  private function insertNodeNameTable($m_companies_id, $id, $activity) {
+    $cells = $activity['cells'];
+    foreach($cells as $index => $cell) {
+      if(strcmp($cell['type'], 'devs.Model') !== 0) continue;
+      if(!empty($cell['attrs']['actionParam']['nodeName'])) {
+        $nodeName = $this->TChatbotDiagramNodeName->find('first', array(
+          'conditions' => array(
+            'm_companies_id' => $m_companies_id,
+            'node_id' => $cell['id']
+          )
+        ));
+        if(empty($nodeName)) {
+          $this->TChatbotDiagramNodeName->create();
+          $this->TChatbotDiagramNodeName->set(array(
+            'm_companies_id' => $m_companies_id,
+            't_chatbot_diagram_id' => $id,
+            'type' => $cell['attrs']['nodeBasicInfo']['nodeType'],
+            'node_id' => $cell['id'],
+            'node_name' => $cell['attrs']['actionParam']['nodeName'],
+            'del_flg' => 0
+          ));
+        } else {
+          $this->TChatbotDiagramNodeName->create();
+          $nodeName['TChatbotDiagramNodeName']['t_chatbot_diagram_id'] = $id;
+          $nodeName['TChatbotDiagramNodeName']['type'] = $cell['attrs']['nodeBasicInfo']['nodeType'];
+          $nodeName['TChatbotDiagramNodeName']['node_name'] = $cell['attrs']['actionParam']['nodeName'];
+          $this->TChatbotDiagramNodeName->set($nodeName);
+        }
+        if (!$this->TChatbotDiagramNodeName->save()) {
+          throw new Exception('t_chatbot_diagram_node_nameテーブルにデータ保存時にエラー発生しました。');
+        }
+      }
+    }
+  }
+
+  private function addDefaultAutoMessages($m_companies_id, $companyInfo, $addedRelationScenarioIds, $addedRelationDiagramIds)
   {
     if (!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
     $autoMessages = $this->TAutoMessages->find('all', [
@@ -869,6 +952,8 @@ class ContractController extends AppController
           $data['t_chatbot_scenario_id'] = $addedRelationScenarioIds[$index];
         } else if (array_key_exists('target_automessage_index', $item) && array_key_exists($item['target_automessage_index'], $addedRelationAutomessageIds)) {
           $data['call_automessage_id'] = $addedRelationAutomessageIds[$item['target_automessage_index']];
+        } else if (array_key_exists('target_diagram_index', $item) && array_key_exists($item['target_diagram_index'], $addedRelationDiagramIds)) {
+          $data['t_chatbot_diagram_id'] = intval($addedRelationDiagramIds[$item['target_diagram_index']]);
         }
         $this->TAutoMessages->set($data);
         $this->TAutoMessages->save();
@@ -948,7 +1033,7 @@ class ContractController extends AppController
     if (empty($scenarios)) {
       $default = $this->getDefaultScenarioConfigurations();
       $savedLeadList = array();
-      foreach ($default as &$scenario) {
+      foreach ($default as $scenarioIndex => &$scenario) {
         $actions = &$scenario['activity']['scenarios'];
         foreach ($actions as &$action) {
           if (strcmp($action['actionType'], 2) === 0) {
@@ -1044,8 +1129,15 @@ class ContractController extends AppController
           throw new Exception(json_encode($this->TChatbotScenario->validationErrors, JSON_UNESCAPED_UNICODE));
         }
         if (array_key_exists('relation_auto_message_index', $scenario)) {
-          $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
+          if(empty($autoMessageRelationAssoc['autoMessage'])) {
+            $autoMessageRelationAssoc['autoMessage'] = array();
+          }
+          $autoMessageRelationAssoc['autoMessage'][$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
         }
+        if(empty($autoMessageRelationAssoc['index'])) {
+          $autoMessageRelationAssoc['index'] = array();
+        }
+        $autoMessageRelationAssoc['index'][$scenarioIndex] = $this->TChatbotScenario->getLastInsertId();
       }
     } else if ($forceInsert) {
       // 既存設定があることを考慮して今のソート番号を取得
@@ -1062,7 +1154,7 @@ class ContractController extends AppController
         $sortNum = (int)$lastScenario['TChatbotScenario']['sort'];
       }
       $default = $this->getDefaultScenarioConfigurations();
-      foreach ($default as &$scenario) {
+      foreach ($default as $index => &$scenario) {
         $actions = &$scenario['activity']['scenarios'];
         foreach ($actions as &$action) {
           if (strcmp($action['actionType'], 4) === 0) {
@@ -1109,8 +1201,15 @@ class ContractController extends AppController
           throw new Exception(json_encode($this->TChatbotScenario->validationErrors, JSON_UNESCAPED_UNICODE));
         }
         if (array_key_exists('relation_auto_message_index', $scenario)) {
-          $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
+          if(empty($autoMessageRelationAssoc['autoMessage'])) {
+            $autoMessageRelationAssoc['autoMessage'] = array();
+          }
+          $autoMessageRelationAssoc['autoMessage'][$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
         }
+        if(empty($autoMessageRelationAssoc['index'])) {
+          $autoMessageRelationAssoc['index'] = array();
+        }
+        $autoMessageRelationAssoc['index'][$index] = $this->TChatbotScenario->getLastInsertId();
       }
     }
     return $autoMessageRelationAssoc;
@@ -1329,8 +1428,13 @@ class ContractController extends AppController
     if ($withScenarioOptions) {
       return Configure::read('default.autoMessages_with_scenario');
     } else {
-      return Configure::read('default.autoMessages_without_scenario');
+      return Configure::read('default.autoMessages_with_scenario');
     }
+  }
+
+  private function getDefaultDiagramConfigurations()
+  {
+    return Configure::read('default.diagrams');
   }
 
   private function getDefaultMailTemplateConfigurations()

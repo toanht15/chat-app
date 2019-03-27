@@ -7,8 +7,8 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 <div id='tautomessages_idx' class="card-shadow" style = "margin:15px 15px 15px 15px;">
 
   <div id='tautomessages_title'>
-    <div class="fLeft"><i class="fal fa-comments fa-2x"></i></div>
-    <h1>オートメッセージ設定</h1>
+    <div class="fLeft"><i class="far fa-play-circle fa-2x"></i></div>
+    <h1>トリガー設定（条件設定）</h1>
   </div>
 
   <div id='tautomessages_menu' class="p20trl">
@@ -82,26 +82,26 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </a>
         </span>
       </div>
-      <!-- オートメッセージ設定の並び替えモード -->
+      <!-- トリガー設定の並び替えモード -->
       <div class="tabpointer">
         <label class="pointer">
           <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText"> 並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; float: right; position: relative; top: 0px; left: 0px;">（！）並び替え中（保存する場合はチェックを外してください）</span>
         </label>
       </div>
-      <!-- オートメッセージ設定の並び替えモード -->
+      <!-- トリガー設定の並び替えモード -->
     </div>
     <!-- 検索窓 -->
     <div id="rightContentWrap" class="fRight">
       <div id="importBtnAreaWrap">
         <div id="importBtnArea">
         <?= $this->Html->link(
-          'オートメッセージをエクセルで編集する',
+          'トリガーをエクセルで編集する',
           'javascript:void(0)',
           array('escape' => false,
             'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? " skyBlueBtn  commontooltip" : " grayBtn disabled commontooltip"),
             'id' => 'importExcelBtn',
             'disabled' => !$coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE],
-            'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "オートメッセージの設定をエクセルにエクスポートしたり、エクセルで編集した内容をインポートすることが可能です。" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
+            'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "トリガーの設定をエクセルにエクスポートしたり、エクセルで編集した内容をインポートすることが可能です。" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
             'data-balloon-position' => '50',
             'data-balloon-width' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? '460' : ''
           ));
@@ -259,7 +259,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 1em; font-weight: bold;" width=" 5%">
             <?php
-              if(strcmp($val['TAutoMessage']['action_type'], 2) === 0 || strcmp($val['TAutoMessage']['action_type'], 3) === 0) {
+              if(strcmp($val['TAutoMessage']['action_type'], 2) === 0 || strcmp($val['TAutoMessage']['action_type'], 3) === 0 || strcmp($val['TAutoMessage']['action_type'], 4) === 0) {
                 echo '<span class="m10b">－</span>';
               } elseif (isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2) {
                 echo '<span class="m10b"></span>';
@@ -270,7 +270,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 1em;" width=" 4%">
             <?php
-            if(strcmp($val['TAutoMessage']['action_type'], 2) === 0 || strcmp($val['TAutoMessage']['action_type'], 3) === 0) {
+            if(strcmp($val['TAutoMessage']['action_type'], 2) === 0 || strcmp($val['TAutoMessage']['action_type'], 3) === 0 || strcmp($val['TAutoMessage']['action_type'], 4) === 0) {
               echo '<span class="m10b">－</span>';
             } elseif (isset($activity['cv']) && $activity['cv'] === 2) {
               echo '<span class="m10b"></span>';
@@ -281,7 +281,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 1em;" width=" 4%">
             <?php
-            if (strcmp($val['TAutoMessage']['action_type'], 2) === 0 || strcmp($val['TAutoMessage']['action_type'], 3) === 0) {
+            if (strcmp($val['TAutoMessage']['action_type'], 2) === 0 || strcmp($val['TAutoMessage']['action_type'], 3) === 0 || strcmp($val['TAutoMessage']['action_type'], 4) === 0) {
               echo '<span class="m10b">－</span>';
             } elseif (isset($val['TAutoMessage']['send_mail_flg']) && !$val['TAutoMessage']['send_mail_flg']) {
               echo '<span class="m10b"></span>';
@@ -305,7 +305,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         </tr>
       <?php endforeach; ?>
       <?php if ( count($settingList) === 0 ) : ?>
-        <tr><td colspan="6" class="tCenter" style="letter-spacing: 2px">オートメッセージ設定がありません</td></tr>
+        <tr><td colspan="6" class="tCenter" style="letter-spacing: 2px">トリガー設定（条件設定）がありません</td></tr>
       <?php endif; ?>
       </tbody>
     </table>

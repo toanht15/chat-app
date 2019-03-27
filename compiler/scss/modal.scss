@@ -1630,6 +1630,11 @@
           }
         }
 
+        .callbackToDiagramWrap {
+          margin: 5px 25px 5px 119px;
+          display: inline-block;
+        }
+
         #jump_modal {
           select#jumpTargetNode {
             width: 200px;
@@ -1729,7 +1734,7 @@
               display: flex;
               margin-top: 40px;
               padding: 0 0 20px 40px;
-              max-height: 180px;
+              max-height: 284px;
               overflow-y: auto;
               p {
                 margin: 0;
@@ -1756,7 +1761,7 @@
           #text_modal_preview {
             width: 370px;
             .diagram_preview_area {
-              max-height: 256px;
+              max-height: 350px;
             }
           }
         }
@@ -1774,16 +1779,24 @@
       /* 分岐のモーダル */
       &.p_diagrams_branch {
         width: 870px;
+        #popup-title {
+          height: 43px;
+        }
         #popup-main {
           padding: 0!important;
+          height: calc(100% - 112px);
         }
         #branch_modal {
           display: flex;
+          height: 100%;
         }
         #branch_modal_editor {
-          padding-bottom: 25px;
           width: 500px;
           border-right: 1px solid #909090;
+          .scroll-wrapper {
+            height: calc(100% - 66px);
+            overflow-y: auto;
+          }
           #branch_modal_head {
             padding: 0 0 0 40px;
             input[type='text'] {
@@ -1901,7 +1914,6 @@
             .branch_modal_setting_content {
               margin-top: 20px;
               position: relative;
-              overflow-y: auto;
               .setting_row {
                 display: flex;
                 align-items: flex-start;
@@ -1940,15 +1952,12 @@
         }
         #branch_modal_preview {
           width: 370px;
-          .diagram_preview_area {
-            max-height: 859px;
-          }
         }
         #popup-button {
           display:flex;
           justify-content: space-around;
           align-items: start;
-          height: auto!important;
+          height: 10%!important;
           border-top: 1px solid #909090;
           .textBtn {
             width: 70px;
@@ -2493,7 +2502,7 @@
 }
 
 
-/* オートメッセージ設定レイアウト調整 */
+/* トリガー設定レイアウト調整 */
 #tautomessages_idx{
   #tautomessages_menu{
     .btnSet{
