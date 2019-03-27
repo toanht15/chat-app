@@ -5455,6 +5455,17 @@ var socket, // socket.io
       var ua = navigator.userAgent.toLowerCase();
       return ua.indexOf('android') > 0;
     },
+    getDevice: function() {
+      var ua = navigator.userAgent.toLowerCase();
+      if (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 ||
+          ua.indexOf('android') > 0 && ua.indexOf('mobile') > 0) {
+        return 'smartphone';
+      } else if (ua.indexOf('ipad') > 0 || ua.indexOf('android') > 0) {
+        return 'tablet';
+      } else {
+        return 'pc';
+      }
+    },
     isset: function(a) {
       if (a === null || a === '' || a === undefined || String(a) === 'null' ||
           String(a) === 'undefined') {
