@@ -98,7 +98,8 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->actionTypeMap = [
-      'トリガーを呼び出す'    => 3,
+      'チャットツリーを呼び出す' => 4,
+      '別のトリガーを呼び出す'    => 3,
       'シナリオを呼び出す'    => 2,
       'チャットメッセージを送る' => 1
     ];
@@ -256,7 +257,9 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
       'BP' => NULL,
       'BQ' => NULL,
       'BR' => NULL,
-      'BS' => NULL
+      'BS' => NULL,
+      'BT' => NULL,
+      'BU' => NULL,
     ];
     $importData = [];
     $errorFound = false;
@@ -379,7 +382,11 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
             $importData[$key]['activity']['conditions'][4][0]['operatingHoursTime'] = $this->businessHourMap[$row['T']];
           }
 
-          if ($actionType == 3) {
+          if ($actionType == 4) {
+            // call auto message
+            $importData[$key]['call_diagram_name'] = $row['BT'];
+            $importData[$key]['activity']['widgetOpen'] = $row['BU'];
+          } else if ($actionType == 3) {
             // call auto message
             $importData[$key]['call_automessage_name'] = $row['BS'];
           } else if($actionType == 2) {
@@ -716,6 +723,17 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
 
       if (empty($row['BR'])) {
         $this->addError($errors, 'BQ', 'シナリオが未入力です');
+      }
+    }
+
+    // scenario
+    if ($this->actionTypeMap[$row['BD']] == 4) {
+      if (empty($row['BU'])) {
+        $this->addError($errors, 'BR', '自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
+      }
+
+      if (empty($row['BT'])) {
+        $this->addError($errors, 'BQ', 'チャットツリーが未入力です');
       }
     }
 
