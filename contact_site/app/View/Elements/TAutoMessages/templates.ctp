@@ -18,7 +18,7 @@
       <div style="border-top: none; display: flex; height: 30px; padding: 0; margin-top: -8px;">
         <p>訪問回数 </p>
         <input type="number" ng-model="setItem.visitCnt" name="visitCnt" ui-validate-watch="'setItem.visitCntCond'" ui-validate="{isVisitCntRule : 'main.isVisitCntRule($value, setItem.visitCntCond)'}" style="width: 6em; margin-left: 10px; height: 32px; padding-bottom: 0;" min="1" max="100" required><p>回</p>
-        <select style="margin-left: 10px; height: 24px; margin-top: 8px;" ng-model="setItem.visitCntCond">
+        <select style="margin-left: 10px; height: 24px; margin-top: 8px; font-size: 12px;" ng-model="setItem.visitCntCond">
           <option value="4">以上</option>
           <option value="1">に一致する場合</option>
           <option value="2">以上の場合</option>
