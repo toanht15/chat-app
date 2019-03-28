@@ -11922,8 +11922,8 @@ div.balloon {
     .grid_balloon {
       display: -ms-grid;
       display: grid;
-      -ms-grid-columns: minmax(max-content, max-content) 1fr;
-      grid-template-columns: minmax(max-content, max-content) 1fr;
+      -ms-grid-columns: minmax(max-content, max-content) 1fr 7px;
+      grid-template-columns: minmax(max-content, max-content) 1fr 7px;
       &.no_icon {
         grid-template-columns: 1fr;
         -ms-grid-columns: 1fr;

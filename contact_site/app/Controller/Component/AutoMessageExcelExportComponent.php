@@ -140,7 +140,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     ];
 
     $this->actionTypeMap = [
-      3 => 'オートメッセージを呼び出す',
+      4 => 'チャットツリーを呼び出す',
+      3 => '別のトリガーを呼び出す',
       2 => 'シナリオを呼び出す',
       1 => 'チャットメッセージを送る'
     ];
@@ -178,6 +179,9 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
       } else if($value['TAutoMessage']['action_type'] == 3) {
         // call automessage
         $this->writeCallAutomessageData($json, $row, $value);
+      } else if($value['TAutoMessage']['action_type'] == 4) {
+        // call diagram
+        $this->writeCallDiagramData($json, $row, $value);
       } else {
         // send message
         $this->writeSendMessageData($json, $row, $value);
@@ -226,10 +230,10 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   public function setColumnConditionalFormat($beginColumn, $row, $condition)
   {
     $operator = '=';
-    if($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS') {
+    if($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS' || $beginColumn == 'BT') {
       $operator = '<>';
     }
-    $conditionCol   = ($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS') ? 'BD' : $beginColumn;
+    $conditionCol   = ($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS' || $beginColumn == 'BT') ? 'BD' : $beginColumn;
     $condition      = '$' . $conditionCol . $row . ' '.$operator.' "' . $condition . '"';
     $objConditional = new PHPExcel_Style_Conditional();
     $objConditional->setConditionType(PHPExcel_Style_Conditional::CONDITION_EXPRESSION);
@@ -259,6 +263,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     $this->setColumnConditionalFormat('BE', $row, $this->actionTypeMap[1]);
     $this->setColumnConditionalFormat('BQ', $row, $this->actionTypeMap[2]);
     $this->setColumnConditionalFormat('BS', $row, $this->actionTypeMap[3]);
+    $this->setColumnConditionalFormat('BT', $row, $this->actionTypeMap[4]);
   }
 
   /**
@@ -307,6 +312,9 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
         break;
       case 'BS':
         $targetArray = ['BS'];
+        break;
+      case 'BT':
+        $targetArray = ['BT','BU'];
         break;
       default:
         $targetArray = [];
@@ -376,6 +384,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     $this->setCellDataValidation('BI', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
 
     $this->setCellDataValidation('BR', $row, "", $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
+
+    $this->setCellDataValidation('BU', $row, "", $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
   }
 
   /**
@@ -404,7 +414,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   public function copyRowStyle($baseRow, $endRow)
   {
     // column BA ~ BS
-    foreach (range('A', 'S') as $column) {
+    foreach (range('A', 'U') as $column) {
       $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('B' . $column . $baseRow), 'B' . $column . self::SECOND_ROW . ':' . 'B' . $column . $endRow);
     }
 
@@ -601,6 +611,18 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   {
     $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[3]);
     $this->currentSheet->setCellValue('BS' . $row, $value['CalledAutoMessage']['name']);
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   * @param $value
+   */
+  private function writeCallDiagramData($json, $row, $value)
+  {
+    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[4]);
+    $this->currentSheet->setCellValue('BT' . $row, $value['TChatbotDiagram']['name']);
+    $this->currentSheet->setCellValue('BU' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
   }
 
   /**
