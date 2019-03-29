@@ -867,6 +867,7 @@
         divElm.id = data.prefix + '_question';
         var html = $scope.simulatorSettings.createButtonUI(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        divElm.querySelector('li').style.width = "100%";
         divElm.style.display = "";
         if( $scope.needsIcon() ) {
           gridElm = $scope.addIconImage( gridElm );
