@@ -6815,10 +6815,12 @@ var socket, // socket.io
         var emitData = userInfo.getSendList();
         emitData.widget = window.sincloInfo.widgetDisplay;
         var tmpAutoMessages = sinclo.chatApi.autoMessages.get(true);
+        var tmpDiagramMessages = sinclo.chatApi.diagramMessages.get(true);
         emit('connectSuccess', {
           confirm: false,
           reconnect: true,
           tmpAutoMessages: tmpAutoMessages,
+          tmpDiagramMessages: tmpDiagramMessages,
           widget: window.sincloInfo.widgetDisplay
         }, function(ev) {
           emit('customerInfo', emitData);
@@ -7030,6 +7032,10 @@ var socket, // socket.io
       sinclo.diagramApi.common.init(obj.id, obj.activity);
       sinclo.diagramApi.executor.execute();
     }); // socket-on: sendChatResult
+
+    socket.on('resDiagramMessage', function(d) {
+      sinclo.resDiagramMessage(d);
+    });
 
     // チャット入力状況受信
     socket.on('receiveTypeCond', function(d) {
