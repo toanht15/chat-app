@@ -1180,7 +1180,7 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk li.sinclo_re span.link { color: ' +
           chatPosition.re.color + '; }';
       /* アイコン表示時用CSS */
-      html += '      #sincloBox ul#chatTalk div.grid_for_icon { display:grid; display:-ms-grid; grid-template-columns: minmax(max-content, max-content) 1fr; -ms-grid-columns: minmax(max-content, max-content) 1fr; }';
+      html += '      #sincloBox ul#chatTalk div.grid_for_icon { display:grid; display:-ms-grid; grid-template-columns: minmax(max-content, max-content) 1fr 0px; -ms-grid-columns: minmax(max-content, max-content) 1fr 0px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon li.sinclo_re:not(.no-wrap) { justify-self: start; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon li.noneBalloon:not(.no-wrap) { justify-self: start; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon li.sinclo_re { -ms-grid-column-align: start; -ms-grid-column: 2; }';

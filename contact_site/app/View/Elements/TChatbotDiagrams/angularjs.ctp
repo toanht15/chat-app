@@ -1958,7 +1958,7 @@
         $scope.buttonUITextAlign = custom.buttonUITextAlign ? custom.buttonUITextAlign : "2";
         $scope.buttonUIActiveColor = custom.buttonUIActiveColor ? custom.buttonUIActiveColor : $scope.getRawColor($scope.widget.settings.main_color, 0.5);
         $scope.buttonUIBorderColor = custom.buttonUIBorderColor ? custom.buttonUIBorderColor : "#E3E3E3";
-        $scope.outButtonUINoneBorder = custom.outButtonUINoneBorder ? custom.outButtonUINoneBorder : false;
+        $scope.outButtonUINoneBorder = custom.outButtonUINoneBorder ? custom.outButtonUINoneBorder : true;
       };
 
       $scope.revertStandard = function(buttonType, colorType, elm){
