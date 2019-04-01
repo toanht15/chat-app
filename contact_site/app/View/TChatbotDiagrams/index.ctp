@@ -135,7 +135,7 @@
         </tr>
       <?php endforeach; ?>
       <?php if ( count($settingList) === 0 ) : ?>
-        <tr class="cancel"><td colspan="6" class="tCenter" style="letter-spacing: 2px">シナリオ設定がありません</td></tr>
+        <tr class="cancel"><td colspan="6" class="tCenter" style="letter-spacing: 2px">チャットツリー設定がありません</td></tr>
       <?php endif; ?>
       </tbody>
     </table>
