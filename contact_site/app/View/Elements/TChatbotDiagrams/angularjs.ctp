@@ -2176,6 +2176,9 @@
           });
           $scope.diagramSimulatorService.actionInit();
           $scope.diagramSimulatorService.doAction();
+          if ($scope.widget.settings.chat_init_show_textarea !== '1') {
+            $scope.diagramSimulatorService.hideTextarea();
+          }
         }, 0);
       });
 
