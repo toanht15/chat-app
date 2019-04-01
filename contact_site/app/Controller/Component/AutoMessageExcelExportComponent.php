@@ -93,9 +93,10 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     ];
 
     $this->visitCntCondMap = [
-      1 => '一致',
-      2 => '以上',
-      3 => '未満'
+      4 => '以上',
+      1 => 'に一致する場合',
+      2 => '以上の場合',
+      3 => '未満の場合'
     ];
 
     $this->targetNameMap = [
@@ -206,6 +207,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
       $this->writePreviousPageData($json, $row);
       // 営業時間
       $this->writeBusinessHourData($json, $row);
+      //訪問者の端末
+      $this->writeVisitorDevicetData($json, $row);
     }
   }
 
@@ -230,10 +233,10 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   public function setColumnConditionalFormat($beginColumn, $row, $condition)
   {
     $operator = '=';
-    if($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS' || $beginColumn == 'BT') {
+    if ($beginColumn == 'BG' || $beginColumn == 'BS' || $beginColumn == 'BU' || $beginColumn == 'BV') {
       $operator = '<>';
     }
-    $conditionCol   = ($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS' || $beginColumn == 'BT') ? 'BD' : $beginColumn;
+    $conditionCol   = ($beginColumn == 'BG' || $beginColumn == 'BS' || $beginColumn == 'BU' || $beginColumn == 'BV') ? 'BF' : $beginColumn;
     $condition      = '$' . $conditionCol . $row . ' '.$operator.' "' . $condition . '"';
     $objConditional = new PHPExcel_Style_Conditional();
     $objConditional->setConditionType(PHPExcel_Style_Conditional::CONDITION_EXPRESSION);
@@ -260,10 +263,11 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     $this->setColumnConditionalFormat('AH', $row, $this->isSettingMap[2]);
     $this->setColumnConditionalFormat('AP', $row, $this->isSettingMap[2]);
     $this->setColumnConditionalFormat('AW', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('BE', $row, $this->actionTypeMap[1]);
-    $this->setColumnConditionalFormat('BQ', $row, $this->actionTypeMap[2]);
-    $this->setColumnConditionalFormat('BS', $row, $this->actionTypeMap[3]);
-    $this->setColumnConditionalFormat('BT', $row, $this->actionTypeMap[4]);
+    $this->setColumnConditionalFormat('BD', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('BG', $row, $this->actionTypeMap[1]);
+    $this->setColumnConditionalFormat('BS', $row, $this->actionTypeMap[2]);
+    $this->setColumnConditionalFormat('BU', $row, $this->actionTypeMap[3]);
+    $this->setColumnConditionalFormat('BV', $row, $this->actionTypeMap[4]);
   }
 
   /**
@@ -304,17 +308,20 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
       case 'AW':
         $targetArray = ['AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC'];
         break;
-      case 'BE':
-        $targetArray = ['BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP'];
+      case 'BD':
+        $targetArray = ['BD', 'BE'];
         break;
-      case 'BQ':
-        $targetArray = ['BQ', 'BR'];
+      case 'BG':
+        $targetArray = ['BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR'];
         break;
       case 'BS':
-        $targetArray = ['BS'];
+        $targetArray = ['BS', 'BT'];
         break;
-      case 'BT':
-        $targetArray = ['BT','BU'];
+      case 'BU':
+        $targetArray = ['BU'];
+        break;
+      case 'BV':
+        $targetArray = ['BV','BW'];
         break;
       default:
         $targetArray = [];
@@ -337,7 +344,10 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     $this->setCellDataValidation('G', $row, "", $this->stayTimeTypeMap[1] . ', ' . $this->stayTimeTypeMap[2] . ', ' . $this->stayTimeTypeMap[3]);
     // 訪問回数
     $this->setCellDataValidation('I', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('K', $row, "", $this->visitCntCondMap[1] . ', ' . $this->visitCntCondMap[2] . ', ' . $this->visitCntCondMap[3]);
+    $this->currentSheet->getComment('J'. $row)->setWidth("400px");
+    $this->currentSheet->getComment('J'. $row)->setHeight("100px");
+    $this->currentSheet->getComment('J'. $row)->getText()->createTextRun('条件が以上の場合は「OO ~ OO」形式で入力してください。例：1 ~ 10');
+    $this->setCellDataValidation('K', $row, "", $this->visitCntCondMap[4] . ', ' . $this->visitCntCondMap[1] . ', ' . $this->visitCntCondMap[2] . ', ' . $this->visitCntCondMap[3]);
     // ページ
     $this->setCellDataValidation('L', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
     $this->setCellDataValidation('M', $row, "", $this->targetNameMap[1] . ', ' . $this->targetNameMap[2]);
@@ -376,16 +386,22 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     $this->setCellDataValidation('BB', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
     $this->setCellDataValidation('BC', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
 
+    // 訪問者の端末
+    $this->setCellDataValidation('BD', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->currentSheet->getComment('BE'. $row)->setWidth("250px");
+    $this->currentSheet->getComment('BE'. $row)->setHeight("100px");
+    $this->currentSheet->getComment('BE'. $row)->getText()->createTextRun('PC, スマートフォン, タブレットを入力してください。区切りは「,]です。');
+
     // 実行設定
-    $this->setCellDataValidation('BD', $row, $this->actionTypeMap[1], $this->actionTypeMap[1] . ', ' . $this->actionTypeMap[2]);
-    $this->setCellDataValidation('BE', $row, $this->widgetOpenMap[1], $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
-    $this->setCellDataValidation('BG', $row, $this->chatTextAreaMap[1], $this->chatTextAreaMap[1] . ', ' . $this->chatTextAreaMap[2]);
-    $this->setCellDataValidation('BH', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('BI', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('BF', $row, $this->actionTypeMap[1], $this->actionTypeMap[1] . ', ' . $this->actionTypeMap[2]);
+    $this->setCellDataValidation('BG', $row, $this->widgetOpenMap[1], $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
+    $this->setCellDataValidation('BI', $row, $this->chatTextAreaMap[1], $this->chatTextAreaMap[1] . ', ' . $this->chatTextAreaMap[2]);
+    $this->setCellDataValidation('BJ', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('BK', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
 
-    $this->setCellDataValidation('BR', $row, "", $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
+    $this->setCellDataValidation('BT', $row, "", $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
 
-    $this->setCellDataValidation('BU', $row, "", $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
+    $this->setCellDataValidation('BW', $row, "", $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
   }
 
   /**
@@ -413,8 +429,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function copyRowStyle($baseRow, $endRow)
   {
-    // column BA ~ BS
-    foreach (range('A', 'U') as $column) {
+    // column BA ~ BW
+    foreach (range('A', 'W') as $column) {
       $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('B' . $column . $baseRow), 'B' . $column . self::SECOND_ROW . ':' . 'B' . $column . $endRow);
     }
 
@@ -449,7 +465,12 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   {
     if (isset($json['conditions'][2])) {
       $this->currentSheet->setCellValue('I' . $row, $this->isSettingMap[1]);
-      $this->currentSheet->setCellValue('J' . $row, $json['conditions'][2][0]['visitCnt']);
+      if ($json['conditions'][2][0]['visitCntCond'] == '4') {
+        // 範囲設定
+        $this->currentSheet->setCellValue('J' . $row, $json['conditions'][2][0]['visitCnt'] . ' ~ ' . $json['conditions'][2][0]['visitCntMax']);
+      } else {
+        $this->currentSheet->setCellValue('J' . $row, $json['conditions'][2][0]['visitCnt']);
+      }
       $this->currentSheet->setCellValue('K' . $row, $this->visitCntCondMap[$json['conditions'][2][0]['visitCntCond']]);
     }
   }
@@ -590,16 +611,42 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   }
 
   /**
+   * 訪問者の端末
+   * @param $json
+   * @param $row
+   */
+  private function writeVisitorDevicetData($json, $row)
+  {
+    if (isset($json['conditions'][11])) {
+      $this->currentSheet->setCellValue('BD' . $row, $this->isSettingMap[1]);
+      $deviceList = '';
+      if ($json['conditions'][11][0]['pc']) {
+        $deviceList .= 'PC, ';
+      }
+
+      if ($json['conditions'][11][0]['smartphone']) {
+        $deviceList .= 'スマートフォン, ';
+      }
+
+      if ($json['conditions'][11][0]['tablet']) {
+        $deviceList .= 'タブレット';
+      }
+
+      $this->currentSheet->setCellValue('BE' . $row, trim($deviceList, ', '));
+    }
+  }
+
+  /**
    * @param $json
    * @param $row
    * @param $value
    */
   private function writeScenarioData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[2]);
-    $this->currentSheet->setCellValue('BG' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
-    $this->currentSheet->setCellValue('BQ' . $row, $value['TChatbotScenario']['name']);
-    $this->currentSheet->setCellValue('BR' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
+    $this->currentSheet->setCellValue('BF' . $row, $this->actionTypeMap[2]);
+    $this->currentSheet->setCellValue('BI' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
+    $this->currentSheet->setCellValue('BS' . $row, $value['TChatbotScenario']['name']);
+    $this->currentSheet->setCellValue('BT' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
   }
 
   /**
@@ -609,8 +656,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   private function writeCallAutomessageData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[3]);
-    $this->currentSheet->setCellValue('BS' . $row, $value['CalledAutoMessage']['name']);
+    $this->currentSheet->setCellValue('BF' . $row, $this->actionTypeMap[3]);
+    $this->currentSheet->setCellValue('BU' . $row, $value['CalledAutoMessage']['name']);
   }
 
   /**
@@ -620,9 +667,9 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   private function writeCallDiagramData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[4]);
-    $this->currentSheet->setCellValue('BT' . $row, $value['TChatbotDiagram']['name']);
-    $this->currentSheet->setCellValue('BU' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
+    $this->currentSheet->setCellValue('BF' . $row, $this->actionTypeMap[4]);
+    $this->currentSheet->setCellValue('BV' . $row, $value['TChatbotDiagram']['name']);
+    $this->currentSheet->setCellValue('BW' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
   }
 
   /**
@@ -632,24 +679,24 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   private function writeSendMessageData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[1]);
-    $this->currentSheet->setCellValue('BE' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
-    $this->currentSheet->setCellValue('BF' . $row, $json['message']);
-    $this->currentSheet->setCellValue('BG' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
-    $this->currentSheet->setCellValue('BH' . $row, $this->triggerCVMap[$json['cv']]);
-    $this->currentSheet->setCellValue('BI' . $row, $this->sendMailFlgMap[$value['TAutoMessage']['send_mail_flg']]);
+    $this->currentSheet->setCellValue('BF' . $row, $this->actionTypeMap[1]);
+    $this->currentSheet->setCellValue('BG' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
+    $this->currentSheet->setCellValue('BH' . $row, $json['message']);
+    $this->currentSheet->setCellValue('BI' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
+    $this->currentSheet->setCellValue('BJ' . $row, $this->triggerCVMap[$json['cv']]);
+    $this->currentSheet->setCellValue('BK' . $row, $this->sendMailFlgMap[$value['TAutoMessage']['send_mail_flg']]);
     // get mail information
     $mailTransmission = ClassRegistry::init('MMailTransmissionSetting');
     $transmissionData = $mailTransmission->findById($value['TAutoMessage']['m_mail_transmission_settings_id']);
     if (!empty($transmissionData)) {
       $splitedMailAddresses = explode(',', $transmissionData['MMailTransmissionSetting']['to_address']);
-      $this->currentSheet->setCellValue('BJ' . $row, !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "");
-      $this->currentSheet->setCellValue('BK' . $row, !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "");
-      $this->currentSheet->setCellValue('BL' . $row, !empty($splitedMailAddresses[2]) ? $splitedMailAddresses[2] : "");
-      $this->currentSheet->setCellValue('BM' . $row, !empty($splitedMailAddresses[3]) ? $splitedMailAddresses[3] : "");
-      $this->currentSheet->setCellValue('BN' . $row, !empty($splitedMailAddresses[4]) ? $splitedMailAddresses[4] : "");
-      $this->currentSheet->setCellValue('BO' . $row, !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "");
-      $this->currentSheet->setCellValue('BP' . $row, !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "");
+      $this->currentSheet->setCellValue('BL' . $row, !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "");
+      $this->currentSheet->setCellValue('BM' . $row, !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "");
+      $this->currentSheet->setCellValue('BN' . $row, !empty($splitedMailAddresses[2]) ? $splitedMailAddresses[2] : "");
+      $this->currentSheet->setCellValue('BO' . $row, !empty($splitedMailAddresses[3]) ? $splitedMailAddresses[3] : "");
+      $this->currentSheet->setCellValue('BP' . $row, !empty($splitedMailAddresses[4]) ? $splitedMailAddresses[4] : "");
+      $this->currentSheet->setCellValue('BQ' . $row, !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "");
+      $this->currentSheet->setCellValue('BR' . $row, !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "");
     }
   }
 
