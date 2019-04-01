@@ -14,13 +14,19 @@
 
 <?php /* 訪問回数｜C_AUTO_TRIGGER_VISIT_CNT */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_VISIT_CNT?>'" class="setVisitCnt">
-    <li>
-      <span><label>訪問回数</label></span>
-      <input type="text" class="tRight" ng-pattern="<?=C_MATCH_RULE_NUM_2?>" ui-validate-watch=" 'setItem.visitCntCond' " ui-validate="{isVisitCntRule : 'main.isVisitCntRule($value, setItem.visitCntCond)' }" ng-model="setItem.visitCnt" name="visitCnt" required="">&nbsp;回
-    </li>
-    <li>
-      <?=$this->AutoMessage->radio('visitCntCond')?>
-    </li>
+  <li>
+      <div style="border-top: none; display: flex; height: 30px; padding: 0; margin-top: -8px;">
+        <p>訪問回数 </p>
+        <input type="number" ng-model="setItem.visitCnt" name="visitCnt" ui-validate-watch="'setItem.visitCntCond'" ui-validate="{isVisitCntRule : 'main.isVisitCntRule($value, setItem.visitCntCond)'}" style="width: 6em; margin-left: 10px; height: 32px; padding-bottom: 0;" min="1" max="100" required><p>回</p>
+        <select style="margin-left: 10px; height: 24px; margin-top: 8px; font-size: 12px; padding-bottom: 3px;" ng-model="setItem.visitCntCond">
+          <option value="4">以上</option>
+          <option value="1">に一致する場合</option>
+          <option value="2">以上の場合</option>
+          <option value="3">未満の場合</option>
+        </select>
+        <input ng-if="setItem.visitCntCond == '4'" ng-model="setItem.visitCntMax" type="number" name="visitCntMax" style="width: 6em; margin-left: 18px; height: 32px; padding-bottom: 0;" min="{{setItem.visitCnt + 1}}" max="100" required>　<p ng-if="setItem.visitCntCond == '4'" style="margin-left: -10px;">回 未満の場合</p>
+      </div>
+  </li>
   </ul>
 <?php /* ページ｜C_AUTO_TRIGGER_STAY_PAGE */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_STAY_PAGE?>'"  class="setStayPage">
@@ -152,5 +158,20 @@
     <?php if($operatingHourData == 2) { ?>
       <input type="hidden" name = "notOperatingHour" ng-model="setItem.operatingHour" ng-required="setItem.operatingHoursTime != '3'">
     <?php } ?>
+  </li>
+</ul>
+
+<ul ng-if="itemType == '<?=C_AUTO_TRIGGER_VISITOR_DEVICE?>'" class="setStayPage" >
+  <li>
+    <span style="margin-top: 3px;"> 端末</span>
+    <label class="pointer">
+      <input ng-model="setItem.pc" name="device" type="checkbox" ng-required="!setItem.pc && !setItem.smartphone && !setItem.tablet">PC
+    </label>
+    <label style="margin-left: 20px;">
+      <input ng-model="setItem.smartphone" name="device" type="checkbox">スマートフォン
+    </label>
+    <label style="margin-left: 20px;">
+      <input ng-model="setItem.tablet" name="device" type="checkbox">タブレット
+    </label>
   </li>
 </ul>

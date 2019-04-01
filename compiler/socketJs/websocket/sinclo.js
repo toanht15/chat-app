@@ -8145,7 +8145,7 @@
         console.log('setAndSettings key : ' + key + ' setting: ' + setting);
         var keys = Object.keys(setting.conditions);
         // 発言内容条件を一番最後にする
-        var arrayForSort = ['1', '2', '3', '4', '5', '6', '8', '9', '10', '7'];
+        var arrayForSort = ['1', '2', '3', '4', '5', '6', '8', '9', '10', '11', '7'];
         var tmpKey = [];
         arrayForSort.forEach(function(element, index, array) {
           if (keys.indexOf(element) >= 0) {
@@ -8232,6 +8232,11 @@
               break;
             case 10: // 営業時間
               this.judge.operating_hours(conditions[0], function(err, timer) {
+                if (err) ret = null;
+              });
+              break;
+            case 11: // 営業時間
+              this.judge.visitorDevice(conditions[0], function(err, timer) {
                 if (err) ret = null;
               });
               break;
@@ -8354,6 +8359,15 @@
             case 10: // 営業時間設定
               for (u = 0; u < conditions.length; u++) {
                 this.judge.operating_hours(conditions[u], function(err, timer) {
+                  if (!err) {
+                    ret = 0;
+                  }
+                });
+              }
+              break;
+            case 11: // 営業時間設定
+              for (u = 0; u < conditions.length; u++) {
+                this.judge.visitorDevice(conditions[u], function(err, timer) {
                   if (!err) {
                     ret = 0;
                   }
@@ -8599,6 +8613,20 @@
           }
           return false;
         },
+        isValidStayCountCondition: function(condition, count) {
+          switch (Number(condition.visitCntCond)) {
+            case 1: // 一致
+              return (Number(condition.visitCnt) === Number(count));
+            case 2: // 以上
+              return (Number(condition.visitCnt) <= Number(count));
+            case 3: // 未満
+              return (Number(condition.visitCnt) > Number(count));
+            case 4: // 範囲
+              return (Number(condition.visitCntMax) > Number(count)) && (Number(condition.visitCnt) <= Number(count));
+            default:
+              return false;
+          }
+        },
         /**
          * @params int type 比較種別
          * @params int a キーワード
@@ -8811,8 +8839,7 @@
         stayCount: function(cond, callback) {
           if (!('visitCntCond' in cond) ||
               !('visitCnt' in cond)) return callback(true, null);
-          if (sinclo.trigger.common.numMatch(cond.visitCntCond,
-              userInfo.getStayCount(), cond.visitCnt)) {
+          if (sinclo.trigger.common.isValidStayCountCondition(cond, userInfo.getStayCount())) {
             callback(false, 0);
           } else {
             callback(true, null);
@@ -9232,6 +9259,17 @@
                 }
               }
             }
+          }
+        },
+        visitorDevice: function(cond, callback) {
+          if (!('pc' in cond) || !('smartphone' in cond) || !('tablet' in cond)) return callback(true, null);
+          var device = check.getDevice();
+          if ((device === 'pc' && cond.pc) ||
+              (device === 'smartphone' && cond.smartphone) ||
+              (device === 'tablet' && cond.tablet)) {
+            callback(false, 0);
+          } else {
+            callback(true, null);
           }
         }
       }

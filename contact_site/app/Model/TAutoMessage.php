@@ -157,10 +157,9 @@ class TAutoMessage extends AppModel {
             }
 
             // 値が未入力のものはエラー
-            if ( strcmp($item[$field], "") === 0 ) {
+            if ( gettype($item[$field]) == 'string ' && strcmp($item[$field], "") === 0 ) {
               return false;
             }
-
           }
 
         } // 設定単位ごと
