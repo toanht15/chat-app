@@ -5035,6 +5035,7 @@
         cs += ' hearing_msg';
 
         li.className = cs;
+        li.style.width = '95%';
         li.innerHTML = messageHtml + buttonUIHtml;
       },
       addCheckbox: function(cs, message, settings, storedValue) {
@@ -5659,8 +5660,7 @@
               this.getRawColor(sincloInfo.widget.mainColor, 0.5) +
               ' !important;}';
         }
-        style += '#sincloBox ul#chatTalk ' + id + ' button {width: ' +
-            this.getButtonUIWidth() + 'px;}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button {width: 100%;}';
         style += '#sincloBox ul#chatTalk ' + id +
             ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
         style += '#sincloBox ul#chatTalk ' + id +
@@ -13279,14 +13279,14 @@
             var nid = check.isset(currentNode.sourceNodeId) ?
                 currentNode.sourceNodeId :
                 self.common.getCurrentNodeId();
-            if (check.isset(labels[idx]['type']) &&
-                check.isset(labels[idx]['value']) &&
-                Number(labels[idx]['type']) === 2) {
-              html += sinclo.chatApi.createMessageHtml(labels[idx]['value']);
+            if (check.isset(labels[arr[idx]]['type']) &&
+                check.isset(labels[arr[idx]]['value']) &&
+                Number(labels[arr[idx]]['type']) === 2) {
+              html += sinclo.chatApi.createMessageHtml(labels[arr[idx]]['value']);
             } else {
-              var message = check.isset(labels[idx]['value']) ?
-                  labels[idx]['value'] :
-                  labels[idx];
+              var message = check.isset(labels[arr[idx]]['value']) ?
+                  labels[arr[idx]]['value'] :
+                  labels[arr[idx]];
               switch (Number(currentNode.attrs.actionParam.btnType)) {
                 case 1:
                   // ラジオボタン
@@ -13308,7 +13308,7 @@
                       '" class="sinclo-chat-radio" value="' + message +
                       '" data-did="' + did +
                       '" data-nid="' + nid +
-                      '" data-next-nid="' + selectionMap[labels[idx]['uuid']] + '">';
+                      '" data-next-nid="' + selectionMap[labels[arr[idx]]['uuid']] + '">';
                   html += '<label for="sinclo-radio-btn-' + timestamp + '">' +
                       message + '</label>';
                   html += '</sinclo-radio>' + '\n';
@@ -13317,8 +13317,8 @@
                   }
                   break;
                 case 2:
-                  var isPrevMessage = (idx > 0 && Number(labels[idx - 1].type) === 2);
-                  var isNextMessage = (idx < Object.keys(labels).length - 1 && Number(labels[idx + 1].type) === 2);
+                  var isPrevMessage = (idx > 0 && Number(labels[arr[idx - 1]].type) === 2);
+                  var isNextMessage = (idx < Object.keys(labels).length - 1 && Number(labels[arr[idx + 1]].type) === 2);
                   var isEnd = (idx === Object.keys(labels).length - 1);
                   var addClass = '';
                   if(idx === 0 || isPrevMessage) {
@@ -13338,7 +13338,7 @@
                   html += '<button onclick="return false;" class="sinclo-button-ui diagram-ui ' + addClass + '" data-did="' +
                       did +
                       '" data-nid="' + nid +
-                      '" data-next-nid="' + selectionMap[labels[idx]['uuid']] + '">' +
+                      '" data-next-nid="' + selectionMap[labels[arr[idx]]['uuid']] + '">' +
                       message + '</button>';
                   if (idx === arr.length - 1) {
                     html += '</div>';

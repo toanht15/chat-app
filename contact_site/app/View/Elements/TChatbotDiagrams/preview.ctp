@@ -32,7 +32,7 @@
 </style>
 <style>
   .diagram_preview_area { width: 100%; list-style-type: none; margin: 0; overflow-y: auto; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica,Helvetica Neue,Arial,Verdana;}
-  .diagram_preview_area { background-color: {{widget.settings['chat_talk_background_color']}}; height: calc(100% - 66px)}
+  .diagram_preview_area { background-color: {{widget.settings['chat_talk_background_color']}}; height: calc(100% - 66px); padding: 0px 5px 0px 5px; }
   .diagram_preview_area .iconDiv {display: flex}
   .diagram_preview_area .iconDiv.arrowBottom { align-items: flex-end;}
   .diagram_preview_area .iconDiv.arrowUp {align-items: flex-start;}
@@ -112,7 +112,7 @@
 
   .diagram_preview_area li select { border: 1px solid #909090; border-radius: 0; padding: 5px; height: 30px; margin-top: 9px; margin-bottom: -2px; width: 100%; word-break: break-all}
   .diagram_preview_area .grid_preview li.smallSize select { min-width: 183px;}
-  .diagram_preview_area .grid_preview {display: grid; grid-template-columns: minmax(max-content, max-content) 1fr; margin-bottom: 5px; }
+  .diagram_preview_area .grid_preview {display: grid; grid-template-columns: minmax(max-content, max-content) 1fr 7px; margin-bottom: 5px; }
 
   /* icon css */
   .diagram_preview_area .img_wrapper {display: inline-block; width: 40px; height: 40px; padding: 0; text-align: center; border-radius: 50%; overflow: hidden; position: relative;}

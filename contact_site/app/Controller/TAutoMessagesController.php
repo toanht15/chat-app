@@ -890,12 +890,24 @@ class TAutoMessagesController extends WidgetSettingController
 
       foreach ($data as $index => $row) {
         $scenarioId = null;
+        $diagramId = null;
         if ($row['scenario']) {
           $scenarioId = $this->getScenarioIdByName($row['scenario']);
           // scenario not exist
           if (!$scenarioId) {
             $errorArray = [];
             $errorArray[$index]['BQ'][0] = "シナリオが存在しません";
+            $exception = new AutoMessageException("Excelデータバリデーションエラー", 200);
+            $exception->setErrors($errorArray);
+            throw $exception;
+          }
+        }
+        if ($row['call_diagram_name']) {
+          $diagramId = $this->getDiagramIdByName($row['call_diagram_name']);
+          // scenario not exist
+          if (!$diagramId) {
+            $errorArray = [];
+            $errorArray[$index]['BT'][0] = "チャットツリーが存在しません";
             $exception = new AutoMessageException("Excelデータバリデーションエラー", 200);
             $exception->setErrors($errorArray);
             throw $exception;
@@ -911,6 +923,7 @@ class TAutoMessagesController extends WidgetSettingController
             'action_type' => $row['action_type'], // 「チャットメッセージを送る」固定
             'active_flg' => $row['active_flg'],
             't_chatbot_scenario_id' => $scenarioId,
+            't_chatbot_diagram_id' => $diagramId,
             'del_flg' => 0
           ]
         ];
@@ -1000,7 +1013,7 @@ class TAutoMessagesController extends WidgetSettingController
         'TAutoMessage.sort' => 'asc',
         'TAutoMessage.id' => 'asc'
       ],
-      'fields' => ['TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name', 'CalledAutoMessage.name'],
+      'fields' => ['TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name', 'CalledAutoMessage.name', 'TChatbotDiagram.name'],
       'conditions' => [
         'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
         'TAutoMessage.del_flg != ' => 1
@@ -1020,6 +1033,14 @@ class TAutoMessagesController extends WidgetSettingController
           'alias' => 'CalledAutoMessage',
           'conditions' => [
             'TAutoMessage.call_automessage_id = CalledAutoMessage.id'
+          ]
+        ],
+        [
+          'type' => 'LEFT',
+          'table' => 't_chatbot_diagrams',
+          'alias' => 'TChatbotDiagram',
+          'conditions' => [
+            'TAutoMessage.t_chatbot_diagram_id = TChatbotDiagram.id'
           ]
         ]
       ],
@@ -1517,6 +1538,24 @@ class TAutoMessagesController extends WidgetSettingController
     ]);
 
     return $data['TChatbotScenario']['id'];
+  }
+
+  /**
+   * @param $name
+   * @return mixed
+   */
+  private function getDiagramIdByName($name)
+  {
+    $data = $this->TChatbotDiagram->find('first', [
+      'fields' => ['id'],
+      'conditions' => [
+        'name' => $name,
+        'del_flg != ' => 1,
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]);
+
+    return $data['TChatbotDiagram']['id'];
   }
 
   private function convertCallAutomessageList($array, $editTargetId)
