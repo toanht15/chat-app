@@ -194,6 +194,7 @@
         gridSize: 5,
         model: graph,
         linkPinning: false,
+        async: true,
         defaultLink: new joint.dia.Link({
           attrs: {
             '.connection': {
@@ -236,6 +237,11 @@
         validateMagnet: function(cellView, magnet) {
           return magnet.getAttribute('magnet') !== 'passive';
         }
+      });
+
+      loading.load.start();
+      paper.on('render:done', function(){
+        loading.load.finish();
       });
 
       paper.scale(0.7);
@@ -283,10 +289,6 @@
           initNodeEvent(graph.getCells());
         }, 500);
       }
-
-
-
-
 
       paper.on('cell:pointerup',
           function(cellView, evt, x, y) {
