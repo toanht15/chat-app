@@ -340,6 +340,17 @@
                     $('#popup-frame').css('top', 0).css('height', contHeight);
                     $scope.popupFix();
                   };
+                } else {
+                  $('#popup-frame').css('height','');
+                  $('#popup-content').css('height','auto');
+
+                  popupEvent.resize = function() {
+                    debugger;
+                    var contHeight = $('#popup-content').height();
+                    $('#popup-frame').css('top', 0).css('height', contHeight);
+                    $scope.popupFix();
+                  };
+                  popupEvent.resize();
                 }
 
                 $scope.popupHandler();
