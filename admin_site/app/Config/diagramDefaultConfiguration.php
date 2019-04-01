@@ -1702,7 +1702,7 @@ $config['default'] = array(
                 "selection" => array(
                   array(
                     "type" => "2",
-                    "value" => "--------------------------------------------------"
+                    "value" => "------------------------------------------------"
                   ),
                   array(
                     "type" => "1",
@@ -2230,7 +2230,7 @@ $config['default'] = array(
                   ),
                   array(
                     "type" => "2",
-                    "value" => "--------------------------------------------------"
+                    "value" => "------------------------------------------------"
                   ),
                   array(
                     "type" => "1",
@@ -5626,7 +5626,7 @@ $config['default'] = array(
                 "selection" => array(
                   array(
                     "type" => "2",
-                    "value" => "--------------------------------------------------"
+                    "value" => "------------------------------------------------"
                   ),
                   array(
                     "type" => "1",
@@ -6036,7 +6036,7 @@ $config['default'] = array(
               ),
               "nodeBasicInfo" => array(
                 "nodeType" => "childTextNode",
-                "tooltip" => "--------------------------------------------------"
+                "tooltip" => "------------------------------------------------"
               ),
               ".cover_top" => array(
                 "fill" => "#c73576",
@@ -6088,7 +6088,7 @@ $config['default'] = array(
               ),
               "nodeBasicInfo" => array(
                 "nodeType" => "childTextNode",
-                "tooltip" => "--------------------------------------------------"
+                "tooltip" => "------------------------------------------------"
               ),
               ".cover_top" => array(
                 "fill" => "#c73576",
@@ -6140,7 +6140,7 @@ $config['default'] = array(
               ),
               "nodeBasicInfo" => array(
                 "nodeType" => "childTextNode",
-                "tooltip" => "--------------------------------------------------"
+                "tooltip" => "------------------------------------------------"
               ),
               ".cover_top" => array(
                 "fill" => "#c73576",
