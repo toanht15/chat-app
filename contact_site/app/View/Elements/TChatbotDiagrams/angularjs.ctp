@@ -194,6 +194,7 @@
         gridSize: 5,
         model: graph,
         linkPinning: false,
+        async: true,
         defaultLink: new joint.dia.Link({
           attrs: {
             '.connection': {
@@ -236,6 +237,11 @@
         validateMagnet: function(cellView, magnet) {
           return magnet.getAttribute('magnet') !== 'passive';
         }
+      });
+
+      loading.load.start();
+      paper.on('render:done', function(){
+        loading.load.finish();
       });
 
       paper.scale(0.7);
@@ -283,10 +289,6 @@
           initNodeEvent(graph.getCells());
         }, 500);
       }
-
-
-
-
 
       paper.on('cell:pointerup',
           function(cellView, evt, x, y) {
@@ -340,6 +342,17 @@
                     $('#popup-frame').css('top', 0).css('height', contHeight);
                     $scope.popupFix();
                   };
+                } else {
+                  $('#popup-frame').css('height','');
+                  $('#popup-content').css('height','auto');
+
+                  popupEvent.resize = function() {
+                    debugger;
+                    var contHeight = $('#popup-content').height();
+                    $('#popup-frame').css('top', 0).css('height', contHeight);
+                    $scope.popupFix();
+                  };
+                  popupEvent.resize();
                 }
 
                 $scope.popupHandler();
@@ -1947,7 +1960,7 @@
         $scope.buttonUITextAlign = custom.buttonUITextAlign ? custom.buttonUITextAlign : "2";
         $scope.buttonUIActiveColor = custom.buttonUIActiveColor ? custom.buttonUIActiveColor : $scope.getRawColor($scope.widget.settings.main_color, 0.5);
         $scope.buttonUIBorderColor = custom.buttonUIBorderColor ? custom.buttonUIBorderColor : "#E3E3E3";
-        $scope.outButtonUINoneBorder = custom.outButtonUINoneBorder ? custom.outButtonUINoneBorder : false;
+        $scope.outButtonUINoneBorder = custom.outButtonUINoneBorder ? custom.outButtonUINoneBorder : true;
       };
 
       $scope.revertStandard = function(buttonType, colorType, elm){
@@ -2176,6 +2189,9 @@
           });
           $scope.diagramSimulatorService.actionInit();
           $scope.diagramSimulatorService.doAction();
+          if ($scope.widget.settings.chat_init_show_textarea !== '1') {
+            $scope.diagramSimulatorService.hideTextarea();
+          }
         }, 0);
       });
 

@@ -5660,7 +5660,7 @@
               ' !important;}';
         }
         style += '#sincloBox ul#chatTalk ' + id + ' button {width: ' +
-            this.getButtonUIWidth() + 'px;}';
+            this.getButtonUIWidth() + ';}';
         style += '#sincloBox ul#chatTalk ' + id +
             ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
         style += '#sincloBox ul#chatTalk ' + id +
@@ -6008,6 +6008,9 @@
       },
       getButtonUIWidth: function() {
         var width = 280;
+        if (check.smartphone()) {
+          return '100%';
+        }
         switch (Number(sincloInfo.widget.widgetSizeType)) {
           case 1:
             width = 183;
@@ -6027,8 +6030,8 @@
         }
         return (Number(sincloInfo.widget.showOperatorIcon) === 1 ||
             Number(sincloInfo.widget.showChatbotIcon) === 1) ?
-            width :
-            width + 20;
+            width + 'px' :
+            width + 20 + 'px';
       },
       getCarouselSize: function(settings) {
         if (settings.carouselPattern === '1') {
@@ -13375,7 +13378,7 @@
               ' button.sinclo-button-ui {text-align: center}';
           style += '#sincloBox ul#chatTalk ' + id +
               ' button.sinclo-button-ui {width: ' +
-              sinclo.chatApi.getButtonUIWidth() + 'px;}';
+              sinclo.chatApi.getButtonUIWidth() + ';}';
           style += '#sincloBox ul#chatTalk ' + id +
               ' span.sinclo-text-line { margin: 4px 0; }';
           if (settings.isCustomize) {
@@ -13394,6 +13397,13 @@
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui.selected {background-color: ' +
                 settings.buttonUIActiveColor + ' !important;}';
+            if (settings.outButtonUINoneBorder) {
+              style += '#sincloBox ul#chatTalk ' + id + ' button {border: none}';
+            } else {
+              style += '#sincloBox ul#chatTalk ' + id +
+                  ' button {border: 1px solid ' +
+                  settings.buttonUIBorderColor + ' }';
+            }
           } else {
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui {background-color: ' +
@@ -13411,13 +13421,7 @@
                 ' button.sinclo-button-ui.selected {background-color: ' +
                 sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
                 ' !important;}';
-          }
-          if (settings.outButtonUINoneBorder) {
             style += '#sincloBox ul#chatTalk ' + id + ' button {border: none}';
-          } else {
-            style += '#sincloBox ul#chatTalk ' + id +
-                ' button {border: 1px solid ' +
-                settings.buttonUIBorderColor + ' }';
           }
           style += '</style>';
 
