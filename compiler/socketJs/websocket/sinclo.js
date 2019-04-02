@@ -6074,31 +6074,7 @@
         return ('#' + codeR + codeG + codeB).toUpperCase();
       },
       getButtonUIWidth: function() {
-        var width = 280;
-        if (check.smartphone()) {
-          return '100%';
-        }
-        switch (Number(sincloInfo.widget.widgetSizeType)) {
-          case 1:
-            width = 183;
-            break;
-          case 2:
-            width = 230;
-            break;
-          case 3:
-            width = 280;
-            break;
-          case 4:
-            width = 280;
-            break;
-          default:
-            width = 280;
-            break;
-        }
-        return (Number(sincloInfo.widget.showOperatorIcon) === 1 ||
-            Number(sincloInfo.widget.showChatbotIcon) === 1) ?
-            width + 'px' :
-            width + 20 + 'px';
+        return '100%';
       },
       getCarouselSize: function(settings) {
         if (settings.carouselPattern === '1') {
