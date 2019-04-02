@@ -8559,7 +8559,11 @@
         } else if (String(type) === '4') {
           console.log('CHAT DIAGRAM TRIGGERED!!!!!! ' + diagramId);
           if (window.sincloInfo.contract.chatbotTreeEditor && diagramId
-            && !sinclo.scenarioApi.isProcessing()) {
+            && !sinclo.scenarioApi.isProcessing()
+            && !sinclo.chatApi.autoMessages.exists(id)) {
+            console.log('exists id : ' + id + ' or scenario is processing');
+            return;
+          }) {
             emit('getChatDiagram', {'diagramId': diagramId});
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
