@@ -417,6 +417,14 @@ sincloApp.directive('ngShowonhover',function() {
                     messageList.push("訪問回数が未入力です");
                   }
 
+                  if ('pattern' in form.visitCntMax.$error && $.inArray("訪問回数は1～100回までの半角数字で指定できます", messageList) === -1) {
+                    messageList.push("訪問回数は1～100回までの半角数字で指定できます");
+                  }
+
+                  if ( 'number' in form.visitCntMax.$error ) {
+                    messageList.push("訪問回数は数値で入力してください");
+                  }
+
                   if ('min' in form.visitCntMax.$error) {
                     messageList.push("入力した値が正しくありません");
                   }
