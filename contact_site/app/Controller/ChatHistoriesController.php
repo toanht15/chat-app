@@ -911,43 +911,65 @@ class ChatHistoriesController extends AppController
             || $val['THistoryChatLog']['message_type'] == 49
             || $val['THistoryChatLog']['message_type'] == 52
             || $val['THistoryChatLog']['message_type'] == 55) {
-            $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
-            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
             $json = json_decode($val['THistoryChatLog']['message']);
+            $typeLabel = '';
+            switch ($val['THistoryChatLog']['message_type']) {
+              case 41: //
+                $typeLabel = 'プルダウン';
+                break;
+              case 42:
+                $typeLabel = 'カレンダー';
+                break;
+              case 45:
+                $typeLabel = 'カルーセル';
+                break;
+              case 46:
+                $typeLabel = 'コンファーム';
+                break;
+              case 49:
+                $typeLabel = 'ボタン';
+                break;
+              case 52:
+                $typeLabel = 'チェックボックス';
+                break;
+              case 55:
+                $typeLabel = 'ラジオボタン';
+                break;
+              default:
+                $typeLabel = '';
+                break;
+            }
+            $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング：' . $typeLabel . '）';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
             if (!$json->message) {
-              switch ($val['THistoryChatLog']['message_type']) {
-                case 41:
-                  $val['THistoryChatLog']['message'] = '（プルダウン質問内容なし）';
-                  break;
-                case 42:
-                  $val['THistoryChatLog']['message'] = '（カレンダー質問内容なし）';
-                  break;
-                case 45:
-                  $val['THistoryChatLog']['message'] = '（カルーセル質問内容なし）';
-                  break;
-                case 49:
-                  $val['THistoryChatLog']['message'] = '（ボタン質問内容なし）';
-                  break;
-                case 52:
-                  $val['THistoryChatLog']['message'] = '（チェックボックス質問内容なし）';
-                  break;
-                case 55:
-                  $val['THistoryChatLog']['message'] = '（ラジオボタン質問内容なし）';
-                  break;
-                default:
-                  $val['THistoryChatLog']['message'] = '（質問内容なし）';
-                  break;
-              }
+              $val['THistoryChatLog']['message'] = '';
             } else {
               $val['THistoryChatLog']['message'] = $json->message;
             }
-            if($val['THistoryChatLog']['message_type'] == 55) {
-              $val['THistoryChatLog']['message'] .= "\n";
+            if($val['THistoryChatLog']['message_type'] == 41
+              || $val['THistoryChatLog']['message_type'] == 46
+              || $val['THistoryChatLog']['message_type'] == 46
+              || $val['THistoryChatLog']['message_type'] == 49
+              || $val['THistoryChatLog']['message_type'] == 55) {
+              if (!$json->message) {
+                $val['THistoryChatLog']['message'] .= "\n";
+              }
               foreach($json->settings->options as $idx => $option) {
                 if($idx === (count($json->settings->options) - 1)) {
                   $val['THistoryChatLog']['message'] .= '[] '.$option;
                 } else {
                   $val['THistoryChatLog']['message'] .= '[] '.$option."\n";
+                }
+              }
+            } else if($val['THistoryChatLog']['message_type'] == 52) {
+              if (!$json->message) {
+                $val['THistoryChatLog']['message'] .= "\n";
+              }
+              foreach($json->settings->options as $idx => $option) {
+                if($idx === (count($json->settings->options) - 1)) {
+                  $val['THistoryChatLog']['message'] .= '□ '.$option;
+                } else {
+                  $val['THistoryChatLog']['message'] .= '□ '.$option."\n";
                 }
               }
             }
@@ -965,10 +987,30 @@ class ChatHistoriesController extends AppController
             continue;
           }
           if ($val['THistoryChatLog']['message_type'] == 300) {
-            $row['transmissionKind'] = 'チャットツリーメッセージ（分岐）';
-            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
             $json = json_decode($val['THistoryChatLog']['message']);
-            $val['THistoryChatLog']['message'] = $json->message;
+            $typeLabel = '';
+            switch($json->type) {
+              case 1:
+                $typeLabel = 'ラジオボタン';
+                break;
+              case 2:
+                $typeLabel = 'ボタン';
+                break;
+            }
+            $row['transmissionKind'] = 'チャットツリーメッセージ（分岐：' . $typeLabel . '）';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+            if (!$json->message) {
+              $val['THistoryChatLog']['message'] = "";
+            } else {
+              $val['THistoryChatLog']['message'] = $json->message . "\n";
+            }
+            foreach($json->labels as $idx => $assoc) {
+              if($idx === (count($json->labels) - 1)) {
+                $val['THistoryChatLog']['message'] .= ($assoc->type === '1' ? '[] ' : '').$assoc->value;
+              } else {
+                $val['THistoryChatLog']['message'] .= ($assoc->type === '1' ? '[] ' : '').$assoc->value."\n";
+              }
+            }
           }
           if ($val['THistoryChatLog']['message_type'] == 301) {
             $row['transmissionKind'] = 'チャットツリーメッセージ（分岐回答）';
