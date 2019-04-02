@@ -5035,6 +5035,7 @@
         cs += ' hearing_msg';
 
         li.className = cs;
+        li.style.width = '95%';
         li.innerHTML = messageHtml + buttonUIHtml;
       },
       addCheckbox: function(cs, message, settings, storedValue) {
@@ -5659,8 +5660,7 @@
               this.getRawColor(sincloInfo.widget.mainColor, 0.5) +
               ' !important;}';
         }
-        style += '#sincloBox ul#chatTalk ' + id + ' button {width: ' +
-            this.getButtonUIWidth() + 'px;}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button {width: 100%;}';
         style += '#sincloBox ul#chatTalk ' + id +
             ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
         style += '#sincloBox ul#chatTalk ' + id +
