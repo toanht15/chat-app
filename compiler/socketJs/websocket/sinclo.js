@@ -8563,7 +8563,7 @@
             && !sinclo.chatApi.autoMessages.exists(id)) {
             console.log('exists id : ' + id + ' or scenario is processing');
             return;
-          }) {
+          } else {
             emit('getChatDiagram', {'diagramId': diagramId});
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
