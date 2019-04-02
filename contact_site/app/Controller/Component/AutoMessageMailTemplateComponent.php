@@ -26,6 +26,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const SEND_NAME_SCENARIO_ANSWER_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング回答）';
   const SEND_NAME_SCENARIO_RETURN_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング解析結果）';
   const SEND_NAME_SCENARIO_MODIFY_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング内容修正）';
+  const SEND_NAME_SCENARIO_HEARING_INPUT = 'シナリオメッセージ（ヒアリング回答）';
   const SEND_NAME_SCENARIO_HEARING_REINPUT = 'シナリオメッセージ(ヒアリング再回答)';
   const SEND_NAME_DIAGRAM_BRANCH_MESSAGE = 'チャットツリーメッセージ（分岐）';
   const SEND_NAME_DIAGRAM_TEXT_MESSAGE = 'チャットツリーメッセージ（テキスト発言）';
@@ -168,7 +169,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         $message = $this->generateScenarioTextBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 22:
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        $message = $this->generateScenarioHearingBlockStr(null, $chatLog['created'], $chatLog['message']);
         break;
       case 23:
         $message = $this->generateScenarioSelectionBlockStr($chatLog['created'],$chatLog['message']);
@@ -185,13 +186,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         $message = $this->generateScenarioModifyBulkHearingBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 33:
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        $message = $this->generateScenarioHearingAnswerBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 34:
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        $message = $this->generateScenarioHearingAnswerBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 35:
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        $message = $this->generateScenarioHearingAnswerBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 36:
         $message = $this->generateScenarioReInputHearingBlockStr($chatLog['created'],$chatLog['message']);
@@ -209,29 +210,79 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         $message = $this->generateScenarioReturnBulkHearingBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 41:
-        $obj = json_decode($chatLog['message'], TRUE);
-        $chatMessage = (strcmp($obj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'], $chatMessage);
+        $obj = json_decode($chatLog['message']);
+        $chatMessage = (strcmp($obj->message, "") === 0) ? "" : $obj->message."\n";
+        foreach($obj->settings->options as $idx => $option) {
+          if($idx === (count($obj->settings->options) - 1)) {
+            $chatMessage .= '[] '.$option;
+          } else {
+            $chatMessage .= '[] '.$option."\n";
+          }
+        }
+        $message = $this->generateScenarioHearingBlockStr('シナリオメッセージ（ヒアリング：プルダウン）', $chatLog['created'], $chatMessage);
         break;
       case 42:
         $obj = json_decode($chatLog['message'], TRUE);
-        $chatMessage = (strcmp($obj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'], $chatMessage);
+        $chatMessage = (strcmp($obj['message'], "") === 0) ? "" : $obj['message'];
+        $chatMessage .= "\n（カレンダーを表示）";
+        $message = $this->generateScenarioHearingBlockStr('シナリオメッセージ（ヒアリング：カレンダー）', $chatLog['created'], $chatMessage);
         break;
       case 45:
       case 46:
       case 49:
       case 52:
       case 55:
-        $obj = json_decode($chatLog['message'], TRUE);
-        $chatMessage = (strcmp($obj['message'], "") === 0) ? "（質問内容なし）" : $obj['message'];
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'], $chatMessage);
+        switch($chatLog['message_type']) {
+          case 45:
+            $labelType = "カルーセル";
+            break;
+          case 46:
+            $labelType = "コンファーム";
+            break;
+          case 49:
+            $labelType = "ボタン";
+            break;
+          case 52:
+            $labelType = "チェックボックス";
+            break;
+          case 55:
+            $labelType = "ラジオボタン";
+            break;
+        }
+
+        $obj = json_decode($chatLog['message']);
+        $chatMessage = (strcmp($obj->message, "") === 0) ? "" : $obj->message."\n";
+        if(!empty($obj->settings->images) && !empty($obj->settings->images[0]->answer)) {
+          $carouselData = $obj->settings->images;
+          foreach($carouselData as $index => $datum) {
+            if($index === (count($obj->settings->images) - 1)) {
+              $chatMessage .= '[] '.$datum->answer;
+            } else {
+              $chatMessage .= '[] '.$datum->answer."\n";
+            }
+          }
+        } else if(!empty($obj->settings->options)) {
+          foreach($obj->settings->options as $idx => $option) {
+            if($idx === (count($obj->settings->options) - 1)) {
+              $chatMessage .= ($chatLog['message_type'] === 52 ? '□ ' : '[] ').$option;
+            } else {
+              $chatMessage .= ($chatLog['message_type'] === 52 ? '□ ' : '[] ').$option."\n";
+            }
+          }
+        }
+        $message = $this->generateScenarioHearingBlockStr('シナリオメッセージ（ヒアリング：'.$labelType.'）', $chatLog['created'], $chatMessage);
         break;
       case 43:
       case 47:
       case 50:
       case 53:
-        $message = $this->generateScenarioHearingBlockStr($chatLog['created'], $chatLog['message']);
+        if ($chatLog['message_type'] == 53) {
+          $json = json_decode($chatLog['message'], TRUE);
+          $chatMessage = $json['message'];
+        } else {
+          $chatMessage = $chatLog['message'];
+        }
+        $message = $this->generateScenarioHearingAnswerBlockStr($chatLog['created'], $chatMessage);
         break;
       case 44:
       case 48:
@@ -248,8 +299,15 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 90:
         break;
       case 300:
-        $chatLogObj = json_decode($chatLog['message'], TRUE);
-        $chatMessage = (strcmp($chatLogObj['message'], "") === 0) ? "（質問内容なし）" : $chatLogObj['message'];
+        $chatLogObj = json_decode($chatLog['message']);
+        $chatMessage = (strcmp($chatLogObj->message, "") === 0) ? "" : $chatLogObj->message."\n";
+        foreach($chatLogObj->labels as $idx => $assoc) {
+          if($idx === (count($chatLogObj->labels) - 1)) {
+            $chatMessage .= ($assoc->type === '1' ? '[] ' : '').$assoc->value;
+          } else {
+            $chatMessage .= ($assoc->type === '1' ? '[] ' : '').$assoc->value."\n";
+          }
+        }
         $message = $this->generateDiagramBranchMessageBlockStr($chatLog['created'],$chatMessage);
         break;
       case 301:
@@ -257,7 +315,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         break;
       case 302:
         $chatLogObj = json_decode($chatLog['message'], TRUE);
-        $chatMessage = (strcmp($chatLogObj['message'], "") === 0) ? "（質問内容なし）" : $chatLogObj['message'];
+        $chatMessage = (strcmp($chatLogObj['message'], "") === 0) ? "" : $chatLogObj['message'];
         $message = $this->generateDiagramTextMessageBlockStr($chatLog['created'],$chatMessage);
         break;
       case 303:
@@ -360,9 +418,16 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     return $message;
   }
 
-  protected function generateScenarioHearingBlockStr($date, $content) {
+  protected function generateScenarioHearingBlockStr($typeLabel = self::SEND_NAME_SCENARIO_HEARING, $date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
-    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING);
+    $message .= $this->createMessageBlockHeader($date, $typeLabel);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateScenarioHearingAnswerBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING_INPUT);
     $message .= $this->createMessageContent($content);
     return $message;
   }
