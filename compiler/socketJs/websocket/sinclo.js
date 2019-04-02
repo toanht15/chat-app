@@ -699,6 +699,7 @@
         common.widgetHandler.resetMessageAreaState();
         storage.l.set('leaveFlg', 'false');
         storage.s.unset('amsg');
+        storage.s.unset('_scl_d_msg');
         storage.s.unset('chatAct');
         storage.s.unset('chatEmit');
         storage.l.unset('bannerAct');
@@ -2732,6 +2733,11 @@
         this.chatApi.scDown();
       }
     },
+    resDiagramMessage: function(d) {
+      console.log('resDiagramMessage : ' + JSON.stringify(d));
+      var obj = JSON.parse(d);
+      sinclo.chatApi.diagramMessages.push(obj.nodeId, obj);
+    },
     confirmVideochatStart: function(obj) {
       // ビデオチャット開始に必要な情報をオペレータ側から受信し、セットする
       if (obj.toTabId !== userInfo.tabId) return false;
@@ -3387,6 +3393,67 @@
           var list = this.get(true);
           delete list[id];
           storage.s.set('amsg', JSON.stringify(list));
+        }
+      },
+      diagramMessages: {
+        push: function(id, obj) {
+          var list = this.get(true);
+          if (!this.exists(id)) {
+            list[id] = obj;
+            storage.s.set('_scl_d_msg', JSON.stringify(list));
+            return true;
+          } else if (!('created' in list[id])) {
+            console.log('OVERWRITE OBJECT ID: ' + id + 'B : ' +
+                JSON.stringify(list[id]) + 'A : ' + JSON.stringify(obj));
+            list[id] = obj;
+            storage.s.set('amsg', JSON.stringify(list));
+            return true;
+          }
+          return false;
+        },
+        get: function(allData) {
+          var json = storage.s.get('_scl_d_msg');
+          var returnData = {};
+          if (json) {
+            var array = JSON.parse(json);
+            Object.keys(array).forEach(function(id, index, ar) {
+              if (allData || !array[id].applied) {
+                returnData[id] = array[id];
+              }
+            });
+          }
+          return returnData;
+        },
+        getByArray: function(allData) {
+          var json = storage.s.get('_scl_d_msg');
+          var returnData = [];
+          if (json) {
+            var array = JSON.parse(json);
+            Object.keys(array).forEach(function(id, index, ar) {
+              if (allData || !array[id].applied) {
+                returnData.push(array[id]);
+              }
+            });
+          }
+          return returnData;
+        },
+        exists: function(chatId) {
+          var list = this.get(true);
+          console.log('>>>>>>>>>>>>>>> ' + JSON.stringify(list));
+          return chatId in list;
+        },
+        unset: function() {
+          // 論理的にフラグを付ける
+          var list = this.get(true);
+          Object.keys(list).forEach(function(id, index, arr) {
+            list[id]['applied'] = true;
+          });
+          storage.s.set('_scl_d_msg', JSON.stringify(list));
+        },
+        delete: function(id) {
+          var list = this.get(true);
+          delete list[id];
+          storage.s.set('_scl_d_msg', JSON.stringify(list));
         }
       },
       init: function() {
@@ -5660,7 +5727,7 @@
               ' !important;}';
         }
         style += '#sincloBox ul#chatTalk ' + id + ' button {width: ' +
-            this.getButtonUIWidth() + 'px;}';
+            this.getButtonUIWidth() + ';}';
         style += '#sincloBox ul#chatTalk ' + id +
             ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
         style += '#sincloBox ul#chatTalk ' + id +
@@ -6007,28 +6074,7 @@
         return ('#' + codeR + codeG + codeB).toUpperCase();
       },
       getButtonUIWidth: function() {
-        var width = 280;
-        switch (Number(sincloInfo.widget.widgetSizeType)) {
-          case 1:
-            width = 183;
-            break;
-          case 2:
-            width = 230;
-            break;
-          case 3:
-            width = 280;
-            break;
-          case 4:
-            width = 280;
-            break;
-          default:
-            width = 280;
-            break;
-        }
-        return (Number(sincloInfo.widget.showOperatorIcon) === 1 ||
-            Number(sincloInfo.widget.showChatbotIcon) === 1) ?
-            width :
-            width + 20;
+        return '100%';
       },
       getCarouselSize: function(settings) {
         if (settings.carouselPattern === '1') {
@@ -7282,10 +7328,10 @@
             // シナリオ中の返答はオペレータへの通知をしない
             isScenarioMessage = true;
           } else if (value.did && value.sourceNodeId) {
+            sinclo.diagramApi.common.changeAllowSaving();
             messageType = sinclo.diagramApi.storage.getSendCustomerMessageType(
                 value.did, value.sourceNodeId);
             isDiagramMessage = true;
-            sinclo.diagramApi.common.changeAllowSaving();
           }
 
           if (sinclo.chatApi.isCustomerSendMessageType(messageType)
@@ -8555,8 +8601,13 @@
           }
         } else if (String(type) === '4') {
           console.log('CHAT DIAGRAM TRIGGERED!!!!!! ' + diagramId);
-          if (window.sincloInfo.contract.chatbotTreeEditor && diagramId
-            && !sinclo.scenarioApi.isProcessing()) {
+          if (!window.sincloInfo.contract.chatbotTreeEditor
+            || !diagramId
+            || sinclo.scenarioApi.isProcessing()
+            || sinclo.chatApi.autoMessages.exists(id)) {
+            console.log('exists id : ' + id + ' or scenario is processing');
+            return;
+          } else {
             emit('getChatDiagram', {'diagramId': diagramId});
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
@@ -8572,6 +8623,7 @@
               }
               sinclo.operatorInfo.ev();
             }
+            sinclo.chatApi.autoMessages.push(id, {});
           }
         }
       },
@@ -13375,7 +13427,7 @@
               ' button.sinclo-button-ui {text-align: center}';
           style += '#sincloBox ul#chatTalk ' + id +
               ' button.sinclo-button-ui {width: ' +
-              sinclo.chatApi.getButtonUIWidth() + 'px;}';
+              sinclo.chatApi.getButtonUIWidth() + ';}';
           style += '#sincloBox ul#chatTalk ' + id +
               ' span.sinclo-text-line { margin: 4px 0; }';
           if (settings.isCustomize) {
@@ -13394,6 +13446,13 @@
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui.selected {background-color: ' +
                 settings.buttonUIActiveColor + ' !important;}';
+            if (settings.outButtonUINoneBorder) {
+              style += '#sincloBox ul#chatTalk ' + id + ' button {border: none}';
+            } else {
+              style += '#sincloBox ul#chatTalk ' + id +
+                  ' button {border: 1px solid ' +
+                  settings.buttonUIBorderColor + ' }';
+            }
           } else {
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui {background-color: ' +
@@ -13411,13 +13470,7 @@
                 ' button.sinclo-button-ui.selected {background-color: ' +
                 sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
                 ' !important;}';
-          }
-          if (settings.outButtonUINoneBorder) {
             style += '#sincloBox ul#chatTalk ' + id + ' button {border: none}';
-          } else {
-            style += '#sincloBox ul#chatTalk ' + id +
-                ' button {border: 1px solid ' +
-                settings.buttonUIBorderColor + ' }';
           }
           style += '</style>';
 

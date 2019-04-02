@@ -167,7 +167,7 @@ class TAutoMessagesController extends WidgetSettingController
   public function beforeFilter()
   {
     parent::beforeFilter();
-    $this->set('title_for_layout', 'オートメッセージ機能');
+    $this->set('title_for_layout', 'トリガー機能');
     $this->outMessageIfType = Configure::read('outMessageIfType');
     $this->outMessageTriggerList = Configure::read('outMessageTriggerList');
     $operatingHourData = $this->MOperatingHour->find('first', [

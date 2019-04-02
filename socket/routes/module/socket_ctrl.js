@@ -2859,6 +2859,25 @@ io.sockets.on('connection', function(socket) {
 
       }
     }
+    if (isset(obj.tmpDiagramMessages)) {
+      try {
+        Object.keys(obj.tmpDiagramMessages).
+          forEach(function(diagramKey, index, array) {
+          if (typeof (obj.tmpDiagramMessages[diagramKey]['created']) ===
+              'string') {
+            obj.tmpDiagramMessages[diagramKey]['created'] = new Date(
+                obj.tmpDiagramMessages[diagramKey]['created']);
+          }
+          if (isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(
+              sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
+          }
+          sincloCore[obj.siteKey][obj.sincloSessionId].diagram.push(obj.tmpDiagramMessages[diagramKey]);
+        });
+      } catch (e) {
+
+      }
+    }
     if (obj.subWindow) {
       sincloCore[obj.siteKey][obj.tabId].toTabId = obj.to;
       sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;

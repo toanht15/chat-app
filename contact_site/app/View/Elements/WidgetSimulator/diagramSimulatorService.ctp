@@ -225,6 +225,10 @@
           'anwer_' + type * '_' + nodeId);
     };
 
+    self.hideTextarea = function() {
+      $rootScope.$broadcast('switchSimulatorChatTextArea', false);
+    };
+
     // handle radio button click
     $(document).on('change', '#chatTalk input[type="radio"]', function(e) {
       var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
