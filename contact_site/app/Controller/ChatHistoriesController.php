@@ -968,7 +968,11 @@ class ChatHistoriesController extends AppController
             $row['transmissionKind'] = 'チャットツリーメッセージ（分岐）';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
             $json = json_decode($val['THistoryChatLog']['message']);
-            $val['THistoryChatLog']['message'] = $json->message;
+            if(!$json->message) {
+              $val['THistoryChatLog']['message'] = '（分岐質問内容なし）';
+            } else {
+              $val['THistoryChatLog']['message'] = $json->message;
+            }
           }
           if ($val['THistoryChatLog']['message_type'] == 301) {
             $row['transmissionKind'] = 'チャットツリーメッセージ（分岐回答）';
