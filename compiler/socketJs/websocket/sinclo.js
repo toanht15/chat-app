@@ -8575,6 +8575,7 @@
               }
               sinclo.operatorInfo.ev();
             }
+            sinclo.chatApi.autoMessages.push(id, {});
           }
         }
       },
