@@ -4997,7 +4997,7 @@ ul.naviBtn {
     cursor:pointer;
   }
 
-  input[type='checkbox'] {
+  input[type='checkbox']:not(.sinclo-chat-checkbox) {
       display: none;
 
       &:checked + label {
