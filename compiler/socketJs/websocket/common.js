@@ -1438,7 +1438,9 @@ var socket, // socket.io
         /* ヒアリング */
         html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
         html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
-        html += '#sincloBox ul#chatTalk li.sinclo_re.customWidth {width: 93%}';
+        html += '#sincloBox ul#chatTalk div.grid_for_icon.smallSize li.sinclo_re.customWidth {width: calc(100% - 17.5px); }';
+        html += '#sincloBox ul#chatTalk div.grid_for_icon.middleSize li.sinclo_re.customWidth {width: calc(100% - 21px); }';
+        html += '#sincloBox ul#chatTalk li.sinclo_re.customWidth {width: calc(100% - 24.6px); }';
 
         /* ファイル受信  */
         var previewFileClasses = '#sincloBox #chatTalk li.sinclo_se';
