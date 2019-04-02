@@ -669,9 +669,9 @@
               content += '<span class=\'cChat\' style ="font-size:' + fontSize + '; margin-bottom: 0;">' +
                   $scope.createTextOfCheckbox(message) + '</span>';
             } else {
-            content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
-                $scope.createTextOfMessage(chat, message, {radio: false}) + '</span>';
-          }
+              content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
+                  $scope.createTextOfMessage(chat, message, {radio: false}) + '</span>';
+            }
           }
         } else if (type === chatApi.messageType.scenario.customer.reInputText
             || type === chatApi.messageType.scenario.customer.reInputRadio
@@ -903,6 +903,17 @@
                   textOfMessage += '■ ' + messageContent.settings.options[i];
                 } else {
                   textOfMessage += '■ ' + messageContent.settings.options[i] + "\n";
+                }
+              }
+              textOfMessage = $scope.createTextOfMessage(chat, textOfMessage);
+            } else if (type === chatApi.messageType.scenario.message.calendar) {
+              textOfMessage += '（カレンダーを表示）';
+            } else if (type === chatApi.messageType.scenario.message.carousel) {
+              for(var i=0; i < Object.keys(messageContent.settings.images).length; i++) {
+                if(i === (Object.keys(messageContent.settings.images).length - 1)) {
+                  textOfMessage += '[] ' + messageContent.settings.images[i].answer;
+                } else {
+                  textOfMessage += '[] ' + messageContent.settings.images[i].answer + "\n";
                 }
               }
               textOfMessage = $scope.createTextOfMessage(chat, textOfMessage);
