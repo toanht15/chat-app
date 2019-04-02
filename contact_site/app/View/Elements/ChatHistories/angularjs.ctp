@@ -1205,8 +1205,16 @@
                   dataBaloon +
                   '\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
             }
+
+            var textOfMessage = '';
+            if (!messageObj.message) {
+              textOfMessage = '（分岐質問内容なし）';
+            } else {
+              textOfMessage = $scope.createTextOfMessage(chat, messageObj.message);
+            }
+
             content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
-                $scope.createTextOfMessage(chat, messageObj.message) + '</span>';
+                textOfMessage + '</span>';
           }
         } else if (type === chatApi.messageType.diagram.customer.branch) {
           cn = 'sinclo_re';
