@@ -699,6 +699,7 @@
         common.widgetHandler.resetMessageAreaState();
         storage.l.set('leaveFlg', 'false');
         storage.s.unset('amsg');
+        storage.s.unset('_scl_d_msg');
         storage.s.unset('chatAct');
         storage.s.unset('chatEmit');
         storage.l.unset('bannerAct');
@@ -2732,6 +2733,11 @@
         this.chatApi.scDown();
       }
     },
+    resDiagramMessage: function(d) {
+      console.log('resDiagramMessage : ' + JSON.stringify(d));
+      var obj = JSON.parse(d);
+      sinclo.chatApi.diagramMessages.push(obj.nodeId, obj);
+    },
     confirmVideochatStart: function(obj) {
       // ビデオチャット開始に必要な情報をオペレータ側から受信し、セットする
       if (obj.toTabId !== userInfo.tabId) return false;
@@ -3387,6 +3393,67 @@
           var list = this.get(true);
           delete list[id];
           storage.s.set('amsg', JSON.stringify(list));
+        }
+      },
+      diagramMessages: {
+        push: function(id, obj) {
+          var list = this.get(true);
+          if (!this.exists(id)) {
+            list[id] = obj;
+            storage.s.set('_scl_d_msg', JSON.stringify(list));
+            return true;
+          } else if (!('created' in list[id])) {
+            console.log('OVERWRITE OBJECT ID: ' + id + 'B : ' +
+                JSON.stringify(list[id]) + 'A : ' + JSON.stringify(obj));
+            list[id] = obj;
+            storage.s.set('amsg', JSON.stringify(list));
+            return true;
+          }
+          return false;
+        },
+        get: function(allData) {
+          var json = storage.s.get('_scl_d_msg');
+          var returnData = {};
+          if (json) {
+            var array = JSON.parse(json);
+            Object.keys(array).forEach(function(id, index, ar) {
+              if (allData || !array[id].applied) {
+                returnData[id] = array[id];
+              }
+            });
+          }
+          return returnData;
+        },
+        getByArray: function(allData) {
+          var json = storage.s.get('_scl_d_msg');
+          var returnData = [];
+          if (json) {
+            var array = JSON.parse(json);
+            Object.keys(array).forEach(function(id, index, ar) {
+              if (allData || !array[id].applied) {
+                returnData.push(array[id]);
+              }
+            });
+          }
+          return returnData;
+        },
+        exists: function(chatId) {
+          var list = this.get(true);
+          console.log('>>>>>>>>>>>>>>> ' + JSON.stringify(list));
+          return chatId in list;
+        },
+        unset: function() {
+          // 論理的にフラグを付ける
+          var list = this.get(true);
+          Object.keys(list).forEach(function(id, index, arr) {
+            list[id]['applied'] = true;
+          });
+          storage.s.set('_scl_d_msg', JSON.stringify(list));
+        },
+        delete: function(id) {
+          var list = this.get(true);
+          delete list[id];
+          storage.s.set('_scl_d_msg', JSON.stringify(list));
         }
       },
       init: function() {
@@ -7285,10 +7352,10 @@
             // シナリオ中の返答はオペレータへの通知をしない
             isScenarioMessage = true;
           } else if (value.did && value.sourceNodeId) {
+            sinclo.diagramApi.common.changeAllowSaving();
             messageType = sinclo.diagramApi.storage.getSendCustomerMessageType(
                 value.did, value.sourceNodeId);
             isDiagramMessage = true;
-            sinclo.diagramApi.common.changeAllowSaving();
           }
 
           if (sinclo.chatApi.isCustomerSendMessageType(messageType)
