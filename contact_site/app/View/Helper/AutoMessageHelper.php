@@ -493,7 +493,7 @@ class autoMessageHelper extends AppHelper {
             $deviceList = [];
             if ($v['pc']) $deviceList[] = 'PC';
             if ($v['smartphone']) $deviceList[] = 'スマートフォン';
-            if ($v['tablet']) $deviceList = 'タブレット';
+            if ($v['tablet']) $deviceList[] = 'タブレット';
               $retList[] = sprintf($this->labelList[$itemId], implode($deviceList, ','));
           }
           break;
