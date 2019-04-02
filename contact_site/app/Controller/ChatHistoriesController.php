@@ -972,6 +972,23 @@ class ChatHistoriesController extends AppController
                   $val['THistoryChatLog']['message'] .= '□ '.$option."\n";
                 }
               }
+            } else if ($val['THistoryChatLog']['message_type'] == 42) {
+              if (!$json->message) {
+                $val['THistoryChatLog']['message'] .= "\n";
+              }
+              $val['THistoryChatLog']['message'] .= "（カレンダーを表示）";
+            } else if ($val['THistoryChatLog']['message_type'] == 45) {
+              if (!$json->message) {
+                $val['THistoryChatLog']['message'] .= "\n";
+              }
+              $carouselData = $json->settings->images;
+              foreach($carouselData as $index => $datum) {
+                if($index === (count($json->settings->images) - 1)) {
+                  $val['THistoryChatLog']['message'] .= '[] '.$datum->answer;
+                } else {
+                  $val['THistoryChatLog']['message'] .= '[] '.$datum->answer."\n";
+                }
+              }
             }
           }
           if ($val['THistoryChatLog']['message_type'] == 81) {
