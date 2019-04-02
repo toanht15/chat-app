@@ -116,6 +116,10 @@ class TAutoMessage extends AppModel {
                 continue;
               }
             }
+
+            if (strcmp($field, "visitCntMax") === 0) {
+              continue;
+            }
             return false;
           }
           // キーが存在し、配列以外の値が入っている
