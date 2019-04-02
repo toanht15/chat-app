@@ -1980,7 +1980,7 @@
               scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom))
             }, time);
           }
-        }, 0);
+        }, 100);
       };
 
       /**
