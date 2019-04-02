@@ -314,6 +314,10 @@ define('C_SCENARIO_CONTROL_STRING', 2);
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
 
+// single, multiple setting
+define('C_SINGLE', 1); // single
+define('C_MULTIPLE', 2); // multiple
+
 // TRUE/FALSE
 define("C_CHECK_OFF", 0);
 define("C_CHECK_ON", 1);

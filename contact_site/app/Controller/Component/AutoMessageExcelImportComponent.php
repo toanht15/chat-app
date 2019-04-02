@@ -712,7 +712,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     // 訪問者の端末
     if ($this->isSettingMap[$row['BD']] == 1) {
       if (empty($row['BE'])) {
-        $this->addError($errors, 'AF', '端末が未入力です');
+        $this->addError($errors, 'BE', '端末が未入力です');
       }
       $string  = str_replace(' ', '', $row['BE']);
       $devices = explode(',', trim($string, ','));
