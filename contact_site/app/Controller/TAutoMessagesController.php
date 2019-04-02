@@ -1382,6 +1382,14 @@ class TAutoMessagesController extends WidgetSettingController
       }
       $activity['conditions'][$actualType] = $arr;
     }
+    if ($type === C_AUTO_TRIGGER_VISIT_CNT) {
+      $arr = array();
+      foreach ($conditions as $index => $settings) {
+        $settings['visitCnt'] = (int)$settings['visitCnt'];
+        array_push($arr, $settings);
+      }
+      $activity['conditions'][$actualType] = $arr;
+    }
     if ($type === C_AUTO_TRIGGER_REFERRER) {
       $arr = array();
       foreach ($conditions as $index => $settings) {
