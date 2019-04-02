@@ -239,8 +239,12 @@
         }
       });
 
-      loading.load.start();
+      var loadingTimer =
+          setTimeout(function(){
+            loading.load.start();
+          }, 300);
       paper.on('render:done', function(){
+        clearTimeout(loadingTimer);
         loading.load.finish();
       });
 
