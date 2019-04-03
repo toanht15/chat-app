@@ -239,12 +239,16 @@
         }
       });
 
-      var loadingTimer =
-          setTimeout(function(){
-            loading.load.start();
-          }, 300);
+      var dataForUpdate = $('#TChatbotDiagramActivity').val();
+      var loadingTimer = null;
+      if (dataForUpdate !== null && dataForUpdate !== '') {
+        loadingTimer =
+            setTimeout(function() {
+              loading.load.start();
+            }, 300);
+      }
       paper.on('render:done', function(){
-        clearTimeout(loadingTimer);
+        if(loadingTimer) clearTimeout(loadingTimer);
         loading.load.finish();
       });
 
@@ -252,7 +256,6 @@
       graph.addCell(startNode());
 
       var dragReferencePosition = null;
-      var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
       // default value
       $scope.messageIntervalTimeSec = 2;
