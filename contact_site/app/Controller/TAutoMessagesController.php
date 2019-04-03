@@ -341,6 +341,12 @@ class TAutoMessagesController extends WidgetSettingController
           $changeEditData['conditions'][4] = json_decode($editData[0]['TAutoMessage']['activity'],
             true)['conditions'][10];
         }
+
+        if ($key > 11) {
+          unset($changeEditData['conditions'][$key]);
+          $changeEditData['conditions'][$key - 1 ] = json_decode($editData[0]['TAutoMessage']['activity'],
+            true)['conditions'][$key - 1];
+        }
         $changeEditData = $this->convertOldIFData($key, $val, $changeEditData, $key);
       }
 
@@ -1266,7 +1272,8 @@ class TAutoMessagesController extends WidgetSettingController
           unset($changeEditData['conditions'][4]);
           $changeEditData['conditions'][10] = json_decode($saveData['TAutoMessage']['activity'], true)['conditions'][4];
         }
-        if ($key >= 5) {
+
+        if ($key >= 5 && $key < 11) {
           unset($changeEditData['conditions'][$key]);
           $changeEditData['conditions'][$key - 1] = json_decode($saveData['TAutoMessage']['activity'],
             true)['conditions'][$key];
@@ -1371,6 +1378,14 @@ class TAutoMessagesController extends WidgetSettingController
         } else {
           array_push($arr, $settings);
         }
+      }
+      $activity['conditions'][$actualType] = $arr;
+    }
+    if ($type === C_AUTO_TRIGGER_VISIT_CNT) {
+      $arr = array();
+      foreach ($conditions as $index => $settings) {
+        $settings['visitCnt'] = (int)$settings['visitCnt'];
+        array_push($arr, $settings);
       }
       $activity['conditions'][$actualType] = $arr;
     }

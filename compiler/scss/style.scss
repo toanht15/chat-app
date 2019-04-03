@@ -6286,7 +6286,6 @@ ul.naviBtn {
             min-width: 25.5em;
 
             > ul {
-
               >li.error-message {
                 padding-left: 0;
                 font-size: 12px;
@@ -6482,6 +6481,13 @@ ul.naviBtn {
                 }
               }
 
+              .pb13 {
+                padding-bottom: 13px !important;
+              }
+
+              > items li.noPaddingBottom {
+                padding-bottom: 0;
+              }
             }
 
             div.balloon {
@@ -6536,7 +6542,7 @@ ul.naviBtn {
               display: inline-block;
 
               ul {
-                height: 361px;
+                height: 397px;
                 border: 1px solid #969696;
                 overflow-x: hidden;
                 overflow-y: auto;
