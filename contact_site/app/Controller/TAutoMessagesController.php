@@ -474,9 +474,6 @@ class TAutoMessagesController extends WidgetSettingController
           'TAutoMessage.del_flg' => 0,
           'TAutoMessage.id' => $id,
           'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
-          'NOT' => array(
-            'TAutoMessage.call_automessage_id' => $id
-          )
         ),
         'recursive' => -1
       ));
