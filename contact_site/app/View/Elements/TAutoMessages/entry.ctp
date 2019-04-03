@@ -139,7 +139,7 @@
               <?= $this->Form->input('call_automessage_id', array(
                 'type' => 'select',
                 'options' => $this->data['otherAutoMessages'],
-                'empty' => 'オートメッセージを選択してください',
+                'empty' => 'トリガーを選択してください',
                 'disabled' => !true,
               ), array(
                 'default' => (!empty($this->data['TAutoMessage']['call_automessage_id'])) ? $this->data['TAutoMessage']['call_automessage_id'] : ''

@@ -245,6 +245,17 @@
                 '\' class=\'sinclo-chat-radio\' value=\'' + val + '\' disabled=\'\'>';
             str += '<label class=\'pointer\' for=\'' + radioName + '-' + i + '\'>' + val + '</label>';
           }
+          // チェックボックス
+          var checkbox = str.indexOf('■');
+          if (option.radio && (checkbox > -1)) {
+            var val = '';
+            if (checkbox > -1) {
+              val = str.slice(checkbox + 2);
+            }
+            str = '<input type=\'checkbox\' name=\'' + radioName + '\' id=\'' + radioName + '-' + i +
+                '\' class=\'sinclo-chat-checkbox\' value=\'' + val + '\' disabled=\'\'>';
+            str += '<label class=\'pointer\' for=\'' + radioName + '-' + i + '\'>' + val + '</label>';
+          }
           //リンク、電話番号
           str = replaceVariable(str, isSmartphone, '6');
           custom += str + '\n';
@@ -636,14 +647,14 @@
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important;font-size:' + fontSize +
-                '\'>ゲスト(ヒアリング回答)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>ゲスト（ヒアリング回答）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important; font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
             content = '<span class=\'cName\' style = \'color:#333333 !important; font-size:' + fontSize +
-                '\'>ゲスト(ヒアリング回答)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>ゲスト（ヒアリング回答）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
               content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog(' + chat.id + ',' +
@@ -658,9 +669,9 @@
               content += '<span class=\'cChat\' style ="font-size:' + fontSize + '; margin-bottom: 0;">' +
                   $scope.createTextOfCheckbox(message) + '</span>';
             } else {
-            content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
-                $scope.createTextOfMessage(chat, message, {radio: false}) + '</span>';
-          }
+              content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
+                  $scope.createTextOfMessage(chat, message, {radio: false}) + '</span>';
+            }
           }
         } else if (type === chatApi.messageType.scenario.customer.reInputText
             || type === chatApi.messageType.scenario.customer.reInputRadio
@@ -683,14 +694,14 @@
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important;font-size:' + fontSize +
-                '\'>シナリオメッセージ(ヒアリング再回答)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>シナリオメッセージ（ヒアリング再回答）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important; font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
             content = '<span class=\'cName\' style = \'color:#333333 !important; font-size:' + fontSize +
-                '\'>シナリオメッセージ(ヒアリング再回答)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>シナリオメッセージ（ヒアリング再回答）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
               content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog(' + chat.id + ',' +
@@ -718,7 +729,7 @@
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important;font-size:' + fontSize +
-                '\'>ゲスト(選択肢回答)(' +
+                '\'>ゲスト（選択肢回答）(' +
                 Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important; font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
@@ -726,7 +737,7 @@
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
             content = '<span class=\'cName\' style = \'color:#333333 !important; font-size:' + fontSize +
-                '\'>ゲスト(選択肢回答)(' +
+                '\'>ゲスト（選択肢回答）(' +
                 Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
@@ -754,13 +765,13 @@
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important; font-size:' + fontSize +
-                '\'>シナリオメッセージ(テキスト発言)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>シナリオメッセージ（テキスト発言）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important;font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
-            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>シナリオメッセージ(テキスト発言)</span>';
+            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>シナリオメッセージ（テキスト発言）</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
               content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog(' +
@@ -787,13 +798,13 @@
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important; font-size:' + fontSize +
-                '\'>シナリオメッセージ(ヒアリング)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>シナリオメッセージ（ヒアリング）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important;font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
-            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>シナリオメッセージ(ヒアリング)</span>';
+            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>シナリオメッセージ（ヒアリング）</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
               content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog(' +
@@ -823,16 +834,42 @@
           div.style.padding = '0';
           div.style.borderBottom = '1px solid #bfbfbf';
           div.style.marginTop = '6px';
+
+          var typeLabel = '';
+          switch(type) {
+            case chatApi.messageType.scenario.message.pulldown:
+              typeLabel = 'プルダウン';
+              break;
+            case chatApi.messageType.scenario.message.calendar:
+              typeLabel = 'カレンダー';
+              break;
+            case chatApi.messageType.scenario.message.carousel:
+              typeLabel = 'カルーセル';
+              break;
+            case chatApi.messageType.scenario.message.radio:
+              typeLabel = 'ラジオボタン';
+              break;
+            case chatApi.messageType.scenario.message.buttonUI:
+              typeLabel = 'ボタン';
+              break;
+            case chatApi.messageType.scenario.message.checkbox:
+              typeLabel = 'チェックボックス';
+              break;
+            case chatApi.messageType.scenario.message.button:
+              typeLabel = 'コンファーム';
+              break;
+          }
+
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important; font-size:' + fontSize +
-                '\'>シナリオメッセージ(ヒアリング)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>シナリオメッセージ（ヒアリング：' + typeLabel + '）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important;font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
-            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>シナリオメッセージ(ヒアリング)</span>';
+            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>シナリオメッセージ（ヒアリング：' + typeLabel + '）</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
               content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog(' +
@@ -845,40 +882,38 @@
             }
             var messageContent = JSON.parse(message);
             var textOfMessage = '';
-            if (!messageContent.message) {
-              switch (type) {
-                case chatApi.messageType.scenario.message.pulldown:
-                  textOfMessage = '（プルダウン質問内容なし）';
-                  break;
-                case chatApi.messageType.scenario.message.calendar:
-                  textOfMessage = '（カレンダー質問内容なし）';
-                  break;
-                case chatApi.messageType.scenario.message.carousel:
-                  textOfMessage = '（カルーセル質問内容なし）';
-                  break;
-                case chatApi.messageType.scenario.message.buttonUI:
-                  textOfMessage = '（ボタン質問内容なし）';
-                  break;
-                case chatApi.messageType.scenario.message.checkbox:
-                  textOfMessage = '（チェックボックス質問内容なし）';
-                  break;
-                case chatApi.messageType.scenario.message.radio:
-                  textOfMessage = '（ラジオボタン質問内容なし）';
-                  break;
-                default:
-                  textOfMessage = '（質問内容なし）';
-                  break;
-              }
-            } else {
-              textOfMessage = $scope.createTextOfMessage(chat, messageContent.message);
+            if (messageContent.message) {
+              textOfMessage = $scope.createTextOfMessage(chat, messageContent.message) + "\n";
             }
-            if(type === chatApi.messageType.scenario.message.radio) {
-              textOfMessage = messageContent.message + "\n";
+            if(type === chatApi.messageType.scenario.message.radio
+            || type === chatApi.messageType.scenario.message.buttonUI
+            || type === chatApi.messageType.scenario.message.button
+            || type === chatApi.messageType.scenario.message.pulldown) {
               for(var i=0; i < messageContent.settings.options.length; i++) {
                 if(i === (messageContent.settings.options.length - 1)) {
                   textOfMessage += '[] ' + messageContent.settings.options[i];
                 } else {
                   textOfMessage += '[] ' + messageContent.settings.options[i] + "\n";
+                }
+              }
+              textOfMessage = $scope.createTextOfMessage(chat, textOfMessage);
+            } else if (type === chatApi.messageType.scenario.message.checkbox) {
+              for(var i=0; i < messageContent.settings.options.length; i++) {
+                if(i === (messageContent.settings.options.length - 1)) {
+                  textOfMessage += '■ ' + messageContent.settings.options[i];
+                } else {
+                  textOfMessage += '■ ' + messageContent.settings.options[i] + "\n";
+                }
+              }
+              textOfMessage = $scope.createTextOfMessage(chat, textOfMessage);
+            } else if (type === chatApi.messageType.scenario.message.calendar) {
+              textOfMessage += '（カレンダーを表示）';
+            } else if (type === chatApi.messageType.scenario.message.carousel) {
+              for(var i=0; i < Object.keys(messageContent.settings.images).length; i++) {
+                if(i === (Object.keys(messageContent.settings.images).length - 1)) {
+                  textOfMessage += '[] ' + messageContent.settings.images[i].answer;
+                } else {
+                  textOfMessage += '[] ' + messageContent.settings.images[i].answer + "\n";
                 }
               }
               textOfMessage = $scope.createTextOfMessage(chat, textOfMessage);
@@ -1117,13 +1152,13 @@
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important; font-size:' + fontSize +
-                '\'>シナリオメッセージ(ヒアリング)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>シナリオメッセージ（ヒアリング：プルダウン）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important;font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
-            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>シナリオメッセージ(ヒアリング)</span>';
+            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>シナリオメッセージ（ヒアリング：プルダウン）</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
               content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog(' +
@@ -1134,8 +1169,16 @@
                   dataBaloon +
                   '\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
             }
-            content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
-                $scope.createTextOfMessage(chat, messageObj.message) + '</span>';
+            textOfMessage = messageObj.message + "\n";
+            for(var i=0; i < messageObj.settings.options.length; i++) {
+              if(i === (messageObj.settings.options.length - 1)) {
+                textOfMessage += '■ ' + messageObj.settings.options[i];
+              } else {
+                textOfMessage += '■ ' + messageObj.settings.options[i] + "\n";
+              }
+            }
+            textOfMessage = $scope.createTextOfMessage(chat, textOfMessage);
+            content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+ textOfMessage +"</span>";
           }
         } else if (type === chatApi.messageType.scenario.message.calendar) {
           cn = 'sinclo_auto';
@@ -1179,6 +1222,7 @@
           var created = chat.created.replace(' ', '%');
           var messageObj = JSON.parse(message);
           var forDeletionMessage = messageObj.message.replace(/\r?\n?\s+/g, '');
+          var btnTypeLabel = messageObj.type === 1 ? 'ラジオボタン' : 'ボタン';
           forDeletionMessage = escape_html(forDeletionMessage);
           div.style.textAlign = 'right';
           div.style.height = 'auto';
@@ -1188,13 +1232,13 @@
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important; font-size:' + fontSize +
-                '\'>チャットツリーメッセージ(分岐)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>チャットツリーメッセージ（分岐：' + btnTypeLabel + '）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important;font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
-            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>チャットツリーメッセージ(分岐)</span>';
+            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>チャットツリーメッセージ（分岐：' + btnTypeLabel + '）</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
               content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog(' +
@@ -1205,8 +1249,17 @@
                   dataBaloon +
                   '\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
             }
-            content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
-                $scope.createTextOfMessage(chat, messageObj.message) + '</span>';
+
+            textOfMessage = messageObj.message + "\n";
+            for(var i=0; i < Object.keys(messageObj.labels).length; i++) {
+              if(i === (Object.keys(messageObj.labels).length - 1)) {
+                textOfMessage += (messageObj.labels[i].type === '1' ? '[] ' : '') + messageObj.labels[i].value;
+              } else {
+                textOfMessage += (messageObj.labels[i].type === '1' ? '[] ' : '') + messageObj.labels[i].value + "\n";
+              }
+            }
+            textOfMessage = $scope.createTextOfMessage(chat, textOfMessage);
+            content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+ textOfMessage +"</span>";
           }
         } else if (type === chatApi.messageType.diagram.customer.branch) {
           cn = 'sinclo_re';
@@ -1221,13 +1274,13 @@
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important; font-size:' + fontSize +
-                '\'>チャットツリーメッセージ(分岐回答)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>チャットツリーメッセージ（分岐回答）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important;font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
-            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>チャットツリーメッセージ(分岐回答)</span>';
+            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>チャットツリーメッセージ（分岐回答）</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
               content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog(' +
@@ -1255,13 +1308,13 @@
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
             content = '<span class=\'cName\' style = \'color:#bdbdbd !important; font-size:' + fontSize +
-                '\'>チャットツリーメッセージ(テキスト発言)(' + Number($('#visitorsId').text()) + ')</span>';
+                '\'>チャットツリーメッセージ（テキスト発言）(' + Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important;font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
-            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>チャットツリーメッセージ(テキスト発言)</span>';
+            content = '<span class=\'cName\' style = \'font-size:' + fontSize + '\'>チャットツリーメッセージ（テキスト発言）</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
               content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 onclick = openChatDeleteDialog(' +
