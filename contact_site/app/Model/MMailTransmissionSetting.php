@@ -51,7 +51,7 @@ class MMailTransmissionSetting extends AppModel {
   ];
 
   public function isValidAllEmails($toAddresses){
-    $result = true;
+    $valid = true;
     foreach($toAddresses as $toAddress) {
       $explode = explode(',', $toAddress);
       foreach($explode as $mailAddress) {
@@ -60,7 +60,7 @@ class MMailTransmissionSetting extends AppModel {
         if(!$valid && !$match) break;
       }
     }
-    return $result || $match;
+    return $valid || $match;
   }
 
   public function isNOTDuplicateEmails($toAddresses) {
