@@ -194,6 +194,7 @@
         gridSize: 5,
         model: graph,
         linkPinning: false,
+        async: true,
         defaultLink: new joint.dia.Link({
           attrs: {
             '.connection': {
@@ -238,11 +239,23 @@
         }
       });
 
+      var dataForUpdate = $('#TChatbotDiagramActivity').val();
+      var loadingTimer = null;
+      if (dataForUpdate !== null && dataForUpdate !== '') {
+        loadingTimer =
+            setTimeout(function() {
+              loading.load.start();
+            }, 300);
+      }
+      paper.on('render:done', function(){
+        if(loadingTimer) clearTimeout(loadingTimer);
+        loading.load.finish();
+      });
+
       paper.scale(0.7);
       graph.addCell(startNode());
 
       var dragReferencePosition = null;
-      var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
       // default value
       $scope.messageIntervalTimeSec = 2;
@@ -283,10 +296,6 @@
           initNodeEvent(graph.getCells());
         }, 500);
       }
-
-
-
-
 
       paper.on('cell:pointerup',
           function(cellView, evt, x, y) {
@@ -340,11 +349,23 @@
                     $('#popup-frame').css('top', 0).css('height', contHeight);
                     $scope.popupFix();
                   };
+                } else {
+                  $('#popup-frame').css('height','');
+                  $('#popup-content').css('height','auto');
+
+                  popupEvent.resize = function() {
+                    debugger;
+                    var contHeight = $('#popup-content').height();
+                    $('#popup-frame').css('top', 0).css('height', contHeight);
+                    $scope.popupFix();
+                  };
+                  popupEvent.resize();
                 }
 
                 $scope.popupHandler();
                 $scope.handleButtonCSS();
                 $scope.popupInit(frame);
+                addTooltipEvent();
                 initPopupCloseEvent();
                 /* Install jscolor after create modal */
                 $(window)[0].jscolor.installByClassName('jscolor');
@@ -1947,7 +1968,7 @@
         $scope.buttonUITextAlign = custom.buttonUITextAlign ? custom.buttonUITextAlign : "2";
         $scope.buttonUIActiveColor = custom.buttonUIActiveColor ? custom.buttonUIActiveColor : $scope.getRawColor($scope.widget.settings.main_color, 0.5);
         $scope.buttonUIBorderColor = custom.buttonUIBorderColor ? custom.buttonUIBorderColor : "#E3E3E3";
-        $scope.outButtonUINoneBorder = custom.outButtonUINoneBorder ? custom.outButtonUINoneBorder : false;
+        $scope.outButtonUINoneBorder = custom.outButtonUINoneBorder ? custom.outButtonUINoneBorder : true;
       };
 
       $scope.revertStandard = function(buttonType, colorType, elm){
@@ -2176,6 +2197,9 @@
           });
           $scope.diagramSimulatorService.actionInit();
           $scope.diagramSimulatorService.doAction();
+          if ($scope.widget.settings.chat_init_show_textarea !== '1') {
+            $scope.diagramSimulatorService.hideTextarea();
+          }
         }, 0);
       });
 
@@ -2339,11 +2363,17 @@
       template: '<div>' +
           '<div id=\'scenario_modal\'>' +
           '<label for=\'scenario\'>シナリオ名</label>' +
-          '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key">' +
+          <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]): ?>
+          '<label for="callTargetScenario" display="inline-block" class="commontooltip disabled" data-text="こちらの機能はオプションの加入が必要です。">' +
+          <?php endif; ?>
+          '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key" <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) echo 'class="disabled" disabled'; ?>>' +
           '</select>' +
+          <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]): ?>
+          '</label>' +
+          <?php endif; ?>
           '</div>' +
           '<div class="callbackToDiagramWrap">' +
-          '<label for="callbackToDiagram"><input type="checkbox" name=\'callbackToDiagram\' id=\'callbackToDiagram\'ng-model="callbackToDiagram">終了後、このチャットツリーに戻る</label>' +
+          '<label for="callbackToDiagram" <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) echo 'class="disabled"'; ?>><input type="checkbox" name=\'callbackToDiagram\' id=\'callbackToDiagram\'ng-model="callbackToDiagram" <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) echo 'class="disabled" disabled'; ?>>終了後、このチャットツリーに戻る</label>' +
           '</div>' +
           '<div class="scenario_valid_margin">' +
           '<span class="diagram_valid" ng-show="scenarioIsEmpty">シナリオを選択してください</span>' +

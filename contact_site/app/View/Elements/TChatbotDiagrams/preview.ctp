@@ -122,14 +122,13 @@
 
 <style ng-if="!isCustomize">
   /* Default selection UI */
-  .diagram_preview_area li button {width: 188px; background-color: {{widget.settings.re_text_color}};  color: {{widget.settings.re_background_color}}; cursor: pointer;  min-height: 35px; margin-bottom: 1px;  padding: 10px 15px; border: 1px solid #E3E3E3; text-align: center; }
+  .diagram_preview_area li button {width: 188px; background-color: {{widget.settings.re_text_color}};  color: {{widget.settings.re_background_color}}; cursor: pointer;  min-height: 35px; margin-bottom: 1px;  padding: 10px 15px; border: none; text-align: center; }
   .diagram_preview_area li.middleSize button { width: 240px;}
   .diagram_preview_area li.largeSize button { width: 280px;}
   .diagram_preview_area li button:active{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
   .diagram_preview_area li button:focus{outline: none}
   .diagram_preview_area li button:hover{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
   .diagram_preview_area li div.hasText {margin-top: 8px}
-
 </style>
 
 <style ng-if="radioStyle == 1">
@@ -138,7 +137,6 @@
   .diagram_preview_area li span.sinclo-radio [type="radio"]:checked ~ label {background-color:{{radioEntireActiveColor}}; color:{{radioActiveTextColor}};}
   .diagram_preview_area li span.sinclo-radio [type="radio"] + label:before {top: 9px!important; left: 8px!important;}
   .diagram_preview_area li span.sinclo-radio [type="radio"] + label:after {top: 13px!important; left: 12px!important;}
-
 </style>
 <style ng-if="isCustomize">
   /* Custom selection UI */

@@ -167,7 +167,7 @@ class TAutoMessagesController extends WidgetSettingController
   public function beforeFilter()
   {
     parent::beforeFilter();
-    $this->set('title_for_layout', 'オートメッセージ機能');
+    $this->set('title_for_layout', 'トリガー機能');
     $this->outMessageIfType = Configure::read('outMessageIfType');
     $this->outMessageTriggerList = Configure::read('outMessageTriggerList');
     $operatingHourData = $this->MOperatingHour->find('first', [
@@ -374,13 +374,13 @@ class TAutoMessagesController extends WidgetSettingController
         if (!empty($transmissionData)) {
           $this->request->data['TAutoMessage']['m_mail_transmission_settings_id'] = $editData[0]['TAutoMessage']['m_mail_transmission_settings_id'];
           $splitedMailAddresses = explode(',', $transmissionData['MMailTransmissionSetting']['to_address']);
-          $this->request->data['TAutoMessage']['mail_address_1'] = !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "";
-          $this->request->data['TAutoMessage']['mail_address_2'] = !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "";
+          $this->request->data['TAutoMessage']['mail_address_1'] = !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : $transmissionData;
+          $this->request->data['TAutoMessage']['mail_address_2'] = !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : $editData[0]['TAutoMessage']['m_mail_transmission_settings_id'];
           $this->request->data['TAutoMessage']['mail_address_3'] = !empty($splitedMailAddresses[2]) ? $splitedMailAddresses[2] : "";
           $this->request->data['TAutoMessage']['mail_address_4'] = !empty($splitedMailAddresses[3]) ? $splitedMailAddresses[3] : "";
           $this->request->data['TAutoMessage']['mail_address_5'] = !empty($splitedMailAddresses[4]) ? $splitedMailAddresses[4] : "";
-          $this->request->data['TAutoMessage']['subject'] = !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "";
-          $this->request->data['TAutoMessage']['from_name'] = !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "";
+          $this->request->data['TAutoMessage']['subject'] = !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "subject";
+          $this->request->data['TAutoMessage']['from_name'] = !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "from_name";
         }
         $this->request->data['TAutoMessage']['m_mail_template_id'] = $editData[0]['TAutoMessage']['m_mail_template_id'];
       }
@@ -480,9 +480,6 @@ class TAutoMessagesController extends WidgetSettingController
           'TAutoMessage.del_flg' => 0,
           'TAutoMessage.id' => $id,
           'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
-          'NOT' => array(
-            'TAutoMessage.call_automessage_id' => $id
-          )
         ),
         'recursive' => -1
       ));
@@ -605,6 +602,8 @@ class TAutoMessagesController extends WidgetSettingController
       $saveData['TAutoMessage']['m_mail_transmission_settings_id'] = $value['TAutoMessage']['m_mail_transmission_settings_id'];
       $saveData['TAutoMessage']['m_mail_template_id'] = $value['TAutoMessage']['m_mail_template_id'];
       $saveData['TAutoMessage']['t_chatbot_scenario_id'] = $value['TAutoMessage']['t_chatbot_scenario_id'];
+      $saveData['TAutoMessage']['call_automessage_id'] = $value['TAutoMessage']['call_automessage_id'];
+      $saveData['TAutoMessage']['t_chatbot_diagram_id'] = $value['TAutoMessage']['t_chatbot_diagram_id'];
       $saveData['TAutoMessage']['del_flg'] = $value['TAutoMessage']['del_flg'];
 
       $this->TAutoMessage->set($saveData);

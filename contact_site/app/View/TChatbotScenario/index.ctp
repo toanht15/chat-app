@@ -126,7 +126,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               <p>（未設定）</p>
             <?php else: ?>
               <?php if ($callerAutoMessage !== ''): ?>
-                <p><span class="callerTypeLabel typeAutoMessage">オートメッセージ</span><span><?= $callerAutoMessage; ?></span></p>
+                <p><span class="callerTypeLabel typeAutoMessage">トリガー</span><span><?= $callerAutoMessage; ?></span></p>
               <?php endif; ?>
               <?php if ($callerScenario !== ''): ?>
                 <p><span class="callerTypeLabel typeScenario">シナリオ</span><span><?= $callerScenario; ?></span></p>

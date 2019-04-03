@@ -604,7 +604,7 @@ $config['widgetShowNameType'] = array(
 
 /* ウィジェット設定 － 表示名種別 */
 $config['widgetShowAutomessageNameType'] = array(
-  C_WIDGET_SHOW_AUTOMESSAGE_COMP => "企業名を表示する<br>　<s>※オートメッセージやSorryメッセージなど自動メッセージの吹き出しに企業名を表示します</s>",
+  C_WIDGET_SHOW_AUTOMESSAGE_COMP => "企業名を表示する<br>　<s>※トリガーやSorryメッセージなど自動メッセージの吹き出しに企業名を表示します</s>",
   C_WIDGET_SHOW_AUTOMESSAGE_NONE => "表示しない"
 );
 
