@@ -1710,209 +1710,180 @@ io.sockets.on('connection', function(socket) {
     sendCheck: function(d, callback) {
       return this.scCheck(2, d, callback);
     }, // Sorryメッセージ送信チェック
+    dayMap: {
+      0: 'sun',
+      1: 'mon',
+      2: 'tue',
+      3: 'wed',
+      4: 'thu',
+      5: 'fri',
+      6: 'sat'
+    },
     scCheck: function(type, d, callback) {
-      var companyId = companyList[d.siteKey];
-      var siteKey = d.siteKey;
+      var companyId = companyList[d.siteKey],
+          siteKey = d.siteKey,
+          ret = false,
+          message = null,
+          now = new Date(),
+          nowDay = now.getDay(),
+          timeData = [],
+          publicHolidayData = null,
+          active_flg = '',
+          check = '',
+          outside_hours_sorry_message = '',
+          wating_call_sorry_message = '',
+          no_standby_sorry_message = '',
+          dateParse = Date.parse(now),
+          date = now.getFullYear() + '/' +
+              ('0' + (now.getMonth() + 1)).slice(-2) + '/' +
+              ('0' + (now.getDate())).slice(-2) + ' ';
 
-      var getUserSQL = 'SELECT IFNULL(chat.sc_flg, 2) as sc_flg,in_flg,sorry_message, outside_hours_sorry_message, wating_call_sorry_message, no_standby_sorry_message,initial_notification_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;';
-      pool.query(getUserSQL, [companyId], function(err, rows) {
-        if (err !== null && err !== '') return false; // DB接続断対応
-        var ret = false, message = null;
-        now = new Date();
-        nowDay = now.getDay();
-        var timeData = [];
-        var active_flg = '';
-        var check = '';
-        dateParse = Date.parse(now);
-        date = now.getFullYear() + '/' +
-            ('0' + (now.getMonth() + 1)).slice(-2) + '/' +
-            ('0' + (now.getDate())).slice(-2) + ' ';
-        if (common.operationHourSettings[siteKey] != '') {
-          for (var i = 0; i <
-          common.operationHourSettings[siteKey].length; i++) {
-            dayType = JSON.parse(common.operationHourSettings[siteKey][i].type);
-            //営業時間設定の条件が「毎日」の場合
-            if (dayType == 1) {
-              var day = {
-                0: 'sun',
-                1: 'mon',
-                2: 'tue',
-                3: 'wed',
-                4: 'thu',
-                5: 'fri',
-                6: 'sat'
-              };
-              day = day[nowDay];
-              timeData = JSON.parse(
-                  common.operationHourSettings[siteKey][i].time_settings).everyday[day];
-              publicHolidayData = JSON.parse(
-                  common.operationHourSettings[siteKey][i].time_settings).everyday['pub'];
-            }
-            //営業時間設定の条件が「平日・週末」の場合
-            else {
-              var day = {
-                0: 'sun',
-                1: 'mon',
-                2: 'tue',
-                3: 'wed',
-                4: 'thu',
-                5: 'fri',
-                6: 'sat'
-              };
-              if (nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 ||
-                  nowDay == 5) {
-                var day = 'week';
-              } else {
-                var day = 'weekend';
-              }
-              timeData = JSON.parse(
-                  common.operationHourSettings[siteKey][i].time_settings).weekly[day];
-              publicHolidayData = JSON.parse(
-                  common.operationHourSettings[siteKey][i].time_settings).weekly['weekpub'];
-            }
-            active_flg = JSON.parse(
-                common.operationHourSettings[siteKey][i].active_flg);
+      if (common.operationHourSettings[siteKey] != '') {
+        for (var i = 0; i <
+        common.operationHourSettings[siteKey].length; i++) {
+          dayType = JSON.parse(common.operationHourSettings[siteKey][i].type);
+          //営業時間設定の条件が「毎日」の場合
+          if (dayType == 1) {
+            day = this.dayMap[nowDay];
+            timeData = JSON.parse(
+                common.operationHourSettings[siteKey][i].time_settings).everyday[day];
+            publicHolidayData = JSON.parse(
+                common.operationHourSettings[siteKey][i].time_settings).everyday['pub'];
           }
+          //営業時間設定の条件が「平日・週末」の場合
+          else {
+            var dayType = 'week';
+            if (nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 ||
+                nowDay == 5) {
+              dayType = 'week';
+            } else {
+              dayType = 'weekend';
+            }
+            timeData = JSON.parse(
+                common.operationHourSettings[siteKey][i].time_settings).weekly[dayType];
+            publicHolidayData = JSON.parse(
+                common.operationHourSettings[siteKey][i].time_settings).weekly['weekpub'];
+          }
+          active_flg = JSON.parse(
+              common.operationHourSettings[siteKey][i].active_flg);
         }
-        if (rows && rows[0]) {
+      }
 
-          if (rows[0].sorry_message == '') {
-            //営業時間外sorryメッセージ
-            var outside_hours_sorry_message = rows[0].outside_hours_sorry_message;
-            //待ち呼sorryメッセージ
-            var wating_call_sorry_message = rows[0].wating_call_sorry_message;
-            //待機なしsorryメッセージ
-            var no_standby_sorry_message = rows[0].no_standby_sorry_message;
-          } else {
-            //営業時間外sorryメッセージ
-            var outside_hours_sorry_message = rows[0].sorry_message;
-            //待ち呼sorryメッセージ
-            var wating_call_sorry_message = rows[0].sorry_message;
-            //待機なしsorryメッセージ
-            var no_standby_sorry_message = rows[0].sorry_message;
-          }
+      if (common.chatSettings[d.siteKey].sorry_message == "") {
+        //営業時間外sorryメッセージ
+        outside_hours_sorry_message = common.chatSettings[d.siteKey].outside_hours_sorry_message;
+        //待ち呼sorryメッセージ
+        wating_call_sorry_message = common.chatSettings[d.siteKey].wating_call_sorry_message;
+        //待機なしsorryメッセージ
+        no_standby_sorry_message = common.chatSettings[d.siteKey].no_standby_sorry_message;
+      } else {
+        //営業時間外sorryメッセージ
+        outside_hours_sorry_message = common.chatSettings[d.siteKey].sorry_message;
+        //待ち呼sorryメッセージ
+        wating_call_sorry_message = common.chatSettings[d.siteKey].sorry_message;
+        //待機なしsorryメッセージ
+        no_standby_sorry_message = common.chatSettings[d.siteKey].sorry_message;
+      }
 
-          // ウィジェットが非表示の場合
-          if (type == 1 && rows[0].display_type === 3) {
-            return callback(true,
-                {opFlg: false, message: no_standby_sorry_message});
-          } else if (type == 2 && rows[0].display_type === 3) {
-            //営業時間を利用する場合
-            if (active_flg == 1) {
-              for (var i2 = 0; i2 <
-              common.publicHolidaySettingsArray.length; i2++) {
-                //祝日の場合
-                if ((now.getFullYear() + '/' + '0' +
-                    (now.getMonth() + 1)).slice(-2) + '/' +
-                    ('0' + (now.getDate())).slice(-2) ==
-                    common.publicHolidaySettingsArray[i2].year + '/' +
-                    common.publicHolidaySettingsArray[i2].month + '/' +
-                    common.publicHolidaySettingsArray[i2].day) {
-                  //祝日の営業時間設定が「休み」でない場合
-                  if (publicHolidayData[0].start != '' &&
-                      publicHolidayData[0].end != '') {
-                    for (var i = 0; i < publicHolidayData.length; i++) {
-                      var endTime = publicHolidayData[i].end;
-                      // 営業時間の終了時刻が24:00の場合
-                      if (publicHolidayData[i].end == '24:00') {
-                        endTime = '23:59:59';
-                      }
-                      // 営業時間内の場合
-                      if (Date.parse(
-                          new Date(date + publicHolidayData[i].start)) <=
-                          dateParse && dateParse <
-                          Date.parse(new Date(date + endTime))) {
-                        return callback(true,
-                            {opFlg: false, message: no_standby_sorry_message});
-                        break;
-                      }
-                    }
-                  }
-                  //営業時間外の場合
-                  return callback(true,
-                      {opFlg: false, message: outside_hours_sorry_message});
-                }
-              }
-              // 祝日でない場合、営業時間設定が「休み」でない場合
-              if (timeData[0].start != '' && timeData[0].end != '') {
-                for (var i = 0; i < timeData.length; i++) {
-                  var endTime = timeData[i].end;
-                  // 営業時間の終了時刻が024:00の場合
-                  if (timeData[i].end == '24:00') {
+      // ウィジェットが非表示の場合
+      if (type == 1 && common.widgetSettings[d.siteKey].style_settings.display_type === 3) {
+        return callback(true,
+            {opFlg: false, message: no_standby_sorry_message});
+      } else if (type == 2 && common.widgetSettings[d.siteKey].style_settings.display_type === 3) {
+        //営業時間を利用する場合
+        if (active_flg == 1) {
+          for (var i2 = 0; i2 <
+          common.publicHolidaySettingsArray.length; i2++) {
+            //祝日の場合
+            if ((now.getFullYear() + '/' + '0' +
+                (now.getMonth() + 1)).slice(-2) + '/' +
+                ('0' + (now.getDate())).slice(-2) ==
+                common.publicHolidaySettingsArray[i2].year + '/' +
+                common.publicHolidaySettingsArray[i2].month + '/' +
+                common.publicHolidaySettingsArray[i2].day) {
+              //祝日の営業時間設定が「休み」でない場合
+              if (publicHolidayData[0].start != '' &&
+                  publicHolidayData[0].end != '') {
+                for (var i = 0; i < publicHolidayData.length; i++) {
+                  var endTime = publicHolidayData[i].end;
+                  // 営業時間の終了時刻が24:00の場合
+                  if (publicHolidayData[i].end == '24:00') {
                     endTime = '23:59:59';
                   }
                   // 営業時間内の場合
-                  if (Date.parse(new Date(date + timeData[i].start)) <=
+                  if (Date.parse(
+                      new Date(date + publicHolidayData[i].start)) <=
                       dateParse && dateParse <
                       Date.parse(new Date(date + endTime))) {
-                    check = true;
                     return callback(true,
                         {opFlg: false, message: no_standby_sorry_message});
                     break;
                   }
                 }
-                //営業時間外の場合
-                if (check != true) {
-                  return callback(true,
-                      {opFlg: false, message: outside_hours_sorry_message});
-                }
               }
-            }
-            //営業時間を利用しない場合
-            else {
+              //営業時間外の場合
               return callback(true,
-                  {opFlg: false, message: no_standby_sorry_message});
+                  {opFlg: false, message: outside_hours_sorry_message});
             }
           }
-
-          // ウィジェット表示のジャッジの場合、常に表示は必ずtrue
-          if (type === 1 && rows[0].display_type === 1) {
-            return callback(true,
-                {opFlg: true, message: no_standby_sorry_message});
-          }
-          // ウィジェット表示のジャッジの場合、営業時間内のみ表示するの場合、営業時間内の場合はtrue
-          if (type === 1 && rows[0].display_type === 4 && active_flg == 1) {
-            // 祝日の場合
-            for (var i2 = 0; i2 <
-            common.publicHolidaySettingsArray.length; i2++) {
-              if (now.getFullYear() + '/' +
-                  ('0' + (now.getMonth() + 1)).slice(-2) + '/' +
-                  ('0' + (now.getDate())).slice(-2) ==
-                  common.publicHolidaySettingsArray[i2].year + '/' +
-                  common.publicHolidaySettingsArray[i2].month + '/' +
-                  common.publicHolidaySettingsArray[i2].day) {
-                if (publicHolidayData[0].start != '' &&
-                    publicHolidayData[0].end != '') {
-                  for (var i = 0; i < publicHolidayData.length; i++) {
-                    var endTime = publicHolidayData[i].end;
-                    // 営業時間の終了時刻が24:00の場合
-                    if (publicHolidayData[i].end == '24:00') {
-                      endTime = '23:59:59';
-                    }
-                    if (Date.parse(
-                        new Date(date + publicHolidayData[i].start)) <=
-                        dateParse && dateParse <
-                        Date.parse(new Date(date + endTime))) {
-                      return callback(true,
-                          {opFlg: true, message: no_standby_sorry_message});
-                      break;
-                    }
-                  }
-                }
+          // 祝日でない場合、営業時間設定が「休み」でない場合
+          if (timeData[0].start != '' && timeData[0].end != '') {
+            for (var i = 0; i < timeData.length; i++) {
+              var endTime = timeData[i].end;
+              // 営業時間の終了時刻が024:00の場合
+              if (timeData[i].end == '24:00') {
+                endTime = '23:59:59';
+              }
+              // 営業時間内の場合
+              if (Date.parse(new Date(date + timeData[i].start)) <=
+                  dateParse && dateParse <
+                  Date.parse(new Date(date + endTime))) {
+                check = true;
                 return callback(true,
-                    {opFlg: false, message: outside_hours_sorry_message});
+                    {opFlg: false, message: no_standby_sorry_message});
+                break;
               }
             }
-            // 祝日でない場合、営業時間設定が「休み」でない場合
-            if (timeData[0].start != '' && timeData[0].end != '') {
-              for (var i = 0; i < timeData.length; i++) {
-                var endTime = timeData[i].end;
+            //営業時間外の場合
+            if (check != true) {
+              return callback(true,
+                  {opFlg: false, message: outside_hours_sorry_message});
+            }
+          }
+        }
+        //営業時間を利用しない場合
+        else {
+          return callback(true,
+              {opFlg: false, message: no_standby_sorry_message});
+        }
+      }
+
+      // ウィジェット表示のジャッジの場合、常に表示は必ずtrue
+      if (type === 1 && common.widgetSettings[d.siteKey].style_settings.display_type === 1) {
+        return callback(true,
+            {opFlg: true, message: no_standby_sorry_message});
+      }
+      // ウィジェット表示のジャッジの場合、営業時間内のみ表示するの場合、営業時間内の場合はtrue
+      if (type === 1 && common.widgetSettings[d.siteKey].style_settings.display_type === 4 && active_flg == 1) {
+        // 祝日の場合
+        for (var i2 = 0; i2 <
+        common.publicHolidaySettingsArray.length; i2++) {
+          if (now.getFullYear() + '/' +
+              ('0' + (now.getMonth() + 1)).slice(-2) + '/' +
+              ('0' + (now.getDate())).slice(-2) ==
+              common.publicHolidaySettingsArray[i2].year + '/' +
+              common.publicHolidaySettingsArray[i2].month + '/' +
+              common.publicHolidaySettingsArray[i2].day) {
+            if (publicHolidayData[0].start != '' &&
+                publicHolidayData[0].end != '') {
+              for (var i = 0; i < publicHolidayData.length; i++) {
+                var endTime = publicHolidayData[i].end;
                 // 営業時間の終了時刻が24:00の場合
-                if (timeData[i].end == '24:00') {
+                if (publicHolidayData[i].end == '24:00') {
                   endTime = '23:59:59';
                 }
-                // 営業時間内の場合
-                if (Date.parse(new Date(date + timeData[i].start)) <=
+                if (Date.parse(
+                    new Date(date + publicHolidayData[i].start)) <=
                     dateParse && dateParse <
                     Date.parse(new Date(date + endTime))) {
                   return callback(true,
@@ -1924,346 +1895,357 @@ io.sockets.on('connection', function(socket) {
             return callback(true,
                 {opFlg: false, message: outside_hours_sorry_message});
           }
+        }
+        // 祝日でない場合、営業時間設定が「休み」でない場合
+        if (timeData[0].start != '' && timeData[0].end != '') {
+          for (var i = 0; i < timeData.length; i++) {
+            var endTime = timeData[i].end;
+            // 営業時間の終了時刻が24:00の場合
+            if (timeData[i].end == '24:00') {
+              endTime = '23:59:59';
+            }
+            // 営業時間内の場合
+            if (Date.parse(new Date(date + timeData[i].start)) <=
+                dateParse && dateParse <
+                Date.parse(new Date(date + endTime))) {
+              return callback(true,
+                  {opFlg: true, message: no_standby_sorry_message});
+              break;
+            }
+          }
+        }
+        return callback(true,
+            {opFlg: false, message: outside_hours_sorry_message});
+      }
 
-          // チャット上限数を設定していない場合
-          if (Number(rows[0].sc_flg) === 2) {
-            // オペレーターが待機している場合
-            if (type === 1 &&
-                (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0)
-            ) {
+      // チャット上限数を設定していない場合
+      if (Number(common.chatSettings[d.siteKey].sc_flg) === 2) {
+        // オペレーターが待機している場合
+        if (type === 1 &&
+            (common.widgetSettings[d.siteKey].style_settings.display_type === 2 && getOperatorCnt(d.siteKey) > 0)
+        ) {
+          return callback(true,
+              {opFlg: true, message: outside_hours_sorry_message});
+        }
+        // 営業時間設定を利用している場合
+        if (active_flg === 1) {
+          //祝日の場合
+          for (var i2 = 0; i2 <
+          common.publicHolidaySettingsArray.length; i2++) {
+            if ((now.getFullYear() + '/' + '0' +
+                (now.getMonth() + 1)).slice(-2) + '/' +
+                ('0' + (now.getDate())).slice(-2) ==
+                common.publicHolidaySettingsArray[i2].year + '/' +
+                common.publicHolidaySettingsArray[i2].month + '/' +
+                common.publicHolidaySettingsArray[i2].day) {
+              check = true;
+              //祝日の営業時間設定が「休み」でない場合
+              if (publicHolidayData[0].start != '' &&
+                  publicHolidayData[0].end != '') {
+                for (var i = 0; i < publicHolidayData.length; i++) {
+                  var endTime = publicHolidayData[i].end;
+                  // 営業時間の終了時刻が24:00の場合
+                  if (publicHolidayData[i].end == '24:00') {
+                    endTime = '23:59:59';
+                  }
+                  //営業時間内の場合
+                  if (Date.parse(
+                      new Date(date + publicHolidayData[i].start)) <=
+                      dateParse && dateParse < Date.parse(
+                          new Date(date + publicHolidayData[i].end))) {
+                    // オペレータが待機している場合
+                    if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
+                        getOperatorCnt(d.siteKey) > 0) ||
+                        (common.widgetSettings[d.siteKey].style_settings.display_type === 1 &&
+                            getOperatorCnt(d.siteKey) > 0) ||
+                        (common.widgetSettings[d.siteKey].style_settings.display_type === 4 &&
+                            getOperatorCnt(d.siteKey) > 0)
+                    ) {
+                      return callback(true, {
+                        opFlg: true,
+                        message: null,
+                        in_flg: common.chatSettings[d.siteKey].in_flg
+                      });
+                    }
+                    //オペレータが待機していない場合
+                    else {
+                      ret = false;
+                      message = no_standby_sorry_message;
+                    }
+                  }
+                  //営業時間外の場合
+                  else {
+                    ret = false;
+                    message = outside_hours_sorry_message;
+                  }
+                }
+              }
+              //祝日の営業時間設定が「休み」の場合
+              else {
+                ret = false;
+                message = outside_hours_sorry_message;
+              }
+            }
+          }
+
+          //祝日でない場合
+          if (check != true) {
+            //営業時間設定が「休み」の場合
+            if (timeData[0].start == '' && timeData[0].end == '') {
+              ret = false;
+              message = outside_hours_sorry_message;
+            }
+            //営業時間設定が「休み」でない場合
+            else {
+              for (var i = 0; i < timeData.length; i++) {
+                var endTime = timeData[i].end;
+                // 営業時間の終了時刻が24:00の場合
+                if (timeData[i].end == '24:00') {
+                  endTime = '23:59:59';
+                }
+                //営業時間内
+                if (Date.parse(new Date(date + timeData[i].start)) <=
+                    dateParse && dateParse <
+                    Date.parse(new Date(date + endTime))) {
+                  check = true;
+                  //オペレータが待機している場合
+                  if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
+                      getOperatorCnt(d.siteKey) > 0) ||
+                      (common.widgetSettings[d.siteKey].style_settings.display_type === 1 &&
+                          getOperatorCnt(d.siteKey) > 0) ||
+                      (common.widgetSettings[d.siteKey].style_settings.display_type === 4 &&
+                          getOperatorCnt(d.siteKey) > 0)
+                  ) {
+                    return callback(true, {
+                      opFlg: true,
+                      message: null,
+                      in_flg: rows[0].in_flg
+                    });
+                  }
+                  //オペレータが待機していない場合
+                  else {
+                    ret = false;
+                    message = no_standby_sorry_message;
+                  }
+                }
+              }
+              // 営業時間外の場合
+              if (check != true) {
+                ret = false;
+                message = outside_hours_sorry_message;
+              }
+            }
+          }
+        }
+        //営業時間設定を利用していない場合
+        else {
+          //オペレータが待機している場合
+          if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+              (common.widgetSettings[d.siteKey].style_settings.display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+              (common.widgetSettings[d.siteKey].style_settings.display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+          ) {
+            return callback(true,
+                {opFlg: true, message: null, in_flg: common.chatSettings[d.siteKey].in_flg});
+          }
+          //オペレータが待機していない場合
+          else {
+            ret = false;
+            message = no_standby_sorry_message;
+          }
+        }
+      }
+
+
+      // チャット上限数を設定している場合
+      else if (Number(common.chatSettings[d.siteKey].sc_flg) === 1) {
+        if (type === 1 && common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
+            scList.hasOwnProperty(d.siteKey)) {
+          var userIds = Object.keys(scList[d.siteKey].user);
+          if (userIds.length !== 0) {
+            for (var i = 0; i < userIds.length; i++) {
+              if (Number(scList[d.siteKey].user[userIds[i]]) ===
+                  Number(scList[d.siteKey].cnt[userIds[i]])) continue;
               return callback(true,
                   {opFlg: true, message: outside_hours_sorry_message});
             }
-            // 営業時間設定を利用している場合
-            if (active_flg === 1) {
-              //祝日の場合
-              for (var i2 = 0; i2 <
-              common.publicHolidaySettingsArray.length; i2++) {
-                if ((now.getFullYear() + '/' + '0' +
-                    (now.getMonth() + 1)).slice(-2) + '/' +
-                    ('0' + (now.getDate())).slice(-2) ==
-                    common.publicHolidaySettingsArray[i2].year + '/' +
-                    common.publicHolidaySettingsArray[i2].month + '/' +
-                    common.publicHolidaySettingsArray[i2].day) {
-                  check = true;
-                  //祝日の営業時間設定が「休み」でない場合
-                  if (publicHolidayData[0].start != '' &&
-                      publicHolidayData[0].end != '') {
-                    for (var i = 0; i < publicHolidayData.length; i++) {
-                      var endTime = publicHolidayData[i].end;
-                      // 営業時間の終了時刻が24:00の場合
-                      if (publicHolidayData[i].end == '24:00') {
-                        endTime = '23:59:59';
-                      }
-                      //営業時間内の場合
-                      if (Date.parse(
-                          new Date(date + publicHolidayData[i].start)) <=
-                          dateParse && dateParse < Date.parse(
-                              new Date(date + publicHolidayData[i].end))) {
-                        // オペレータが待機している場合
-                        if ((rows[0].display_type === 2 &&
+          }
+        }
+        //営業時間設定を利用している場合
+        if (active_flg === 1) {
+          for (var i2 = 0; i2 <
+          common.publicHolidaySettingsArray.length; i2++) {
+            //祝日の場合
+            if ((now.getFullYear() + '/' + '0' +
+                (now.getMonth() + 1)).slice(-2) + '/' +
+                ('0' + (now.getDate())).slice(-2) ==
+                common.publicHolidaySettingsArray[i2].year + '/' +
+                common.publicHolidaySettingsArray[i2].month + '/' +
+                common.publicHolidaySettingsArray[i2].day) {
+              check = true;
+              //祝日の営業時間設定が「休み」でない場合
+              if (publicHolidayData[0].start != '' &&
+                  publicHolidayData[0].end != '') {
+                for (var i = 0; i < publicHolidayData.length; i++) {
+                  var endTime = publicHolidayData[i].end;
+                  // 営業時間の終了時刻が24:00の場合
+                  if (publicHolidayData[i].end == '24:00') {
+                    endTime = '23:59:59';
+                  }
+                  //営業時間内の場合
+                  if (Date.parse(
+                      new Date(date + publicHolidayData[i].start)) <=
+                      dateParse && dateParse <
+                      Date.parse(new Date(date + endTime))) {
+                    //オペレータが待機している場合
+                    if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
+                        getOperatorCnt(d.siteKey) > 0) ||
+                        (common.widgetSettings[d.siteKey].style_settings.display_type === 1 &&
                             getOperatorCnt(d.siteKey) > 0) ||
-                            (rows[0].display_type === 1 &&
-                                getOperatorCnt(d.siteKey) > 0) ||
-                            (rows[0].display_type === 4 &&
-                                getOperatorCnt(d.siteKey) > 0)
-                        ) {
+                        (common.widgetSettings[d.siteKey].style_settings.display_type === 4 &&
+                            getOperatorCnt(d.siteKey) > 0)
+                    ) {
+                      // チャット上限数をみる
+                      if (scList.hasOwnProperty(d.siteKey)) {
+                        var userIds = Object.keys(scList[d.siteKey].user);
+                        if (userIds.length !== 0) {
+                          for (var i3 = 0; i3 < userIds.length; i3++) {
+                            if (Number(
+                                scList[d.siteKey].user[userIds[i]]) ===
+                                Number(
+                                    scList[d.siteKey].cnt[userIds[i]])) continue;
+                            return callback(true, {
+                              opFlg: true,
+                              message: null,
+                              in_flg: common.chatSettings[d.siteKey].in_flg
+                            });
+                          }
+                          //上限数を超えている場合
+                          if (ret != true) {
+                            ret = false;
+                            message = wating_call_sorry_message;
+                          }
+                        }
+                      }
+                    }
+                    //待機中のオペレータがいない場合
+                    else {
+                      ret = false;
+                      message = no_standby_sorry_message;
+                    }
+                  }
+                  //営業時間外の場合
+                  else {
+                    ret = false;
+                    message = outside_hours_sorry_message;
+                  }
+                }
+              }
+              //休みの設定にしているとき
+              else {
+                ret = false;
+                message = outside_hours_sorry_message;
+              }
+            }
+          }
+
+          //祝日でない場合
+          if (check != true) {
+            //営業時間設定が「休み」の場合
+            if (timeData[0].start === '' && timeData[0].end === '') {
+              ret = false;
+              message = outside_hours_sorry_message;
+            }
+            //営業時間設定が「休み」でない場合
+            else {
+              for (var i = 0; i < timeData.length; i++) {
+                var endTime = timeData[i].end;
+                // 営業時間の終了時刻が24:00の場合
+                if (timeData[i].end == '24:00') {
+                  endTime = '23:59:59';
+                }
+                //営業時間内の場合
+                if (Date.parse(new Date(date + timeData[i].start)) <=
+                    dateParse && dateParse <
+                    Date.parse(new Date(date + endTime))) {
+                  check = true;
+                  //オペレータが待機している場合
+                  if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
+                      getOperatorCnt(d.siteKey) > 0) ||
+                      (common.widgetSettings[d.siteKey].style_settings.display_type === 1 &&
+                          getOperatorCnt(d.siteKey) > 0) ||
+                      (common.widgetSettings[d.siteKey].style_settings.display_type === 4 &&
+                          getOperatorCnt(d.siteKey) > 0)
+                  ) {
+                    // チャット上限数をみる
+                    if (scList.hasOwnProperty(d.siteKey)) {
+                      var userIds = Object.keys(scList[d.siteKey].user);
+                      if (userIds.length !== 0) {
+                        for (var i2 = 0; i2 < userIds.length; i2++) {
+                          if (Number(scList[d.siteKey].user[userIds[i]]) ===
+                              Number(
+                                  scList[d.siteKey].cnt[userIds[i]])) continue;
                           return callback(true, {
                             opFlg: true,
                             message: null,
                             in_flg: rows[0].in_flg
                           });
                         }
-                        //オペレータが待機していない場合
-                        else {
+                        //上限数を超えている場合
+                        if (ret != true) {
                           ret = false;
-                          message = no_standby_sorry_message;
+                          message = wating_call_sorry_message;
                         }
                       }
-                      //営業時間外の場合
-                      else {
-                        ret = false;
-                        message = outside_hours_sorry_message;
-                      }
                     }
                   }
-                  //祝日の営業時間設定が「休み」の場合
+                  //待機中のオペレータがいない場合
                   else {
                     ret = false;
-                    message = outside_hours_sorry_message;
+                    message = no_standby_sorry_message;
                   }
                 }
               }
-
-              //祝日でない場合
+              // 営業時間外の場合
               if (check != true) {
-                //営業時間設定が「休み」の場合
-                if (timeData[0].start == '' && timeData[0].end == '') {
-                  ret = false;
-                  message = outside_hours_sorry_message;
-                }
-                //営業時間設定が「休み」でない場合
-                else {
-                  for (var i = 0; i < timeData.length; i++) {
-                    var endTime = timeData[i].end;
-                    // 営業時間の終了時刻が24:00の場合
-                    if (timeData[i].end == '24:00') {
-                      endTime = '23:59:59';
-                    }
-                    //営業時間内
-                    if (Date.parse(new Date(date + timeData[i].start)) <=
-                        dateParse && dateParse <
-                        Date.parse(new Date(date + endTime))) {
-                      check = true;
-                      //オペレータが待機している場合
-                      if ((rows[0].display_type === 2 &&
-                          getOperatorCnt(d.siteKey) > 0) ||
-                          (rows[0].display_type === 1 &&
-                              getOperatorCnt(d.siteKey) > 0) ||
-                          (rows[0].display_type === 4 &&
-                              getOperatorCnt(d.siteKey) > 0)
-                      ) {
-                        return callback(true, {
-                          opFlg: true,
-                          message: null,
-                          in_flg: rows[0].in_flg
-                        });
-                      }
-                      //オペレータが待機していない場合
-                      else {
-                        ret = false;
-                        message = no_standby_sorry_message;
-                      }
-                    }
-                  }
-                  // 営業時間外の場合
-                  if (check != true) {
-                    ret = false;
-                    message = outside_hours_sorry_message;
-                  }
-                }
-              }
-            }
-            //営業時間設定を利用していない場合
-            else {
-              //オペレータが待機している場合
-              if ((rows[0].display_type === 2 && getOperatorCnt(d.siteKey) >
-                  0) ||
-                  (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) >
-                      0) ||
-                  (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
-              ) {
-                return callback(true,
-                    {opFlg: true, message: null, in_flg: rows[0].in_flg});
-              }
-              //オペレータが待機していない場合
-              else {
                 ret = false;
-                message = no_standby_sorry_message;
+                message = outside_hours_sorry_message;
               }
             }
           }
-
-
-          // チャット上限数を設定している場合
-          else if (Number(rows[0].sc_flg) === 1) {
-            if (type === 1 && rows[0].display_type === 2 &&
-                scList.hasOwnProperty(d.siteKey)) {
+        }
+        //営業時間設定を利用しない場合
+        else {
+          //オペレータが待機している場合
+          if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
+              (common.widgetSettings[d.siteKey].style_settings.display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
+              (common.widgetSettings[d.siteKey].style_settings.display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+          ) {
+            // チャット上限数をみる
+            if (scList.hasOwnProperty(d.siteKey)) {
               var userIds = Object.keys(scList[d.siteKey].user);
               if (userIds.length !== 0) {
                 for (var i = 0; i < userIds.length; i++) {
                   if (Number(scList[d.siteKey].user[userIds[i]]) ===
                       Number(scList[d.siteKey].cnt[userIds[i]])) continue;
                   return callback(true,
-                      {opFlg: true, message: outside_hours_sorry_message});
+                      {opFlg: true, message: null, in_flg: rows[0].in_flg});
                 }
-              }
-            }
-            //営業時間設定を利用している場合
-            if (active_flg === 1) {
-              for (var i2 = 0; i2 <
-              common.publicHolidaySettingsArray.length; i2++) {
-                //祝日の場合
-                if ((now.getFullYear() + '/' + '0' +
-                    (now.getMonth() + 1)).slice(-2) + '/' +
-                    ('0' + (now.getDate())).slice(-2) ==
-                    common.publicHolidaySettingsArray[i2].year + '/' +
-                    common.publicHolidaySettingsArray[i2].month + '/' +
-                    common.publicHolidaySettingsArray[i2].day) {
-                  check = true;
-                  //祝日の営業時間設定が「休み」でない場合
-                  if (publicHolidayData[0].start != '' &&
-                      publicHolidayData[0].end != '') {
-                    for (var i = 0; i < publicHolidayData.length; i++) {
-                      var endTime = publicHolidayData[i].end;
-                      // 営業時間の終了時刻が24:00の場合
-                      if (publicHolidayData[i].end == '24:00') {
-                        endTime = '23:59:59';
-                      }
-                      //営業時間内の場合
-                      if (Date.parse(
-                          new Date(date + publicHolidayData[i].start)) <=
-                          dateParse && dateParse <
-                          Date.parse(new Date(date + endTime))) {
-                        //オペレータが待機している場合
-                        if ((rows[0].display_type === 2 &&
-                            getOperatorCnt(d.siteKey) > 0) ||
-                            (rows[0].display_type === 1 &&
-                                getOperatorCnt(d.siteKey) > 0) ||
-                            (rows[0].display_type === 4 &&
-                                getOperatorCnt(d.siteKey) > 0)
-                        ) {
-                          // チャット上限数をみる
-                          if (scList.hasOwnProperty(d.siteKey)) {
-                            var userIds = Object.keys(scList[d.siteKey].user);
-                            if (userIds.length !== 0) {
-                              for (var i3 = 0; i3 < userIds.length; i3++) {
-                                if (Number(
-                                    scList[d.siteKey].user[userIds[i]]) ===
-                                    Number(
-                                        scList[d.siteKey].cnt[userIds[i]])) continue;
-                                return callback(true, {
-                                  opFlg: true,
-                                  message: null,
-                                  in_flg: rows[0].in_flg
-                                });
-                              }
-                              //上限数を超えている場合
-                              if (ret != true) {
-                                ret = false;
-                                message = wating_call_sorry_message;
-                              }
-                            }
-                          }
-                        }
-                        //待機中のオペレータがいない場合
-                        else {
-                          ret = false;
-                          message = no_standby_sorry_message;
-                        }
-                      }
-                      //営業時間外の場合
-                      else {
-                        ret = false;
-                        message = outside_hours_sorry_message;
-                      }
-                    }
-                  }
-                  //休みの設定にしているとき
-                  else {
-                    ret = false;
-                    message = outside_hours_sorry_message;
-                  }
-                }
-              }
-
-              //祝日でない場合
-              if (check != true) {
-                //営業時間設定が「休み」の場合
-                if (timeData[0].start === '' && timeData[0].end === '') {
+                //上限数を超えている場合
+                if (ret != true) {
                   ret = false;
-                  message = outside_hours_sorry_message;
-                }
-                //営業時間設定が「休み」でない場合
-                else {
-                  for (var i = 0; i < timeData.length; i++) {
-                    var endTime = timeData[i].end;
-                    // 営業時間の終了時刻が24:00の場合
-                    if (timeData[i].end == '24:00') {
-                      endTime = '23:59:59';
-                    }
-                    //営業時間内の場合
-                    if (Date.parse(new Date(date + timeData[i].start)) <=
-                        dateParse && dateParse <
-                        Date.parse(new Date(date + endTime))) {
-                      check = true;
-                      //オペレータが待機している場合
-                      if ((rows[0].display_type === 2 &&
-                          getOperatorCnt(d.siteKey) > 0) ||
-                          (rows[0].display_type === 1 &&
-                              getOperatorCnt(d.siteKey) > 0) ||
-                          (rows[0].display_type === 4 &&
-                              getOperatorCnt(d.siteKey) > 0)
-                      ) {
-                        // チャット上限数をみる
-                        if (scList.hasOwnProperty(d.siteKey)) {
-                          var userIds = Object.keys(scList[d.siteKey].user);
-                          if (userIds.length !== 0) {
-                            for (var i2 = 0; i2 < userIds.length; i2++) {
-                              if (Number(scList[d.siteKey].user[userIds[i]]) ===
-                                  Number(
-                                      scList[d.siteKey].cnt[userIds[i]])) continue;
-                              return callback(true, {
-                                opFlg: true,
-                                message: null,
-                                in_flg: rows[0].in_flg
-                              });
-                            }
-                            //上限数を超えている場合
-                            if (ret != true) {
-                              ret = false;
-                              message = wating_call_sorry_message;
-                            }
-                          }
-                        }
-                      }
-                      //待機中のオペレータがいない場合
-                      else {
-                        ret = false;
-                        message = no_standby_sorry_message;
-                      }
-                    }
-                  }
-                  // 営業時間外の場合
-                  if (check != true) {
-                    ret = false;
-                    message = outside_hours_sorry_message;
-                  }
+                  message = wating_call_sorry_message;
                 }
               }
             }
-            //営業時間設定を利用しない場合
-            else {
-              //オペレータが待機している場合
-              if ((rows[0].display_type === 2 && getOperatorCnt(d.siteKey) >
-                  0) ||
-                  (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) >
-                      0) ||
-                  (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
-              ) {
-                // チャット上限数をみる
-                if (scList.hasOwnProperty(d.siteKey)) {
-                  var userIds = Object.keys(scList[d.siteKey].user);
-                  if (userIds.length !== 0) {
-                    for (var i = 0; i < userIds.length; i++) {
-                      if (Number(scList[d.siteKey].user[userIds[i]]) ===
-                          Number(scList[d.siteKey].cnt[userIds[i]])) continue;
-                      return callback(true,
-                          {opFlg: true, message: null, in_flg: rows[0].in_flg});
-                    }
-                    //上限数を超えている場合
-                    if (ret != true) {
-                      ret = false;
-                      message = wating_call_sorry_message;
-                    }
-                  }
-                }
-              }
-              //待機中のオペレータがいない場合
-              else {
-                ret = false;
-                message = no_standby_sorry_message;
-              }
-            }
           }
-          return callback(true, {opFlg: ret, message: message});
-        } else {
-          if (type === 1) { // ウィジェット
-            ret = true;
+          //待機中のオペレータがいない場合
+          else {
+            ret = false;
+            message = no_standby_sorry_message;
           }
-          return callback(false, {ret: ret, message: null});
         }
-      });
+      }
+      return callback(true, {opFlg: ret, message: message});
     }
   };
 
