@@ -1162,12 +1162,12 @@ io.sockets.on('connection', function(socket) {
           var messages = (isset(rows)) ? rows : [];
           var setList = {};
           for (var i = 0; i < messages.length; i++) {
-            var date = messages[i].created;
-            date = new Date(date);
+            var chatMessageDate = messages[i].created;
+            chatMessageDate = new Date(chatMessageDate);
             // if ( ('userName' in messages[i]) && obj.showName !== 1 ) {
             //   delete messages[i].userName;
             // }
-            setList[fullDateTime(messages[i].created)] = messages[i];
+            setList[fullDateTime(chatMessageDate)] = messages[i];
           }
           var autoMessages = [];
           if (obj.sincloSessionId in sincloCore[obj.siteKey] &&
@@ -1182,14 +1182,13 @@ io.sockets.on('connection', function(socket) {
 
             }
           }
-          for (var i = 0; i < autoMessages.length; i++) {
-            var date = autoMessages[i].created;
-            date = new Date(date);
+          for (var j = 0; j < autoMessages.length; j++) {
+            var autoMessageDate = autoMessages[j].created;
+            autoMessageDate = new Date(autoMessageDate);
             // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
             //   delete autoMessages[i].userName;
             // }
-            setList[fullDateTime(autoMessages[i].created) +
-            '_'] = autoMessages[i];
+            setList[fullDateTime(autoMessageDate) + '_'] = autoMessages[j];
           }
           var scenarioMessages = [];
           if (obj.sincloSessionId in sincloCore[obj.siteKey] && 'scenario' in
@@ -1207,10 +1206,10 @@ io.sockets.on('connection', function(socket) {
                   });
             });
           }
-          for (var i = 0; i < scenarioMessages.length; i++) {
-            var date = scenarioMessages[i].created;
-            date = new Date(date);
-            setList[fullDateTime(date) + '_'] = scenarioMessages[i];
+          for (var k = 0; k < scenarioMessages.length; k++) {
+            var scenarioDate = scenarioMessages[k].created;
+            scenarioDate = new Date(scenarioDate);
+            setList[fullDateTime(scenarioDate) + '_'] = scenarioMessages[k];
           }
           var diagram = [];
           if (obj.sincloSessionId in sincloCore[obj.siteKey] &&
@@ -1222,14 +1221,13 @@ io.sockets.on('connection', function(socket) {
 
             }
           }
-          for (var i = 0; i < diagram.length; i++) {
-            var date = diagram[i].created;
-            date = new Date(date);
+          for (var l = 0; l < diagram.length; l++) {
+            var diagramDate = diagram[l].created;
+            diagramDate = new Date(diagramDate);
             // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
             //   delete autoMessages[i].userName;
             // }
-            setList[fullDateTime(date) +
-            '_'] = diagram[i];
+            setList[fullDateTime(diagramDate) + '_'] = diagram[l];
           }
           chatData.messages = objectSort(setList);
           obj.chat = chatData;
@@ -1277,7 +1275,8 @@ io.sockets.on('connection', function(socket) {
               insertData.message_read_flg = 1;
               insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
               insertData.message_distinction = d.messageDistinction;
-            } else if (((Number(insertData.message_type) === 1 || Number(insertData.message_type) === 303) &&
+            } else if (((Number(insertData.message_type) === 1 ||
+                Number(insertData.message_type) === 303) &&
                 d.hasOwnProperty('notifyToCompany') && !d.notifyToCompany) ||
                 Number(insertData.message_type) === 12 ||
                 Number(insertData.message_type) === 13) {
@@ -1297,7 +1296,7 @@ io.sockets.on('connection', function(socket) {
     _handleInsertData: function(
         error, results, d, noReturnSelfMessage, insertData) {
       try {
-        if(d.messageType === 1
+        if (d.messageType === 1
             || d.messageType === 12
             || d.messageType === 13
             || d.messageType === 19
@@ -1311,7 +1310,7 @@ io.sockets.on('connection', function(socket) {
             || d.messageType === 53
             || d.messageType === 54) {
           // DEBUG: サイト訪問者側メッセージのログ出力
-          console.log('customer message',{
+          console.log('customer message', {
             siteKey: d.siteKey,
             ssId: d.sincloSessionId,
             tabId: d.tabId,
@@ -1319,17 +1318,18 @@ io.sockets.on('connection', function(socket) {
             type: d.messageType
           });
         }
-      } catch(e) {
+      } catch (e) {
 
       }
       if (!isset(error)) {
         let messageTimeType = 1;
-        if(Number(insertData.message_request_flg) === 1) {
+        if (Number(insertData.message_request_flg) === 1) {
           messageTimeType = 2;
         } else if (d.messageType === 1 || d.messageType === 8) {
           messageTimeType = 2;
         }
-        ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, messageTimeType, insertData.created);
+        ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id,
+            messageTimeType, insertData.created);
         if (!isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
         var sendData = {
           tabId: d.tabId,
@@ -1347,7 +1347,8 @@ io.sockets.on('connection', function(socket) {
         // 担当者のいない消費者からのメッセージの場合
         if ((d.messageType === 1 &&
             !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))
-        || (d.messageType === 303 && d.notifyToCompany && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))) {
+            || (d.messageType === 303 && d.notifyToCompany &&
+                !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat'))) {
           // 応対可能かチェック(対応できるのであれば trueが返る)
           chatApi.sendCheck(d, function(err, ret) {
             sendData.opFlg = ret.opFlg;
@@ -1414,8 +1415,10 @@ io.sockets.on('connection', function(socket) {
 
             //通知された場合
             if (ret.opFlg === true && d.notifyToCompany) {
-              ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, 3, insertData.created);
-              if ((d.messageType === 1 || d.messageType === 303) && insertData.message_read_flg != 1) {
+              ChatLogTimeManager.saveTime(results.insertId,
+                  insertData.t_histories_id, 3, insertData.created);
+              if ((d.messageType === 1 || d.messageType === 303) &&
+                  insertData.message_read_flg != 1) {
                 sincloCore[d.siteKey][d.tabId].chatUnreadId = results.insertId;
                 sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
               }
@@ -1465,7 +1468,6 @@ io.sockets.on('connection', function(socket) {
           if (Number(insertData.message_type) === 3) return false;
 
           // 書き込みが成功したら企業側に結果を返す
-
           var sendChatData = {
             tabId: d.tabId,
             sincloSessionId: sincloSessionId,
@@ -1475,7 +1477,9 @@ io.sockets.on('connection', function(socket) {
             userId: insertData.m_users_id,
             messageType: d.messageType,
             ret: true,
-            message: (d.isDiagramMessage) ? d.chatMessage.message : d.chatMessage,
+            message: (d.isDiagramMessage) ?
+                d.chatMessage.message :
+                d.chatMessage,
             siteKey: d.siteKey,
             notifyToCompany: d.notifyToCompany
           };
@@ -1496,10 +1500,15 @@ io.sockets.on('connection', function(socket) {
           }
         }
 
-        if(d.isDiagramMessage) {
+        if (d.isDiagramMessage) {
           var obj = d.chatMessage;
           var sql = 'INSERT INTO t_history_diagram_logs VALUES (null,?,?,?,?,?,0,now(),NULL,NULL)';
-          pool.query(sql, [companyList[d.siteKey], results.insertId, obj.did, obj.sourceNodeId, obj.nextNodeId], (err, result) => {
+          pool.query(sql, [
+            companyList[d.siteKey],
+            results.insertId,
+            obj.did,
+            obj.sourceNodeId,
+            obj.nextNodeId], (err, result) => {
 
           });
         }
@@ -1612,12 +1621,14 @@ io.sockets.on('connection', function(socket) {
                   }
                   if (results.hasOwnProperty('insertId')) {
                     let messageTimeType = 1;
-                    if(Number(insertData.message_request_flg) === 1) {
+                    if (Number(insertData.message_request_flg) === 1) {
                       messageTimeType = 2;
                     } else if (d.messageType === 1 || d.messageType === 8) {
                       messageTimeType = 2;
                     }
-                    ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, messageTimeType, insertData.created);
+                    ChatLogTimeManager.saveTime(results.insertId,
+                        insertData.t_histories_id, messageTimeType,
+                        insertData.created);
                     d.id = results.insertId;
                     d.created = fullDateTime(d.created);
                   }
@@ -1769,27 +1780,29 @@ io.sockets.on('connection', function(socket) {
         }
       }
 
-      if (common.chatSettings[d.siteKey].sorry_message == "") {
+      if (common.chatSettings[siteKey].sorry_message == '') {
         //営業時間外sorryメッセージ
-        outside_hours_sorry_message = common.chatSettings[d.siteKey].outside_hours_sorry_message;
+        outside_hours_sorry_message = common.chatSettings[siteKey].outside_hours_sorry_message;
         //待ち呼sorryメッセージ
-        wating_call_sorry_message = common.chatSettings[d.siteKey].wating_call_sorry_message;
+        wating_call_sorry_message = common.chatSettings[siteKey].wating_call_sorry_message;
         //待機なしsorryメッセージ
-        no_standby_sorry_message = common.chatSettings[d.siteKey].no_standby_sorry_message;
+        no_standby_sorry_message = common.chatSettings[siteKey].no_standby_sorry_message;
       } else {
         //営業時間外sorryメッセージ
-        outside_hours_sorry_message = common.chatSettings[d.siteKey].sorry_message;
+        outside_hours_sorry_message = common.chatSettings[siteKey].sorry_message;
         //待ち呼sorryメッセージ
-        wating_call_sorry_message = common.chatSettings[d.siteKey].sorry_message;
+        wating_call_sorry_message = common.chatSettings[siteKey].sorry_message;
         //待機なしsorryメッセージ
-        no_standby_sorry_message = common.chatSettings[d.siteKey].sorry_message;
+        no_standby_sorry_message = common.chatSettings[siteKey].sorry_message;
       }
 
       // ウィジェットが非表示の場合
-      if (type == 1 && common.widgetSettings[d.siteKey].style_settings.display_type === 3) {
+      if (type == 1 &&
+          common.widgetSettings[siteKey].style_settings.display_type === 3) {
         return callback(true,
             {opFlg: false, message: no_standby_sorry_message});
-      } else if (type == 2 && common.widgetSettings[d.siteKey].style_settings.display_type === 3) {
+      } else if (type == 2 &&
+          common.widgetSettings[siteKey].style_settings.display_type === 3) {
         //営業時間を利用する場合
         if (active_flg == 1) {
           for (var i2 = 0; i2 <
@@ -1859,12 +1872,15 @@ io.sockets.on('connection', function(socket) {
       }
 
       // ウィジェット表示のジャッジの場合、常に表示は必ずtrue
-      if (type === 1 && common.widgetSettings[d.siteKey].style_settings.display_type === 1) {
+      if (type === 1 &&
+          common.widgetSettings[siteKey].style_settings.display_type === 1) {
         return callback(true,
             {opFlg: true, message: no_standby_sorry_message});
       }
       // ウィジェット表示のジャッジの場合、営業時間内のみ表示するの場合、営業時間内の場合はtrue
-      if (type === 1 && common.widgetSettings[d.siteKey].style_settings.display_type === 4 && active_flg == 1) {
+      if (type === 1 &&
+          common.widgetSettings[siteKey].style_settings.display_type === 4 &&
+          active_flg == 1) {
         // 祝日の場合
         for (var i2 = 0; i2 <
         common.publicHolidaySettingsArray.length; i2++) {
@@ -1919,10 +1935,11 @@ io.sockets.on('connection', function(socket) {
       }
 
       // チャット上限数を設定していない場合
-      if (Number(common.chatSettings[d.siteKey].sc_flg) === 2) {
+      if (Number(common.chatSettings[siteKey].sc_flg) === 2) {
         // オペレーターが待機している場合
         if (type === 1 &&
-            (common.widgetSettings[d.siteKey].style_settings.display_type === 2 && getOperatorCnt(d.siteKey) > 0)
+            (common.widgetSettings[siteKey].style_settings.display_type === 2 &&
+                getOperatorCnt(siteKey) > 0)
         ) {
           return callback(true,
               {opFlg: true, message: outside_hours_sorry_message});
@@ -1954,17 +1971,20 @@ io.sockets.on('connection', function(socket) {
                       dateParse && dateParse < Date.parse(
                           new Date(date + publicHolidayData[i].end))) {
                     // オペレータが待機している場合
-                    if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
-                        getOperatorCnt(d.siteKey) > 0) ||
-                        (common.widgetSettings[d.siteKey].style_settings.display_type === 1 &&
-                            getOperatorCnt(d.siteKey) > 0) ||
-                        (common.widgetSettings[d.siteKey].style_settings.display_type === 4 &&
-                            getOperatorCnt(d.siteKey) > 0)
+                    if ((common.widgetSettings[siteKey].style_settings.display_type ===
+                        2 &&
+                        getOperatorCnt(siteKey) > 0) ||
+                        (common.widgetSettings[siteKey].style_settings.display_type ===
+                            1 &&
+                            getOperatorCnt(siteKey) > 0) ||
+                        (common.widgetSettings[siteKey].style_settings.display_type ===
+                            4 &&
+                            getOperatorCnt(siteKey) > 0)
                     ) {
                       return callback(true, {
                         opFlg: true,
                         message: null,
-                        in_flg: common.chatSettings[d.siteKey].in_flg
+                        in_flg: common.chatSettings[siteKey].in_flg
                       });
                     }
                     //オペレータが待機していない場合
@@ -2009,12 +2029,15 @@ io.sockets.on('connection', function(socket) {
                     Date.parse(new Date(date + endTime))) {
                   check = true;
                   //オペレータが待機している場合
-                  if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
-                      getOperatorCnt(d.siteKey) > 0) ||
-                      (common.widgetSettings[d.siteKey].style_settings.display_type === 1 &&
-                          getOperatorCnt(d.siteKey) > 0) ||
-                      (common.widgetSettings[d.siteKey].style_settings.display_type === 4 &&
-                          getOperatorCnt(d.siteKey) > 0)
+                  if ((common.widgetSettings[siteKey].style_settings.display_type ===
+                      2 &&
+                      getOperatorCnt(siteKey) > 0) ||
+                      (common.widgetSettings[siteKey].style_settings.display_type ===
+                          1 &&
+                          getOperatorCnt(siteKey) > 0) ||
+                      (common.widgetSettings[siteKey].style_settings.display_type ===
+                          4 &&
+                          getOperatorCnt(siteKey) > 0)
                   ) {
                     return callback(true, {
                       opFlg: true,
@@ -2040,12 +2063,19 @@ io.sockets.on('connection', function(socket) {
         //営業時間設定を利用していない場合
         else {
           //オペレータが待機している場合
-          if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
-              (common.widgetSettings[d.siteKey].style_settings.display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
-              (common.widgetSettings[d.siteKey].style_settings.display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+          if ((common.widgetSettings[siteKey].style_settings.display_type ===
+              2 && getOperatorCnt(siteKey) > 0) ||
+              (common.widgetSettings[siteKey].style_settings.display_type ===
+                  1 && getOperatorCnt(siteKey) > 0) ||
+              (common.widgetSettings[siteKey].style_settings.display_type ===
+                  4 && getOperatorCnt(siteKey) > 0)
           ) {
             return callback(true,
-                {opFlg: true, message: null, in_flg: common.chatSettings[d.siteKey].in_flg});
+                {
+                  opFlg: true,
+                  message: null,
+                  in_flg: common.chatSettings[siteKey].in_flg
+                });
           }
           //オペレータが待機していない場合
           else {
@@ -2057,14 +2087,15 @@ io.sockets.on('connection', function(socket) {
 
 
       // チャット上限数を設定している場合
-      else if (Number(common.chatSettings[d.siteKey].sc_flg) === 1) {
-        if (type === 1 && common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
-            scList.hasOwnProperty(d.siteKey)) {
-          var userIds = Object.keys(scList[d.siteKey].user);
+      else if (Number(common.chatSettings[siteKey].sc_flg) === 1) {
+        if (type === 1 &&
+            common.widgetSettings[siteKey].style_settings.display_type === 2 &&
+            scList.hasOwnProperty(siteKey)) {
+          var userIds = Object.keys(scList[siteKey].user);
           if (userIds.length !== 0) {
             for (var i = 0; i < userIds.length; i++) {
-              if (Number(scList[d.siteKey].user[userIds[i]]) ===
-                  Number(scList[d.siteKey].cnt[userIds[i]])) continue;
+              if (Number(scList[siteKey].user[userIds[i]]) ===
+                  Number(scList[siteKey].cnt[userIds[i]])) continue;
               return callback(true,
                   {opFlg: true, message: outside_hours_sorry_message});
             }
@@ -2097,26 +2128,29 @@ io.sockets.on('connection', function(socket) {
                       dateParse && dateParse <
                       Date.parse(new Date(date + endTime))) {
                     //オペレータが待機している場合
-                    if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
-                        getOperatorCnt(d.siteKey) > 0) ||
-                        (common.widgetSettings[d.siteKey].style_settings.display_type === 1 &&
-                            getOperatorCnt(d.siteKey) > 0) ||
-                        (common.widgetSettings[d.siteKey].style_settings.display_type === 4 &&
-                            getOperatorCnt(d.siteKey) > 0)
+                    if ((common.widgetSettings[siteKey].style_settings.display_type ===
+                        2 &&
+                        getOperatorCnt(siteKey) > 0) ||
+                        (common.widgetSettings[siteKey].style_settings.display_type ===
+                            1 &&
+                            getOperatorCnt(siteKey) > 0) ||
+                        (common.widgetSettings[siteKey].style_settings.display_type ===
+                            4 &&
+                            getOperatorCnt(siteKey) > 0)
                     ) {
                       // チャット上限数をみる
-                      if (scList.hasOwnProperty(d.siteKey)) {
-                        var userIds = Object.keys(scList[d.siteKey].user);
+                      if (scList.hasOwnProperty(siteKey)) {
+                        var userIds = Object.keys(scList[siteKey].user);
                         if (userIds.length !== 0) {
                           for (var i3 = 0; i3 < userIds.length; i3++) {
                             if (Number(
-                                scList[d.siteKey].user[userIds[i]]) ===
+                                scList[siteKey].user[userIds[i]]) ===
                                 Number(
-                                    scList[d.siteKey].cnt[userIds[i]])) continue;
+                                    scList[siteKey].cnt[userIds[i]])) continue;
                             return callback(true, {
                               opFlg: true,
                               message: null,
-                              in_flg: common.chatSettings[d.siteKey].in_flg
+                              in_flg: common.chatSettings[siteKey].in_flg
                             });
                           }
                           //上限数を超えている場合
@@ -2169,21 +2203,24 @@ io.sockets.on('connection', function(socket) {
                     Date.parse(new Date(date + endTime))) {
                   check = true;
                   //オペレータが待機している場合
-                  if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 &&
-                      getOperatorCnt(d.siteKey) > 0) ||
-                      (common.widgetSettings[d.siteKey].style_settings.display_type === 1 &&
-                          getOperatorCnt(d.siteKey) > 0) ||
-                      (common.widgetSettings[d.siteKey].style_settings.display_type === 4 &&
-                          getOperatorCnt(d.siteKey) > 0)
+                  if ((common.widgetSettings[siteKey].style_settings.display_type ===
+                      2 &&
+                      getOperatorCnt(siteKey) > 0) ||
+                      (common.widgetSettings[siteKey].style_settings.display_type ===
+                          1 &&
+                          getOperatorCnt(siteKey) > 0) ||
+                      (common.widgetSettings[siteKey].style_settings.display_type ===
+                          4 &&
+                          getOperatorCnt(siteKey) > 0)
                   ) {
                     // チャット上限数をみる
-                    if (scList.hasOwnProperty(d.siteKey)) {
-                      var userIds = Object.keys(scList[d.siteKey].user);
+                    if (scList.hasOwnProperty(siteKey)) {
+                      var userIds = Object.keys(scList[siteKey].user);
                       if (userIds.length !== 0) {
                         for (var i2 = 0; i2 < userIds.length; i2++) {
-                          if (Number(scList[d.siteKey].user[userIds[i]]) ===
+                          if (Number(scList[siteKey].user[userIds[i]]) ===
                               Number(
-                                  scList[d.siteKey].cnt[userIds[i]])) continue;
+                                  scList[siteKey].cnt[userIds[i]])) continue;
                           return callback(true, {
                             opFlg: true,
                             message: null,
@@ -2216,17 +2253,20 @@ io.sockets.on('connection', function(socket) {
         //営業時間設定を利用しない場合
         else {
           //オペレータが待機している場合
-          if ((common.widgetSettings[d.siteKey].style_settings.display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
-              (common.widgetSettings[d.siteKey].style_settings.display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
-              (common.widgetSettings[d.siteKey].style_settings.display_type === 4 && getOperatorCnt(d.siteKey) > 0)
+          if ((common.widgetSettings[siteKey].style_settings.display_type ===
+              2 && getOperatorCnt(siteKey) > 0) ||
+              (common.widgetSettings[siteKey].style_settings.display_type ===
+                  1 && getOperatorCnt(siteKey) > 0) ||
+              (common.widgetSettings[siteKey].style_settings.display_type ===
+                  4 && getOperatorCnt(siteKey) > 0)
           ) {
             // チャット上限数をみる
-            if (scList.hasOwnProperty(d.siteKey)) {
-              var userIds = Object.keys(scList[d.siteKey].user);
+            if (scList.hasOwnProperty(siteKey)) {
+              var userIds = Object.keys(scList[siteKey].user);
               if (userIds.length !== 0) {
                 for (var i = 0; i < userIds.length; i++) {
-                  if (Number(scList[d.siteKey].user[userIds[i]]) ===
-                      Number(scList[d.siteKey].cnt[userIds[i]])) continue;
+                  if (Number(scList[siteKey].user[userIds[i]]) ===
+                      Number(scList[siteKey].cnt[userIds[i]])) continue;
                   return callback(true,
                       {opFlg: true, message: null, in_flg: rows[0].in_flg});
                 }
@@ -2845,18 +2885,19 @@ io.sockets.on('connection', function(socket) {
     if (isset(obj.tmpDiagramMessages)) {
       try {
         Object.keys(obj.tmpDiagramMessages).
-          forEach(function(diagramKey, index, array) {
-          if (typeof (obj.tmpDiagramMessages[diagramKey]['created']) ===
-              'string') {
-            obj.tmpDiagramMessages[diagramKey]['created'] = new Date(
-                obj.tmpDiagramMessages[diagramKey]['created']);
-          }
-          if (isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(
-              sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
-            sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
-          }
-          sincloCore[obj.siteKey][obj.sincloSessionId].diagram.push(obj.tmpDiagramMessages[diagramKey]);
-        });
+            forEach(function(diagramKey, index, array) {
+              if (typeof (obj.tmpDiagramMessages[diagramKey]['created']) ===
+                  'string') {
+                obj.tmpDiagramMessages[diagramKey]['created'] = new Date(
+                    obj.tmpDiagramMessages[diagramKey]['created']);
+              }
+              if (isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(
+                  sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
+                sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
+              }
+              sincloCore[obj.siteKey][obj.sincloSessionId].diagram.push(
+                  obj.tmpDiagramMessages[diagramKey]);
+            });
       } catch (e) {
 
       }
@@ -2959,7 +3000,8 @@ io.sockets.on('connection', function(socket) {
           getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     }
     for (var key in customerList[obj.siteKey]) {
-      if (isset(obj.tabId) && obj.tabId.indexOf(customerList[obj.siteKey][key]['tabId']) === 0) {
+      if (isset(obj.tabId) &&
+          obj.tabId.indexOf(customerList[obj.siteKey][key]['tabId']) === 0) {
         customerList[obj.siteKey][key]['status'] = obj.status;
         break;
       }
@@ -3563,7 +3605,8 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(d);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
-    var sincloSessionId = getSessionId(obj.siteKey, obj.tabId, 'sincloSessionId');
+    var sincloSessionId = getSessionId(obj.siteKey, obj.tabId,
+        'sincloSessionId');
     obj.messageType = chatApi.cnst.observeType.auto;
     obj.sendTo = socket.id;
     obj.sincloSessionId = sincloSessionId;
@@ -3573,7 +3616,12 @@ io.sockets.on('connection', function(socket) {
     if (getSessionId(obj.siteKey, obj.tabId, 'chatSessionId')) {
       var sessionId = getSessionId(obj.siteKey, obj.tabId, 'chatSessionId');
       emit.toUser('reqTypingMessage',
-          {siteKey: obj.siteKey, from: obj.mUserId, tabId: obj.tabId, sincloSessionId: sincloSessionId},
+          {
+            siteKey: obj.siteKey,
+            from: obj.mUserId,
+            tabId: obj.tabId,
+            sincloSessionId: sincloSessionId
+          },
           sessionId);
     }
   });
@@ -3602,7 +3650,8 @@ io.sockets.on('connection', function(socket) {
     ret.chatToken = obj.chatToken;
     ret.tabId = obj.tabId;
     ret.historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
-    ret.sincloSessionId = getSessionId(obj.siteKey, obj.tabId, 'sincloSessionId');
+    ret.sincloSessionId = getSessionId(obj.siteKey, obj.tabId,
+        'sincloSessionId');
     emit.toUser('resAutoChatMessages', ret, obj.sendTo);
   });
 
@@ -3618,7 +3667,8 @@ io.sockets.on('connection', function(socket) {
       otherInformation: obj.otherInformation
     };
     try {
-      emit.toSameUser("syncScenarioDataResult", dataSet, obj.siteKey, obj.sessionID);
+      emit.toSameUser('syncScenarioDataResult', dataSet, obj.siteKey,
+          obj.sessionID);
     } catch (e) {
       console.log('ERROR DETECTED!! >> ' + e);
     }
@@ -3657,14 +3707,15 @@ io.sockets.on('connection', function(socket) {
           'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
           [obj.userId, companyList[obj.siteKey]], function(err, result) {
             if (err !== null && err !== '') return false;
-            var settingObj = "";
-            var profileIcon = "";
+            var settingObj = '';
+            var profileIcon = '';
             try {
-              if( isset(result[0]["settings"]) ) {
-                settingObj = result[0]["settings"];
-                profileIcon = JSON.parse(settingObj)["profileIcon"];
+              if (isset(result[0]['settings'])) {
+                settingObj = result[0]['settings'];
+                profileIcon = JSON.parse(settingObj)['profileIcon'];
               }
-            } catch (e) {}
+            } catch (e) {
+            }
 
             emit.toMine('chatStartResult', {
               ret: false,
@@ -3674,7 +3725,6 @@ io.sockets.on('connection', function(socket) {
               sincloSessionId: obj.sincloSessionId
             }, socket);
           });
-
 
       var userId = (getSessionId(obj.siteKey, obj.tabId, 'chat')) ?
           sincloCore[obj.siteKey][obj.tabId].chat :
@@ -3760,16 +3810,18 @@ io.sockets.on('connection', function(socket) {
 
               pool.query(
                   'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
-                  [obj.userId, companyList[obj.siteKey]], function(err, result) {
+                  [obj.userId, companyList[obj.siteKey]],
+                  function(err, result) {
                     if (err !== null && err !== '') return false;
-                    var settingObj = "";
-                    var profileIcon = "";
+                    var settingObj = '';
+                    var profileIcon = '';
                     try {
-                      if( isset(result[0]["settings"]) ) {
-                        settingObj = result[0]["settings"];
-                        profileIcon = JSON.parse(settingObj)["profileIcon"];
+                      if (isset(result[0]['settings'])) {
+                        settingObj = result[0]['settings'];
+                        profileIcon = JSON.parse(settingObj)['profileIcon'];
                       }
-                    } catch (e) {}
+                    } catch (e) {
+                    }
 
                     sendData.profileIcon = profileIcon;
                     emit.toSameUser('chatStartResult', sendData, obj.siteKey,
@@ -3777,7 +3829,6 @@ io.sockets.on('connection', function(socket) {
                   });
 
               //emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-
 
               /* チャット対応上限の処理（対応人数加算の処理） */
               if (scList.hasOwnProperty(obj.siteKey) &&
@@ -3992,7 +4043,8 @@ io.sockets.on('connection', function(socket) {
         obj.chatMessage.replace('button_', '').replace('\n', ''),
         obj.messageDistinction,
         obj.created).then((resultData) => {
-      ChatLogTimeManager.saveTime(resultData.insertId, sincloCore[obj.siteKey][obj.tabId].historyId, 2, obj.created);
+      ChatLogTimeManager.saveTime(resultData.insertId,
+          sincloCore[obj.siteKey][obj.tabId].historyId, 2, obj.created);
       customerMessageInsertResult = resultData;
       customerSendData = {
         tabId: obj.tabId,
@@ -4135,8 +4187,9 @@ io.sockets.on('connection', function(socket) {
                 !sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isSwitchingOperator())) {
           if (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller)) {
             // functionManager.isEnabledでCogmoAttendAPIのsystemUUIDが返却される
-            sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller(functionManager.isEnabled(obj.siteKey,
-                functionManager.keyList.useCogmoAttendApi));
+            sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller(
+                functionManager.isEnabled(obj.siteKey,
+                    functionManager.keyList.useCogmoAttendApi));
             sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.init(
                 sincloCore[obj.siteKey][obj.tabId].historyId, obj,
                 fullDateTime(), emit).then(() => {
@@ -4815,40 +4868,40 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(data);
     var result = {};
     pool.query(
-      'select activity from t_chatbot_diagrams where m_companies_id = ? and id = ?;',
-      [companyList[obj.siteKey], obj.diagramId],
-      function(err, row) {
-        if (err !== null && err !== '') {
-          if (ack) {
-            ack(result);
-          } else {
-            emit.toMine('resGetChatDiagram', result, socket);
+        'select activity from t_chatbot_diagrams where m_companies_id = ? and id = ?;',
+        [companyList[obj.siteKey], obj.diagramId],
+        function(err, row) {
+          if (err !== null && err !== '') {
+            if (ack) {
+              ack(result);
+            } else {
+              emit.toMine('resGetChatDiagram', result, socket);
+            }
+            return;
           }
-          return;
-        }
-        if (row.length !== 0) {
-          result = JSON.parse(row[0].activity);
-          // そのままのデータだとクライアント側の処理のパフォーマンスが悪いため
-          // UUIDでデータを参照できるよう加工する
-          var sendObj = {};
-          for(let i=0; i < result.cells.length; i++) {
-            let cell = result.cells[i];
-            sendObj[cell['id']] = {
-              id: cell['id'],
-              parent: cell['parent'],
-              type: cell['type'],
-              embeds: cell['embeds'],
-              attrs: cell['attrs']
+          if (row.length !== 0) {
+            result = JSON.parse(row[0].activity);
+            // そのままのデータだとクライアント側の処理のパフォーマンスが悪いため
+            // UUIDでデータを参照できるよう加工する
+            var sendObj = {};
+            for (let i = 0; i < result.cells.length; i++) {
+              let cell = result.cells[i];
+              sendObj[cell['id']] = {
+                id: cell['id'],
+                parent: cell['parent'],
+                type: cell['type'],
+                embeds: cell['embeds'],
+                attrs: cell['attrs']
+              };
             }
           }
-        }
-        if (ack) {
-          ack({id: obj.scenarioId, activity: sendObj});
-        } else {
-          emit.toMine('resGetChatDiagram',
-              {id: obj.diagramId, activity: sendObj}, socket);
-        }
-      });
+          if (ack) {
+            ack({id: obj.scenarioId, activity: sendObj});
+          } else {
+            emit.toMine('resGetChatDiagram',
+                {id: obj.diagramId, activity: sendObj}, socket);
+          }
+        });
   });
 
   socket.on('sendDiagramMessage', function(d, ack) {
@@ -4895,10 +4948,11 @@ io.sockets.on('connection', function(socket) {
         }
 
         let messages = obj.message;
-        if(isset(sincloCore[obj.siteKey])
+        if (isset(sincloCore[obj.siteKey])
             && isset(sincloCore[obj.siteKey][obj.sincloSessionId])
             && isset(sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
-          messages = sincloCore[obj.siteKey][obj.sincloSessionId].diagram.concat(messages);
+          messages = sincloCore[obj.siteKey][obj.sincloSessionId].diagram.concat(
+              messages);
           sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
         }
         messages.forEach(function(elm, index, arr) {
