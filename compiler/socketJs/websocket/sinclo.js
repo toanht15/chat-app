@@ -13576,17 +13576,20 @@
         },
         doAction: function() {
           console.log('<><><><><> CALL SCENARIO <><><><><>');
-          var self = sinclo.diagramApi;
-          var currentNode = self.storage.getCurrentNode();
-          var scenarioId = currentNode.attrs.actionParam.scenarioId;
-          if (currentNode.attrs.actionParam.callbackToDiagram) {
-            self.callScenario.beginWaitEndScenario();
+          if(window.sincloInfo.contract.chatbotScenario) {
+            var self = sinclo.diagramApi;
+            var currentNode = self.storage.getCurrentNode();
+            var scenarioId = currentNode.attrs.actionParam.scenarioId;
+            if (currentNode.attrs.actionParam.callbackToDiagram) {
+              self.callScenario.beginWaitEndScenario();
+            }
+            common.chatBotTypingCall(
+                {messageType: self.messageType.message.text});
+            self.executor.wait(self.executor.getIntervalTimeSec()).
+                then(function() {
+                  emit('getScenario', {'scenarioId': scenarioId});
+                });
           }
-          common.chatBotTypingCall({messageType: self.messageType.message.text});
-          self.executor.wait(self.executor.getIntervalTimeSec()).
-              then(function() {
-                emit('getScenario', {'scenarioId': scenarioId});
-              });
         },
         beginWaitEndScenario: function() {
           var self = sinclo.diagramApi;

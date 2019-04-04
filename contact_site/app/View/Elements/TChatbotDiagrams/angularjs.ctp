@@ -239,12 +239,16 @@
         }
       });
 
-      var loadingTimer =
-          setTimeout(function(){
-            loading.load.start();
-          }, 300);
+      var dataForUpdate = $('#TChatbotDiagramActivity').val();
+      var loadingTimer = null;
+      if (dataForUpdate !== null && dataForUpdate !== '') {
+        loadingTimer =
+            setTimeout(function() {
+              loading.load.start();
+            }, 300);
+      }
       paper.on('render:done', function(){
-        clearTimeout(loadingTimer);
+        if(loadingTimer) clearTimeout(loadingTimer);
         loading.load.finish();
       });
 
@@ -252,7 +256,6 @@
       graph.addCell(startNode());
 
       var dragReferencePosition = null;
-      var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
       // default value
       $scope.messageIntervalTimeSec = 2;
@@ -362,6 +365,7 @@
                 $scope.popupHandler();
                 $scope.handleButtonCSS();
                 $scope.popupInit(frame);
+                addTooltipEvent();
                 initPopupCloseEvent();
                 /* Install jscolor after create modal */
                 $(window)[0].jscolor.installByClassName('jscolor');
@@ -2359,11 +2363,17 @@
       template: '<div>' +
           '<div id=\'scenario_modal\'>' +
           '<label for=\'scenario\'>シナリオ名</label>' +
-          '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key">' +
+          <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]): ?>
+          '<label for="callTargetScenario" display="inline-block" class="commontooltip disabled" data-text="こちらの機能はオプションの加入が必要です。">' +
+          <?php endif; ?>
+          '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key" <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) echo 'class="disabled" disabled'; ?>>' +
           '</select>' +
+          <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]): ?>
+          '</label>' +
+          <?php endif; ?>
           '</div>' +
           '<div class="callbackToDiagramWrap">' +
-          '<label for="callbackToDiagram"><input type="checkbox" name=\'callbackToDiagram\' id=\'callbackToDiagram\'ng-model="callbackToDiagram">終了後、このチャットツリーに戻る</label>' +
+          '<label for="callbackToDiagram" <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) echo 'class="disabled"'; ?>><input type="checkbox" name=\'callbackToDiagram\' id=\'callbackToDiagram\'ng-model="callbackToDiagram" <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) echo 'class="disabled" disabled'; ?>>終了後、このチャットツリーに戻る</label>' +
           '</div>' +
           '<div class="scenario_valid_margin">' +
           '<span class="diagram_valid" ng-show="scenarioIsEmpty">シナリオを選択してください</span>' +
