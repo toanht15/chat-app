@@ -9,6 +9,7 @@ var common = require('./common');
 var LandscapeAPI = require('./landscape');
 var CogmoAttendAPICaller = require('./cogmo_attend');
 var ChatLogTimeManager = require('./chat_log_time_manager');
+var CommonUtil = require('./class/util/common_utility');
 
 // mysql
 var mysql = require('mysql'),
@@ -174,23 +175,15 @@ var CompanyFunctionManager = function() {
     },
     isEnabled: function(companyKey, funcName) {
       var result = false;
-      if (isset(_list[companyKey]) && isset(_list[companyKey][funcName])) {
+      if (CommonUtil.isset(_list[companyKey]) &&
+          CommonUtil.isset(_list[companyKey][funcName])) {
         result = _list[companyKey][funcName];
       }
       return result;
     }
   };
 };
-
 var functionManager = new CompanyFunctionManager();
-
-// ユーザーIDの新規作成
-function makeUserId() {
-  var d = new Date();
-  return d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) +
-      ('0' + d.getDate()).slice(-2) + d.getHours() + d.getMinutes() +
-      d.getSeconds() + Math.floor(Math.random() * 1000);
-}
 
 // sincloCoreオブジェクトからセッションIDを取得する関数
 function getSessionId(siteKey, tabId, key) {
@@ -207,22 +200,6 @@ function getChatSessionIds(siteKey, sincloSessionId, key) {
     return sincloCore[siteKey][sincloSessionId][key];
   }
 }
-
-function now() {
-  var d = new Date();
-  return '【' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + '】';
-}
-
-function isset(a) {
-  return (a !== undefined && a !== null && a !== '');
-}
-
-var timeCalculator = function(obj) {
-  var now = new Date(),
-      start = new Date(Number(obj.time)),
-      req = parseInt((now.getTime() - start.getTime()) / 1000);
-  return Number(req);
-};
 
 function timeUpdate(historyId, obj, time, callback) {
   var insertStayData = {
@@ -242,9 +219,9 @@ function timeUpdate(historyId, obj, time, callback) {
           callback(false);
           return false;
         } // DB接続断対応
-        if (isset(rows) && isset(rows[0])) {
+        if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
           // UPDATE
-          var stayTime = calcTime(rows[0].created, time);
+          var stayTime = CommonUtil.calcTime(rows[0].created, time);
           pool.query(
               'UPDATE t_history_stay_logs SET stay_time = ? WHERE id = ?',
               [stayTime, rows[0].id],
@@ -324,40 +301,6 @@ router.get('/refreshCompanyList', function(req, res, next) {
 });
 module.exports = router;
 
-function _numPad(str) {
-  return ('0' + str).slice(-2);
-}
-
-function calcTime(startTime, endTime) {
-  var end = new Date(endTime),
-      start = new Date(startTime);
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) return false;
-  req = parseInt((end.getTime() - start.getTime()) / 1000);
-  hour = parseInt(req / 3600);
-  min = parseInt((req / 60) % 60);
-  sec = req % 60;
-  return _numPad(hour) + ':' + _numPad(min) + ':' + _numPad(sec); // 表示を更新
-}
-
-function fullDateTime(parse) {
-  function _numPad(str) {
-    return ('0' + str).slice(-2);
-  }
-
-  var d = (isset(parse)) ? new Date(Number(parse)) : new Date();
-  return d.getFullYear() + _numPad(d.getMonth() + 1) + _numPad(d.getDate()) +
-      _numPad(d.getHours()) + _numPad(d.getMinutes()) +
-      _numPad(d.getSeconds()) +
-      _numPad(Number(String(d.getMilliseconds()).slice(0, 2)));
-}
-
-function formatDateParse(parse) {
-  var d = (isset(parse)) ? new Date(Number(parse)) : new Date();
-  return d.getFullYear() + '/' + _numPad(d.getMonth() + 1) + '/' +
-      _numPad(d.getDate()) + ' ' + _numPad(d.getHours()) + ':' +
-      _numPad(d.getMinutes()) + ':' + _numPad(d.getSeconds());
-}
-
 function syncStopCtrl(siteKey, tabId, unsetFlg) {
   var keys = [
     'connectToken', 'syncSessionId', 'syncHostSessionId', 'sdHistoryId',
@@ -366,7 +309,7 @@ function syncStopCtrl(siteKey, tabId, unsetFlg) {
   // 画面同期の記録
   var sdHistoryId = getSessionId(siteKey, tabId, 'sdHistoryId');
   if (sdHistoryId) {
-    var now = formatDateParse();
+    var now = CommonUtil.formatDateParse();
     db.timeUpdateToDisplayShare(now, sdHistoryId);
   }
 
@@ -407,7 +350,7 @@ function coBrowseStopCtrl(siteKey, tabId, unsetFlg) {
   /*
   var sdHistoryId = getSessionId(siteKey, tabId, "sdHistoryId");
   if ( sdHistoryId ) {
-    var now = formatDateParse();
+    var now = CommonUtil.formatDateParse();
     db.timeUpdateToDisplayShare(now, sdHistoryId);
   }
   */
@@ -439,40 +382,11 @@ function coBrowseStopCtrl(siteKey, tabId, unsetFlg) {
 
 function getOperatorCnt(siteKey) {
   var cnt = 0;
-  if (isset(activeOperator[siteKey])) {
+  if (CommonUtil.isset(activeOperator[siteKey])) {
     var key = Object.keys(activeOperator[siteKey]);
     cnt = key.length;
   }
   return cnt;
-}
-
-function objectSort(object) {
-  //戻り値用新オブジェクト生成
-  var sorted = {};
-  //キーだけ格納し，ソートするための配列生成
-  var array = [];
-  //for in文を使用してオブジェクトのキーだけ配列に格納
-  for (var key in object) {
-    //指定された名前のプロパティがオブジェクトにあるかどうかチェック
-    if (object.hasOwnProperty(key)) {
-      //if条件がtrueならば，配列の最後にキーを追加する
-      array.push(key);
-    }
-  }
-  //配列のソート
-  array.sort();
-  //配列の逆ソート
-  //array.reverse();
-
-  //キーが入った配列の長さ分だけfor文を実行
-  for (var i = 0; i < array.length; i++) {
-    /*戻り値用のオブジェクトに
-    新オブジェクト[配列内のキー] ＝ 引数のオブジェクト[配列内のキー]を入れる．
-    配列はソート済みなので，ソートされたオブジェクトが出来上がる*/
-    sorted[array[i]] = object[array[i]];
-  }
-  //戻り値にソート済みのオブジェクトを指定
-  return sorted;
 }
 
 function getConnectInfo(o) {
@@ -481,49 +395,49 @@ function getConnectInfo(o) {
       'coBrowseConnectToken');
   var responderId = getSessionId(o.siteKey, o.tabId, 'responderId');
   var chatUserId = getSessionId(o.siteKey, o.tabId, 'chat');
-  if (isset(responderId) && isset(connectToken)) {
+  if (CommonUtil.isset(responderId) && CommonUtil.isset(connectToken)) {
     o.responderId = responderId;
     o.connectToken = connectToken;
   } else {
     delete o['connectToken'];
-    if (!isset(coBrowseConnectToken)) {
+    if (!CommonUtil.isset(coBrowseConnectToken)) {
       delete o['responderId'];
     }
   }
-  if (isset(responderId) && isset(coBrowseConnectToken)) {
+  if (CommonUtil.isset(responderId) && CommonUtil.isset(coBrowseConnectToken)) {
     o.responderId = responderId;
     o.coBrowseConnectToken = coBrowseConnectToken;
   } else {
     delete o['coBrowseConnectToken'];
-    if (!isset(connectToken)) {
+    if (!CommonUtil.isset(connectToken)) {
       delete o['responderId'];
     }
   }
-  if (isset(chatUserId)) {
+  if (CommonUtil.isset(chatUserId)) {
     o.chat = chatUserId;
   } else {
     o.chat = null;
   }
   var docShareId = getSessionId(o.siteKey, o.tabId, 'docShareId');
-  if (isset(docShareId)) {
+  if (CommonUtil.isset(docShareId)) {
     o.docShareId = docShareId;
   } else {
     delete o['docShareId'];
   }
   var sincloSessionId = getSessionId(o.siteKey, o.tabId, 'sincloSessionId');
-  if (isset(sincloSessionId)) {
+  if (CommonUtil.isset(sincloSessionId)) {
     o.sincloSessionId = sincloSessionId;
   } else {
     o.sincloSessionId = null;
   }
   var orgName = getSessionId(o.siteKey, o.tabId, 'orgName');
-  if (isset(orgName)) {
+  if (CommonUtil.isset(orgName)) {
     o.orgName = orgName;
   } else {
     o.orgName = '';
   }
   var lbcCode = getSessionId(o.siteKey, o.tabId, 'lbcCode');
-  if (isset(lbcCode)) {
+  if (CommonUtil.isset(lbcCode)) {
     o.lbcCode = lbcCode;
   } else {
     o.lbcCode = '';
@@ -534,7 +448,7 @@ function getConnectInfo(o) {
 // IPアドレスの取得
 function getIp(socket) {
   var ip = '0.0.0.0';
-  if (isset(socket.handshake.headers['x-forwarded-for'])) {
+  if (CommonUtil.isset(socket.handshake.headers['x-forwarded-for'])) {
     ip = socket.handshake.headers['x-forwarded-for'];
   }
   return ip;
@@ -750,7 +664,8 @@ function sendSenarioMail(obj, callback) {
     return;
   });
 
-  var historyId = isset(getSessionId(obj.siteKey, obj.tabId, 'historyId')) ?
+  var historyId = CommonUtil.isset(
+      getSessionId(obj.siteKey, obj.tabId, 'historyId')) ?
       getSessionId(obj.siteKey, obj.tabId, 'historyId') :
       obj.historyId;
   req.write(JSON.stringify({
@@ -763,26 +678,6 @@ function sendSenarioMail(obj, callback) {
     'variables': obj.variables
   }));
   req.end();
-}
-
-// Frameの削除
-function trimFrame(str) {
-  return str.replace('_frame', '');
-}
-
-// 数値チェック
-function isNumber(n) {
-  return RegExp(/^(\+|\-)?\d+(.\d+)?$/).test(n);
-}
-
-// objectのマージ
-function extend(obj1, obj2) {
-  for (key in obj2) {
-    if (obj2.hasOwnProperty(key)) {
-      obj1[key] = obj2[key];
-    }
-  }
-  return obj1;
 }
 
 // emit用
@@ -805,28 +700,28 @@ var emit = {
   },
   toUser: function(ev, d, sId) { // 対象ユーザーに送信(sId = the session id)
     var obj = this._convert(d);
-    if (!isset(sId)) return false;
-    if (!isset(io.sockets.connected[sId])) return false;
+    if (!CommonUtil.isset(sId)) return false;
+    if (!CommonUtil.isset(io.sockets.connected[sId])) return false;
     return io.sockets.connected[sId].emit(ev, obj);
   },
   toSameUser: function(ev, d, siteKey, sessionId) { // 対象ユーザーに送信(sId = the session id)
     var obj = this._convert(d);
     var sessionIds = getChatSessionIds(siteKey, sessionId, 'sessionIds');
-    if (!isset(sessionIds)) return false;
+    if (!CommonUtil.isset(sessionIds)) return false;
     var result = false;
     for (var index in sessionIds) {
-      if (!isset(io.sockets.connected[sessionIds[index]])) continue;
+      if (!CommonUtil.isset(io.sockets.connected[sessionIds[index]])) continue;
       io.sockets.connected[sessionIds[index]].emit(ev, obj);
     }
   },
   toClient: function(ev, d, rName) { // 対象企業を閲覧中のユーザーに送信(rName = the room's name)
     var obj = this._convert(d);
-    if (!isset(rName)) return false;
+    if (!CommonUtil.isset(rName)) return false;
     return io.sockets.in(rName + this.roomKey.client).emit(ev, obj);
   },
   toCompany: function(ev, d, rName) { // 対象企業にのみ送信(rName = the room's name)
     var obj = this._convert(d);
-    if (!isset(rName)) return false;
+    if (!CommonUtil.isset(rName)) return false;
     return io.sockets.in(rName + this.roomKey.company).emit(ev, obj);
   }
 };
@@ -841,7 +736,7 @@ function getConversationCountUser(visitors_id, callback) {
   pool.query(
       'SELECT conversation_count FROM t_conversation_count WHERE visitors_id = ?',
       [visitors_id], function(err, results) {
-        if (isset(err)) {
+        if (CommonUtil.isset(err)) {
           console.log(
               'RECORD SElECT ERROR: t_conversation_count(conversation_count):' +
               err);
@@ -859,7 +754,7 @@ function addChatActiveUser(t_history_chat_logs_id, m_users_id, siteKey) {
       'INSERT INTO t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',
       [t_history_chat_logs_id, companyList[siteKey], m_users_id, new Date()],
       function(err, results) {
-        if (isset(err)) {
+        if (CommonUtil.isset(err)) {
           console.log(
               'RECORD INSERT ERROR: t_history_chat_active_users:' + err);
         }
@@ -867,7 +762,7 @@ function addChatActiveUser(t_history_chat_logs_id, m_users_id, siteKey) {
 }
 
 var callback = function(err, results) {
-  if (isset(err)) {
+  if (CommonUtil.isset(err)) {
     console.log(
         'RECORD SElECT ERROR: t_conversation_count(conversation_count):' + err);
     return false;
@@ -877,14 +772,16 @@ var callback = function(err, results) {
 
 var db = {
   addDisplayShareHistory: function(responderId, obj) {
-    if (isset(obj.siteKey)) {
-      var tabId = (obj.subWindow) ? trimFrame(obj.to) : trimFrame(obj.tabId);
+    if (CommonUtil.isset(obj.siteKey)) {
+      var tabId = (obj.subWindow) ?
+          CommonUtil.trimFrame(obj.to) :
+          CommonUtil.trimFrame(obj.tabId);
       if (!(tabId in sincloCore[obj.siteKey])) return false;
       if (!(sincloCore[obj.siteKey][tabId].hasOwnProperty(
           'historyId'))) return false;
       var historyId = getSessionId(obj.siteKey, tabId, 'historyId');
       var sdHistoryId = getSessionId(obj.siteKey, tabId, 'sdHistoryId');
-      var now = formatDateParse();
+      var now = CommonUtil.formatDateParse();
       // 登録処理
       if (!sdHistoryId) {
         //insert
@@ -914,7 +811,7 @@ var db = {
         [sdHistoryId], function(err, rows) {
           if (err !== null && err !== '') return false; // DB接続断対応
           // データが見つかった場合
-          if (isset(rows) && isset(rows[0])) {
+          if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
             // アップデートする
             pool.query(
                 'UPDATE t_history_share_displays SET finish_time = ? WHERE id = ?',
@@ -926,18 +823,19 @@ var db = {
         });
   },
   addHistory: function(obj, s) {
-    if (isset(obj.tabId) && isset(obj.siteKey)) {
-      if (!isset(companyList[obj.siteKey]) || obj.subWindow) return false;
+    if (CommonUtil.isset(obj.tabId) && CommonUtil.isset(obj.siteKey)) {
+      if (!CommonUtil.isset(companyList[obj.siteKey]) ||
+          obj.subWindow) return false;
       var siteId = companyList[obj.siteKey];
       pool.query(
           'SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;',
           [siteId, obj.sincloSessionId || obj.tabId, obj.userId],
           function(err, rows) {
             if (err !== null && err !== '') return false; // DB接続断対応
-            var now = formatDateParse();
+            var now = CommonUtil.formatDateParse();
 
-            if (isset(rows) && isset(rows[0])) {
-              if (isset(obj.sincloSessionId)) {
+            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
+              if (CommonUtil.isset(obj.sincloSessionId)) {
                 sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
               }
               sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
@@ -954,7 +852,7 @@ var db = {
                 tab_id: obj.sincloSessionId || obj.tabId,
                 ip_address: obj.ipAddress,
                 user_agent: obj.userAgent,
-                access_date: formatDateParse(obj.time),
+                access_date: CommonUtil.formatDateParse(obj.time),
                 referrer_url: obj.referrer,
                 created: now,
                 modified: now
@@ -964,7 +862,7 @@ var db = {
                   function(error, results, fields) {
                     if (error && (error !== null && error !== '')) return false; // DB接続断対応
                     var historyId = results.insertId;
-                    if (isset(obj.sincloSessionId)) {
+                    if (CommonUtil.isset(obj.sincloSessionId)) {
                       sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
                     }
                     sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
@@ -985,17 +883,18 @@ var db = {
    * @param s
    */
   upsertCustomerInfo: function(obj, s, callback) {
-    if (isset(obj.customVariables)) {
+    if (CommonUtil.isset(obj.customVariables)) {
       var customVariables = obj.customVariables;
       var found = false;
-      var customerInfo = (isset(
+      var customerInfo = (CommonUtil.isset(
           sincloCore[obj.siteKey][obj.sincloSessionId]) &&
-          isset(sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo)) ?
+          CommonUtil.isset(
+              sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo)) ?
           sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo :
           {};
       if (Object.keys(customVariables).length !== 0) {
         Object.keys(customVariables).forEach(function(elm, index, arr) {
-          if (isset(customVariables[elm]) && customVariables[elm] !==
+          if (CommonUtil.isset(customVariables[elm]) && customVariables[elm] !==
               customerInfo[elm]) {
             found = true;
           }
@@ -1011,10 +910,11 @@ var db = {
               } // DB接続断対応
 
               var currentData = {};
-              if (isset(row) && isset(row[0])) {
+              if (CommonUtil.isset(row) && CommonUtil.isset(row[0])) {
                 currentData = JSON.parse(row[0].informations);
                 Object.keys(customVariables).forEach(function(key, idx, array) {
-                  if (isset(customVariables[key]) && customVariables[key] !==
+                  if (CommonUtil.isset(customVariables[key]) &&
+                      customVariables[key] !==
                       '') {
                     currentData[key] = customVariables[key];
                   }
@@ -1067,7 +967,7 @@ var db = {
           obj.executeUrl,
           obj.userAgent],
         function(err, result) {
-          if (isset(err)) {
+          if (CommonUtil.isset(err)) {
             console.log('ERROR DETECTED!!!' + err);
           }
         });
@@ -1128,7 +1028,7 @@ io.sockets.on('connection', function(socket) {
       }
       // 履歴idか(入退室以外に)メッセージがない
       if (!getSessionId(d.siteKey, d.tabId, 'historyId') ||
-          (!isset(d.chatMessage) &&
+          (!CommonUtil.isset(d.chatMessage) &&
               !(chatApi.cnst.observeType.start && d.messageType ||
                   chatApi.cnst.observeType.end && d.messageType))) {
         // エラーを渡す
@@ -1159,7 +1059,7 @@ io.sockets.on('connection', function(socket) {
 
         pool.query(sql, [chatData.historyId], function(err, rows) {
           if (err !== null && err !== '') return false; // DB接続断対応
-          var messages = (isset(rows)) ? rows : [];
+          var messages = (CommonUtil.isset(rows)) ? rows : [];
           var setList = {};
           for (var i = 0; i < messages.length; i++) {
             var chatMessageDate = messages[i].created;
@@ -1167,7 +1067,7 @@ io.sockets.on('connection', function(socket) {
             // if ( ('userName' in messages[i]) && obj.showName !== 1 ) {
             //   delete messages[i].userName;
             // }
-            setList[fullDateTime(chatMessageDate)] = messages[i];
+            setList[CommonUtil.fullDateTime(chatMessageDate)] = messages[i];
           }
           var autoMessages = [];
           if (obj.sincloSessionId in sincloCore[obj.siteKey] &&
@@ -1188,7 +1088,8 @@ io.sockets.on('connection', function(socket) {
             // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
             //   delete autoMessages[i].userName;
             // }
-            setList[fullDateTime(autoMessageDate) + '_'] = autoMessages[j];
+            setList[CommonUtil.fullDateTime(autoMessageDate) +
+            '_'] = autoMessages[j];
           }
           var scenarioMessages = [];
           if (obj.sincloSessionId in sincloCore[obj.siteKey] && 'scenario' in
@@ -1209,7 +1110,8 @@ io.sockets.on('connection', function(socket) {
           for (var k = 0; k < scenarioMessages.length; k++) {
             var scenarioDate = scenarioMessages[k].created;
             scenarioDate = new Date(scenarioDate);
-            setList[fullDateTime(scenarioDate) + '_'] = scenarioMessages[k];
+            setList[CommonUtil.fullDateTime(scenarioDate) +
+            '_'] = scenarioMessages[k];
           }
           var diagram = [];
           if (obj.sincloSessionId in sincloCore[obj.siteKey] &&
@@ -1227,9 +1129,9 @@ io.sockets.on('connection', function(socket) {
             // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
             //   delete autoMessages[i].userName;
             // }
-            setList[fullDateTime(diagramDate) + '_'] = diagram[l];
+            setList[CommonUtil.fullDateTime(diagramDate) + '_'] = diagram[l];
           }
-          chatData.messages = objectSort(setList);
+          chatData.messages = CommonUtil.objectSort(setList);
           obj.chat = chatData;
           console.log(chatData);
           emit.toMine('chatMessageData', obj, socket);
@@ -1259,7 +1161,8 @@ io.sockets.on('connection', function(socket) {
           function(err, rows) {
             if (err !== null && err !== '') return false; // DB接続断対応
             if (rows && rows[0]) {
-              insertData.t_history_stay_logs_id = isset(d.stayLogsId) ?
+              insertData.t_history_stay_logs_id = CommonUtil.isset(
+                  d.stayLogsId) ?
                   d.stayLogsId :
                   rows[0].id;
             }
@@ -1321,7 +1224,7 @@ io.sockets.on('connection', function(socket) {
       } catch (e) {
 
       }
-      if (!isset(error)) {
+      if (!CommonUtil.isset(error)) {
         let messageTimeType = 1;
         if (Number(insertData.message_request_flg) === 1) {
           messageTimeType = 2;
@@ -1330,7 +1233,8 @@ io.sockets.on('connection', function(socket) {
         }
         ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id,
             messageTimeType, insertData.created);
-        if (!isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
+        if (!CommonUtil.isset(
+            sincloCore[d.siteKey][d.tabId].sessionId)) return false;
         var sendData = {
           tabId: d.tabId,
           chatId: results.insertId,
@@ -1381,7 +1285,7 @@ io.sockets.on('connection', function(socket) {
               sincloSessionId: sincloSessionId,
               opFlg: sendData.opFlg,
               chatId: results.insertId,
-              sort: fullDateTime(insertData.created),
+              sort: CommonUtil.fullDateTime(insertData.created),
               created: insertData.created,
               userId: insertData.m_users_id,
               messageType: d.messageType,
@@ -1472,7 +1376,7 @@ io.sockets.on('connection', function(socket) {
             tabId: d.tabId,
             sincloSessionId: sincloSessionId,
             chatId: results.insertId,
-            sort: fullDateTime(insertData.created),
+            sort: CommonUtil.fullDateTime(insertData.created),
             created: insertData.created,
             userId: insertData.m_users_id,
             messageType: d.messageType,
@@ -1524,8 +1428,8 @@ io.sockets.on('connection', function(socket) {
               //対応数上限設定ある場合
               if (Number(result[0].sc_flg) == 1) {
                 //オペレータがいる場合
-                if (isset(scList[d.siteKey])
-                    && isset(scList[d.siteKey].user)
+                if (CommonUtil.isset(scList[d.siteKey])
+                    && CommonUtil.isset(scList[d.siteKey].user)
                     && Object.keys(scList[d.siteKey].user)
                     && Object.keys(scList[d.siteKey].user).length !== 0) {
                   for (key in Object.keys(scList[d.siteKey].user)) {
@@ -1541,7 +1445,7 @@ io.sockets.on('connection', function(socket) {
               //対応数上限設定していない場合
               else {
                 //オペレータがいる場合
-                if (isset(company.info[d.siteKey])
+                if (CommonUtil.isset(company.info[d.siteKey])
                     && Object.keys(company.info[d.siteKey])
                     && Object.keys(company.info[d.siteKey]).length !== 0) {
                   for (key in Object.keys(company.info[d.siteKey])) {
@@ -1613,7 +1517,7 @@ io.sockets.on('connection', function(socket) {
             }
             pool.query('INSERT INTO t_history_chat_logs SET ?', insertData,
                 function(error, results, fields) {
-                  if (isset(error)) {
+                  if (CommonUtil.isset(error)) {
                     d.error = error;
                     d.ret = false;
                     console.log(
@@ -1630,7 +1534,7 @@ io.sockets.on('connection', function(socket) {
                         insertData.t_histories_id, messageTimeType,
                         insertData.created);
                     d.id = results.insertId;
-                    d.created = fullDateTime(d.created);
+                    d.created = CommonUtil.fullDateTime(d.created);
                   }
                   emit.toCompany(name, d, d.siteKey);
                 });
@@ -1652,11 +1556,13 @@ io.sockets.on('connection', function(socket) {
       sql += '   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id desc';
       pool.query(sql, [sincloSessionId, siteId], function(err, rows) {
         if (err !== null && err !== '') return false; // DB接続断対応
-        if (!isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
+        if (!CommonUtil.isset(err) &&
+            (rows.length > 0 && CommonUtil.isset(rows[0].chatId))) {
           ret.chatUnreadId = rows[0].chatId;
-          if (isset(sincloCore[obj.siteKey])
-              && isset(sincloCore[obj.siteKey][obj.tabId])
-              && isset(sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) {
+          if (CommonUtil.isset(sincloCore[obj.siteKey])
+              && CommonUtil.isset(sincloCore[obj.siteKey][obj.tabId])
+              && CommonUtil.isset(
+                  sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) {
             if (rows.length > 0 &&
                 sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt === 0) {
               ret.chatUnreadCnt = rows.length;
@@ -1682,11 +1588,13 @@ io.sockets.on('connection', function(socket) {
         chatUnreadId: null,
         chatUnreadCnt: 0
       };
-      ret.chatUnreadId = (isset(sincloCore[obj.siteKey][obj.tabId]) && isset(
+      ret.chatUnreadId = (CommonUtil.isset(
+          sincloCore[obj.siteKey][obj.tabId]) && CommonUtil.isset(
           sincloCore[obj.siteKey][obj.tabId].chatUnreadId)) ?
           sincloCore[obj.siteKey][obj.tabId].chatUnreadId :
           null;
-      ret.chatUnreadCnt = (isset(sincloCore[obj.siteKey][obj.tabId]) && isset(
+      ret.chatUnreadCnt = (CommonUtil.isset(
+          sincloCore[obj.siteKey][obj.tabId]) && CommonUtil.isset(
           sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) ?
           sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt :
           null;
@@ -2322,7 +2230,8 @@ io.sockets.on('connection', function(socket) {
           'SELECT informations FROM m_customers WHERE m_companies_id = ? AND visitors_id = ? order by id desc LIMIT 1;',
           [companyList[siteKey], visitorId], function(err, row) {
             if (err !== null && err !== '') callback(null); // DB接続断対応
-            if (isset(row) && isset(row[0]) && isset(row[0].informations)) {
+            if (CommonUtil.isset(row) && CommonUtil.isset(row[0]) &&
+                CommonUtil.isset(row[0].informations)) {
               callback(JSON.parse(row[0].informations));
             } else {
               callback(null);
@@ -2342,22 +2251,23 @@ io.sockets.on('connection', function(socket) {
     send = data;
 
     if (res.type !== 'admin') {
-      if (res.tabId && (isset(sincloCore[res.siteKey]) &&
-          isset(sincloCore[res.siteKey][res.tabId]) &&
-          !isset(sincloCore[res.siteKey][res.tabId].timeoutTimer))) {
+      if (res.tabId && (CommonUtil.isset(sincloCore[res.siteKey]) &&
+          CommonUtil.isset(sincloCore[res.siteKey][res.tabId]) &&
+          !CommonUtil.isset(sincloCore[res.siteKey][res.tabId].timeoutTimer))) {
         // 別タブを開いたときに情報がコピーされてしまっている状態
         console.log(
             'tabId is duplicate. change firstConnection flg ' + res.tabId);
         data.firstConnection = true;
       }
-      if (res.tabId && (isset(sincloCore[res.siteKey]) &&
-          isset(sincloCore[res.siteKey][res.tabId]) && 'timeoutTimer' in
+      if (res.tabId && (CommonUtil.isset(sincloCore[res.siteKey]) &&
+          CommonUtil.isset(sincloCore[res.siteKey][res.tabId]) &&
+          'timeoutTimer' in
           sincloCore[res.siteKey][res.tabId])) {
         var currentSincloSessionId = sincloCore[res.siteKey][res.tabId].sincloSessionId;
         if (currentSincloSessionId) {
           var oldSessionId = sincloCore[res.siteKey][res.tabId].sessionId;
           var sincloSession = sincloCore[res.siteKey][currentSincloSessionId];
-          if (isset(sincloSession)) {
+          if (CommonUtil.isset(sincloSession)) {
             var sessionIds = sincloSession.sessionIds;
             delete sessionIds[oldSessionId];
             if (currentSincloSessionId !== res.sincloSessionId &&
@@ -2373,7 +2283,7 @@ io.sockets.on('connection', function(socket) {
 
       if (data.userId === undefined || data.userId === '' || data.userId ===
           null) {
-        send.userId = makeUserId();
+        send.userId = CommonUtil.makeUserId();
       }
       if (data.forceFirstConnect || (!data.inactiveReconnect &&
           ((res.sincloSessionId === undefined || res.sincloSessionId === '' ||
@@ -2520,7 +2430,8 @@ io.sockets.on('connection', function(socket) {
           if (ret.opFlg === false) {
             send.opFlg = false;
             if (res.hasOwnProperty('tabId') &&
-                isset(getSessionId(res.siteKey, res.tabId, 'chat'))) {
+                CommonUtil.isset(
+                    getSessionId(res.siteKey, res.tabId, 'chat'))) {
               send.opFlg = true;
             }
           }
@@ -2537,7 +2448,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('getCustomerList', function(data, ack) {
     var obj = JSON.parse(data);
-    if (isset(obj.siteKey)) {
+    if (CommonUtil.isset(obj.siteKey)) {
       emit.toMine('beginOfCustomerList', {}, socket);
       processReceiveAccessInfo(obj.siteKey, socket);
     }
@@ -2555,17 +2466,17 @@ io.sockets.on('connection', function(socket) {
     var totalCounter = 0;
     var chunkSize = 100;
     var keyLength = 0;
-    if (isset(customerList[siteKey])) {
+    if (CommonUtil.isset(customerList[siteKey])) {
       keyLength = Object.keys(customerList[siteKey]).length;
     }
     var arr = [keyLength];
-    if (isset(customerList[siteKey])) {
+    if (CommonUtil.isset(customerList[siteKey])) {
       Object.keys(customerList[siteKey]).forEach(function(key) {
         var splitedKey = key.split('@@');
-        if (splitedKey.length === 2 && isset(splitedKey[1])) {
+        if (splitedKey.length === 2 && CommonUtil.isset(splitedKey[1])) {
           var targetSocketId = splitedKey[1];
           if (!io.sockets.connected[targetSocketId] ||
-              !isset(customerList[siteKey][key].sincloSessionId)) {
+              !CommonUtil.isset(customerList[siteKey][key].sincloSessionId)) {
             var targetTabId = customerList[siteKey][key].tabId;
             console.log('【' + siteKey + '】 customerList key : ' + key +
                 ' client is not exist. deleting. targetTabId : ' + targetTabId);
@@ -2597,9 +2508,10 @@ io.sockets.on('connection', function(socket) {
                   functionManager.keyList.hideRealtimeMonitor)
                   && functionManager.isEnabled(siteKey,
                       functionManager.keyList.monitorPollingMode)
-                  && ((isset(val['chatUnreadCnt']) && val['chatUnreadCnt'] ===
-                      0) && !isset(val['responderId']) &&
-                      !isset(val['chat']))) {
+                  && ((CommonUtil.isset(val['chatUnreadCnt']) &&
+                      val['chatUnreadCnt'] ===
+                      0) && !CommonUtil.isset(val['responderId']) &&
+                      !CommonUtil.isset(val['chat']))) {
                 // 何もしない
               } else {
                 arr.push(val);
@@ -2626,8 +2538,10 @@ io.sockets.on('connection', function(socket) {
                 && functionManager.isEnabled(siteKey,
                     functionManager.keyList.monitorPollingMode)
                 &&
-                ((!isset(val['chatUnreadCnt']) || val['chatUnreadCnt'] === 0) &&
-                    !isset(val['responderId']) && !isset(val['chat']))) {
+                ((!CommonUtil.isset(val['chatUnreadCnt']) ||
+                    val['chatUnreadCnt'] === 0) &&
+                    !CommonUtil.isset(val['responderId']) &&
+                    !CommonUtil.isset(val['chat']))) {
               // 何もしない
             } else {
               arr.push(val);
@@ -2652,8 +2566,9 @@ io.sockets.on('connection', function(socket) {
 
         var sincloSessionId = getSessionId(val.siteKey, val.tabId,
             'sincloSessionId');
-        if (isset(sincloCore[val.siteKey][sincloSessionId]) &&
-            isset(sincloCore[val.siteKey][sincloSessionId].customerInfo)) {
+        if (CommonUtil.isset(sincloCore[val.siteKey][sincloSessionId]) &&
+            CommonUtil.isset(
+                sincloCore[val.siteKey][sincloSessionId].customerInfo)) {
           val.customerInfo = sincloCore[val.siteKey][sincloSessionId].customerInfo;
           afterGetCustomerInformations();
         } else {
@@ -2669,7 +2584,7 @@ io.sockets.on('connection', function(socket) {
         }
       });
     }
-    if (isset(customerList[siteKey]) &&
+    if (CommonUtil.isset(customerList[siteKey]) &&
         Object.keys(customerList[siteKey]).length === 0) {
       emit.toMine('receiveAccessInfo', arr, socket);
       if (functionManager.isEnabled(siteKey,
@@ -2691,7 +2606,7 @@ io.sockets.on('connection', function(socket) {
       if (ret.opFlg === false) {
         opFlg = false;
         if (obj.hasOwnProperty('tabId') &&
-            isset(getSessionId(obj.siteKey, obj.tabId, 'chat'))) {
+            CommonUtil.isset(getSessionId(obj.siteKey, obj.tabId, 'chat'))) {
           opFlg = true;
         }
       }
@@ -2714,7 +2629,7 @@ io.sockets.on('connection', function(socket) {
     obj = getConnectInfo(obj);
 
     // IPアドレスの取得
-    if (!(('ipAddress' in obj) && isset(obj.ipAddress))) {
+    if (!(('ipAddress' in obj) && CommonUtil.isset(obj.ipAddress))) {
       obj.ipAddress = getIp(socket);
     }
 
@@ -2733,12 +2648,12 @@ io.sockets.on('connection', function(socket) {
           functionManager.keyList.monitorPollingMode)) return false;
       chatApi.sendUnreadCnt('sendChatInfo', obj, false);
 
-      if (isset(sincloCore[obj.siteKey][obj.sincloSessionId])) {
+      if (CommonUtil.isset(sincloCore[obj.siteKey][obj.sincloSessionId])) {
         sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = obj.customerInfo;
       }
     };
 
-    if (isset(company.info[obj.siteKey]) &&
+    if (CommonUtil.isset(company.info[obj.siteKey]) &&
         Object.keys(company.info[obj.siteKey]).length > 0) {
       customerApi.getInformations(obj.userId, obj.siteKey,
           function(information) {
@@ -2767,7 +2682,8 @@ io.sockets.on('connection', function(socket) {
           var targetTerm = obj.filterType === 1 ? splitedKey[0] : splitedKey[1];
           if (targetTerm) {
             if (targetTerm.indexOf(term) === 0) { // 前方一致検索
-              var mergedObject = extend(customerList[obj.siteKey][key],
+              var mergedObject = CommonUtil.extend(
+                  customerList[obj.siteKey][key],
                   sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
               if (mergedObject.time) {
                 mergedObject.term = timeCalculator(mergedObject);
@@ -2805,7 +2721,7 @@ io.sockets.on('connection', function(socket) {
           ('0' + d.getDate()).slice(-2) + ' ' + ('0' + d.getHours()).slice(-2) +
           ':' + ('0' + d.getMinutes()).slice(-2) + ':' +
           ('0' + d.getSeconds()).slice(-2)], function(error, res) {
-          if (isset(error)) {
+          if (CommonUtil.isset(error)) {
             console.log(
                 'RECORD INSERT ERROR: t_history_widget_close_counts:' + error);
           }
@@ -2828,10 +2744,10 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('connectSuccess', function(data, ack) {
     var obj = JSON.parse(data);
-    if (!isset(sincloCore[obj.siteKey])) {
+    if (!CommonUtil.isset(sincloCore[obj.siteKey])) {
       sincloCore[obj.siteKey] = {};
     }
-    if (!isset(sincloCore[obj.siteKey][obj.tabId])) {
+    if (!CommonUtil.isset(sincloCore[obj.siteKey][obj.tabId])) {
       sincloCore[obj.siteKey][obj.tabId] = {
         sincloSessionId: null,
         sessionId: null,
@@ -2839,8 +2755,8 @@ io.sockets.on('connection', function(socket) {
         chatUnreadCnt: 0
       };
     }
-    if (isset(obj.sincloSessionId) &&
-        !isset(sincloCore[obj.siteKey][obj.sincloSessionId])) {
+    if (CommonUtil.isset(obj.sincloSessionId) &&
+        !CommonUtil.isset(sincloCore[obj.siteKey][obj.sincloSessionId])) {
       sincloCore[obj.siteKey][obj.sincloSessionId] = {
         sessionIds: {},
         autoMessages: {},
@@ -2854,13 +2770,13 @@ io.sockets.on('connection', function(socket) {
     }
 
     var oldSessionId = sincloCore[obj.siteKey][obj.tabId].sessionId;
-    if (oldSessionId && isset(obj.sincloSessionId)) {
+    if (oldSessionId && CommonUtil.isset(obj.sincloSessionId)) {
       var sessionIds = sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
       console.log('delete id : ' + oldSessionId);
       delete sessionIds[oldSessionId];
       console.log('remains : ' + Object.keys(sessionIds).length);
       Object.keys(sessionIds).forEach(function(key) {
-        if (!isset(io.sockets.connected[key])) {
+        if (!CommonUtil.isset(io.sockets.connected[key])) {
           console.log('delete not exist sessionId : ' + key);
           delete sessionIds[key];
           console.log('remains : ' + Object.keys(sessionIds).length);
@@ -2885,11 +2801,11 @@ io.sockets.on('connection', function(socket) {
       sincloSessionId: obj.sincloSessionId
     };
     sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
-    if (isset(obj.sincloSessionId)) {
+    if (CommonUtil.isset(obj.sincloSessionId)) {
       sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
       sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
     }
-    if (isset(obj.tmpAutoMessages)) {
+    if (CommonUtil.isset(obj.tmpAutoMessages)) {
       try {
         Object.keys(obj.tmpAutoMessages).
             forEach(function(automessageKey, index, array) {
@@ -2898,7 +2814,9 @@ io.sockets.on('connection', function(socket) {
                 obj.tmpAutoMessages[automessageKey]['created'] = new Date(
                     obj.tmpAutoMessages[automessageKey]['created']);
               }
-              if (isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(
+              if (CommonUtil.isset(
+                  sincloCore[obj.siteKey][obj.sincloSessionId]) &&
+                  !CommonUtil.isset(
                   sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages)) {
                 sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages = {};
               }
@@ -2908,7 +2826,7 @@ io.sockets.on('connection', function(socket) {
 
       }
     }
-    if (isset(obj.tmpDiagramMessages)) {
+    if (CommonUtil.isset(obj.tmpDiagramMessages)) {
       try {
         Object.keys(obj.tmpDiagramMessages).
             forEach(function(diagramKey, index, array) {
@@ -2917,7 +2835,9 @@ io.sockets.on('connection', function(socket) {
                 obj.tmpDiagramMessages[diagramKey]['created'] = new Date(
                     obj.tmpDiagramMessages[diagramKey]['created']);
               }
-              if (isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(
+              if (CommonUtil.isset(
+                  sincloCore[obj.siteKey][obj.sincloSessionId]) &&
+                  !CommonUtil.isset(
                   sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
                 sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
               }
@@ -2965,7 +2885,7 @@ io.sockets.on('connection', function(socket) {
       // カスタム情報自動登録
       db.upsertCustomerInfo(obj, socket, function(result) {
         // IPアドレスの取得
-        if (!(('ipAddress' in obj) && isset(obj.ipAddress))) {
+        if (!(('ipAddress' in obj) && CommonUtil.isset(obj.ipAddress))) {
           obj.ipAddress = getIp(socket);
         }
 
@@ -2978,7 +2898,7 @@ io.sockets.on('connection', function(socket) {
               obj.lbcCode = response.lbcCode;
               sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
               sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
-              if (isset(
+              if (CommonUtil.isset(
                   customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress +
                   '_' + socket.id])) {
                 customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress +
@@ -3021,12 +2941,12 @@ io.sockets.on('connection', function(socket) {
     }
 
     // 画面同期中は同期フレーム本体に送る
-    if (('connectToken' in obj) && isset(obj.connectToken)) {
+    if (('connectToken' in obj) && CommonUtil.isset(obj.connectToken)) {
       emit.toUser('retTabInfo', obj,
           getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     }
     for (var key in customerList[obj.siteKey]) {
-      if (isset(obj.tabId) &&
+      if (CommonUtil.isset(obj.tabId) &&
           obj.tabId.indexOf(customerList[obj.siteKey][key]['tabId']) === 0) {
         customerList[obj.siteKey][key]['status'] = obj.status;
         break;
@@ -3051,7 +2971,7 @@ io.sockets.on('connection', function(socket) {
                   obj.day,
                   obj.hour,
                   1], function(error, res) {
-                  if (isset(error)) {
+                  if (CommonUtil.isset(error)) {
                     console.log(
                         'RECORD INSERT ERROR: t_history_widget_close_counts:' +
                         error);
@@ -3067,7 +2987,7 @@ io.sockets.on('connection', function(socket) {
                   obj.month,
                   obj.day,
                   obj.hour], function(error, res) {
-                  if (isset(error)) {
+                  if (CommonUtil.isset(error)) {
                     console.log(
                         'RECORD UPDATE ERROR: t_conversation_count(conversation_count):' +
                         error);
@@ -3075,7 +2995,7 @@ io.sockets.on('connection', function(socket) {
                   }
                 });
           }
-          if (isset(err)) {
+          if (CommonUtil.isset(err)) {
             console.log(
                 'RECORD SELECT ERROR: t_history_widget_close_counts:' + err);
           }
@@ -3099,7 +3019,7 @@ io.sockets.on('connection', function(socket) {
                   obj.day,
                   obj.hour,
                   1], function(error, res) {
-                  if (isset(error)) {
+                  if (CommonUtil.isset(error)) {
                     console.log(
                         'RECORD INSERT ERROR: t_history_widget_minimize_counts:' +
                         error);
@@ -3115,7 +3035,7 @@ io.sockets.on('connection', function(socket) {
                   obj.month,
                   obj.day,
                   obj.hour], function(error, res) {
-                  if (isset(error)) {
+                  if (CommonUtil.isset(error)) {
                     console.log(
                         'RECORD UPDATE ERROR: t_conversation_count(conversation_count):' +
                         error);
@@ -3123,7 +3043,7 @@ io.sockets.on('connection', function(socket) {
                   }
                 });
           }
-          if (isset(err)) {
+          if (CommonUtil.isset(err)) {
             console.log(
                 'RECORD SELECT ERROR: t_history_widget_minimize_counts:' + err);
           }
@@ -3138,7 +3058,7 @@ io.sockets.on('connection', function(socket) {
     if (obj.widget === true) {
       pool.query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?',
           [obj.sincloSessionId || obj.tabId], function(err, results) {
-            if (isset(err)) {
+            if (CommonUtil.isset(err)) {
               console.log(
                   'RECORD SElECT ERROR: t_history_widget_displays(tab_id):' +
                   err);
@@ -3153,7 +3073,7 @@ io.sockets.on('connection', function(socket) {
                     companyList[obj.siteKey],
                     obj.sincloSessionId || obj.tabId,
                     new Date()], function(err, results) {
-                    if (isset(err)) {
+                    if (CommonUtil.isset(err)) {
                       console.log(
                           'RECORD INSERT ERROR: t_history_widget_displays(tab_id):' +
                           err);
@@ -3181,7 +3101,7 @@ io.sockets.on('connection', function(socket) {
     }
 
     // IPアドレスの取得
-    if (!(('ipAddress' in obj) && isset(obj.ipAddress))) {
+    if (!(('ipAddress' in obj) && CommonUtil.isset(obj.ipAddress))) {
       obj.ipAddress = getIp(socket);
     }
     chatApi.getUnreadCnt(obj, function(ret) {
@@ -3350,7 +3270,7 @@ io.sockets.on('connection', function(socket) {
    * */
   socket.on('requestSyncStopForSubmit', function(data) {
     var obj = JSON.parse(data);
-    if (isset(obj.connectToken)) {
+    if (CommonUtil.isset(obj.connectToken)) {
       emit.toUser('syncStop', obj,
           getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
       emit.toUser('syncStopForSubmit', obj,
@@ -3365,7 +3285,7 @@ io.sockets.on('connection', function(socket) {
    * */
   socket.on('requestSyncStop', function(data) {
     var obj = JSON.parse(data);
-    if (isset(obj.connectToken)) {
+    if (CommonUtil.isset(obj.connectToken)) {
       var parentId = false;
       obj.message = '切断を検知しました。';
       // 企業フレーム
@@ -3425,7 +3345,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('syncBrowserInfoFrame', function(data) {
     var obj = JSON.parse(data);
 
-    if (isset(obj.windowSize)) {
+    if (CommonUtil.isset(obj.windowSize)) {
       emit.toUser('syncResponce', data,
           getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     } else {
@@ -3456,7 +3376,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('syncBrowserInfo', function(data) {
     var obj = JSON.parse(data);
-    if (isset(obj.windowSize)) {
+    if (CommonUtil.isset(obj.windowSize)) {
       emit.toUser('syncResponce', data,
           getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     } else {
@@ -3505,12 +3425,12 @@ io.sockets.on('connection', function(socket) {
           userId: obj.userId,
           active: obj.active
         };
-    if (!isset(activeOperator[obj.siteKey])) {
+    if (!CommonUtil.isset(activeOperator[obj.siteKey])) {
       activeOperator[obj.siteKey] = {};
     }
     // 在席中
     if (obj.active) {
-      if (!isset(activeOperator[obj.siteKey][obj.userId])) {
+      if (!CommonUtil.isset(activeOperator[obj.siteKey][obj.userId])) {
         activeOperator[obj.siteKey][obj.userId] = socket.id;
         console.log(
             '【' + obj.siteKey + '】オペレータ 離席 => 待機 userId : ' + obj.userId);
@@ -3529,7 +3449,7 @@ io.sockets.on('connection', function(socket) {
     }
     // 退席中
     else {
-      if (isset(activeOperator[obj.siteKey][obj.userId])) {
+      if (CommonUtil.isset(activeOperator[obj.siteKey][obj.userId])) {
         delete activeOperator[obj.siteKey][obj.userId];
         console.log(
             '【' + obj.siteKey + '】オペレータ 待機 => 離席 userId : ' + obj.userId);
@@ -3607,10 +3527,11 @@ io.sockets.on('connection', function(socket) {
         chatApi.cnst.observeType.autoSpeech :
         chatApi.cnst.observeType.auto;
     chat.created = new Date();
-    chat.sort = fullDateTime(chat.created);
+    chat.sort = CommonUtil.fullDateTime(chat.created);
 
     var sincloSession = sincloCore[chat.siteKey][chat.sincloSessionId];
-    if (isset(sincloSession) && isset(sincloSession.autoMessages)) {
+    if (CommonUtil.isset(sincloSession) &&
+        CommonUtil.isset(sincloSession.autoMessages)) {
       sincloCore[chat.siteKey][chat.sincloSessionId].autoMessages[chat.chatId] = chat;
     } else {
       console.log(
@@ -3658,21 +3579,23 @@ io.sockets.on('connection', function(socket) {
 
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
-      if (!isset(obj.messages[i]) || !isset(obj.messages[i].created)) continue;
+      if (!CommonUtil.isset(obj.messages[i]) ||
+          !CommonUtil.isset(obj.messages[i].created)) continue;
       var created = new Date(obj.messages[i].created);
       obj.messages[i].messageType = chatApi.cnst.observeType.auto;
-      setList[fullDateTime(Date.parse(created))] = obj.messages[i];
+      setList[CommonUtil.fullDateTime(Date.parse(created))] = obj.messages[i];
     }
-    if (isset(obj.scenarios)) {
+    if (CommonUtil.isset(obj.scenarios)) {
       for (var i = 0; i < obj.scenarios.length; i++) {
-        if (!isset(obj.scenarios[i]) ||
-            !isset(obj.scenarios[i].created)) continue;
+        if (!CommonUtil.isset(obj.scenarios[i]) ||
+            !CommonUtil.isset(obj.scenarios[i].created)) continue;
         var created = new Date(obj.scenarios[i].created);
-        setList[fullDateTime(Date.parse(created))] = obj.scenarios[i];
+        setList[CommonUtil.fullDateTime(
+            Date.parse(created))] = obj.scenarios[i];
       }
     }
     var ret = {};
-    ret.messages = objectSort(setList);
+    ret.messages = CommonUtil.objectSort(setList);
     ret.chatToken = obj.chatToken;
     ret.tabId = obj.tabId;
     ret.historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
@@ -3702,13 +3625,14 @@ io.sockets.on('connection', function(socket) {
 
   // チャット開始
   socket.on('chatStart', function(d) {
-    var obj = JSON.parse(d), date = new Date(), now = fullDateTime(date),
+    var obj = JSON.parse(d), date = new Date(),
+        now = CommonUtil.fullDateTime(date),
         type = chatApi.cnst.observeType.start;
     var logToken = makeToken();
     // TODO 履歴IDチェック
     try {
-      if (isset(sincloCore[obj.siteKey]) &&
-          isset(sincloCore[obj.siteKey][obj.tabId])) {
+      if (CommonUtil.isset(sincloCore[obj.siteKey]) &&
+          CommonUtil.isset(sincloCore[obj.siteKey][obj.tabId])) {
         sincloCore[obj.siteKey][obj.tabId].chatUnreadId = null;
         sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt = 0;
         console.log('reset chatUnreadCnt');
@@ -3736,7 +3660,7 @@ io.sockets.on('connection', function(socket) {
             var settingObj = '';
             var profileIcon = '';
             try {
-              if (isset(result[0]['settings'])) {
+              if (CommonUtil.isset(result[0]['settings'])) {
                 settingObj = result[0]['settings'];
                 profileIcon = JSON.parse(settingObj)['profileIcon'];
               }
@@ -3773,7 +3697,8 @@ io.sockets.on('connection', function(socket) {
       var scInfo = '';
 
       sincloCore[obj.siteKey][obj.tabId].chat = obj.userId;
-      if (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat)) {
+      if (!CommonUtil.isset(
+          sincloCore[obj.siteKey][obj.sincloSessionId].chat)) {
         sincloCore[obj.siteKey][obj.sincloSessionId].chat = {};
       }
       sincloCore[obj.siteKey][obj.sincloSessionId].chat[obj.tabId] = obj.userId;
@@ -3842,7 +3767,7 @@ io.sockets.on('connection', function(socket) {
                     var settingObj = '';
                     var profileIcon = '';
                     try {
-                      if (isset(result[0]['settings'])) {
+                      if (CommonUtil.isset(result[0]['settings'])) {
                         settingObj = result[0]['settings'];
                         profileIcon = JSON.parse(settingObj)['profileIcon'];
                       }
@@ -3884,7 +3809,7 @@ io.sockets.on('connection', function(socket) {
                     pool.query(
                         'INSERT INTO t_conversation_count(visitors_id,conversation_count) VALUES(?,?)',
                         [visitorId, 1], function(err, result) {
-                          if (isset(err)) {
+                          if (CommonUtil.isset(err)) {
                             console.log(
                                 'RECORD INSERT ERROR: t_convertsation_count(visitors_id,conversation_count):' +
                                 err);
@@ -3938,12 +3863,12 @@ io.sockets.on('connection', function(socket) {
 
   // チャット終了
   socket.on('chatEnd', function(d) {
-    var obj = JSON.parse(d), date = new Date(), now = fullDateTime(),
+    var obj = JSON.parse(d), date = new Date(), now = CommonUtil.fullDateTime(),
         type = chatApi.cnst.observeType.end;
 
     var keys = [];
     var userName = '';
-    if (isset(c_connectList[obj.siteKey][obj.tabId])) {
+    if (CommonUtil.isset(c_connectList[obj.siteKey][obj.tabId])) {
       keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
       userName = c_connectList[obj.siteKey][obj.tabId][keys[keys.length -
       1]].user;
@@ -3973,16 +3898,17 @@ io.sockets.on('connection', function(socket) {
         scList[obj.siteKey].cnt :
         {};
 
-    if (isset(sincloCore[obj.siteKey][obj.tabId])
-        && isset(sincloCore[obj.siteKey][obj.tabId].chat)
-        && isset(connectList[sincloCore[obj.siteKey][obj.tabId].sessionId])
-        && isset(
+    if (CommonUtil.isset(sincloCore[obj.siteKey][obj.tabId])
+        && CommonUtil.isset(sincloCore[obj.siteKey][obj.tabId].chat)
+        && CommonUtil.isset(
+            connectList[sincloCore[obj.siteKey][obj.tabId].sessionId])
+        && CommonUtil.isset(
             connectList[sincloCore[obj.siteKey][obj.tabId].sessionId].userId)) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
-      if (isset(sincloCore[obj.siteKey]) &&
-          isset(sincloCore[obj.siteKey][obj.sincloSessionId]) &&
-          isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat)) {
+      if (CommonUtil.isset(sincloCore[obj.siteKey]) &&
+          CommonUtil.isset(sincloCore[obj.siteKey][obj.sincloSessionId]) &&
+          CommonUtil.isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat)) {
         delete sincloCore[obj.siteKey][obj.sincloSessionId].chat[obj.tabId];
         if (Object.keys(
             sincloCore[obj.siteKey][obj.sincloSessionId].chat).length === 0) {
@@ -4009,7 +3935,7 @@ io.sockets.on('connection', function(socket) {
                 'UPDATE t_conversation_count SET conversation_count = ? WHERE visitors_id = ?',
                 [results[0].conversation_count + 1, visitorId],
                 function(err, result) {
-                  if (isset(err)) {
+                  if (CommonUtil.isset(err)) {
                     console.log(
                         'RECORD UPDATE ERROR: t_conversation_count(conversation_count):' +
                         err);
@@ -4078,7 +4004,7 @@ io.sockets.on('connection', function(socket) {
         chatId: resultData.insertId,
         messageType: 1,
         created: resultData.created,
-        sort: fullDateTime(resultData.created),
+        sort: CommonUtil.fullDateTime(resultData.created),
         ret: true,
         chatMessage: resultData.message.replace('button_', '').
             replace('\n', ''),
@@ -4122,7 +4048,7 @@ io.sockets.on('connection', function(socket) {
                 chatId: resultData.insertId,
                 messageType: 81,
                 created: resultData.created,
-                sort: fullDateTime(resultData.created),
+                sort: CommonUtil.fullDateTime(resultData.created),
                 ret: true,
                 chatMessage: resultData.message,
                 message: resultData.message,
@@ -4174,8 +4100,8 @@ io.sockets.on('connection', function(socket) {
         sincloSessionId: obj.sincloSessionId,
         chatId: null,
         messageType: 81,
-        created: fullDateTime(errorDatetime),
-        sort: fullDateTime(errorDatetime),
+        created: CommonUtil.fullDateTime(errorDatetime),
+        sort: CommonUtil.fullDateTime(errorDatetime),
         ret: true,
         chatMessage: 'システムエラーです。もう一度、メッセージを入力してください。',
         message: 'システムエラーです。もう一度、メッセージを入力してください。',
@@ -4209,16 +4135,18 @@ io.sockets.on('connection', function(socket) {
             functionManager.keyList.useCogmoAttendApi)
             && !sincloCore[obj.siteKey][obj.tabId].chat
             &&
-            (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller) ||
+            (!CommonUtil.isset(
+                sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller) ||
                 !sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isSwitchingOperator())) {
-          if (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller)) {
+          if (!CommonUtil.isset(
+              sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller)) {
             // functionManager.isEnabledでCogmoAttendAPIのsystemUUIDが返却される
             sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller(
                 functionManager.isEnabled(obj.siteKey,
                     functionManager.keyList.useCogmoAttendApi));
             sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.init(
                 sincloCore[obj.siteKey][obj.tabId].historyId, obj,
-                fullDateTime(), emit).then(() => {
+                CommonUtil.fullDateTime(), emit).then(() => {
               handleCogmoAttendAPI(obj, false);
             });
           } else {
@@ -4342,13 +4270,13 @@ io.sockets.on('connection', function(socket) {
                 message.chatId,
                 companyList[obj.siteKey]], loop);
           var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
-          if (isset(sincloSession) && (message.chatId in
+          if (CommonUtil.isset(sincloSession) && (message.chatId in
               sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages)) {
             sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId]['applied'] = true;
-          } else if (isset(sincloSession) &&
-              isset(sincloSession.autoMessages)) {
+          } else if (CommonUtil.isset(sincloSession) &&
+              CommonUtil.isset(sincloSession.autoMessages)) {
             message.created = new Date();
-            message.sort = fullDateTime(message.created);
+            message.sort = CommonUtil.fullDateTime(message.created);
             message.applied = true;
             message.messageType = chatApi.cnst.observeType.auto;
             sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId] = message;
@@ -4378,8 +4306,8 @@ io.sockets.on('connection', function(socket) {
   socket.on('isReadChatMessage', function(d) {
     var obj = JSON.parse(d);
     try {
-      if (isset(sincloCore[obj.siteKey]) &&
-          isset(sincloCore[obj.siteKey][obj.tabId])) {
+      if (CommonUtil.isset(sincloCore[obj.siteKey]) &&
+          CommonUtil.isset(sincloCore[obj.siteKey][obj.tabId])) {
         sincloCore[obj.siteKey][obj.tabId].chatUnreadId = null;
         sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt = 0;
         console.log('reset chatUnreadCnt');
@@ -4394,7 +4322,7 @@ io.sockets.on('connection', function(socket) {
       });
     } catch (e) {
     }
-    if (isset(sincloCore[obj.siteKey][obj.tabId].historyId)) {
+    if (CommonUtil.isset(sincloCore[obj.siteKey][obj.tabId].historyId)) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query(
           'UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;',
@@ -4517,18 +4445,19 @@ io.sockets.on('connection', function(socket) {
           messageDistinction = results[0].conversation_count;
         }
         obj.messages.forEach(function(elm, index, arr) {
-          if (!isset(elm.created)) {
+          if (!CommonUtil.isset(elm.created)) {
             elm.created = new Date();
-            elm.sort = fullDateTime(elm.created);
+            elm.sort = CommonUtil.fullDateTime(elm.created);
           }
           elm.applied = true;
           var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
-          if (isset(sincloSession) && isset(sincloSession.scenario)) {
-            if (!isset(
+          if (CommonUtil.isset(sincloSession) &&
+              CommonUtil.isset(sincloSession.scenario)) {
+            if (!CommonUtil.isset(
                 sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId])) {
               sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId] = {};
             }
-            if (!isset(
+            if (!CommonUtil.isset(
                 sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum])) {
               sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum] = {};
             }
@@ -4585,16 +4514,17 @@ io.sockets.on('connection', function(socket) {
   socket.on('sendScenarioMessage', function(d, ack) {
     var obj = JSON.parse(d);
     var scenario = JSON.parse(JSON.stringify(obj));
-    scenario.created = formatDateParse();
-    scenario.sort = fullDateTime(new Date(scenario.created));
+    scenario.created = CommonUtil.formatDateParse();
+    scenario.sort = CommonUtil.fullDateTime(new Date(scenario.created));
 
     var sincloSession = sincloCore[scenario.siteKey][scenario.sincloSessionId];
-    if (isset(sincloSession) && isset(sincloSession.scenario)) {
-      if (!isset(
+    if (CommonUtil.isset(sincloSession) &&
+        CommonUtil.isset(sincloSession.scenario)) {
+      if (!CommonUtil.isset(
           sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId])) {
         sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId] = {};
       }
-      if (!isset(
+      if (!CommonUtil.isset(
           sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum])) {
         sincloCore[scenario.siteKey][scenario.sincloSessionId].scenario[scenario.scenarioId][scenario.sequenceNum] = {};
       }
@@ -4732,7 +4662,8 @@ io.sockets.on('connection', function(socket) {
                 downloadUrl: targetFileInfo.download_url,
                 fileName: targetFileInfo.file_name,
                 fileSize: targetFileInfo.file_size,
-                expired: formatDateParse(today.setDate(today.getDate() + 1))
+                expired: CommonUtil.formatDateParse(
+                    today.setDate(today.getDate() + 1))
               };
             } else {
               sendData = {
@@ -4773,7 +4704,7 @@ io.sockets.on('connection', function(socket) {
               userId: obj.userId,
               customVariables: saveValue
             }, socket, function(resultData) {
-              if (isset(resultData)) {
+              if (CommonUtil.isset(resultData)) {
                 emit.toCompany('customerInfoUpdated', resultData, obj.siteKey);
               }
             });
@@ -4790,7 +4721,8 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('beginBulkHearing', function(data) {
     var obj = JSON.parse(data),
-        historyId = isset(getSessionId(obj.siteKey, obj.tabId, 'historyId')) ?
+        historyId = CommonUtil.isset(
+            getSessionId(obj.siteKey, obj.tabId, 'historyId')) ?
             getSessionId(obj.siteKey, obj.tabId, 'historyId') :
             obj.historyId;
     getConversationCountUser(obj.userId, function(results) {
@@ -4829,7 +4761,7 @@ io.sockets.on('connection', function(socket) {
    *  @return boolean (check result)
    */
   var isOkVariableForLeadList = function(target) {
-    if (isset(target)) {
+    if (CommonUtil.isset(target)) {
       if (!target.match(/^\s$/)) {
         return true;
       }
@@ -4933,12 +4865,13 @@ io.sockets.on('connection', function(socket) {
   socket.on('sendDiagramMessage', function(d, ack) {
     var obj = JSON.parse(d);
     var diagramData = obj;
-    diagramData.created = formatDateParse();
-    diagramData.sort = fullDateTime(new Date(diagramData.created));
+    diagramData.created = CommonUtil.formatDateParse();
+    diagramData.sort = CommonUtil.fullDateTime(new Date(diagramData.created));
 
     var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
-    if (isset(sincloSession) && isset(sincloSession.diagram)) {
-      if (!isset(
+    if (CommonUtil.isset(sincloSession) &&
+        CommonUtil.isset(sincloSession.diagram)) {
+      if (!CommonUtil.isset(
           sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
         sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
       }
@@ -4974,17 +4907,18 @@ io.sockets.on('connection', function(socket) {
         }
 
         let messages = obj.message;
-        if (isset(sincloCore[obj.siteKey])
-            && isset(sincloCore[obj.siteKey][obj.sincloSessionId])
-            && isset(sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
+        if (CommonUtil.isset(sincloCore[obj.siteKey])
+            && CommonUtil.isset(sincloCore[obj.siteKey][obj.sincloSessionId])
+            && CommonUtil.isset(
+                sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
           messages = sincloCore[obj.siteKey][obj.sincloSessionId].diagram.concat(
               messages);
           sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
         }
         messages.forEach(function(elm, index, arr) {
-          if (!isset(elm.created)) {
+          if (!CommonUtil.isset(elm.created)) {
             elm.created = new Date();
-            elm.sort = fullDateTime(elm.created);
+            elm.sort = CommonUtil.fullDateTime(elm.created);
           }
           elm.applied = true;
 
@@ -5143,7 +5077,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('requestStopCoBrowse', function(data) {
     console.log('requestStopCoBrowse >>> ' + data);
     var obj = JSON.parse(data);
-    if (isset(obj.coBrowseConnectToken)) {
+    if (CommonUtil.isset(obj.coBrowseConnectToken)) {
       var parentId = false;
       obj.message = '切断を検知しました。';
       // 企業フレーム
@@ -5211,14 +5145,14 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('userOut', function(data) {
     var obj = JSON.parse(data);
-    if (!isset(obj.connectToken)) {
+    if (!CommonUtil.isset(obj.connectToken)) {
       emit.toCompany('unsetUser', data, obj.siteKey);
     }
   });
 
   socket.on('settingReload', function(data, ack) {
     var obj = JSON.parse(data), targetKey;
-    if (isset(obj.type) && String(obj.siteKey) === 'master') {
+    if (CommonUtil.isset(obj.type) && String(obj.siteKey) === 'master') {
       switch (obj.type) {
         case 1: // get new company ( sample: socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"})); )
           console.log('before', companyList);
@@ -5227,7 +5161,8 @@ io.sockets.on('connection', function(socket) {
           break;
         case 2: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:2, targetKey: "demo", siteKey: "master"})); )
           console.log('before', companyList);
-          if (isset(obj.targetKey) && isset(companyList[obj.targetKey])) {
+          if (CommonUtil.isset(obj.targetKey) &&
+              CommonUtil.isset(companyList[obj.targetKey])) {
             delete companyList[obj.targetKey];
           }
           console.log('after', companyList);
@@ -5291,7 +5226,7 @@ io.sockets.on('connection', function(socket) {
               'End --------------------------------------------------------');
           break;
         case 8: // confirm tabId user is exists? socket.emit('settingReload', JSON.stringify({type:8, accessId:"", ipAddress:"", targetKey: "demo", siteKey: "master"}));
-          var keys = isset(customerList[obj.targetKey]) ?
+          var keys = CommonUtil.isset(customerList[obj.targetKey]) ?
               Object.keys(customerList[obj.targetKey]) :
               [];
           var targetObj = null;
@@ -5306,31 +5241,37 @@ io.sockets.on('connection', function(socket) {
             });
           }
           var targetSocketId = '';
-          if (isset(targetObj) && isset(targetKey)) {
+          if (CommonUtil.isset(targetObj) && CommonUtil.isset(targetKey)) {
             var splited = targetKey.split('/#');
             targetSocketId = '/#' + splited[1];
           }
           var sendData = {
-            inCustomerList: isset(targetObj),
-            sincloCoreExists: isset(sincloCore[obj.targetKey]),
-            sincloCoreDataExists: isset(
-                sincloCore[obj.targetKey][(isset(targetObj) ?
-                    (isset(targetObj['tabId']) ? targetObj['tabId'] : '') :
+            inCustomerList: CommonUtil.isset(targetObj),
+            sincloCoreExists: CommonUtil.isset(sincloCore[obj.targetKey]),
+            sincloCoreDataExists: CommonUtil.isset(
+                sincloCore[obj.targetKey][(CommonUtil.isset(targetObj) ?
+                    (CommonUtil.isset(targetObj['tabId']) ?
+                        targetObj['tabId'] :
+                        '') :
                     '')]),
-            connectListExists: isset(targetObj) && isset(connectList),
-            inConnectList: isset(targetObj) && isset(connectList) &&
+            connectListExists: CommonUtil.isset(targetObj) &&
+                CommonUtil.isset(connectList),
+            inConnectList: CommonUtil.isset(targetObj) &&
+                CommonUtil.isset(connectList) &&
                 (Object.keys(connectList).indexOf(targetSocketId) !== -1),
-            customerListExists: isset(customerList) &&
-                isset(customerList[obj.targetKey]),
-            socketIdIsFound: isset(targetSocketId),
-            socketConnected: isset(targetSocketId) &&
-                isset(io.sockets.connected[targetSocketId]),
-            inSocketsList: isset(targetSocketId) && isset(io.sockets.sockets) &&
+            customerListExists: CommonUtil.isset(customerList) &&
+                CommonUtil.isset(customerList[obj.targetKey]),
+            socketIdIsFound: CommonUtil.isset(targetSocketId),
+            socketConnected: CommonUtil.isset(targetSocketId) &&
+                CommonUtil.isset(io.sockets.connected[targetSocketId]),
+            inSocketsList: CommonUtil.isset(targetSocketId) &&
+                CommonUtil.isset(io.sockets.sockets) &&
                 (Object.keys(io.sockets.sockets).indexOf(targetSocketId) !== 1)
           };
           console.log('send data : ' + JSON.stringify(sendData));
           emit.toMine('userExistsResult', sendData, socket);
-          if (isset(targetObj) && isset(targetObj['tabId'])) {
+          if (CommonUtil.isset(targetObj) &&
+              CommonUtil.isset(targetObj['tabId'])) {
             emit.toUser('checkExists', {
               siteKey: obj.targetKey,
               tabId: targetObj['tabId'],
@@ -5396,7 +5337,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('resCheckExists', function(data) {
     var obj = JSON.parse(data);
-    if (isset(obj['returnTo'])) {
+    if (CommonUtil.isset(obj['returnTo'])) {
       emit.toUser('resCheckExists', obj, obj['returnTo']);
     } else {
       console.log('resCheckExists NOT sent');
@@ -5637,7 +5578,7 @@ io.sockets.on('connection', function(socket) {
       for (var tabId in sincloCore[userInfo.siteKey]) {
         var tab = sincloCore[userInfo.siteKey][tabId];
 
-        if (('chatSessionId' in tab) && isset(tab.chatSessionId) &&
+        if (('chatSessionId' in tab) && CommonUtil.isset(tab.chatSessionId) &&
             tab.chatSessionId === socket.id) {
           // 企業へ送る
           emit.toCompany('receiveTypeCond',
@@ -5728,8 +5669,8 @@ io.sockets.on('connection', function(socket) {
             [siteId, sincloSessionId, info.userId], function(err, rows) {
               if (err !== null && err !== '') return false; // DB接続断対応
 
-              if (isset(rows) && isset(rows[0])) {
-                var now = formatDateParse();
+              if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
+                var now = CommonUtil.formatDateParse();
                 timeUpdate(rows[0].id, {}, now, function() {
                 });
               }
@@ -5852,8 +5793,8 @@ io.sockets.on('connection', function(socket) {
               }
 
               if (sincloSessionId) {
-                if (isset(sincloCore[info.siteKey][sincloSessionId])
-                    && isset(
+                if (CommonUtil.isset(sincloCore[info.siteKey][sincloSessionId])
+                    && CommonUtil.isset(
                         sincloCore[info.siteKey][sincloSessionId]['sessionIds'])) {
                   var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
                   delete sessionIds[socket.id];
@@ -5869,7 +5810,8 @@ io.sockets.on('connection', function(socket) {
 
       if (sincloSessionId) {
         var sincloSession = sincloCore[info.siteKey][sincloSessionId];
-        if (isset(sincloSession) && isset(sincloSession.sessionIds) &&
+        if (CommonUtil.isset(sincloSession) &&
+            CommonUtil.isset(sincloSession.sessionIds) &&
             Object.keys(sincloSession.sessionIds).length > 0) {
           delete sincloSession.sessionIds[socket.id];
         } else {
@@ -5888,20 +5830,21 @@ io.sockets.on('connection', function(socket) {
         });
       }
     } else {
-      if (info && isset(sincloCore[info.siteKey][info.tabId])) {
+      if (info && CommonUtil.isset(sincloCore[info.siteKey][info.tabId])) {
         console.log('SESSION ID IS NULL info : ' + JSON.stringify(info) +
             ' info.siteKey : ' + info.siteKey + ' info.tabId ' + info.tabId +
             ' sincloSessionId ' +
             sincloCore[info.siteKey][info.tabId].sincloSessionId);
-        if (isset(info.siteKey) && isset(info.tabId)) {
+        if (CommonUtil.isset(info.siteKey) && CommonUtil.isset(info.tabId)) {
           var sincloSessionId = sincloCore[info.siteKey][info.tabId].sincloSessionId;
           // sincloCoreから情報削除
           delete sincloCore[info.siteKey][info.tabId];
-          if (isset(sincloCore[info.siteKey][sincloSessionId]) &&
-              isset(sincloCore[info.siteKey][sincloSessionId].sessionIds)) {
+          if (CommonUtil.isset(sincloCore[info.siteKey][sincloSessionId]) &&
+              CommonUtil.isset(
+                  sincloCore[info.siteKey][sincloSessionId].sessionIds)) {
             var sessionIds = sincloCore[info.siteKey][sincloSessionId].sessionIds;
             Object.keys(sessionIds).forEach(function(key) {
-              if (!isset(io.sockets.connected[key])) {
+              if (!CommonUtil.isset(io.sockets.connected[key])) {
                 console.log('delete not exist sessionId : ' + key);
                 delete sessionIds[key];
                 console.log('remains : ' + Object.keys(sessionIds).length);
@@ -5935,10 +5878,11 @@ io.sockets.on('connection', function(socket) {
                     key);
                 var customer = customerList[info.siteKey][key];
                 delete customerList[info.siteKey][key];
-                if (isset(customer) && customer.sincloSessionId) {
+                if (CommonUtil.isset(customer) && customer.sincloSessionId) {
                   var sincloSessionId = customer.sincloSessionId;
-                  if (isset(sincloCore[info.siteKey][sincloSessionId])
-                      && isset(
+                  if (CommonUtil.isset(
+                      sincloCore[info.siteKey][sincloSessionId])
+                      && CommonUtil.isset(
                           sincloCore[info.siteKey][sincloSessionId]['sessionIds'])) {
                     console.log(
                         'target sincloSessionId > ' + sincloSessionId + ' : ' +

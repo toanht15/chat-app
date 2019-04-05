@@ -6113,6 +6113,13 @@
             data.containerWidth = 310;
             data.width = settings.lineUpStyle === '1' ? 310 : 193;
             break;
+          case 5:
+            data.containerWidth = $('.grid_for_icon').width() -
+                $('.iconDiv').width();
+            data.width = settings.lineUpStyle === '1' ?
+                data.containerWidth :
+                193;
+            break;
           default:
             data.containerWidth = 310;
             data.width = settings.lineUpStyle === '1' ? 310 : 193;
