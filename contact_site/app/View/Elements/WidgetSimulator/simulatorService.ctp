@@ -854,7 +854,7 @@
         var style = '<style>';
         style += '#sincloBox #' + buttonUIName + ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
         style += '#sincloBox #' + buttonUIName + ' button {background-color: ' + data.settings.customDesign.buttonUIBackgroundColor + '}';
-        style += '#sincloBox #' + buttonUIName + ' button {width: ' + this.getButtonUIWidth() + 'px;}';
+        style += '#sincloBox #' + buttonUIName + ' button {width: 100%;}';
         style += '#sincloBox #' + buttonUIName + ' button {color: ' + data.settings.customDesign.buttonUITextColor + '}';
         style += '#sincloBox #' + buttonUIName + ' button:focus {outline: none}';
         style += '#sincloBox #' + buttonUIName + ' button:active {background-color: ' + data.settings.customDesign.buttonUIActiveColor +'}';
