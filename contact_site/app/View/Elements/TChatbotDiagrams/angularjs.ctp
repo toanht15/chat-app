@@ -918,7 +918,7 @@
               $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 30));
               $scope.currentEditCell.attr('nodeBasicInfo/tooltip', $scope.selectedScenario.value);
             }
-            if($scope.callbackToDiagram) {
+            if ($scope.callbackToDiagram && !$scope.currentEditCellParent.hasPort('out')) {
               $scope.currentEditCellParent.addOutPort('out');
               $scope.currentEditCellParent.attr('.outCover', {
                 fill: '#82c0cd',
@@ -954,6 +954,13 @@
                 z: 0,
                 markup: '<rect class="port-body"/>'
               });
+            } else if ($scope.currentEditCellParent.hasPort('out')) {
+              if ($scope.currentEditCellParent.attributes.attrs.nodeBasicInfo.nextNodeId !== '') {
+                $scope.currentEditCellParent.portProp('out', 'attrs/.port-body/fill',
+                    $scope.getPortColor('scenario', 'out'));
+              } else {
+                $scope.currentEditCellParent.portProp('out', 'attrs/.port-body/fill', '#c0c0c0');
+              }
             } else {
               $scope.currentEditCellParent.removeOutPort('out');
             }
@@ -2070,6 +2077,15 @@
         return ('#' + codeR + codeG + codeB).toUpperCase();
       };
 
+      $scope.bindTextTrigger = function(e, forceProcess, index) {
+        $(e.target).on('input', function(event){
+          $scope.changeTextTrigger(event, forceProcess, event.target.value, index);
+        });
+      };
+
+      $scope.blurTextTrigger = function(e, forceProcess, index) {
+        $(e.target).off('input');
+      };
 
       $scope.changeTextTrigger = function(e, forceProcess, text, index){
         $scope.replaceTag(text, index);
@@ -2261,7 +2277,7 @@
           '<div class=\'branch_modal_setting_header\'>' +
           '<div class=\'flex_row_box\'>' +
           '<p>発言内容</p>' +
-          '<resize-textarea ng-keyup="changeTextTrigger($event, true, branchText, \'branch\')" ng-keydown="changeTextTrigger($event, true, branchText, \'branch\')" ng-model="branchText"></resize-textarea>' +
+          '<resize-textarea ng-focus="bindTextTrigger($event, true, \'branch\')" ng-blur="blurTextTrigger($event, true, \'branch\')" ng-model="branchText"></resize-textarea>' +
           '</div>' +
           '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
@@ -2322,7 +2338,7 @@
           '<p>発言内容</p>' +
           '<div id="text_modal_contents" >' +
           '<div class=\'text_modal_setting\' ng-repeat="speakText in speakTextList track by $index" finisher>' +
-          '<resize-textarea ng-keyup="changeTextTrigger($event, true, speakText, $index)" ng-keydown="changeTextTrigger($event, true, speakText, $index)" ng-model="speakTextList[$index]"></resize-textarea>' +
+          '<resize-textarea ng-focus="bindTextTrigger($event, true, $index)" ng-blur="blurTextTrigger($event, true, $index)" ng-model="speakTextList[$index]"></resize-textarea>' +
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index, \'\')">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', speakTextList, $index)">' +
           '</div>' +

@@ -207,6 +207,7 @@ define('C_AUTO_TRIGGER_SEARCH_KEY', 7); // 検索キーワード
 define('C_AUTO_TRIGGER_SPEECH_CONTENT', 8); // 発言内容
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 9); // 最初の滞在ページ
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
+define('C_AUTO_TRIGGER_VISITOR_DEVICE', 11); // 訪問者の端末
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -312,6 +313,10 @@ define('C_SCENARIO_CONTROL_STRING', 2);
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
+
+// single, multiple setting
+define('C_SINGLE', 1); // single
+define('C_MULTIPLE', 2); // multiple
 
 // TRUE/FALSE
 define("C_CHECK_OFF", 0);
@@ -500,6 +505,59 @@ define('C_AFTER_APPLICATION_TO_COMPANY', 6); // いきなり契約登録時 会�
 define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // いきなり契約登録後初期パスワード変更 お客さん向けメール
 define('C_AFTER_PASSWORD_RESET_TO_CUSTOMER', 8); //パスワード変更 お客さん向けメール
 
+// トリガーエクセルエクスポート用
+define('T_SETTING_ON', 1);
+define('T_SETTING_OFF', 2);
+
+define('T_ACTIVE_ON', 0);
+define('T_ACTIVE_OFF', 1);
+
+define('T_WIDGET_OPEN_ON', 1);
+define('T_WIDGET_OPEN_OFF', 2);
+
+define('T_CONDITION_ALL_MATCH', 1);
+define('T_CONDITION_ONE_MATCH', 2);
+
+define('T_TEXTAREA_OPEN', 1);
+define('T_TEXTAREA_CLOSE', 2);
+
+define('T_AUTO_CV_ON', 1);
+define('T_AUTO_CV_OFF', 2);
+
+define('T_SEND_MAIL_ON', 1);
+define('T_SEND_MAIL_OFF', 0);
+
+define('T_STAY_TIME_PAGE', 1);
+define('T_STAY_TIME_SITE', 2);
+
+define('T_STAY_TIME_SECOND', 1);
+define('T_STAY_TIME_MIN', 2);
+define('T_STAY_TIME_HOUR', 3);
+
+define('T_VISIT_COUNT_EQUAL', 1);
+define('T_VISIT_COUNT_MORE_THAN', 2);
+define('T_VISIT_COUNT_LESS_THAN', 3);
+define('T_VISIT_COUNT_RANGE', 4);
+
+define('T_TARGET_PAGE', 1);
+define('T_TARGET_URL', 2);
+
+define('T_STAY_PAGE_ALL_MATCH', 1);
+define('T_STAY_PAGE_PART_MATCH', 2);
+define('T_STAY_PAGE_NOT_MATCH', 3);
+
+define('T_SPEECH_ONE_TIME', 1);
+define('T_SPEECH_ANY_TIME', 2);
+
+define('T_IN_BUSINESS_HOUR', 1);
+define('T_OUT_BUSINESS_HOUR', 2);
+
+define('T_ACTION_SEND_MESSSAGE', 1);
+define('T_ACTION_CALL_SCENARIO', 2);
+define('T_ACTION_CALL_TRIGGER', 3);
+define('T_ACTION_CALL_CHAT_TREE', 4);
+
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = array(
   C_AUTHORITY_ADMIN => "管理者",
@@ -677,7 +735,8 @@ $config['outMessageTriggerList'] = array(
     'key' => 'visit_cnt',
     'default' => array(
       "visitCnt" => "",
-      "visitCntCond" => 2
+      "visitCntCond" => "4",
+      "visitCntMax" => ""
     )
   ),
   // 発言内容
@@ -787,6 +846,17 @@ $config['outMessageTriggerList'] = array(
     'key' => 'operating_hours',
     'default' => array(
       "operatingHoursTime" => 1
+    )
+  ),
+  // 訪問者の端末
+  C_AUTO_TRIGGER_VISITOR_DEVICE => array(
+    'label' => 'サイト訪問者の端末',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'visitor_device',
+    'default' => array(
+      "pc" => false,
+      "smartphone" => false,
+      "tablet" => false
     )
   )
 );

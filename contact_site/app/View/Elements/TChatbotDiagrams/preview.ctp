@@ -53,7 +53,9 @@
   .diagram_preview_area li.all-round { border-radius: 12px!important; }
   .diagram_preview_area li.sinclo_re.no-wrap span.sinclo-text-line { display: block; padding: 0 15px; }
   .diagram_preview_area li.sinclo_re {  background-color: {{widget.makeFaintColor()}}; font-size: {{widget.settings['re_text_size']}}px; }
-  .diagram_preview_area li.sinclo_re.customWidth { width: 90%; }
+  .diagram_preview_area li.sinclo_re.customWidth {width: calc(100% - 17.5px); }
+  .diagram_preview_area li.sinclo_re.middleSize.customWidth {width: calc(100% - 21px); }
+  .diagram_preview_area li.sinclo_re.largeSize.customWidth, .diagram_preview_area li.sinclo_re.customSize.customWidth {width: calc(100% - 24.6px); }
   .diagram_preview_area li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
   .diagram_preview_area li.sinclo_re span.sinclo-text-line{ display: inline-block; color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
   .diagram_preview_area li.sinclo_re span.sinclo-text-line.between{ margin-top:{{radioSelectionDistance}}px }
@@ -122,9 +124,7 @@
 
 <style ng-if="!isCustomize">
   /* Default selection UI */
-  .diagram_preview_area li button {width: 188px; background-color: {{widget.settings.re_text_color}};  color: {{widget.settings.re_background_color}}; cursor: pointer;  min-height: 35px; margin-bottom: 1px;  padding: 10px 15px; border: none; text-align: center; }
-  .diagram_preview_area li.middleSize button { width: 240px;}
-  .diagram_preview_area li.largeSize button { width: 280px;}
+  .diagram_preview_area li button {width: 100%; background-color: {{widget.settings.re_text_color}};  color: {{widget.settings.re_background_color}}; cursor: pointer;  min-height: 35px; margin-bottom: 1px;  padding: 10px 15px; border: none; text-align: center; }
   .diagram_preview_area li button:active{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
   .diagram_preview_area li button:focus{outline: none}
   .diagram_preview_area li button:hover{background-color: {{getRawColor(widget.settings.main_color, 0.5)}};}
@@ -143,9 +143,7 @@
 
   /* button UI */
   .diagram_preview_area li button {background-color: {{buttonUIBackgroundColor}};  color: {{buttonUITextColor}};  cursor: pointer;  min-height: 35px;  margin-bottom: 1px;  padding: 10px 15px;  }
-  .diagram_preview_area li button {width: 188px;}
-  .diagram_preview_area li.middleSize button { width: 240px;}
-  .diagram_preview_area li.largeSize button { width: 280px;}
+  .diagram_preview_area li button {width: 100%;}
   .diagram_preview_area li button:active{background-color: {{buttonUIActiveColor}};}
   .diagram_preview_area li button:focus{outline: none}
   .diagram_preview_area li button:hover{background-color: {{buttonUIActiveColor}};}
