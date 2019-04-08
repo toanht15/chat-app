@@ -14,13 +14,19 @@
 
 <?php /* 訪問回数｜C_AUTO_TRIGGER_VISIT_CNT */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_VISIT_CNT?>'" class="setVisitCnt">
-    <li>
-      <span><label>訪問回数</label></span>
-      <input type="text" class="tRight" ng-pattern="<?=C_MATCH_RULE_NUM_2?>" ui-validate-watch=" 'setItem.visitCntCond' " ui-validate="{isVisitCntRule : 'main.isVisitCntRule($value, setItem.visitCntCond)' }" ng-model="setItem.visitCnt" name="visitCnt" required="">&nbsp;回
-    </li>
-    <li>
-      <?=$this->AutoMessage->radio('visitCntCond')?>
-    </li>
+  <li>
+      <div>
+        <p>訪問回数 </p>
+        <input type="number" ng-model="setItem.visitCnt" name="visitCnt" class="visitCnt" ng-pattern="<?=C_MATCH_RULE_NUM_2?>" ui-validate-watch="'setItem.visitCntCond'" ui-validate="{isVisitCntRule : 'main.isVisitCntRule($value, setItem.visitCntCond)'}" min="1" max="100" required><p>回</p>
+        <select style="" ng-model="setItem.visitCntCond">
+          <option value="4">以上</option>
+          <option value="1">に一致する場合</option>
+          <option value="2">以上の場合</option>
+          <option value="3">未満の場合</option>
+        </select>
+        <input ng-if="setItem.visitCntCond == '4'" ng-model="setItem.visitCntMax" type="number" name="visitCntMax" class="visitCntMax" ng-pattern="<?=C_MATCH_RULE_NUM_2?>" min="{{setItem.visitCnt + 1}}" max="100" required>　<p ng-if="setItem.visitCntCond == '4'" style="margin-left: -10px;">回 未満の場合</p>
+      </div>
+  </li>
   </ul>
 <?php /* ページ｜C_AUTO_TRIGGER_STAY_PAGE */ ?>
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_STAY_PAGE?>'"  class="setStayPage">
@@ -152,5 +158,20 @@
     <?php if($operatingHourData == 2) { ?>
       <input type="hidden" name = "notOperatingHour" ng-model="setItem.operatingHour" ng-required="setItem.operatingHoursTime != '3'">
     <?php } ?>
+  </li>
+</ul>
+
+<ul ng-if="itemType == '<?=C_AUTO_TRIGGER_VISITOR_DEVICE?>'" class="setVisitorDevice" >
+  <li>
+    <span style="margin-top: 3px;"> 端末</span>
+    <label class="pointer pc">
+      <input ng-model="setItem.pc" name="device" type="checkbox" ng-required="!setItem.pc && !setItem.smartphone && !setItem.tablet">PC
+    </label>
+    <label class="pointer smartphone">
+      <input ng-model="setItem.smartphone" name="device" type="checkbox">スマートフォン
+    </label>
+    <label class="pointer tablet">
+      <input ng-model="setItem.tablet" name="device" type="checkbox">タブレット
+    </label>
   </li>
 </ul>
