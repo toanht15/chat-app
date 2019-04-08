@@ -918,7 +918,7 @@
               $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 30));
               $scope.currentEditCell.attr('nodeBasicInfo/tooltip', $scope.selectedScenario.value);
             }
-            if($scope.callbackToDiagram) {
+            if ($scope.callbackToDiagram && !$scope.currentEditCellParent.hasPort('out')) {
               $scope.currentEditCellParent.addOutPort('out');
               $scope.currentEditCellParent.attr('.outCover', {
                 fill: '#82c0cd',
@@ -954,6 +954,13 @@
                 z: 0,
                 markup: '<rect class="port-body"/>'
               });
+            } else if ($scope.currentEditCellParent.hasPort('out')) {
+              if ($scope.currentEditCellParent.attributes.attrs.nodeBasicInfo.nextNodeId !== '') {
+                $scope.currentEditCellParent.portProp('out', 'attrs/.port-body/fill',
+                    $scope.getPortColor('scenario', 'out'));
+              } else {
+                $scope.currentEditCellParent.portProp('out', 'attrs/.port-body/fill', '#c0c0c0');
+              }
             } else {
               $scope.currentEditCellParent.removeOutPort('out');
             }
