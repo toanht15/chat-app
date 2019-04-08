@@ -139,6 +139,7 @@
     };
 
     self.doCallScenarioAction = function(node) {
+      <?php if($coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]): ?>
       $.ajax({
         url: "<?= $this->Html->url('/TChatbotScenario/remoteGetActionDetail') ?>",
         type: 'post',
@@ -161,6 +162,10 @@
         console.warn('failed get scenario detail');
         console.error(errorThrown);
       });
+      <?php else: ?>
+      clearChatbotTypingTimer();
+      chatBotTypingRemove();
+      <?php endif; ?>
     };
 
     self.handleEndScenarioProcess = function (event) {

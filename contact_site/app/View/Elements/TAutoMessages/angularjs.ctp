@@ -411,6 +411,26 @@ sincloApp.directive('ngShowonhover',function() {
                         messageList.push("訪問回数は「1回未満」という設定はできません");
                     }
                 }
+
+                if ('visitCntMax' in form) {
+                  if ('required' in form.visitCntMax.$error && $.inArray('訪問回数が未入力です', messageList) === -1) {
+                    messageList.push('訪問回数が未入力です');
+                  }
+
+                  if ('pattern' in form.visitCntMax.$error && $.inArray('訪問回数は1～100回までの半角数字で指定できます', messageList) ===
+                      -1) {
+                    messageList.push('訪問回数は1～100回までの半角数字で指定できます');
+                  }
+
+                  if ('number' in form.visitCntMax.$error) {
+                    messageList.push('訪問回数は数値で入力してください');
+                  }
+
+                  if ('min' in form.visitCntMax.$error) {
+                    messageList.push('入力した値が正しくありません');
+                  }
+                }
+
                 /* 検索キーワード */
                 if ( 'keyword' in form ) {
                     if (String(key) === '<?=h(C_AUTO_TRIGGER_SEARCH_KEY)?>' && 'required' in form.keyword.$error) {
@@ -476,6 +496,10 @@ sincloApp.directive('ngShowonhover',function() {
                 /* 営業時間 */
                 if( 'notOperatingHour' in form) {
                     messageList.push("営業時間設定を利用していません");
+                }
+                /* 訪問者の端末 */
+                if( 'device' in form) {
+                  messageList.push("端末が未選択です");
                 }
 
                 for( var i = 0; i <  messageList.length; i++ ){
