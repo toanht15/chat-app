@@ -3,7 +3,7 @@ App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Vali
 class SalesForceController extends AppController {
 
   const API_CALL_TIMEOUT = 5;
-  const SALES_FORCE_API = "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
+  const SALES_FORCE_API = "https://webto.salesforce.com/servlet/servlet.WebToLead";
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -31,11 +31,14 @@ class SalesForceController extends AppController {
     }
 
     $salesForceData = $this->matchData($data);
+    $queryString = http_build_query(array_filter($salesForceData));
+    $queryString = 'encoding=UTF-8&' . $queryString;
+
     $socket = new HttpSocket(array(
       'timeout' => self::API_CALL_TIMEOUT
     ));
 
-    $result = $socket->post(self::SALES_FORCE_API, $salesForceData);
+    $result = $socket->post(self::SALES_FORCE_API, $queryString);
 
     if (json_decode($result->code) === 409) {
       $this->response->statusCode(409);
