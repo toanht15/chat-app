@@ -79,7 +79,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
 
     $this->isSettingMap = [
       'する'  => 1,
-      'しない' => 0
+      'しない' => 2
     ];
 
     $this->activeFlgMap = [
@@ -99,7 +99,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
 
     $this->actionTypeMap = [
       'チャットツリーを呼び出す' => 4,
-      '別のトリガーを呼び出す'    => 3,
+      '別のトリガーを呼び出す'  => 3,
       'シナリオを呼び出す'    => 2,
       'チャットメッセージを送る' => 1
     ];
@@ -286,18 +286,18 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           $importData[$key]['action_type']               = $actionType = $this->actionTypeMap[$row['BF']];
 
           // 滞在時間
-          if ($this->isSettingMap[$row['E']] == 1) {
+          if ($this->isSettingMap[$row['E']] == T_SETTING_ON) {
             $importData[$key]['activity']['conditions'][1][0]['stayTimeCheckType'] = $this->stayTimeCheckTypeMap[$row['F']];
             $importData[$key]['activity']['conditions'][1][0]['stayTimeType']      = $this->stayTimeTypeMap[$row['G']];
             $importData[$key]['activity']['conditions'][1][0]['stayTimeRange']     = (string)$row['H'];
           }
 
           // 訪問回数
-          if ($this->isSettingMap[$row['I']] == 1) {
-            if ($this->visitCntCondMap[$row['K']] == "4") {
-              $nums = explode('~', trim($row['J']));
-              $importData[$key]['activity']['conditions'][2][0]['visitCnt'] = (int)trim($nums[0]);
-              $importData[$key]['activity']['conditions'][2][0]['visitCntMax'] = (int)trim($nums[1]);
+          if ($this->isSettingMap[$row['I']] == T_SETTING_ON) {
+            if ((int)$this->visitCntCondMap[$row['K']] == T_VISIT_COUNT_RANGE) {
+              $nums                                                             = explode('~', trim($row['J']));
+              $importData[$key]['activity']['conditions'][2][0]['visitCnt']     = (int)trim($nums[0]);
+              $importData[$key]['activity']['conditions'][2][0]['visitCntMax']  = (int)trim($nums[1]);
               $importData[$key]['activity']['conditions'][2][0]['visitCntCond'] = $this->visitCntCondMap[$row['K']];
             } else {
               $importData[$key]['activity']['conditions'][2][0]['visitCnt']     = (int)$row['J'];
@@ -306,7 +306,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           }
 
           // ページ
-          if ($this->isSettingMap[$row['L']] == 1) {
+          if ($this->isSettingMap[$row['L']] == T_SETTING_ON) {
             $importData[$key]['activity']['conditions'][3][0]['targetName']              = $this->targetNameMap[$row['M']];
             $importData[$key]['activity']['conditions'][3][0]['keyword_contains']        = $this->getCellValue($row['N']);
             $importData[$key]['activity']['conditions'][3][0]['keyword_contains_type']   = !empty($row['O']) ? $this->containsTypeMap[$row['O']] : "1";
@@ -316,7 +316,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           }
 
           // 曜日・時間
-          if ($this->isSettingMap[$row['U']] == 1) {
+          if ($this->isSettingMap[$row['U']] == T_SETTING_ON) {
             $day        = [
               'mon' => false,
               'tue' => false,
@@ -342,7 +342,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           }
 
           // 参照元URL（リファラー）
-          if ($this->isSettingMap[$row['Y']] == 1) {
+          if ($this->isSettingMap[$row['Y']] == T_SETTING_ON) {
             $importData[$key]['activity']['conditions'][6][0]['keyword_contains']        = $this->getCellValue($row['Z']);
             $importData[$key]['activity']['conditions'][6][0]['keyword_contains_type']   = !empty($row['AA']) ? $this->containsTypeMap[$row['AA']] : "1";
             $importData[$key]['activity']['conditions'][6][0]['keyword_exclusions']      = $this->getCellValue($row['AB']);
@@ -351,13 +351,13 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           }
 
           // 検索キーワード
-          if ($this->isSettingMap[$row['AE']] == 1) {
+          if ($this->isSettingMap[$row['AE']] == T_SETTING_ON) {
             $importData[$key]['activity']['conditions'][7][0]['keyword']    = $this->getCellValue($row['AF']);
             $importData[$key]['activity']['conditions'][7][0]['searchCond'] = $this->referrerCondTypeMap[$row['AG']];
           }
 
           // 発言内容
-          if ($this->isSettingMap[$row['AH']] == 1) {
+          if ($this->isSettingMap[$row['AH']] == T_SETTING_ON) {
             $importData[$key]['activity']['conditions'][8][0]['keyword_contains']        = $this->getCellValue($row['AI']);
             $importData[$key]['activity']['conditions'][8][0]['keyword_contains_type']   = !empty($row['AJ']) ? $this->containsTypeMap[$row['AJ']] : "1";
             $importData[$key]['activity']['conditions'][8][0]['keyword_exclusions']      = $this->getCellValue($row['AK']);
@@ -368,7 +368,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           }
 
           // 最初に訪れたページ
-          if ($this->isSettingMap[$row['AP']] == 1) {
+          if ($this->isSettingMap[$row['AP']] == T_SETTING_ON) {
             $importData[$key]['activity']['conditions'][9][0]['targetName']              = $this->targetNameMap[$row['AQ']];
             $importData[$key]['activity']['conditions'][9][0]['keyword_contains']        = $this->getCellValue($row['AR']);
             $importData[$key]['activity']['conditions'][9][0]['keyword_contains_type']   = !empty($row['AS']) ? $this->containsTypeMap[$row['AS']] : "1";
@@ -378,7 +378,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           }
 
           // 前のページ
-          if ($this->isSettingMap[$row['AW']] == 1) {
+          if ($this->isSettingMap[$row['AW']] == T_SETTING_ON) {
             $importData[$key]['activity']['conditions'][10][0]['targetName']              = $this->targetNameMap[$row['AX']];
             $importData[$key]['activity']['conditions'][10][0]['keyword_contains']        = $this->getCellValue($row['AY']);
             $importData[$key]['activity']['conditions'][10][0]['keyword_contains_type']   = !empty($row['AZ']) ? $this->containsTypeMap[$row['AZ']] : "1";
@@ -388,12 +388,12 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           }
 
           // 営業時間
-          if ($this->isSettingMap[$row['S']] == 1) {
+          if ($this->isSettingMap[$row['S']] == T_SETTING_ON) {
             $importData[$key]['activity']['conditions'][4][0]['operatingHoursTime'] = $this->businessHourMap[$row['T']];
           }
 
           // 訪問者の端末
-          if ($this->isSettingMap[$row['BD']] == 1) {
+          if ($this->isSettingMap[$row['BD']] == T_SETTING_ON) {
             $string  = str_replace(' ', '', $row['BE']);
             $devices = explode(',', trim($string, ','));
             $devices = array_map('strtolower', $devices);
@@ -417,19 +417,19 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
             }
           }
 
-          if ($actionType == 4) {
-            // call auto message
+          if ($actionType == T_ACTION_CALL_CHAT_TREE) {
+            // call diagram
             $importData[$key]['call_diagram_name'] = $row['BV'];
             $importData[$key]['activity']['widgetOpen'] = $row['BW'];
-          } else if ($actionType == 3) {
+          } else if ($actionType == T_ACTION_CALL_TRIGGER) {
             // call auto message
             $importData[$key]['call_automessage_name'] = $row['BU'];
-          } else if($actionType == 2) {
+          } else if($actionType == T_ACTION_CALL_SCENARIO) {
             // scenario
             $importData[$key]['activity']['widgetOpen']   = $this->widgetOpenMap[$row['BT']];
             $importData[$key]['activity']['message']      = "";
-            $importData[$key]['activity']['chatTextarea'] = 2;
-            $importData[$key]['activity']['cv']           = 2;
+            $importData[$key]['activity']['chatTextarea'] = T_TEXTAREA_CLOSE;
+            $importData[$key]['activity']['cv']           = T_AUTO_CV_OFF;
             $importData[$key]['scenario']                 = $this->getCellValue($row['BS']);
           } else {
             // send mail
@@ -438,7 +438,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
             $importData[$key]['activity']['chatTextarea'] = $this->chatTextAreaMap[$row['BI']];
             $importData[$key]['activity']['cv']           = $this->triggerCVMap[$row['BJ']];
             $importData[$key]['send_mail_flg']            = $sendMailFlg = $this->sendMailFlgMap[$row['BK']];
-            if ($sendMailFlg == 1) {
+            if ($sendMailFlg == T_SEND_MAIL_ON) {
               $importData[$key]['mail_address_1'] = $this->getCellValue($row['BL']);
               $importData[$key]['mail_address_2'] = $this->getCellValue($row['BM']);
               $importData[$key]['mail_address_3'] = $this->getCellValue($row['BN']);
@@ -448,7 +448,6 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
               $importData[$key]['mail_from_name'] = $this->getCellValue($row['BR']);
             }
           }
-
         }
       }
     }
@@ -489,7 +488,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
       $this->addError($errors, 'D', 'すべて一致／いずれかが一致 のいずれかの指定のみ可能です');
     }
     // 滞在時間
-    if ($this->isSettingMap[$row['E']] == 1) {
+    if ($this->isSettingMap[$row['E']] == T_SETTING_ON) {
       if (empty($row['F'])) {
         $this->addError($errors, 'F', 'サイト／ページ のいずれかの指定のみ可能です');
       }
@@ -504,7 +503,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // 訪問回数
-    if ($this->isSettingMap[$row['I']] == 1) {
+    if ($this->isSettingMap[$row['I']] == T_SETTING_ON) {
       if (empty($row['J'])) {
         $this->addError($errors, 'K', '訪問回数が未入力です');
       } else {
@@ -539,7 +538,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // ページ
-    if ($this->isSettingMap[$row['L']] == 1) {
+    if ($this->isSettingMap[$row['L']] == T_SETTING_ON) {
       if (empty($row['M'])) {
         $this->addError($errors, 'M', 'URL/タイトル のいずれかの指定のみ可能です');
       }
@@ -562,7 +561,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // 曜日・時間
-    if ($this->isSettingMap[$row['U']] == 1) {
+    if ($this->isSettingMap[$row['U']] == T_SETTING_ON) {
       if (empty($row['V'])) {
         $this->addError($errors, 'V', '曜日が未入力です');
       } else {
@@ -600,7 +599,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // 参照元URL（リファラー）
-    if ($this->isSettingMap[$row['Y']] == 1) {
+    if ($this->isSettingMap[$row['Y']] == T_SETTING_ON) {
       if (empty($row['Z']) && empty($row['AB'])) {
         $this->addError($errors, 'Z', 'キーワードはいずれかの指定が必須です');
       }
@@ -619,7 +618,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // 検索キーワード
-    if ($this->isSettingMap[$row['AE']] == 1) {
+    if ($this->isSettingMap[$row['AE']] == T_SETTING_ON) {
       if (empty($row['AF'])) {
         $this->addError($errors, 'AF', 'キーワードが未入力です。');
       }
@@ -630,7 +629,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // 発言内容
-    if ($this->isSettingMap[$row['AH']] == 1) {
+    if ($this->isSettingMap[$row['AH']] == T_SETTING_ON) {
       if (empty($row['AI']) && empty($row['AK'])) {
         $this->addError($errors, 'AI', 'キーワードはいずれかの指定が必須です');
       }
@@ -657,7 +656,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // 最初に訪れたページ
-    if ($this->isSettingMap[$row['AP']] == 1) {
+    if ($this->isSettingMap[$row['AP']] == T_SETTING_ON) {
       if (empty($row['AQ'])) {
         $this->addError($errors, 'AQ', 'URL/タイトル のいずれかの指定のみ可能です');
       }
@@ -680,7 +679,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // 前のページ
-    if ($this->isSettingMap[$row['AW']] == 1) {
+    if ($this->isSettingMap[$row['AW']] == T_SETTING_ON) {
       if (empty($row['AX'])) {
         $this->addError($errors, 'AX', 'URL/タイトル のいずれかの指定のみ可能です');
       }
@@ -703,14 +702,14 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // 営業時間
-    if ($this->isSettingMap[$row['S']] == 1) {
+    if ($this->isSettingMap[$row['S']] == T_SETTING_ON) {
       if (empty($row['T'])) {
         $this->addError($errors, 'T', '営業時間内/営業時間外 のいずれかの指定のみ可能です');
       }
     }
 
     // 訪問者の端末
-    if ($this->isSettingMap[$row['BD']] == 1) {
+    if ($this->isSettingMap[$row['BD']] == T_SETTING_ON) {
       if (empty($row['BE'])) {
         $this->addError($errors, 'BE', '端末が未入力です');
       }
@@ -725,7 +724,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // send message
-    if ($this->actionTypeMap[$row['BF']] == 1) {
+    if ($this->actionTypeMap[$row['BF']] == T_SETTING_ON) {
       if (empty($row['BG'])) {
         $this->addError($errors, 'BG', '自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
       }
@@ -746,7 +745,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
         $this->addError($errors, 'BK', 'する/しない のいずれかの指定のみ可能です');
       }
       // if send mail
-      if ($this->isSettingMap[$row['BK']] == 1) {
+      if ($this->isSettingMap[$row['BK']] == T_SETTING_ON) {
         if (empty($row['BQ'])) {
           $this->addError($errors, 'BK', 'メールタイトルの指定は必須です');
         }
@@ -790,7 +789,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // scenario
-    if ($this->actionTypeMap[$row['BF']] == 2) {
+    if ($this->actionTypeMap[$row['BF']] == T_ACTION_CALL_SCENARIO) {
       if (empty($row['BT'])) {
         $this->addError($errors, 'BT', '自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
       }
@@ -801,7 +800,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // scenario
-    if ($this->actionTypeMap[$row['BF']] == 4) {
+    if ($this->actionTypeMap[$row['BF']] == T_ACTION_CALL_CHAT_TREE) {
       if (empty($row['BW'])) {
         $this->addError($errors, 'BW', '自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
       }
