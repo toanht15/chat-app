@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var common = require('./module/common');
+var list = require('./module/company_list');
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -1017,5 +1018,11 @@ function getIpRange(ipAddress) {
 
   return {min: minIpBit, max: maxIpBit};
 }
+
+router.get('/refreshCompanyList', function(req, res, next) {
+  list.getCompanyList();
+  res.send('OK');
+  res.status(200);
+});
 
 module.exports = router;

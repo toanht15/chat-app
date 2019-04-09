@@ -5,8 +5,10 @@
  */
 
 var app = require('../app');
+const cluster = require('cluster');
 var debug = require('debug')('socket:server');
 var http = require('http');
+const numCpus = require('os').cpus().length;
 
 /**
  * Get port from environment and store in Express.
@@ -16,20 +18,38 @@ var host = normalizePort(process.env.HOST || "0.0.0.0");
 var port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
+cluster.schedulingPolicy = cluster.SCHED_RR;
 
-var server = http.createServer(app);
+if (cluster.isMaster) {                           // マスタープロセスの処理
+  console.log(`Master ${process.pid} is running`);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+  // コア数分ワーカープロセスを作る
+  for (let i = 0; i < numCpus; i++) {
+    cluster.fork();
+  }
 
-server.listen(port, host);
-server.on('error', onError);
-server.on('listening', onListening);
+  // ワーカープロセスが死んだ場合
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died with signal`, signal);
+    // プロセス再起動
+    cluster.fork();
+  });
+} else {
+  /**
+   * Create HTTP server.
+   */
 
+  var server = http.createServer(app);
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+
+  server.listen(port, host);
+  server.on('error', onError);
+  server.on('listening', onListening);
+  console.log(`Worker ${process.pid} started`);
+}
 /**
  * Normalize a port into a number, string, or false.
  */

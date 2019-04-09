@@ -6,6 +6,7 @@ var api = require('../api');
 var uuid = require('node-uuid');
 var request = require('request');
 var common = require('./common');
+var list = require('./company_list');
 var LandscapeAPI = require('./landscape');
 var CogmoAttendAPICaller = require('./cogmo_attend');
 var ChatLogTimeManager = require('./chat_log_time_manager');
@@ -45,145 +46,7 @@ var io = require('socket.io')(process.env.WS_PORT),
       info: {}, // siteKeyをキーとした企業側ユーザー人数管理
       user: {}, // socket.idをキーとした企業側ユーザー管理
       timeout: {} // userIdをキーとした企業側ユーザー管理
-    },
-    customerList = {}; // customerList[siteKey][<accessId>_<socket.id>][<userObj>]
-
-// LiveAssistの同時セッション数管理用クラス
-// laSessionCount = { 'siteKey' : {current: '利用中セッション数', max: '指定済みの最大数'} }
-var LaSessionCounter = function() {
-  var _key_currentCount = 'current';
-  var _key_maxCount = 'max';
-  var countList = {};
-  var _initializeCountList = function(siteKey) {
-    countList[siteKey] = {};
-    countList[siteKey][_key_currentCount] = [];
-    countList[siteKey][_key_maxCount] = 0;
-    _printCurrentState(siteKey, '_initializeCountList');
-  };
-  var _getMaxCount = function(siteKey) {
-    return (siteKey in countList && _key_maxCount in countList[siteKey]) ?
-        countList[siteKey][_key_maxCount] :
-        0;
-  };
-  var _getCurrentCount = function(siteKey) {
-    return (siteKey in countList && _key_currentCount in countList[siteKey]) ?
-        countList[siteKey][_key_currentCount].length :
-        0;
-  };
-  var _printCurrentState = function(siteKey, functionName) {
-    var current = _getCurrentCount(siteKey);
-    var max = _getMaxCount(siteKey);
-    console.log('LaSessionCounter::' + functionName + ' siteKey:' + siteKey +
-        ' currentSessions:' + current + ' max:' + max);
-  };
-  return {
-    setMaxCount: function(siteKey, maxCount) {
-      if (!(siteKey in countList)) {
-        _initializeCountList(siteKey);
-      }
-      countList[siteKey][_key_maxCount] = maxCount;
-      _printCurrentState(siteKey, 'setMaxCount');
-    },
-    getMaxCount: function(siteKey) {
-      return _getMaxCount(siteKey);
-    },
-    getCurrentCount: function(siteKey) {
-      return _getCurrentCount(siteKey);
-    },
-    countUp: function(siteKey, tabId) { // サイト訪問者側のIDを入れる
-      if (!this.currentCountExists(siteKey)) {
-        // まずはゼロ代入
-        this.initializeCurrentCount(siteKey);
-      }
-      if (!this.isLimit(siteKey)) {
-        console.log('DEBUG2 : ' + JSON.stringify(countList[siteKey]));
-        countList[siteKey][_key_currentCount].push(tabId);
-      }
-      _printCurrentState(siteKey, 'countUp');
-    },
-    countDown: function(siteKey, tabId) { // サイト訪問者側のIDを入れる
-      if (countList[siteKey][_key_currentCount].length <= 0) return;
-      countList[siteKey][_key_currentCount].some(function(v, i) {
-        if (v === tabId) countList[siteKey][_key_currentCount].splice(i, 1);
-      });
-      _printCurrentState(siteKey, 'countDown');
-
-    },
-    initializeCurrentCount: function(siteKey) {
-      countList[siteKey][_key_currentCount] = [];
-    },
-    currentCountExists: function(siteKey) {
-      return (siteKey in countList) &&
-          (_key_currentCount in countList[siteKey]) &&
-          (typeof (countList[siteKey][_key_currentCount] === 'object'));
-    },
-    isLimit: function(siteKey) {
-      var current = this.getCurrentCount(siteKey);
-      var max = this.getMaxCount(siteKey);
-      var result = (current >= max);
-      if (result) {
-        _printCurrentState(siteKey, 'isLimit');
-      }
-      return result;
-    }
-  };
-};
-var laSessionCounter = new LaSessionCounter();
-
-/**
- * 機能有無管理クラス
- */
-var CompanyFunctionManager = function() {
-  var _list = {};
-
-  return {
-    keyList: {
-      chat: 'chat',
-      synclo: 'synclo',
-      document: 'document',
-      videochat: 'videochat',
-      laCoBrowse: 'laCoBrowse',
-      chatLimitation: 'chatLimitation',
-      exportHistory: 'exportHistory',
-      deleteHistory: 'deleteHistory',
-      statistics: 'statistics',
-      dictionaryCategory: 'dictionaryCategory',
-      hideRealtimeMonitor: 'hideRealtimeMonitor',
-      operatingHour: 'operatingHour',
-      refCompanyData: 'refCompanyData',
-      freeInput: 'freeInput',
-      cv: 'cv',
-      autoMessageSendMail: 'autoMessageSendMail',
-      sendFile: 'sendFile',
-      loginIpFilter: 'loginIpFilter',
-      importExcelAutoMessage: 'importExcelAutoMessage',
-      operatorPresenceView: 'operatorPresenceView',
-      monitorPollingMode: 'monitorPollingMode',
-      useCogmoAttendApi: 'useCogmoAttendApi'
-    },
-    set: function(companyKey, coreSettings) {
-      try {
-        if (typeof (coreSettings) === 'string') {
-          _list[companyKey] = JSON.parse(coreSettings);
-        } else {
-          // object
-          _list[companyKey] = coreSettings;
-        }
-      } catch (e) {
-        console.log('Error while set functionList companyKey : ' + companyKey);
-      }
-    },
-    isEnabled: function(companyKey, funcName) {
-      var result = false;
-      if (CommonUtil.isset(_list[companyKey]) &&
-          CommonUtil.isset(_list[companyKey][funcName])) {
-        result = _list[companyKey][funcName];
-      }
-      return result;
-    }
-  };
-};
-var functionManager = new CompanyFunctionManager();
+    }; // list.functionManager[siteKey][<accessId>_<socket.id>][<userObj>]
 
 // sincloCoreオブジェクトからセッションIDを取得する関数
 function getSessionId(siteKey, tabId, key) {
@@ -263,9 +126,6 @@ function makeToken() {
   return token;
 };
 
-var companyList = {};
-var initialized = false;
-
 function getCompanyList(forceReload) {
   pool.query('select * from m_companies where del_flg = 0;',
       function(err, rows) {
@@ -274,11 +134,12 @@ function getCompanyList(forceReload) {
         for (var i = 0; key.length > i; i++) {
           var row = rows[key[i]];
           companyList[row.company_key] = row.id;
-          laSessionCounter.setMaxCount(row.company_key, row.la_limit_users);
-          functionManager.set(row.company_key, row.core_settings);
-          if (!(row.company_key in customerList)) {
-            console.log('new customerList : ' + row.company_key);
-            customerList[row.company_key] = {};
+          list.laSessionCounter.setMaxCount(row.company_key,
+              row.la_limit_users);
+          list.functionManager.set(row.company_key, row.core_settings);
+          if (!(row.company_key in list.customerList)) {
+            console.log('new list.customerList : ' + row.company_key);
+            list.customerList[row.company_key] = {};
           }
           if (initialized && !(row.company_key in common.companySettings)) {
             console.log('LOAD NEW COMPANY SETTINGS : ' + row.company_key);
@@ -292,14 +153,7 @@ function getCompanyList(forceReload) {
       });
 }
 
-getCompanyList();
-
-router.get('/refreshCompanyList', function(req, res, next) {
-  getCompanyList();
-  res.send('OK');
-  res.status(200);
-});
-module.exports = router;
+list.getCompanyList();
 
 function syncStopCtrl(siteKey, tabId, unsetFlg) {
   var keys = [
@@ -327,10 +181,10 @@ function syncStopCtrl(siteKey, tabId, unsetFlg) {
     }
   }
 
-  for (var key in customerList[siteKey]) {
-    if (tabId.indexOf(customerList[siteKey][key]['tabId']) === 0) {
+  for (var key in list.customerList[siteKey]) {
+    if (tabId.indexOf(list.customerList[siteKey][key]['tabId']) === 0) {
       for (var i = 0; keys.length > i; i++) {
-        delete customerList[siteKey][key][keys[i]];
+        delete list.customerList[siteKey][key][keys[i]];
       }
       break;
     }
@@ -369,15 +223,15 @@ function coBrowseStopCtrl(siteKey, tabId, unsetFlg) {
     }
   }
 
-  for (var key in customerList[siteKey]) {
-    if (tabId.indexOf(customerList[siteKey][key]['tabId']) === 0) {
+  for (var key in list.customerList[siteKey]) {
+    if (tabId.indexOf(list.customerList[siteKey][key]['tabId']) === 0) {
       for (var i = 0; keys.length > i; i++) {
-        delete customerList[siteKey][key][keys[i]];
+        delete list.customerList[siteKey][key][keys[i]];
       }
       break;
     }
   }
-  laSessionCounter.countDown(siteKey, tabId);
+  list.laSessionCounter.countDown(siteKey, tabId);
 }
 
 function getOperatorCnt(siteKey) {
@@ -516,8 +370,8 @@ var http = require('http');
 http.globalAgent.maxSockets = 1000;
 
 function getCompanyInfoFromApi(obj, ip, callback) {
-  if (functionManager.isEnabled(obj.siteKey,
-      functionManager.keyList.refCompanyData)) {
+  if (list.functionManager.isEnabled(obj.siteKey,
+      list.functionManager.keyList.refCompanyData)) {
     var api = new LandscapeAPI('json', 'utf8');
     api.getFrom(ip, callback);
   } else {
@@ -824,9 +678,9 @@ var db = {
   },
   addHistory: function(obj, s) {
     if (CommonUtil.isset(obj.tabId) && CommonUtil.isset(obj.siteKey)) {
-      if (!CommonUtil.isset(companyList[obj.siteKey]) ||
+      if (!CommonUtil.isset(list.companyList[obj.siteKey]) ||
           obj.subWindow) return false;
-      var siteId = companyList[obj.siteKey];
+      var siteId = list.companyList[obj.siteKey];
       pool.query(
           'SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;',
           [siteId, obj.sincloSessionId || obj.tabId, obj.userId],
@@ -903,7 +757,7 @@ var db = {
       if (found) {
         pool.query(
             'SELECT * from m_customers where m_companies_id = ? AND visitors_id = ? order by id desc',
-            [companyList[obj.siteKey], obj.userId], function(err, row) {
+            [list.companyList[obj.siteKey], obj.userId], function(err, row) {
               if (err !== null && err !== '') {
                 callback(false);
                 return false;
@@ -933,7 +787,7 @@ var db = {
                 pool.query(
                     'INSERT INTO m_customers VALUES (NULL, ?, ?, ?, now(), 0, NULL, NULL, NULL, NULL)',
                     [
-                      companyList[obj.siteKey],
+                      list.companyList[obj.siteKey],
                       obj.userId,
                       JSON.stringify(customVariables)], function(err, result) {
                       sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = customVariables;
@@ -959,7 +813,7 @@ var db = {
   addLeadInformation: function(obj) {
     pool.query(
         'INSERT INTO t_lead_lists VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, now())', [
-          companyList[obj.siteKey],
+          list.companyList[obj.siteKey],
           Number(obj.leadSettingsId),
           Number(obj.scenarioId),
           JSON.stringify(obj.dataSet),
@@ -1144,7 +998,7 @@ io.sockets.on('connection', function(socket) {
     commit: function(d, noReturnSelfMessage) { // DBに書き込むとき
       var insertData = {
         t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
-        m_companies_id: companyList[d.siteKey],
+        m_companies_id: list.companyList[d.siteKey],
         visitors_id: d.userId,
         m_users_id: d.mUserId,
         message: (d.isDiagramMessage) ? d.chatMessage.message : d.chatMessage,
@@ -1296,12 +1150,12 @@ io.sockets.on('connection', function(socket) {
                   !d.isScenarioMessage :
                   d.notifyToCompany
             };
-            if (functionManager.isEnabled(d.siteKey,
-                functionManager.keyList.monitorPollingMode)) {
+            if (list.functionManager.isEnabled(d.siteKey,
+                list.functionManager.keyList.monitorPollingMode)) {
               var sId = sincloCore[d.siteKey][d.tabId].sessionId;
-              Object.keys(customerList[d.siteKey]).forEach(function(key) {
+              Object.keys(list.customerList[d.siteKey]).forEach(function(key) {
                 if (key.indexOf(sId) >= 0) {
-                  sendChatData.customerInfo = customerList[d.siteKey][key];
+                  sendChatData.customerInfo = list.customerList[d.siteKey][key];
                   chatApi.getUnreadCnt(sendChatData.customerInfo,
                       function(ret) {
                         sendChatData.customerInfo['chatUnreadId'] = ret.chatUnreadId;
@@ -1388,12 +1242,12 @@ io.sockets.on('connection', function(socket) {
             notifyToCompany: d.notifyToCompany
           };
 
-          if (functionManager.isEnabled(d.siteKey,
-              functionManager.keyList.monitorPollingMode)) {
+          if (list.functionManager.isEnabled(d.siteKey,
+              list.functionManager.keyList.monitorPollingMode)) {
             var sId = sincloCore[d.siteKey][d.tabId].sessionId;
-            Object.keys(customerList[d.siteKey]).forEach(function(key) {
+            Object.keys(list.customerList[d.siteKey]).forEach(function(key) {
               if (key.indexOf(sId) >= 0) {
-                sendChatData.customerInfo = customerList[d.siteKey][key];
+                sendChatData.customerInfo = list.customerList[d.siteKey][key];
               }
             });
           }
@@ -1408,7 +1262,7 @@ io.sockets.on('connection', function(socket) {
           var obj = d.chatMessage;
           var sql = 'INSERT INTO t_history_diagram_logs VALUES (null,?,?,?,?,?,0,now(),NULL,NULL)';
           pool.query(sql, [
-            companyList[d.siteKey],
+            list.companyList[d.siteKey],
             results.insertId,
             obj.did,
             obj.sourceNodeId,
@@ -1420,7 +1274,7 @@ io.sockets.on('connection', function(socket) {
         //オペレータリクエスト件数
         //リクエストチャットか確認
         if (d.messageRequestFlg == 1) {
-          var companyId = companyList[d.siteKey];
+          var companyId = list.companyList[d.siteKey];
           var getUserInfo = 'SELECT chat.sc_flg as sc_flg, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;';
           pool.query(getUserInfo, [companyId], function(err, result) {
             //ウィジェットが常に表示する場合
@@ -1495,7 +1349,7 @@ io.sockets.on('connection', function(socket) {
 
       var insertData = {
         t_histories_id: getSessionId(d.siteKey, d.tabId, 'historyId'),
-        m_companies_id: companyList[d.siteKey],
+        m_companies_id: list.companyList[d.siteKey],
         visitors_id: d.visitorsId,
         m_users_id: d.userId,
         message: d.chatMessage,
@@ -1549,7 +1403,7 @@ io.sockets.on('connection', function(socket) {
             chatUnreadCnt: 0
           },
           sincloSessionId = obj.sincloSessionId,
-          siteId = companyList[obj.siteKey];
+          siteId = list.companyList[obj.siteKey];
       sql = ' SELECT chat.id AS chatId, his.visitors_id, his.tab_id, chat.message FROM t_histories AS his';
       sql += ' INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )';
       sql += ' WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1';
@@ -1610,7 +1464,8 @@ io.sockets.on('connection', function(socket) {
       for (var i = 0; i < tabIds.length; i++) {
         if (tabIds[i] && tabIds[i].indexOf('_') >= 0) {
           var tabData = sincloCore[obj.siteKey][tabIds[i]];
-          if (tabData.hasOwnProperty('chat') && isNumber(tabData.chat)) {
+          if (tabData.hasOwnProperty('chat') &&
+              CommonUtil.isNumber(tabData.chat)) {
             // 同一のsincloSessionIdを保有するユーザーは同時応対数１とする
             if (Number(tabData.chat) === Number(userId) &&
                 sincloSessionIds.indexOf(tabData.sincloSessionId) === -1) {
@@ -1639,7 +1494,7 @@ io.sockets.on('connection', function(socket) {
       6: 'sat'
     },
     scCheck: function(type, d, callback) {
-      var companyId = companyList[d.siteKey],
+      var companyId = list.companyList[d.siteKey],
           siteKey = d.siteKey,
           ret = false,
           message = null,
@@ -2228,7 +2083,7 @@ io.sockets.on('connection', function(socket) {
     getInformations: function(visitorId, siteKey, callback) {
       pool.query(
           'SELECT informations FROM m_customers WHERE m_companies_id = ? AND visitors_id = ? order by id desc LIMIT 1;',
-          [companyList[siteKey], visitorId], function(err, row) {
+          [list.companyList[siteKey], visitorId], function(err, row) {
             if (err !== null && err !== '') callback(null); // DB接続断対応
             if (CommonUtil.isset(row) && CommonUtil.isset(row[0]) &&
                 CommonUtil.isset(row[0].informations)) {
@@ -2391,7 +2246,7 @@ io.sockets.on('connection', function(socket) {
             // チャット対応上限の設定が無効化されている場合はオブジェクトを削除する
             if (scList.hasOwnProperty(res.siteKey)) {
               var getChatSettingSQL = 'SELECT sc_flg FROM m_chat_settings WHERE m_companies_id = ?';
-              pool.query(getChatSettingSQL, [companyList[res.siteKey]],
+              pool.query(getChatSettingSQL, [list.companyList[res.siteKey]],
                   function(err, rows) {
                     if (err !== null && err !== '') return false; // DB接続断対応
                     if (rows && rows[0] && rows[0].sc_flg === 1) {
@@ -2466,25 +2321,26 @@ io.sockets.on('connection', function(socket) {
     var totalCounter = 0;
     var chunkSize = 100;
     var keyLength = 0;
-    if (CommonUtil.isset(customerList[siteKey])) {
-      keyLength = Object.keys(customerList[siteKey]).length;
+    if (CommonUtil.isset(list.customerList[siteKey])) {
+      keyLength = Object.keys(list.customerList[siteKey]).length;
     }
     var arr = [keyLength];
-    if (CommonUtil.isset(customerList[siteKey])) {
-      Object.keys(customerList[siteKey]).forEach(function(key) {
+    if (CommonUtil.isset(list.customerList[siteKey])) {
+      Object.keys(list.customerList[siteKey]).forEach(function(key) {
         var splitedKey = key.split('@@');
         if (splitedKey.length === 2 && CommonUtil.isset(splitedKey[1])) {
           var targetSocketId = splitedKey[1];
           if (!io.sockets.connected[targetSocketId] ||
-              !CommonUtil.isset(customerList[siteKey][key].sincloSessionId)) {
-            var targetTabId = customerList[siteKey][key].tabId;
-            console.log('【' + siteKey + '】 customerList key : ' + key +
+              !CommonUtil.isset(
+                  list.customerList[siteKey][key].sincloSessionId)) {
+            var targetTabId = list.customerList[siteKey][key].tabId;
+            console.log('【' + siteKey + '】 list.customerList key : ' + key +
                 ' client is not exist. deleting. targetTabId : ' + targetTabId);
             if (targetTabId && targetTabId !== '') {
               emit.toCompany('unsetUser',
                   {siteKey: siteKey, tabId: targetTabId}, siteKey);
             }
-            delete customerList[siteKey][key];
+            delete list.customerList[siteKey][key];
             if (totalCounter === keyLength - 1) {
               emit.toMine('receiveAccessInfo', arr, socket);
               arr = [keyLength];
@@ -2493,21 +2349,21 @@ io.sockets.on('connection', function(socket) {
             return;
           }
         }
-        var val = getConnectInfo(customerList[siteKey][key]);
+        var val = getConnectInfo(list.customerList[siteKey][key]);
         if (val.time) {
           val.term = CommonUtil.timeCalculator(val);
         }
 
         var afterGetCustomerInformations = function() {
-          if (functionManager.isEnabled(siteKey,
-              functionManager.keyList.chat)) {
+          if (list.functionManager.isEnabled(siteKey,
+              list.functionManager.keyList.chat)) {
             chatApi.getUnreadCnt(val, function(ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
               val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
-              if (functionManager.isEnabled(siteKey,
-                  functionManager.keyList.hideRealtimeMonitor)
-                  && functionManager.isEnabled(siteKey,
-                      functionManager.keyList.monitorPollingMode)
+              if (list.functionManager.isEnabled(siteKey,
+                  list.functionManager.keyList.hideRealtimeMonitor)
+                  && list.functionManager.isEnabled(siteKey,
+                      list.functionManager.keyList.monitorPollingMode)
                   && ((CommonUtil.isset(val['chatUnreadCnt']) &&
                       val['chatUnreadCnt'] ===
                       0) && !CommonUtil.isset(val['responderId']) &&
@@ -2524,8 +2380,8 @@ io.sockets.on('connection', function(socket) {
               }
               if (totalCounter === keyLength - 1) {
                 emit.toMine('receiveAccessInfo', arr, socket);
-                if (functionManager.isEnabled(siteKey,
-                    functionManager.keyList.monitorPollingMode)) {
+                if (list.functionManager.isEnabled(siteKey,
+                    list.functionManager.keyList.monitorPollingMode)) {
                   emit.toMine('endOfCustomerList', {}, socket);
                 }
                 arr = [keyLength];
@@ -2533,10 +2389,10 @@ io.sockets.on('connection', function(socket) {
               totalCounter++;
             });
           } else {
-            if (functionManager.isEnabled(siteKey,
-                functionManager.keyList.hideRealtimeMonitor)
-                && functionManager.isEnabled(siteKey,
-                    functionManager.keyList.monitorPollingMode)
+            if (list.functionManager.isEnabled(siteKey,
+                list.functionManager.keyList.hideRealtimeMonitor)
+                && list.functionManager.isEnabled(siteKey,
+                    list.functionManager.keyList.monitorPollingMode)
                 &&
                 ((!CommonUtil.isset(val['chatUnreadCnt']) ||
                     val['chatUnreadCnt'] === 0) &&
@@ -2554,8 +2410,8 @@ io.sockets.on('connection', function(socket) {
             }
             if (totalCounter === keyLength - 1) {
               emit.toMine('receiveAccessInfo', arr, socket);
-              if (functionManager.isEnabled(siteKey,
-                  functionManager.keyList.monitorPollingMode)) {
+              if (list.functionManager.isEnabled(siteKey,
+                  list.functionManager.keyList.monitorPollingMode)) {
                 emit.toMine('endOfCustomerList', {}, socket);
               }
               arr = [keyLength];
@@ -2584,11 +2440,11 @@ io.sockets.on('connection', function(socket) {
         }
       });
     }
-    if (CommonUtil.isset(customerList[siteKey]) &&
-        Object.keys(customerList[siteKey]).length === 0) {
+    if (CommonUtil.isset(list.functionManager[siteKey]) &&
+        Object.keys(list.functionManager[siteKey]).length === 0) {
       emit.toMine('receiveAccessInfo', arr, socket);
-      if (functionManager.isEnabled(siteKey,
-          functionManager.keyList.monitorPollingMode)) {
+      if (list.functionManager.isEnabled(siteKey,
+          list.functionManager.keyList.monitorPollingMode)) {
         emit.toMine('endOfCustomerList', {}, socket);
       }
     }
@@ -2634,18 +2490,19 @@ io.sockets.on('connection', function(socket) {
     }
 
     var afterGetInformationProcess = function() {
-      if (functionManager.isEnabled(obj.siteKey,
-          functionManager.keyList.hideRealtimeMonitor) ||
-          functionManager.isEnabled(obj.siteKey,
-              functionManager.keyList.monitorPollingMode)) {
+      if (list.functionManager.isEnabled(obj.siteKey,
+          list.functionManager.keyList.hideRealtimeMonitor) ||
+          list.functionManager.isEnabled(obj.siteKey,
+              list.functionManager.keyList.monitorPollingMode)) {
       } else {
         emit.toCompany('sendCustomerInfo', obj, obj.siteKey);
       }
-      customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '@@' +
+      list.customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '@@' +
       socket.id] = obj;
       if ((('contract' in obj) && ('chat' in obj.contract) &&
-          obj.contract.chat === false) || functionManager.isEnabled(obj.siteKey,
-          functionManager.keyList.monitorPollingMode)) return false;
+          obj.contract.chat === false) ||
+          list.functionManager.isEnabled(obj.siteKey,
+              list.functionManager.keyList.monitorPollingMode)) return false;
       chatApi.sendUnreadCnt('sendChatInfo', obj, false);
 
       if (CommonUtil.isset(sincloCore[obj.siteKey][obj.sincloSessionId])) {
@@ -2675,7 +2532,7 @@ io.sockets.on('connection', function(socket) {
     var term = obj.term;
     var result = [];
     if ('siteKey' in obj) {
-      var keys = Object.keys(customerList[obj.siteKey]);
+      var keys = Object.keys(list.customerList[obj.siteKey]);
       if (keys && keys.length > 0) {
         keys.forEach(function(key) {
           var splitedKey = key.split('_');
@@ -2683,8 +2540,8 @@ io.sockets.on('connection', function(socket) {
           if (targetTerm) {
             if (targetTerm.indexOf(term) === 0) { // 前方一致検索
               var mergedObject = CommonUtil.extend(
-                  customerList[obj.siteKey][key],
-                  sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
+                  list.customerList[obj.siteKey][key],
+                  sincloCore[obj.siteKey][list.customerList[obj.siteKey][key]['tabId']]);
               if (mergedObject.time) {
                 mergedObject.term = CommonUtil.timeCalculator(mergedObject);
               }
@@ -2713,7 +2570,7 @@ io.sockets.on('connection', function(socket) {
     pool.query(
         'INSERT INTO t_history_link_count_logs (m_companies_id,t_histories_id,t_history_stay_logs_id,link_url,created) VALUES(?,?,?,?,?)',
         [
-          companyList[data.siteKey],
+          list.companyList[data.siteKey],
           data.historyId,
           data.stayLogsId,
           data.link,
@@ -2780,13 +2637,13 @@ io.sockets.on('connection', function(socket) {
           console.log('delete not exist sessionId : ' + key);
           delete sessionIds[key];
           console.log('remains : ' + Object.keys(sessionIds).length);
-          var keys = Object.keys(customerList[obj.siteKey]);
+          var keys = Object.keys(list.customerList[obj.siteKey]);
           if (keys && keys.length > 0) {
             keys.forEach(function(customerListId) {
               if (customerListId.indexOf(key) >= 0) {
                 console.log(
-                    'delete not exist customerList : ' + customerListId);
-                delete customerList[info.siteKey][customerListId];
+                    'delete not exist list.customerList : ' + customerListId);
+                delete list.customerListId[info.siteKey][customerListId];
               }
             });
           }
@@ -2899,11 +2756,14 @@ io.sockets.on('connection', function(socket) {
               sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
               sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
               if (CommonUtil.isset(
-                  customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress +
+                  list.customerList[obj.siteKey][obj.accessId + '_' +
+                  obj.ipAddress +
                   '_' + socket.id])) {
-                customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress +
+                list.customerList[obj.siteKey][obj.accessId + '_' +
+                obj.ipAddress +
                 '_' + socket.id]['orgName'] = obj.orgName;
-                customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress +
+                list.customerList[obj.siteKey][obj.accessId + '_' +
+                obj.ipAddress +
                 '_' + socket.id]['lbcCode'] = obj.lbcCode;
               }
             }
@@ -2912,8 +2772,8 @@ io.sockets.on('connection', function(socket) {
                 'getCompanyInfoFromApiのcallbackでエラー : ' + data + ' message : ' +
                 e.message);
           }
-          if (!functionManager.isEnabled(obj.siteKey,
-              functionManager.keyList.monitorPollingMode)) {
+          if (!list.functionManager.isEnabled(obj.siteKey,
+              list.functionManager.keyList.monitorPollingMode)) {
             emit.toCompany('syncNewInfo', obj, obj.siteKey);
           }
         });
@@ -2927,16 +2787,16 @@ io.sockets.on('connection', function(socket) {
   // ウィジェットが生成されたことを企業側に通知する
   socket.on('syncReady', function(data) {
     var obj = JSON.parse(data);
-    if (!functionManager.isEnabled(obj.siteKey,
-        functionManager.keyList.monitorPollingMode)) {
+    if (!list.functionManager.isEnabled(obj.siteKey,
+        list.functionManager.keyList.monitorPollingMode)) {
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
     }
   });
   // アクティブ状態を送る
   socket.on('sendTabInfo', function(d) {
     var obj = JSON.parse(d);
-    if (!functionManager.isEnabled(obj.siteKey,
-        functionManager.keyList.monitorPollingMode)) {
+    if (!list.functionManager.isEnabled(obj.siteKey,
+        list.functionManager.keyList.monitorPollingMode)) {
       emit.toCompany('retTabInfo', d, obj.siteKey);
     }
 
@@ -2945,10 +2805,11 @@ io.sockets.on('connection', function(socket) {
       emit.toUser('retTabInfo', obj,
           getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     }
-    for (var key in customerList[obj.siteKey]) {
+    for (var key in list.customerList[obj.siteKey]) {
       if (CommonUtil.isset(obj.tabId) &&
-          obj.tabId.indexOf(customerList[obj.siteKey][key]['tabId']) === 0) {
-        customerList[obj.siteKey][key]['status'] = obj.status;
+          obj.tabId.indexOf(list.customerList[obj.siteKey][key]['tabId']) ===
+          0) {
+        list.customerList[obj.siteKey][key]['status'] = obj.status;
         break;
       }
     }
@@ -2959,13 +2820,13 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(data);
     pool.query(
         'SELECT widget_close_count from t_history_widget_close_counts where m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',
-        [companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour],
+        [list.companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour],
         function(err, results) {
           if (results.length == 0) {
             pool.query(
                 'INSERT INTO t_history_widget_close_counts (m_companies_id,year,month,day,hour,widget_close_count) VALUES(?,?,?,?,?,?)',
                 [
-                  companyList[obj.siteKey],
+                  list.companyList[obj.siteKey],
                   obj.year,
                   obj.month,
                   obj.day,
@@ -2982,7 +2843,7 @@ io.sockets.on('connection', function(socket) {
                 'UPDATE t_history_widget_close_counts SET widget_close_count = ? WHERE m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',
                 [
                   results[0].widget_close_count + 1,
-                  companyList[obj.siteKey],
+                  list.companyList[obj.siteKey],
                   obj.year,
                   obj.month,
                   obj.day,
@@ -3007,13 +2868,13 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(data);
     pool.query(
         'SELECT widget_minimize_count from t_history_widget_minimize_counts where m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',
-        [companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour],
+        [list.companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour],
         function(err, results) {
           if (results.length == 0) {
             pool.query(
                 'INSERT INTO t_history_widget_minimize_counts (m_companies_id,year,month,day,hour,widget_minimize_count) VALUES(?,?,?,?,?,?)',
                 [
-                  companyList[obj.siteKey],
+                  list.companyList[obj.siteKey],
                   obj.year,
                   obj.month,
                   obj.day,
@@ -3030,7 +2891,7 @@ io.sockets.on('connection', function(socket) {
                 'UPDATE t_history_widget_minimize_counts SET widget_minimize_count = ? WHERE m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',
                 [
                   results[0].widget_minimize_count + 1,
-                  companyList[obj.siteKey],
+                  list.companyList[obj.siteKey],
                   obj.year,
                   obj.month,
                   obj.day,
@@ -3070,7 +2931,7 @@ io.sockets.on('connection', function(socket) {
               pool.query(
                   'INSERT INTO t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',
                   [
-                    companyList[obj.siteKey],
+                    list.companyList[obj.siteKey],
                     obj.sincloSessionId || obj.tabId,
                     new Date()], function(err, results) {
                     if (CommonUtil.isset(err)) {
@@ -3539,8 +3400,8 @@ io.sockets.on('connection', function(socket) {
           'is null.');
       return false;
     }
-    if (!functionManager.isEnabled(chat.siteKey,
-        functionManager.keyList.monitorPollingMode)) {
+    if (!list.customerList.isEnabled(chat.siteKey,
+        list.customerList.keyList.monitorPollingMode)) {
       emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
     }
     emit.toSameUser('resAutoChatMessage', chat, chat.siteKey,
@@ -3655,7 +3516,7 @@ io.sockets.on('connection', function(socket) {
 
       pool.query(
           'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
-          [obj.userId, companyList[obj.siteKey]], function(err, result) {
+          [obj.userId, list.companyList[obj.siteKey]], function(err, result) {
             if (err !== null && err !== '') return false;
             var settingObj = '';
             var profileIcon = '';
@@ -3737,7 +3598,7 @@ io.sockets.on('connection', function(socket) {
 
       pool.query(
           'SELECT mu.id, mu.display_name, wid.style_settings FROM m_users as mu LEFT JOIN m_widget_settings AS wid ON ( wid.m_companies_id = mu.m_companies_id ) WHERE mu.id = ? AND mu.del_flg != 1 AND wid.del_flg != 1 AND wid.m_companies_id = ?',
-          [obj.userId, companyList[obj.siteKey]], function(err, rows) {
+          [obj.userId, list.companyList[obj.siteKey]], function(err, rows) {
             if (err !== null && err !== '') return false; // DB接続断対応
 
             sendData.userName = 'オペレーター';
@@ -3761,7 +3622,7 @@ io.sockets.on('connection', function(socket) {
 
               pool.query(
                   'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
-                  [obj.userId, companyList[obj.siteKey]],
+                  [obj.userId, list.companyList[obj.siteKey]],
                   function(err, result) {
                     if (err !== null && err !== '') return false;
                     var settingObj = '';
@@ -3990,7 +3851,7 @@ io.sockets.on('connection', function(socket) {
     let customerMessageInsertResult = {};
     apiCaller.saveCustomerMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
         obj.stayLogsId,
-        companyList[obj.siteKey],
+        list.companyList[obj.siteKey],
         obj.userId,
         obj.chatMessage.replace('button_', '').replace('\n', ''),
         obj.messageDistinction,
@@ -4037,7 +3898,7 @@ io.sockets.on('connection', function(socket) {
           setTimeout(() => {
             apiCaller.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
                 obj.stayLogsId,
-                companyList[obj.siteKey],
+                list.companyList[obj.siteKey],
                 obj.userId,
                 text[i],
                 obj.messageDistinction,
@@ -4131,8 +3992,8 @@ io.sockets.on('connection', function(socket) {
         else {
           obj.messageDistinction = results[0].conversation_count;
         }
-        if (functionManager.isEnabled(obj.siteKey,
-            functionManager.keyList.useCogmoAttendApi)
+        if (list.functionManager.isEnabled(obj.siteKey,
+            list.functionManager.keyList.useCogmoAttendApi)
             && !sincloCore[obj.siteKey][obj.tabId].chat
             &&
             (!CommonUtil.isset(
@@ -4140,10 +4001,10 @@ io.sockets.on('connection', function(socket) {
                 !sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isSwitchingOperator())) {
           if (!CommonUtil.isset(
               sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller)) {
-            // functionManager.isEnabledでCogmoAttendAPIのsystemUUIDが返却される
+            // list.functionManager.isEnabledでCogmoAttendAPIのsystemUUIDが返却される
             sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller(
-                functionManager.isEnabled(obj.siteKey,
-                    functionManager.keyList.useCogmoAttendApi));
+                list.functionManager.isEnabled(obj.siteKey,
+                    list.functionManager.keyList.useCogmoAttendApi));
             sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.init(
                 sincloCore[obj.siteKey][obj.tabId].historyId, obj,
                 CommonUtil.fullDateTime(), emit).then(() => {
@@ -4268,7 +4129,7 @@ io.sockets.on('connection', function(socket) {
                     chatApi.cnst.observeType.autoSpeech :
                     chatApi.cnst.observeType.auto,
                 message.chatId,
-                companyList[obj.siteKey]], loop);
+                list.companyList[obj.siteKey]], loop);
           var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
           if (CommonUtil.isset(sincloSession) && (message.chatId in
               sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages)) {
@@ -4401,7 +4262,7 @@ io.sockets.on('connection', function(socket) {
     var result = {};
     pool.query(
         'select activity from t_chatbot_scenarios where m_companies_id = ? and id = ?;',
-        [companyList[obj.siteKey], obj.scenarioId],
+        [list.companyList[obj.siteKey], obj.scenarioId],
         function(err, row) {
           if (err !== null && err !== '') {
             if (ack) {
@@ -4493,7 +4354,7 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(d);
     pool.query(
         'select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22) OR (30 <= message_type and message_type <= 32) OR (message_type = 40)) order by created desc limit 0,1;',
-        [companyList[obj.siteKey], obj.historyId],
+        [list.companyList[obj.siteKey], obj.historyId],
         function(err, row) {
           if (err !== null && err !== '') {
             console.log('UPDATE lastMessage to cv is failed. historyId : ' +
@@ -4535,8 +4396,8 @@ io.sockets.on('connection', function(socket) {
           'is null.');
       return false;
     }
-    if (!functionManager.isEnabled(scenario.siteKey,
-        functionManager.keyList.monitorPollingMode)) {
+    if (!list.functionManager.isEnabled(scenario.siteKey,
+        list.functionManager.keyList.monitorPollingMode)) {
       emit.toCompany('resScenarioMessage', scenario, scenario.siteKey);
     }
     emit.toSameUser('resScenarioMessage', scenario, scenario.siteKey,
@@ -4555,7 +4416,7 @@ io.sockets.on('connection', function(socket) {
     }
     pool.query(
         'update t_history_chat_logs set hide_flg=1 where id >= ? and m_companies_id = ? and visitors_id = ?;',
-        [minChatId, companyList[obj.siteKey], obj.userId],
+        [minChatId, list.companyList[obj.siteKey], obj.userId],
         function(err, result) {
 
         });
@@ -4565,7 +4426,7 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(data);
     pool.query(
         'select * from t_external_api_connections where m_companies_id = ? and id = ? limit 0,1;',
-        [companyList[obj.siteKey], obj.externalApiConnectionId],
+        [list.companyList[obj.siteKey], obj.externalApiConnectionId],
         function(err, row) {
           if (err !== null && err !== '') {
             console.log(
@@ -4640,7 +4501,7 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(data);
     pool.query(
         'select * from t_chatbot_scenario_send_files where m_companies_id = ? and id = ? limit 0,1;',
-        [companyList[obj.siteKey], obj.sendFileId],
+        [list.companyList[obj.siteKey], obj.sendFileId],
         function(err, row) {
           if (err !== null && err !== '') {
             console.log(
@@ -4692,7 +4553,7 @@ io.sockets.on('connection', function(socket) {
 
     pool.query(
         'select id, m_companies_id, item_name, delete_flg from t_customer_information_settings where m_companies_id = ? and id in (?);',
-        [companyList[obj.siteKey], ids], function(err, rows) {
+        [list.companyList[obj.siteKey], ids], function(err, rows) {
           if (err !== null && err !== '') return false;
           if (rows.length > 0) {
             for (var j = 0; j < rows.length; j++) {
@@ -4827,7 +4688,7 @@ io.sockets.on('connection', function(socket) {
     var result = {};
     pool.query(
         'select activity from t_chatbot_diagrams where m_companies_id = ? and id = ?;',
-        [companyList[obj.siteKey], obj.diagramId],
+        [list.companyList[obj.siteKey], obj.diagramId],
         function(err, row) {
           if (err !== null && err !== '') {
             if (ack) {
@@ -4882,8 +4743,8 @@ io.sockets.on('connection', function(socket) {
           'is null.');
       return false;
     }
-    if (!functionManager.isEnabled(obj.siteKey,
-        functionManager.keyList.monitorPollingMode)) {
+    if (!list.functionManager.isEnabled(obj.siteKey,
+        list.functionManager.keyList.monitorPollingMode)) {
       emit.toCompany('resDiagramMessage', diagramData, obj.siteKey);
     }
     emit.toSameUser('resDiagramMessage', diagramData, obj.siteKey,
@@ -4945,7 +4806,7 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(d);
     pool.query(
         'select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? order by created desc limit 0,1;',
-        [companyList[obj.siteKey], obj.historyId],
+        [list.companyList[obj.siteKey], obj.historyId],
         function(err, row) {
           if (err !== null && err !== '') {
             console.log('UPDATE lastMessage to cv is failed. historyId : ' +
@@ -4973,7 +4834,7 @@ io.sockets.on('connection', function(socket) {
     console.log('requestCoBrowseOpen >>> ' + data);
     var obj = JSON.parse(data);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
-    if (laSessionCounter.isLimit(obj.siteKey)) {
+    if (list.laSessionCounter.isLimit(obj.siteKey)) {
       emit.toMine('coBrowseSessionLimit', data, socket);
       return;
     }
@@ -5005,7 +4866,7 @@ io.sockets.on('connection', function(socket) {
     emit.toUser('readyToCoBrowse', data,
         getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
     emit.toCompany('syncNewInfo', data, obj.siteKey);
-    laSessionCounter.countUp(obj.siteKey, obj.tabId);
+    list.laSessionCounter.countUp(obj.siteKey, obj.tabId);
   });
 
   /**
@@ -5155,17 +5016,17 @@ io.sockets.on('connection', function(socket) {
     if (CommonUtil.isset(obj.type) && String(obj.siteKey) === 'master') {
       switch (obj.type) {
         case 1: // get new company ( sample: socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"})); )
-          console.log('before', companyList);
-          getCompanyList(obj.forceReload);
-          console.log('after', companyList);
+          console.log('before', list.companyList);
+          list.getCompanyList(obj.forceReload);
+          console.log('after', list.companyList);
           break;
         case 2: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:2, targetKey: "demo", siteKey: "master"})); )
-          console.log('before', companyList);
+          console.log('before', list.companyList);
           if (CommonUtil.isset(obj.targetKey) &&
-              CommonUtil.isset(companyList[obj.targetKey])) {
-            delete companyList[obj.targetKey];
+              CommonUtil.isset(list.companyList[obj.targetKey])) {
+            delete list.companyList[obj.targetKey];
           }
-          console.log('after', companyList);
+          console.log('after', list.companyList);
           break;
         case 3: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:3, targetKey: "demo", siteKey: "master"})); )
           console.log('connectList', connectList);
@@ -5210,7 +5071,7 @@ io.sockets.on('connection', function(socket) {
           break;
         case 6: // reset LiveAssist current count socket.emit('settingReload', JSON.stringify({type:6, targetKey: "demo", siteKey: "master"}));
           console.log('settingReload >>> reset LiveAssist current count');
-          laSessionCounter.initializeCurrentCount(obj.targetKey);
+          list.laSessionCounter.initializeCurrentCount(obj.targetKey);
           break;
         case 7: // view all Obj socket.emit('settingReload', JSON.stringify({type:7, targetKey: "demo", siteKey: "master"}));
           console.log(
@@ -5221,13 +5082,14 @@ io.sockets.on('connection', function(socket) {
           console.log('c_connectList : ' + JSON.stringify(c_connectList));
           console.log('doc_connectList : ' + JSON.stringify(doc_connectList));
           console.log(
-              'customerList : ' + JSON.stringify(customerList[obj.targetKey]));
+              'list.customerList : ' +
+              JSON.stringify(list.customerList[obj.targetKey]));
           console.log(
               'End --------------------------------------------------------');
           break;
         case 8: // confirm tabId user is exists? socket.emit('settingReload', JSON.stringify({type:8, accessId:"", ipAddress:"", targetKey: "demo", siteKey: "master"}));
-          var keys = CommonUtil.isset(customerList[obj.targetKey]) ?
-              Object.keys(customerList[obj.targetKey]) :
+          var keys = CommonUtil.isset(list.customerList[obj.targetKey]) ?
+              Object.keys(list.customerList[obj.targetKey]) :
               [];
           var targetObj = null;
           var targetKey = '';
@@ -5235,7 +5097,7 @@ io.sockets.on('connection', function(socket) {
             keys.some(function(key) {
               if (key.indexOf(obj.accessId + '_' + obj.ipAddress) >= 0) {
                 targetKey = key;
-                targetObj = customerList[obj.targetKey][key];
+                targetObj = list.customerList[obj.targetKey][key];
                 return true;
               }
             });
@@ -5259,8 +5121,8 @@ io.sockets.on('connection', function(socket) {
             inConnectList: CommonUtil.isset(targetObj) &&
                 CommonUtil.isset(connectList) &&
                 (Object.keys(connectList).indexOf(targetSocketId) !== -1),
-            customerListExists: CommonUtil.isset(customerList) &&
-                CommonUtil.isset(customerList[obj.targetKey]),
+            customerListExists: CommonUtil.isset(list.customerList) &&
+                CommonUtil.isset(list.customerList[obj.targetKey]),
             socketIdIsFound: CommonUtil.isset(targetSocketId),
             socketConnected: CommonUtil.isset(targetSocketId) &&
                 CommonUtil.isset(io.sockets.connected[targetSocketId]),
@@ -5290,8 +5152,8 @@ io.sockets.on('connection', function(socket) {
           console.log('c_connectList : ' + Object.keys(c_connectList).length);
           console.log(
               'doc_connectList : ' + Object.keys(doc_connectList).length);
-          console.log('customerList : ' +
-              Object.keys(customerList[obj.targetKey]).length);
+          console.log('list.customerList : ' +
+              Object.keys(list.customerList[obj.targetKey]).length);
           console.log(
               'End --------------------------------------------------------');
           break;
@@ -5657,7 +5519,7 @@ io.sockets.on('connection', function(socket) {
     info = connectList[socket.id];
     if (info && getSessionId(info.siteKey, info.tabId, 'sessionId')) {
       var core = sincloCore[info.siteKey][info.tabId];
-      var siteId = companyList[info.siteKey];
+      var siteId = list.companyList[info.siteKey];
       var timeout = ('connectToken' in core) ? 10000 : 5000;
       // 消費者側の履歴更新
       if (!('subWindow' in core) || ('subWindow' in core) && !core.subWindow &&
@@ -5787,8 +5649,8 @@ io.sockets.on('connection', function(socket) {
               if (scList.hasOwnProperty(info.siteKey)) {
                 sendData.scInfo = scList[info.siteKey].cnt;
               }
-              if (!functionManager.isEnabled(info.siteKey,
-                  functionManager.keyList.monitorPollingMode)) {
+              if (!list.functionManager.isEnabled(info.siteKey,
+                  list.functionManager.keyList.monitorPollingMode)) {
                 emit.toCompany('unsetUser', sendData, info.siteKey);
               }
 
@@ -5819,13 +5681,13 @@ io.sockets.on('connection', function(socket) {
         }
       }
 
-      var keys = Object.keys(customerList[info.siteKey]);
+      var keys = Object.keys(list.customerList[info.siteKey]);
       if (keys && keys.length > 0) {
         keys.forEach(function(key) {
           if (key.indexOf(socket.id) >= 0) {
             console.log(
-                'delete customerList[' + info.siteKey + '][' + key + ']');
-            delete customerList[info.siteKey][key];
+                'delete list.customerList[' + info.siteKey + '][' + key + ']');
+            delete list.customerList[info.siteKey][key];
           }
         });
       }
@@ -5856,11 +5718,11 @@ io.sockets.on('connection', function(socket) {
           } else {
             console.log('sessionIds is null');
             delete connectList[socket.id];
-            var keys = Object.keys(customerList[info.siteKey]);
+            var keys = Object.keys(list.customerList[info.siteKey]);
             if (keys && keys.length > 0) {
               keys.forEach(function(key) {
                 if (key.indexOf(socket.id) >= 0) {
-                  delete customerList[info.siteKey][key];
+                  delete list.customerList[info.siteKey][key];
                 }
               });
             }
@@ -5869,15 +5731,15 @@ io.sockets.on('connection', function(socket) {
       } else {
         console.log('sincloCore[info.siteKey][info.tabId] is null');
         if (info) {
-          var keys = Object.keys(customerList[info.siteKey]);
+          var keys = Object.keys(list.customerList[info.siteKey]);
           if (keys && keys.length > 0) {
             keys.forEach(function(key) {
               if (key.indexOf(socket.id) >= 0) {
                 console.log(
                     'delete customer sitekey : ' + info.siteKey + ' key : ' +
                     key);
-                var customer = customerList[info.siteKey][key];
-                delete customerList[info.siteKey][key];
+                var customer = list.customerList[info.siteKey][key];
+                delete list.customerList[info.siteKey][key];
                 if (CommonUtil.isset(customer) && customer.sincloSessionId) {
                   var sincloSessionId = customer.sincloSessionId;
                   if (CommonUtil.isset(
@@ -5897,7 +5759,7 @@ io.sockets.on('connection', function(socket) {
                     }
                   }
                 }
-                delete customerList[info.siteKey][key];
+                delete list.customerList[info.siteKey][key];
               }
             });
           }
