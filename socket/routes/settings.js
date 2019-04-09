@@ -1,11 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var database = require('./database');
 var common = require('./module/common');
-
-var getTriggerListSql = "SELECT am.* FROM t_auto_messages AS am ";
-getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
-getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?,?,?);";
 
 /* GET home page. */
 router.get("/", function (req, res, next) {

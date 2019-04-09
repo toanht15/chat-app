@@ -18,8 +18,15 @@ module.exports = class CommonUtility {
     return _numPad(hour) + ':' + _numPad(min) + ':' + _numPad(sec); // 表示を更新
   }
 
+  static timeCalculator(obj) {
+    var now = new Date(),
+        start = new Date(Number(obj.time)),
+        req = parseInt((now.getTime() - start.getTime()) / 1000);
+    return Number(req);
+  };
+
   static fullDateTime(parse) {
-    var d = (isset(parse)) ? new Date(Number(parse)) : new Date();
+    var d = (this.isset(parse)) ? new Date(Number(parse)) : new Date();
     return d.getFullYear() + this.numPad(d.getMonth() + 1) +
         this.numPad(d.getDate()) +
         this.numPad(d.getHours()) + this.numPad(d.getMinutes()) +
@@ -28,7 +35,7 @@ module.exports = class CommonUtility {
   }
 
   static formatDateParse(parse) {
-    const d = (isset(parse)) ? new Date(Number(parse)) : new Date();
+    const d = (this.isset(parse)) ? new Date(Number(parse)) : new Date();
     return d.getFullYear() + '/' + this.numPad(d.getMonth() + 1) + '/' +
         this.numPad(d.getDate()) + ' ' + this.numPad(d.getHours()) + ':' +
         this.numPad(d.getMinutes()) + ':' + this.numPad(d.getSeconds());

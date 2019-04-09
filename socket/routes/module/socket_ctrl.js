@@ -12,7 +12,7 @@ var ChatLogTimeManager = require('./chat_log_time_manager');
 var CommonUtil = require('./class/util/common_utility');
 
 // mysql
-var mysql = require('mysql'),
+var mysql = require('mysql2'),
     pool = mysql.createPool({
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
@@ -2495,7 +2495,7 @@ io.sockets.on('connection', function(socket) {
         }
         var val = getConnectInfo(customerList[siteKey][key]);
         if (val.time) {
-          val.term = timeCalculator(val);
+          val.term = CommonUtil.timeCalculator(val);
         }
 
         var afterGetCustomerInformations = function() {
@@ -2621,7 +2621,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('customerInfo', function(data) {
     var obj = JSON.parse(data);
-    obj.term = timeCalculator(obj);
+    obj.term = CommonUtil.timeCalculator(obj);
     if (getSessionId(obj.siteKey, obj.tabId, 'chat')) {
       obj.chat = getSessionId(obj.siteKey, obj.tabId, 'chat');
     }
@@ -2686,7 +2686,7 @@ io.sockets.on('connection', function(socket) {
                   customerList[obj.siteKey][key],
                   sincloCore[obj.siteKey][customerList[obj.siteKey][key]['tabId']]);
               if (mergedObject.time) {
-                mergedObject.term = timeCalculator(mergedObject);
+                mergedObject.term = CommonUtil.timeCalculator(mergedObject);
               }
               result.push(mergedObject);
             }
@@ -3092,7 +3092,7 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(data);
     if (('contract' in obj) && ('hideRealtimeMonitor' in obj.contract) &&
         obj.contract.hideRealtimeMonitor === true) return false;
-    obj.term = timeCalculator(obj);
+    obj.term = CommonUtil.timeCalculator(obj);
 
     obj = getConnectInfo(obj);
 
