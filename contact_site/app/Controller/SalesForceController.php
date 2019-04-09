@@ -72,6 +72,27 @@ class SalesForceController extends AppController {
       return $error;
     }
 
+    if (isset($data['business_model'])) {
+      foreach ($data['business_model'] as $datum) {
+        if (!in_array($datum, ['社外（toC）', '社外（toB）', '社内'])) {
+          $error['param'] = 'business_model';
+          $error['message'] = 'この値が指定できません';
+          return $error;
+        }
+      }
+
+    }
+
+    if (isset($data['target'])) {
+      foreach ($data['target'] as $datum) {
+        if (!in_array($datum, ['既存顧客', '見込み顧客', 'パートナー企業', '社内'])) {
+          $error['param'] = 'target';
+          $error['message'] = 'この値が指定できません';
+          return $error;
+        }
+      }
+    }
+
     foreach (array_keys($selectionData) as $key) {
       if ($this->isInvalidValue($key, $data, $selectionData)) {
         $error['param'] = $key;
@@ -110,8 +131,6 @@ class SalesForceController extends AppController {
     $data['sale_style']                  = ['オンプレ', 'ハーフクラウド', 'フルクラウド', 'その他'];
     $data['member_site']                 = ['有', '無', '両方'];
     $data['transaction_type']            = ['新規', '既存'];
-    $data['business_model']              = ['社外（toC）', '社外（toB）', '社内'];
-    $data['target']                      = ['既存顧客', '見込み顧客', 'パートナー企業', '社内'];
 
     return $data;
   }
@@ -142,14 +161,14 @@ class SalesForceController extends AppController {
     $salesForceData['00N0o00000FSLYE'] = $this->getData('trial_end_date', $data); // トライアル終了日
     $salesForceData['00N0o00000GlN2z'] = isset($data['payer']) ? $data['payer'] : 0; // 決済者
     $salesForceData['00N0o00000GlN39'] = $this->getData('lead_acquisition_channel', $data); // リード獲得経路
-    $salesForceData['00N0o00000GlN3J'] = $this->getData('business_model', $data); // ビジネスモデル
+    $salesForceData['00N0o00000GlN3J'] = $this->getMultipleData('business_model', $data); // ビジネスモデル
     $salesForceData['00N0o00000GlN3O'] = $this->getData('usage', $data); // 使い方
     $salesForceData['00N0o00000GlN3d'] = $this->getData('member_site', $data); // 会員向けサイト
     $salesForceData['00N0o00000GlN47'] = $this->getData('distribution_channel', $data); // 商流
     $salesForceData['00N0o00000GlN4C'] = $this->getData('introducer', $data); // 紹介元
     $salesForceData['00N0o00000GlN4H'] = $this->getData('transaction_type', $data); // 取引区分
     $salesForceData['00N0o00000GlN4R'] = $this->getData('investigation_motive', $data); // 検討動機
-    $salesForceData['00N0o00000HHnko'] = $this->getData('target', $data); // 対象者
+    $salesForceData['00N0o00000HHnko'] = $this->getMultipleData('target', $data); // 対象者
     $salesForceData['00N0o00000HKXWd'] = $this->getData('department', $data); // 部署
     $salesForceData['00N0o00000JZ6Hm'] = $this->getData('product_type', $data); // 製品種別
     $salesForceData['00N0o00000JZ6Hw'] = $this->getData('sale_style', $data); // 販売形態
@@ -166,5 +185,17 @@ class SalesForceController extends AppController {
   private function getData($key, $data)
   {
    return isset($data[$key]) ? $data[$key] : "";
+  }
+
+  private function getMultipleData($key, $data)
+  {
+    $result = [];
+    if (isset($data[$key])) {
+      foreach ($data[$key] as $datum) {
+        $result[] = $datum;
+      }
+    }
+
+    return count($result) > 0 ? $result : "";
   }
 }
