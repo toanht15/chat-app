@@ -4,6 +4,7 @@ class SalesForceController extends AppController {
 
   const API_CALL_TIMEOUT = 5;
   const SALES_FORCE_API = "https://webto.salesforce.com/servlet/servlet.WebToLead";
+  const OID = "00D0o000001A5TU";
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -144,6 +145,7 @@ class SalesForceController extends AppController {
    */
   private function matchData($data){
     $salesForceData                    = [];
+    $salesForceData['oid']             = self::OID; // oid
     $salesForceData['first_name']      = $this->getData('first_name', $data); // 名
     $salesForceData['last_name']       = $this->getData('last_name', $data);; // 姓
     $salesForceData['email']           = $this->getData('mail', $data);; // メール
