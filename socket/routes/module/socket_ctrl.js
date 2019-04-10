@@ -1341,7 +1341,8 @@ io.sockets.on('connection', function(socket) {
           siteKey: d.siteKey,
           matchAutoSpeech: !d.notifyToCompany,
           isScenarioMessage: d.isScenarioMessage,
-          hideMessage: noReturnSelfMessage ? noReturnSelfMessage : false
+          hideMessage: noReturnSelfMessage ? noReturnSelfMessage : false,
+          shownMessage: isset(d.shownMessage) ? d.shownMessage : false
         };
 
         // 担当者のいない消費者からのメッセージの場合
@@ -4874,6 +4875,7 @@ io.sockets.on('connection', function(socket) {
     var diagramData = obj;
     diagramData.created = formatDateParse();
     diagramData.sort = fullDateTime(new Date(diagramData.created));
+    diagramData.shownMessage = true;
 
     var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
     if (isset(sincloSession) && isset(sincloSession.diagram)) {
@@ -4936,7 +4938,8 @@ io.sockets.on('connection', function(socket) {
             created: elm.created,
             sort: elm.sort,
             messageDistinction: messageDistinction,
-            achievementFlg: elm.requireCv ? -1 : null
+            achievementFlg: elm.requireCv ? -1 : null,
+            shownMessage: isset(elm.shownMessage) ? elm.shownMessage : false
           };
           chatApi.set(ret);
         });

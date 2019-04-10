@@ -2296,7 +2296,7 @@
                 sincloInfo.widget.subTitle);
             this.chatApi.scDown();
             return false;
-          } else if (obj.messageType ===
+          } else if (!obj.shownMessage && obj.messageType ===
               sinclo.chatApi.messageType.diagram.message.branch) {
             // 別タブで送信されたチャットツリーのメッセージは表示する
             // diagram
@@ -2315,7 +2315,8 @@
             sinclo.diagramApi.branch.showMessage(currentNode, branches.message,
                 branches.selectionMap, branches.labels,
                 branches.customizeDesign);
-          } else if (obj.messageType ===
+            return false;
+          } else if (!obj.shownMessage && obj.messageType ===
               sinclo.chatApi.messageType.diagram.message.text) {
             sinclo.chatApi.createMessageUnread({
               cn: cn,
@@ -2409,8 +2410,7 @@
         }
 
         // diagram
-        if (obj.tabId === userInfo.tabId && obj.chatMessage.did &&
-            obj.chatMessage.nextNodeId) {
+        if (obj.chatMessage.did && obj.chatMessage.nextNodeId) {
           if (obj.chatMessage.nextNodeId === 'callOperator') return false;
           var nextNodeId = obj.chatMessage.nextNodeId;
           sinclo.chatApi.createMessageUnread({
@@ -2420,9 +2420,11 @@
             chatId: obj.chatId
           }, false, false, false);
           sinclo.chatApi.scDown(obj);
-          sinclo.diagramApi.executor.setDiagramId(obj.chatMessage.did);
-          sinclo.diagramApi.executor.setNext(obj.chatMessage.did, nextNodeId);
-          sinclo.diagramApi.executor.execute();
+          if (obj.tabId === userInfo.tabId) {
+            sinclo.diagramApi.executor.setDiagramId(obj.chatMessage.did);
+            sinclo.diagramApi.executor.setNext(obj.chatMessage.did, nextNodeId);
+            sinclo.diagramApi.executor.execute();
+          }
           return false;
         }
 
@@ -13642,6 +13644,12 @@
       callScenario: {
         _lKey: {
           callbackEndScenario: 'sinclo:notifyEndScenario'
+        },
+        isCalledFromDiagram: function() {
+          var self = sinclo.diagramApi;
+          var currentNode = self.storage.getCurrentNode();
+          return check.isset(currentNode) &&
+              currentNode.attrs.nodeBasicInfo.nodeType === 'scenario';
         },
         doAction: function() {
           console.log('<><><><><> CALL SCENARIO <><><><><>');
