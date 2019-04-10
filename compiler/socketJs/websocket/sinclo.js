@@ -698,7 +698,7 @@
             'sincloSessionId');
         common.widgetHandler.resetMessageAreaState();
         storage.l.set('leaveFlg', 'false');
-        storage.s.unset('amsg');
+        storage.l.unset('amsg');
         storage.s.unset('_scl_d_msg');
         storage.s.unset('chatAct');
         storage.s.unset('chatEmit');
@@ -2296,6 +2296,34 @@
                 sincloInfo.widget.subTitle);
             this.chatApi.scDown();
             return false;
+          } else if (obj.messageType ===
+              sinclo.chatApi.messageType.diagram.message.branch) {
+            // 別タブで送信されたチャットツリーのメッセージは表示する
+            // diagram
+            var branches = check.isJSON(obj.chatMessage) ?
+                JSON.parse(obj.chatMessage) :
+                chat.message;
+            var currentNode = {
+              diagramId: branches.did,
+              sourceNodeId: branches.nid,
+              attrs: {
+                actionParam: {
+                  btnType: branches.type
+                }
+              }
+            };
+            sinclo.diagramApi.branch.showMessage(currentNode, branches.message,
+                branches.selectionMap, branches.labels,
+                branches.customizeDesign);
+          } else if (obj.messageType ===
+              sinclo.chatApi.messageType.diagram.message.text) {
+            sinclo.chatApi.createMessageUnread({
+              cn: cn,
+              message: obj.chatMessage.message,
+              name: userName,
+              chatId: obj.chatId
+            }, false, false, false);
+            return false;
           } else {
             // 別タブで送信されたオートメッセージは何もしない
             return false;
@@ -2381,7 +2409,8 @@
         }
 
         // diagram
-        if (obj.chatMessage.did && obj.chatMessage.nextNodeId) {
+        if (obj.tabId === userInfo.tabId && obj.chatMessage.did &&
+            obj.chatMessage.nextNodeId) {
           if (obj.chatMessage.nextNodeId === 'callOperator') return false;
           var nextNodeId = obj.chatMessage.nextNodeId;
           sinclo.chatApi.createMessageUnread({
@@ -2613,7 +2642,9 @@
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.receiveFile
           || obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.radio) {
+          sinclo.chatApi.messageType.scenario.message.radio
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.carousel) {
         if (obj.tabId === userInfo.tabId) {
           common.chatBotTypingCall(obj);
           this.chatApi.scDown();
@@ -3339,19 +3370,19 @@
           var list = this.get(true);
           if (!this.exists(id)) {
             list[id] = obj;
-            storage.s.set('amsg', JSON.stringify(list));
+            storage.l.set('amsg', JSON.stringify(list));
             return true;
           } else if (!('created' in list[id])) {
             console.log('OVERWRITE OBJECT ID: ' + id + 'B : ' +
                 JSON.stringify(list[id]) + 'A : ' + JSON.stringify(obj));
             list[id] = obj;
-            storage.s.set('amsg', JSON.stringify(list));
+            storage.l.set('amsg', JSON.stringify(list));
             return true;
           }
           return false;
         },
         get: function(allData) {
-          var json = storage.s.get('amsg');
+          var json = storage.l.get('amsg');
           var returnData = {};
           if (json) {
             var array = JSON.parse(json);
@@ -3364,7 +3395,7 @@
           return returnData;
         },
         getByArray: function(allData) {
-          var json = storage.s.get('amsg');
+          var json = storage.l.get('amsg');
           var returnData = [];
           if (json) {
             var array = JSON.parse(json);
@@ -3387,12 +3418,12 @@
           Object.keys(list).forEach(function(id, index, arr) {
             list[id]['applied'] = true;
           });
-          storage.s.set('amsg', JSON.stringify(list));
+          storage.l.set('amsg', JSON.stringify(list));
         },
         delete: function(id) {
           var list = this.get(true);
           delete list[id];
-          storage.s.set('amsg', JSON.stringify(list));
+          storage.l.set('amsg', JSON.stringify(list));
         }
       },
       diagramMessages: {
@@ -3406,7 +3437,7 @@
             console.log('OVERWRITE OBJECT ID: ' + id + 'B : ' +
                 JSON.stringify(list[id]) + 'A : ' + JSON.stringify(obj));
             list[id] = obj;
-            storage.s.set('amsg', JSON.stringify(list));
+            storage.l.set('amsg', JSON.stringify(list));
             return true;
           }
           return false;
@@ -13670,17 +13701,19 @@
           var currentNode = self.storage.getCurrentNode();
           var url = currentNode.attrs.actionParam.link;
           var jumpType = currentNode.attrs.actionParam.linkType;
-          switch (jumpType) {
-            case 'same':
-              window.location.href = url;
-              break;
-            case 'another':
-              window.open(url);
-              break;
-          }
-          var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
-          self.executor.setNext(self.common.getDiagramId(), nextNodeId);
-          self.executor.execute();
+          self.executor.wait(0.5).then(function() {
+            switch (jumpType) {
+              case 'same':
+                window.location.href = url;
+                break;
+              case 'another':
+                window.open(url);
+                break;
+            }
+            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+            self.executor.setNext(self.common.getDiagramId(), nextNodeId);
+            self.executor.execute();
+          });
         }
       },
       callOperator: {
