@@ -28,9 +28,10 @@ class autoMessageHelper extends AppHelper {
 		'visitCntCond' => [
 			'label' => '条件',
 			'dataList' => [
-				1 => "一致",
-				2 => "以上",
-				3 => "未満"
+				1 => "に一致する場合",
+				2 => "以上の場合",
+				3 => "未満の場合",
+        4 => "以上"
 			]
 		],
 		'targetName' => [
@@ -128,7 +129,10 @@ class autoMessageHelper extends AppHelper {
 	 *  */
 	public $labelList = [
 		C_AUTO_TRIGGER_STAY_TIME => "%s滞在時間が %d%s経過",
-		C_AUTO_TRIGGER_VISIT_CNT => "訪問回数が %d回%s",
+		C_AUTO_TRIGGER_VISIT_CNT => [
+		  C_SINGLE => "訪問回数が %d回%s",
+      C_MULTIPLE => "訪問回数が %d回以上%d回未満の場合",
+    ],
 		C_AUTO_TRIGGER_STAY_PAGE => "ページの%sにて「%s」という文字列を%s%s（内容は%s）",
 		C_AUTO_TRIGGER_OPERATING_HOURS => "%s",
 		C_AUTO_TRIGGER_DAY_TIME => [
@@ -139,7 +143,8 @@ class autoMessageHelper extends AppHelper {
 		C_AUTO_TRIGGER_SEARCH_KEY => "検索キーワードにて「%s」という文字列が%s",
     C_AUTO_TRIGGER_SPEECH_CONTENT => "発言内容が「%s」という文字列%s%s（内容は%s）",
     C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => "最初に訪れたページの%sにて「%s」という文字列%s%s（内容は%s）",
-    C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS => "前のページの%sにて「%s」という文字列を%s%s（内容は%s）"
+    C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS => "前のページの%sにて「%s」という文字列を%s%s（内容は%s）",
+    C_AUTO_TRIGGER_VISITOR_DEVICE => "サイト訪問者の端末が「%s」"
   ];
 
 	public function select($itemKey=null) {
@@ -196,7 +201,7 @@ class autoMessageHelper extends AppHelper {
 		//営業時間が4番目なので順番変更
 		$changeEditData = $list;
 		foreach($changeEditData as $key => $val){
-			if($key >= 4 && $key != 10) {
+			if($key >= 4 && $key < 10) {
 				unset($changeEditData[$key]);
 				$changeEditData[$key+1] = $list[$key];
 			}
@@ -226,10 +231,16 @@ class autoMessageHelper extends AppHelper {
 				case C_AUTO_TRIGGER_VISIT_CNT: // 訪問回数
 					foreach((array)$items as $v) {
 						if (isset($v['visitCnt']) && isset($v['visitCntCond']) && !empty($this->dataList['visitCntCond']['dataList'][$v['visitCntCond']])) {
-							$retList[] = sprintf(
-								$this->labelList[$itemId], $v['visitCnt'],
-								$this->dataList['visitCntCond']['dataList'][$v['visitCntCond']]
-							);
+              if ($v['visitCntCond'] == 4) {
+                $retList[] = sprintf(
+                  $this->labelList[$itemId][C_MULTIPLE], $v['visitCnt'], $v['visitCntMax']
+                );
+              } else {
+                $retList[] = sprintf(
+                  $this->labelList[$itemId][C_SINGLE], $v['visitCnt'],
+                  $this->dataList['visitCntCond']['dataList'][$v['visitCntCond']]
+                );
+              }
 						}
 					}
 					break;
@@ -474,6 +485,16 @@ class autoMessageHelper extends AppHelper {
                 );
               }
             }
+          }
+          break;
+
+        case C_AUTO_TRIGGER_VISITOR_DEVICE:
+          foreach((array)$items as $v) {
+            $deviceList = [];
+            if ($v['pc']) $deviceList[] = 'PC';
+            if ($v['smartphone']) $deviceList[] = 'スマートフォン';
+            if ($v['tablet']) $deviceList[] = 'タブレット';
+              $retList[] = sprintf($this->labelList[$itemId], implode($deviceList, ','));
           }
           break;
 

@@ -50,17 +50,22 @@ class MMailTransmissionSetting extends AppModel {
     ]
   ];
 
-  public function isValidAllEmails($toAddresses){
-    $result = true;
-    foreach($toAddresses as $toAddress) {
-      $explode = explode(',', $toAddress);
-      foreach($explode as $mailAddress) {
-        $valid = Validation::email($mailAddress);
-        $match = preg_match('/^{{.+}}$/', $mailAddress);  // 変数かチェック
-        if(!$valid && !$match) break;
+  /**
+   * @param $addresses
+   * @return bool
+   */
+  public function isValidAllEmails($addresses){
+    $isMail = true;
+    foreach($addresses as $address) {
+      $mailList = explode(',', $address);
+      foreach($mailList as $mail) {
+        $isMail = Validation::email($mail);
+        $isVariable = preg_match('/^{{.+}}$/', $mail);  // 変数かチェック
+        if(!$isMail && !$isVariable) break;
       }
     }
-    return $result || $match;
+
+    return $isMail || $isVariable;
   }
 
   public function isNOTDuplicateEmails($toAddresses) {
