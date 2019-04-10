@@ -128,7 +128,7 @@ class SalesForceController extends AppController {
   {
     $data                                = [];
     $data['name_title']                  = ['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.'];
-    $data['lead_acquisition_channel']    = ['電話', 'トライアル申込フォームフォーム', '問合せフォーム', 'チャット', 'ボクシル', 'ITトレンド', 'フォームDM', 'リトルクラウド', 'ボクシル（無効）', 'sales box', '展示会', '資料ダウンロード'];
+    $data['lead_acquisition_channel']    = ['電話', 'トライアル申込フォーム', '問合せフォーム', 'チャット', 'ボクシル', 'ITトレンド', 'フォームDM', 'リトルクラウド', 'ボクシル（無効）', 'sales box', '展示会', '資料ダウンロード'];
     $data['customer_collection_channel'] = ['SEO', 'Google広告', '一括サイト', '比較サイト', 'リファラー', 'メールなど', '不明'];
     $data['introducer']                  = ['直契約', '代理店'];
     $data['distribution_channel']        = ['直契約', '代理店'];
