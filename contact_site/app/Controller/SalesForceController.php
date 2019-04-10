@@ -31,9 +31,11 @@ class SalesForceController extends AppController {
       return $returnData;
     }
 
-    $salesForceData = $this->matchData($data);
-    $queryString = http_build_query(array_filter($salesForceData));
-    $queryString = 'encoding=UTF-8&' . $queryString;
+    $salesForceData           = $this->matchData($data);
+    $queryString              = http_build_query(array_filter($salesForceData));
+    $businessModelQueryString = $this->buildQueryString('business_model', '00N0o00000GlN3J', $data);
+    $targetModelQueryString   = $this->buildQueryString('target', '00N0o00000HHnko', $data);
+    $queryString              = 'encoding=UTF-8&' . $queryString . $businessModelQueryString . $targetModelQueryString;
 
     $socket = new HttpSocket(array(
       'timeout' => self::API_CALL_TIMEOUT
@@ -126,7 +128,7 @@ class SalesForceController extends AppController {
   {
     $data                                = [];
     $data['name_title']                  = ['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.'];
-    $data['lead_acquisition_channel']    = ['電話', 'トライアル申込フォーム', '問合せフォーム', 'チャット', 'ボクシル', 'ITトレンド', 'フォームDM', 'リトルクラウド', 'ボクシル（無効）', 'sales'];
+    $data['lead_acquisition_channel']    = ['電話', 'トライアル申込フォームフォーム', '問合せフォーム', 'チャット', 'ボクシル', 'ITトレンド', 'フォームDM', 'リトルクラウド', 'ボクシル（無効）', 'sales box', '展示会', '資料ダウンロード'];
     $data['customer_collection_channel'] = ['SEO', 'Google広告', '一括サイト', '比較サイト', 'リファラー', 'メールなど', '不明'];
     $data['introducer']                  = ['直契約', '代理店'];
     $data['distribution_channel']        = ['直契約', '代理店'];
@@ -135,6 +137,7 @@ class SalesForceController extends AppController {
     $data['sale_style']                  = ['オンプレ', 'ハーフクラウド', 'フルクラウド', 'その他'];
     $data['member_site']                 = ['有', '無', '両方'];
     $data['transaction_type']            = ['新規', '既存'];
+    $data['rate']                        = ['Hot', 'Warm', 'Cold'];
 
     return $data;
   }
@@ -146,15 +149,16 @@ class SalesForceController extends AppController {
   private function matchData($data){
     $salesForceData                    = [];
     $salesForceData['oid']             = self::OID; // oid
+    $salesForceData['00N0o00000M5SCB'] = date('Y/m/d H:i', time()); // 問い合わせ日時
     $salesForceData['first_name']      = $this->getData('first_name', $data); // 名
     $salesForceData['last_name']       = $this->getData('last_name', $data);; // 姓
     $salesForceData['email']           = $this->getData('mail', $data);; // メール
-    $salesForceData['company']         = $this->getData('company_name', $data);; // 会社名
-    $salesForceData['city']            = $this->getData('address2', $data);; // 市区郡
-    $salesForceData['state']           = $this->getData('address1', $data);; // 都道府県
-    $salesForceData['salutation']      = $this->getData('name_title', $data);; // 敬称
+    $salesForceData['company']         = $this->getData('company_name', $data); // 会社名
+    $salesForceData['city']            = $this->getData('address2', $data); // 市区郡
+    $salesForceData['state']           = $this->getData('address1', $data); // 都道府県
+    $salesForceData['salutation']      = $this->getData('name_title', $data); // 敬称
     $salesForceData['title']           = $this->getData('position', $data); // 役職
-    $salesForceData['ULR']             = $this->getData('website', $data); // Web サイト
+    $salesForceData['URL']             = $this->getData('website', $data); // Web サイト
     $salesForceData['phone']           = $this->getData('phone', $data); // 電話
     $salesForceData['mobile']          = $this->getData('mobile', $data); // 携帯
     $salesForceData['street']          = $this->getData('address3', $data); // 町名・番地
@@ -166,14 +170,12 @@ class SalesForceController extends AppController {
     $salesForceData['00N0o00000FSLYE'] = $this->getData('trial_end_date', $data); // トライアル終了日
     $salesForceData['00N0o00000GlN2z'] = isset($data['payer']) ? $data['payer'] : 0; // 決済者
     $salesForceData['00N0o00000GlN39'] = $this->getData('lead_acquisition_channel', $data); // リード獲得経路
-    $salesForceData['00N0o00000GlN3J'] = $this->getMultipleData('business_model', $data); // ビジネスモデル
     $salesForceData['00N0o00000GlN3O'] = $this->getData('usage', $data); // 使い方
     $salesForceData['00N0o00000GlN3d'] = $this->getData('member_site', $data); // 会員向けサイト
     $salesForceData['00N0o00000GlN47'] = $this->getData('distribution_channel', $data); // 商流
     $salesForceData['00N0o00000GlN4C'] = $this->getData('introducer', $data); // 紹介元
     $salesForceData['00N0o00000GlN4H'] = $this->getData('transaction_type', $data); // 取引区分
     $salesForceData['00N0o00000GlN4R'] = $this->getData('investigation_motive', $data); // 検討動機
-    $salesForceData['00N0o00000HHnko'] = $this->getMultipleData('target', $data); // 対象者
     $salesForceData['00N0o00000HKXWd'] = $this->getData('department', $data); // 部署
     $salesForceData['00N0o00000JZ6Hm'] = $this->getData('product_type', $data); // 製品種別
     $salesForceData['00N0o00000JZ6Hw'] = $this->getData('sale_style', $data); // 販売形態
@@ -192,15 +194,22 @@ class SalesForceController extends AppController {
    return isset($data[$key]) ? $data[$key] : "";
   }
 
-  private function getMultipleData($key, $data)
-  {
-    $result = [];
-    if (isset($data[$key])) {
-      foreach ($data[$key] as $datum) {
-        $result[] = $datum;
-      }
+  /**
+   * @param $apiKey
+   * @param $salesforceKey
+   * @param $data
+   * @return string
+   */
+  private function buildQueryString($apiKey, $salesforceKey, $data) {
+    if (!isset($data[$apiKey]) || !($data[$apiKey])) {
+      return "";
     }
 
-    return count($result) > 0 ? $result : "";
+    $string = "";
+    foreach ($data[$apiKey] as $datum) {
+      $string .= '&' . $salesforceKey . '=' . $datum;
+    }
+
+    return $string;
   }
 }
