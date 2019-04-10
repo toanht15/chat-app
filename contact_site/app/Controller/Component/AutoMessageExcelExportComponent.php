@@ -47,76 +47,77 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
 
   private function readSettingMapFromConfig() {
     $this->isSettingMap = [
-      1 => 'する',
-      2 => 'しない'
+      T_SETTING_ON  => 'する',
+      T_SETTING_OFF => 'しない'
     ];
 
     $this->activeFlgMap = [
-      0 => '有効',
-      1 => '無効'
+      T_ACTIVE_ON  => '有効',
+      T_ACTIVE_OFF => '無効'
     ];
 
     $this->widgetOpenMap = [
-      1 => '自動で最大化する',
-      2 => '自動で最大化しない'
+      T_WIDGET_OPEN_ON  => '自動で最大化する',
+      T_WIDGET_OPEN_OFF => '自動で最大化しない'
     ];
 
     $this->conditionTypeMap = [
-      1 => 'すべて一致',
-      2 => 'いずれかが一致'
+      T_CONDITION_ALL_MATCH => 'すべて一致',
+      T_CONDITION_ONE_MATCH => 'いずれかが一致'
     ];
 
     $this->chatTextAreaMap = [
-      1 => Configure::read('outMessageTextarea')[1],
-      2 => Configure::read('outMessageTextarea')[2]
+      T_TEXTAREA_OPEN => Configure::read('outMessageTextarea')[1],
+      T_TEXTAREA_CLOSE => Configure::read('outMessageTextarea')[2]
     ];
 
     $this->triggerCVMap = [
-      1 => Configure::read('outMessageCvType')[1],
-      2 => Configure::read('outMessageCvType')[2]
+      T_AUTO_CV_ON => Configure::read('outMessageCvType')[1],
+      T_AUTO_CV_OFF => Configure::read('outMessageCvType')[2]
     ];
 
     $this->sendMailFlgMap = [
-      1 => 'する',
-      0 => 'しない'
+      T_SEND_MAIL_ON => 'する',
+      T_SEND_MAIL_OFF => 'しない'
     ];
 
     $this->stayTimeCheckTypeMap = [
-      2 => 'サイト',
-      1 => 'ページ'
+      T_STAY_TIME_SITE => 'サイト',
+      T_STAY_TIME_PAGE => 'ページ'
     ];
 
     $this->stayTimeTypeMap = [
-      1 => '秒',
-      2 => '分',
-      3 => '時'
+      T_STAY_TIME_SECOND => '秒',
+      T_STAY_TIME_MIN    => '分',
+      T_STAY_TIME_HOUR   => '時'
     ];
 
     $this->visitCntCondMap = [
-      1 => '一致',
-      2 => '以上',
-      3 => '未満'
+      T_VISIT_COUNT_RANGE     => '以上',
+      T_VISIT_COUNT_EQUAL     => 'に一致する場合',
+      T_VISIT_COUNT_MORE_THAN => '以上の場合',
+      T_VISIT_COUNT_LESS_THAN => '未満の場合'
     ];
 
     $this->targetNameMap = [
-      1 => 'ページ',
-      2 => 'URL',
+      T_TARGET_PAGE => 'ページ',
+      T_TARGET_URL  => 'URL',
     ];
 
     $this->kWDContainTypeMap = [
-      1 => 'をすべて含む',
-      2 => 'のいずれかを含む',
+      T_CONDITION_ALL_MATCH => 'をすべて含む',
+      T_CONDITION_ONE_MATCH => 'のいずれかを含む',
     ];
 
     $this->kWDExclusionTypeMap = [
-      1 => 'をすべて含む',
-      2 => 'のいずれかを含む',
+      T_CONDITION_ALL_MATCH => 'をすべて含む',
+      T_CONDITION_ONE_MATCH => 'のいずれかを含む',
     ];
 
     $this->stayPageCondTypeMap = [
-      1 => '完全一致',
-      2 => '部分一致',
-      3 => '不一致'
+      T_STAY_PAGE_ALL_MATCH  => '完全一致',
+      T_STAY_PAGE_PART_MATCH => '部分一致',
+      T_STAY_PAGE_NOT_MATCH  => '不一致'
     ];
 
     $this->exportWeekdayMap = [
@@ -130,20 +131,20 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     ];
 
     $this->speechTriggerCondMap = [
-      1 => '１回のみ有効',
-      2 => '何度でも有効',
+      T_SPEECH_ONE_TIME => '１回のみ有効',
+      T_SPEECH_ANY_TIME => '何度でも有効',
     ];
 
     $this->businessHourMap = [
-      1 => '営業時間内',
-      2 => '営業時間外'
+      T_IN_BUSINESS_HOUR  => '営業時間内',
+      T_OUT_BUSINESS_HOUR => '営業時間外'
     ];
 
     $this->actionTypeMap = [
-      4 => 'チャットツリーを呼び出す',
-      3 => '別のトリガーを呼び出す',
-      2 => 'シナリオを呼び出す',
-      1 => 'チャットメッセージを送る'
+      T_ACTION_CALL_CHAT_TREE => 'チャットツリーを呼び出す',
+      T_ACTION_CALL_TRIGGER   => '別のトリガーを呼び出す',
+      T_ACTION_CALL_SCENARIO  => 'シナリオを呼び出す',
+      T_ACTION_SEND_MESSSAGE  => 'チャットメッセージを送る'
     ];
   }
 
@@ -163,7 +164,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function writeData($data)
   {
-    $dataMap = array_combine(range(5, count($data) + 4), $data);
+    $dataMap = array_combine(range(self::FIRST_ROW, count($data) + 4), $data);
     foreach ($dataMap as $row => $value) {
       $json = json_decode($value['TAutoMessage']['activity'], true);
       // name
@@ -173,13 +174,13 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
       // conditionType
       $this->currentSheet->setCellValue('D' . $row, $this->conditionTypeMap[$json['conditionType']]);
       // action type
-      if ($value['TAutoMessage']['action_type'] == 2) {
+      if ($value['TAutoMessage']['action_type'] == T_ACTION_CALL_SCENARIO) {
         // select scenarios
         $this->writeScenarioData($json, $row, $value);
-      } else if($value['TAutoMessage']['action_type'] == 3) {
+      } else if($value['TAutoMessage']['action_type'] == T_ACTION_CALL_TRIGGER) {
         // call automessage
         $this->writeCallAutomessageData($json, $row, $value);
-      } else if($value['TAutoMessage']['action_type'] == 4) {
+      } else if($value['TAutoMessage']['action_type'] == T_ACTION_CALL_CHAT_TREE) {
         // call diagram
         $this->writeCallDiagramData($json, $row, $value);
       } else {
@@ -206,6 +207,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
       $this->writePreviousPageData($json, $row);
       // 営業時間
       $this->writeBusinessHourData($json, $row);
+      //訪問者の端末
+      $this->writeVisitorDevicetData($json, $row);
     }
   }
 
@@ -230,10 +233,10 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   public function setColumnConditionalFormat($beginColumn, $row, $condition)
   {
     $operator = '=';
-    if($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS' || $beginColumn == 'BT') {
+    if ($beginColumn == 'BG' || $beginColumn == 'BS' || $beginColumn == 'BU' || $beginColumn == 'BV') {
       $operator = '<>';
     }
-    $conditionCol   = ($beginColumn == 'BE' || $beginColumn == 'BQ' || $beginColumn == 'BS' || $beginColumn == 'BT') ? 'BD' : $beginColumn;
+    $conditionCol   = ($beginColumn == 'BG' || $beginColumn == 'BS' || $beginColumn == 'BU' || $beginColumn == 'BV') ? 'BF' : $beginColumn;
     $condition      = '$' . $conditionCol . $row . ' '.$operator.' "' . $condition . '"';
     $objConditional = new PHPExcel_Style_Conditional();
     $objConditional->setConditionType(PHPExcel_Style_Conditional::CONDITION_EXPRESSION);
@@ -250,20 +253,21 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function setRowConditionalFormat($row)
   {
-    $this->setColumnConditionalFormat('E', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('I', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('L', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('S', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('U', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('Y', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('AE', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('AH', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('AP', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('AW', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('BE', $row, $this->actionTypeMap[1]);
-    $this->setColumnConditionalFormat('BQ', $row, $this->actionTypeMap[2]);
-    $this->setColumnConditionalFormat('BS', $row, $this->actionTypeMap[3]);
-    $this->setColumnConditionalFormat('BT', $row, $this->actionTypeMap[4]);
+    $this->setColumnConditionalFormat('E', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('I', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('L', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('S', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('U', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('Y', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('AE', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('AH', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('AP', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('AW', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('BD', $row, $this->isSettingMap[T_SETTING_OFF]);
+    $this->setColumnConditionalFormat('BG', $row, $this->actionTypeMap[T_ACTION_SEND_MESSSAGE]);
+    $this->setColumnConditionalFormat('BS', $row, $this->actionTypeMap[T_ACTION_CALL_SCENARIO]);
+    $this->setColumnConditionalFormat('BU', $row, $this->actionTypeMap[T_ACTION_CALL_TRIGGER]);
+    $this->setColumnConditionalFormat('BV', $row, $this->actionTypeMap[T_ACTION_CALL_CHAT_TREE]);
   }
 
   /**
@@ -304,17 +308,20 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
       case 'AW':
         $targetArray = ['AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC'];
         break;
-      case 'BE':
-        $targetArray = ['BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP'];
+      case 'BD':
+        $targetArray = ['BD', 'BE'];
         break;
-      case 'BQ':
-        $targetArray = ['BQ', 'BR'];
+      case 'BG':
+        $targetArray = ['BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR'];
         break;
       case 'BS':
-        $targetArray = ['BS'];
+        $targetArray = ['BS', 'BT'];
         break;
-      case 'BT':
-        $targetArray = ['BT','BU'];
+      case 'BU':
+        $targetArray = ['BU'];
+        break;
+      case 'BV':
+        $targetArray = ['BV','BW'];
         break;
       default:
         $targetArray = [];
@@ -329,63 +336,72 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   public function setRowDataValidation($row)
   {
 
-    $this->setCellDataValidation('B', $row, $this->activeFlgMap[1], $this->activeFlgMap[1] . ', ' . $this->activeFlgMap[0]);
-    $this->setCellDataValidation('D', $row, $this->conditionTypeMap[1], $this->conditionTypeMap[1] . ', ' . $this->conditionTypeMap[2]);
+    $this->setCellDataValidation('B', $row, $this->activeFlgMap[T_ACTIVE_OFF], $this->activeFlgMap[T_ACTIVE_OFF] . ', ' . $this->activeFlgMap[T_ACTIVE_ON]);
+    $this->setCellDataValidation('D', $row, $this->conditionTypeMap[T_CONDITION_ALL_MATCH], $this->conditionTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->conditionTypeMap[T_CONDITION_ONE_MATCH]);
     // 滞在時間
-    $this->setCellDataValidation('E', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('F', $row, "", $this->stayTimeCheckTypeMap[1] . ', ' . $this->stayTimeCheckTypeMap[2]);
-    $this->setCellDataValidation('G', $row, "", $this->stayTimeTypeMap[1] . ', ' . $this->stayTimeTypeMap[2] . ', ' . $this->stayTimeTypeMap[3]);
+    $this->setCellDataValidation('E', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->setCellDataValidation('F', $row, "", $this->stayTimeCheckTypeMap[T_STAY_TIME_PAGE] . ', ' . $this->stayTimeCheckTypeMap[T_STAY_TIME_SITE]);
+    $this->setCellDataValidation('G', $row, "", $this->stayTimeTypeMap[T_STAY_TIME_SECOND] . ', ' . $this->stayTimeTypeMap[T_STAY_TIME_MIN] . ', ' . $this->stayTimeTypeMap[T_STAY_TIME_HOUR]);
     // 訪問回数
-    $this->setCellDataValidation('I', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('K', $row, "", $this->visitCntCondMap[1] . ', ' . $this->visitCntCondMap[2] . ', ' . $this->visitCntCondMap[3]);
+    $this->setCellDataValidation('I', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->currentSheet->getComment('J'. $row)->setWidth("400px");
+    $this->currentSheet->getComment('J'. $row)->setHeight("100px");
+    $this->currentSheet->getComment('J'. $row)->getText()->createTextRun('条件が以上の場合は「OO ~ OO」形式で入力してください。例：1 ~ 10');
+    $this->setCellDataValidation('K', $row, "", $this->visitCntCondMap[T_VISIT_COUNT_RANGE] . ', ' . $this->visitCntCondMap[T_VISIT_COUNT_EQUAL] . ', ' . $this->visitCntCondMap[T_VISIT_COUNT_MORE_THAN] . ', ' . $this->visitCntCondMap[T_VISIT_COUNT_LESS_THAN]);
     // ページ
-    $this->setCellDataValidation('L', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('M', $row, "", $this->targetNameMap[1] . ', ' . $this->targetNameMap[2]);
-    $this->setCellDataValidation('O', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('Q', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('R', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
+    $this->setCellDataValidation('L', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->setCellDataValidation('M', $row, "", $this->targetNameMap[T_TARGET_PAGE] . ', ' . $this->targetNameMap[T_TARGET_URL]);
+    $this->setCellDataValidation('O', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('Q', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('R', $row, "", $this->stayPageCondTypeMap[T_STAY_PAGE_ALL_MATCH] . ', ' . $this->stayPageCondTypeMap[T_STAY_PAGE_PART_MATCH]);
     // 営業時間
-    $this->setCellDataValidation('S', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('T', $row, "", $this->businessHourMap[1] . ', ' . $this->businessHourMap[2]);
+    $this->setCellDataValidation('S', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->setCellDataValidation('T', $row, "", $this->businessHourMap[T_IN_BUSINESS_HOUR] . ', ' . $this->businessHourMap[T_OUT_BUSINESS_HOUR]);
     // 曜日・時間
-    $this->setCellDataValidation('U', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('U', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
     // 参照元URL（リファラー）
-    $this->setCellDataValidation('Y', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('AA', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('AC', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('AD', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
+    $this->setCellDataValidation('Y', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->setCellDataValidation('AA', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('AC', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('AD', $row, "", $this->stayPageCondTypeMap[T_STAY_PAGE_ALL_MATCH] . ', ' . $this->stayPageCondTypeMap[T_STAY_PAGE_PART_MATCH]);
     // 検索キーワード
-    $this->setCellDataValidation('AE', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('AG', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2] . ', ' . $this->stayPageCondTypeMap[3]);
+    $this->setCellDataValidation('AE', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->setCellDataValidation('AG', $row, "", $this->stayPageCondTypeMap[T_STAY_PAGE_ALL_MATCH] . ', ' . $this->stayPageCondTypeMap[T_STAY_PAGE_PART_MATCH] . ', ' . $this->stayPageCondTypeMap[T_STAY_PAGE_NOT_MATCH]);
     // 発言内容
-    $this->setCellDataValidation('AH', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('AJ', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('AM', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
-    $this->setCellDataValidation('AL', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('AO', $row, "", $this->speechTriggerCondMap[1] . ', ' . $this->speechTriggerCondMap[2]);
+    $this->setCellDataValidation('AH', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->setCellDataValidation('AJ', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('AM', $row, "", $this->stayPageCondTypeMap[T_STAY_PAGE_ALL_MATCH] . ', ' . $this->stayPageCondTypeMap[T_STAY_PAGE_PART_MATCH]);
+    $this->setCellDataValidation('AL', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('AO', $row, "", $this->speechTriggerCondMap[T_SPEECH_ONE_TIME] . ', ' . $this->speechTriggerCondMap[T_SPEECH_ANY_TIME]);
     // 最初に訪れたページ
-    $this->setCellDataValidation('AP', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('AQ', $row, "", $this->targetNameMap[1] . ', ' . $this->targetNameMap[2]);
-    $this->setCellDataValidation('AS', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('AU', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('AV', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
+    $this->setCellDataValidation('AP', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->setCellDataValidation('AQ', $row, "", $this->targetNameMap[T_TARGET_PAGE] . ', ' . $this->targetNameMap[T_TARGET_URL]);
+    $this->setCellDataValidation('AS', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('AU', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('AV', $row, "", $this->stayPageCondTypeMap[T_STAY_PAGE_ALL_MATCH] . ', ' . $this->stayPageCondTypeMap[T_STAY_PAGE_PART_MATCH]);
     // 前のページ
-    $this->setCellDataValidation('AW', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('AX', $row, "", $this->targetNameMap[1] . ', ' . $this->targetNameMap[2]);
-    $this->setCellDataValidation('AZ', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('BB', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
-    $this->setCellDataValidation('BC', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
+    $this->setCellDataValidation('AW', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->setCellDataValidation('AX', $row, "", $this->targetNameMap[T_TARGET_PAGE] . ', ' . $this->targetNameMap[T_TARGET_URL]);
+    $this->setCellDataValidation('AZ', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('BB', $row, "", $this->kWDContainTypeMap[T_CONDITION_ALL_MATCH] . ', ' . $this->kWDContainTypeMap[T_CONDITION_ONE_MATCH]);
+    $this->setCellDataValidation('BC', $row, "", $this->stayPageCondTypeMap[T_STAY_PAGE_ALL_MATCH] . ', ' . $this->stayPageCondTypeMap[T_STAY_PAGE_PART_MATCH]);
+
+    // 訪問者の端末
+    $this->setCellDataValidation('BD', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->currentSheet->getComment('BE'. $row)->setWidth("250px");
+    $this->currentSheet->getComment('BE'. $row)->setHeight("100px");
+    $this->currentSheet->getComment('BE'. $row)->getText()->createTextRun('PC, スマートフォン, タブレットを入力してください。区切りは「,]です。');
 
     // 実行設定
-    $this->setCellDataValidation('BD', $row, $this->actionTypeMap[1], $this->actionTypeMap[1] . ', ' . $this->actionTypeMap[2]);
-    $this->setCellDataValidation('BE', $row, $this->widgetOpenMap[1], $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
-    $this->setCellDataValidation('BG', $row, $this->chatTextAreaMap[1], $this->chatTextAreaMap[1] . ', ' . $this->chatTextAreaMap[2]);
-    $this->setCellDataValidation('BH', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
-    $this->setCellDataValidation('BI', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('BF', $row, $this->actionTypeMap[T_ACTION_SEND_MESSSAGE], $this->actionTypeMap[T_ACTION_SEND_MESSSAGE] . ', ' . $this->actionTypeMap[T_ACTION_CALL_SCENARIO]);
+    $this->setCellDataValidation('BG', $row, $this->widgetOpenMap[T_WIDGET_OPEN_ON], $this->widgetOpenMap[T_WIDGET_OPEN_ON] . ', ' . $this->widgetOpenMap[T_WIDGET_OPEN_OFF]);
+    $this->setCellDataValidation('BI', $row, $this->chatTextAreaMap[T_TEXTAREA_OPEN], $this->chatTextAreaMap[T_TEXTAREA_OPEN] . ', ' . $this->chatTextAreaMap[T_TEXTAREA_CLOSE]);
+    $this->setCellDataValidation('BJ', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
+    $this->setCellDataValidation('BK', $row, $this->isSettingMap[T_SETTING_OFF], $this->isSettingMap[T_SETTING_OFF] . ', ' . $this->isSettingMap[T_SETTING_ON]);
 
-    $this->setCellDataValidation('BR', $row, "", $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
+    $this->setCellDataValidation('BT', $row, "", $this->widgetOpenMap[T_WIDGET_OPEN_ON] . ', ' . $this->widgetOpenMap[T_WIDGET_OPEN_OFF]);
 
-    $this->setCellDataValidation('BU', $row, "", $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
+    $this->setCellDataValidation('BW', $row, "", $this->widgetOpenMap[T_WIDGET_OPEN_ON] . ', ' . $this->widgetOpenMap[T_WIDGET_OPEN_OFF]);
   }
 
   /**
@@ -413,8 +429,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function copyRowStyle($baseRow, $endRow)
   {
-    // column BA ~ BS
-    foreach (range('A', 'U') as $column) {
+    // column BA ~ BW
+    foreach (range('A', 'W') as $column) {
       $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('B' . $column . $baseRow), 'B' . $column . self::SECOND_ROW . ':' . 'B' . $column . $endRow);
     }
 
@@ -433,7 +449,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeStayTimeData($json, $row)
   {
     if (isset($json['conditions'][1])) {
-      $this->currentSheet->setCellValue('E' . $row, $this->isSettingMap[1]);
+      $this->currentSheet->setCellValue('E' . $row, $this->isSettingMap[T_SETTING_ON]);
       $this->currentSheet->setCellValue('F' . $row, $this->stayTimeCheckTypeMap[$json['conditions'][1][0]['stayTimeCheckType']]);
       $this->currentSheet->setCellValue('G' . $row, $this->stayTimeTypeMap[$json['conditions'][1][0]['stayTimeType']]);
       $this->currentSheet->setCellValue('H' . $row, $json['conditions'][1][0]['stayTimeRange']);
@@ -448,8 +464,13 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeVisitCountData($json, $row)
   {
     if (isset($json['conditions'][2])) {
-      $this->currentSheet->setCellValue('I' . $row, $this->isSettingMap[1]);
-      $this->currentSheet->setCellValue('J' . $row, $json['conditions'][2][0]['visitCnt']);
+      $this->currentSheet->setCellValue('I' . $row, $this->isSettingMap[T_SETTING_ON]);
+      if ($json['conditions'][2][0]['visitCntCond'] == '4') {
+        // 範囲設定
+        $this->currentSheet->setCellValue('J' . $row, $json['conditions'][2][0]['visitCnt'] . ' ~ ' . $json['conditions'][2][0]['visitCntMax']);
+      } else {
+        $this->currentSheet->setCellValue('J' . $row, $json['conditions'][2][0]['visitCnt']);
+      }
       $this->currentSheet->setCellValue('K' . $row, $this->visitCntCondMap[$json['conditions'][2][0]['visitCntCond']]);
     }
   }
@@ -462,7 +483,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeURLData($json, $row)
   {
     if (isset($json['conditions'][3])) {
-      $this->currentSheet->setCellValue('L' . $row, $this->isSettingMap[1]);
+      $this->currentSheet->setCellValue('L' . $row, $this->isSettingMap[T_SETTING_ON]);
       $this->currentSheet->setCellValue('M' . $row, $this->targetNameMap[$json['conditions'][3][0]['targetName']]);
       $this->currentSheet->setCellValue('N' . $row, $json['conditions'][3][0]['keyword_contains']);
       $this->currentSheet->setCellValue('O' . $row, $this->kWDContainTypeMap[$json['conditions'][3][0]['keyword_contains_type']]);
@@ -480,7 +501,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeWeekdayData($json, $row)
   {
     if (isset($json['conditions'][4])) {
-      $this->currentSheet->setCellValue('U' . $row, $this->isSettingMap[1]);
+      $this->currentSheet->setCellValue('U' . $row, $this->isSettingMap[T_SETTING_ON]);
       $weekDays = '';
       foreach ($json['conditions'][4][0]['day'] as $day => $val) {
         if ($val) {
@@ -503,7 +524,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeRefferURLData($json, $row)
   {
     if (isset($json['conditions'][5])) {
-      $this->currentSheet->setCellValue('Y' . $row, $this->isSettingMap[1]);
+      $this->currentSheet->setCellValue('Y' . $row, $this->isSettingMap[T_SETTING_ON]);
       $this->currentSheet->setCellValue('Z' . $row, $json['conditions'][5][0]['keyword_contains']);
       $this->currentSheet->setCellValue('AA' . $row, $this->kWDContainTypeMap[$json['conditions'][5][0]['keyword_contains_type']]);
       $this->currentSheet->setCellValue('AB' . $row, $json['conditions'][5][0]['keyword_exclusions']);
@@ -519,7 +540,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeSearchKeywordData($json, $row)
   {
     if (isset($json['conditions'][6])) {
-      $this->currentSheet->setCellValue('AE' . $row, $this->isSettingMap[1]);
+      $this->currentSheet->setCellValue('AE' . $row, $this->isSettingMap[T_SETTING_ON]);
       $this->currentSheet->setCellValue('AF' . $row, $json['conditions'][6][0]['keyword']);
       $this->currentSheet->setCellValue('AG' . $row, $this->stayPageCondTypeMap[$json['conditions'][6][0]['searchCond']]);
     }
@@ -532,7 +553,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeSpeechContentData($json, $row)
   {
     if (isset($json['conditions'][7])) {
-      $this->currentSheet->setCellValue('AH' . $row, $this->isSettingMap[1]);
+      $this->currentSheet->setCellValue('AH' . $row, $this->isSettingMap[T_SETTING_ON]);
       $this->currentSheet->setCellValue('AI' . $row, $json['conditions'][7][0]['keyword_contains']);
       $this->currentSheet->setCellValue('AJ' . $row, $this->kWDContainTypeMap[$json['conditions'][7][0]['keyword_contains_type']]);
       $this->currentSheet->setCellValue('AK' . $row, $json['conditions'][7][0]['keyword_exclusions']);
@@ -550,7 +571,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeFirstVisitPageData($json, $row)
   {
     if (isset($json['conditions'][8])) {
-      $this->currentSheet->setCellValue('AP' . $row, $this->isSettingMap[1]);
+      $this->currentSheet->setCellValue('AP' . $row, $this->isSettingMap[T_SETTING_ON]);
       $this->currentSheet->setCellValue('AQ' . $row, $this->targetNameMap[$json['conditions'][8][0]['targetName']]);
       $this->currentSheet->setCellValue('AR' . $row, $json['conditions'][8][0]['keyword_contains']);
       $this->currentSheet->setCellValue('AS' . $row, $this->kWDContainTypeMap[$json['conditions'][8][0]['keyword_contains_type']]);
@@ -567,7 +588,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writePreviousPageData($json, $row)
   {
     if (isset($json['conditions'][9])) {
-      $this->currentSheet->setCellValue('AW' . $row, $this->isSettingMap[1]);
+      $this->currentSheet->setCellValue('AW' . $row, $this->isSettingMap[T_SETTING_ON]);
       $this->currentSheet->setCellValue('AX' . $row, $this->targetNameMap[$json['conditions'][9][0]['targetName']]);
       $this->currentSheet->setCellValue('AY' . $row, $json['conditions'][9][0]['keyword_contains']);
       $this->currentSheet->setCellValue('AZ' . $row, $this->kWDContainTypeMap[$json['conditions'][9][0]['keyword_contains_type']]);
@@ -584,8 +605,34 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeBusinessHourData($json, $row)
   {
     if (isset($json['conditions'][10])) {
-      $this->currentSheet->setCellValue('S' . $row, $this->isSettingMap[1]);
+      $this->currentSheet->setCellValue('S' . $row, $this->isSettingMap[T_SETTING_ON]);
       $this->currentSheet->setCellValue('T' . $row, $this->businessHourMap[$json['conditions'][10][0]['operatingHoursTime']]);
+    }
+  }
+
+  /**
+   * 訪問者の端末
+   * @param $json
+   * @param $row
+   */
+  private function writeVisitorDevicetData($json, $row)
+  {
+    if (isset($json['conditions'][11])) {
+      $this->currentSheet->setCellValue('BD' . $row, $this->isSettingMap[T_SETTING_ON]);
+      $deviceList = '';
+      if ($json['conditions'][11][0]['pc']) {
+        $deviceList .= 'PC, ';
+      }
+
+      if ($json['conditions'][11][0]['smartphone']) {
+        $deviceList .= 'スマートフォン, ';
+      }
+
+      if ($json['conditions'][11][0]['tablet']) {
+        $deviceList .= 'タブレット';
+      }
+
+      $this->currentSheet->setCellValue('BE' . $row, trim($deviceList, ', '));
     }
   }
 
@@ -596,10 +643,10 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   private function writeScenarioData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[2]);
-    $this->currentSheet->setCellValue('BG' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
-    $this->currentSheet->setCellValue('BQ' . $row, $value['TChatbotScenario']['name']);
-    $this->currentSheet->setCellValue('BR' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
+    $this->currentSheet->setCellValue('BF' . $row, $this->actionTypeMap[T_ACTION_CALL_SCENARIO]);
+    $this->currentSheet->setCellValue('BI' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
+    $this->currentSheet->setCellValue('BS' . $row, $value['TChatbotScenario']['name']);
+    $this->currentSheet->setCellValue('BT' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
   }
 
   /**
@@ -609,8 +656,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   private function writeCallAutomessageData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[3]);
-    $this->currentSheet->setCellValue('BS' . $row, $value['CalledAutoMessage']['name']);
+    $this->currentSheet->setCellValue('BF' . $row, $this->actionTypeMap[T_ACTION_CALL_TRIGGER]);
+    $this->currentSheet->setCellValue('BU' . $row, $value['CalledAutoMessage']['name']);
   }
 
   /**
@@ -620,9 +667,9 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   private function writeCallDiagramData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[4]);
-    $this->currentSheet->setCellValue('BT' . $row, $value['TChatbotDiagram']['name']);
-    $this->currentSheet->setCellValue('BU' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
+    $this->currentSheet->setCellValue('BF' . $row, $this->actionTypeMap[T_ACTION_CALL_CHAT_TREE]);
+    $this->currentSheet->setCellValue('BV' . $row, $value['TChatbotDiagram']['name']);
+    $this->currentSheet->setCellValue('BW' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
   }
 
   /**
@@ -632,24 +679,24 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   private function writeSendMessageData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[1]);
-    $this->currentSheet->setCellValue('BE' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
-    $this->currentSheet->setCellValue('BF' . $row, $json['message']);
-    $this->currentSheet->setCellValue('BG' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
-    $this->currentSheet->setCellValue('BH' . $row, $this->triggerCVMap[$json['cv']]);
-    $this->currentSheet->setCellValue('BI' . $row, $this->sendMailFlgMap[$value['TAutoMessage']['send_mail_flg']]);
+    $this->currentSheet->setCellValue('BF' . $row, $this->actionTypeMap[T_ACTION_SEND_MESSSAGE]);
+    $this->currentSheet->setCellValue('BG' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
+    $this->currentSheet->setCellValue('BH' . $row, $json['message']);
+    $this->currentSheet->setCellValue('BI' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
+    $this->currentSheet->setCellValue('BJ' . $row, $this->triggerCVMap[$json['cv']]);
+    $this->currentSheet->setCellValue('BK' . $row, $this->sendMailFlgMap[$value['TAutoMessage']['send_mail_flg']]);
     // get mail information
     $mailTransmission = ClassRegistry::init('MMailTransmissionSetting');
     $transmissionData = $mailTransmission->findById($value['TAutoMessage']['m_mail_transmission_settings_id']);
     if (!empty($transmissionData)) {
       $splitedMailAddresses = explode(',', $transmissionData['MMailTransmissionSetting']['to_address']);
-      $this->currentSheet->setCellValue('BJ' . $row, !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "");
-      $this->currentSheet->setCellValue('BK' . $row, !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "");
-      $this->currentSheet->setCellValue('BL' . $row, !empty($splitedMailAddresses[2]) ? $splitedMailAddresses[2] : "");
-      $this->currentSheet->setCellValue('BM' . $row, !empty($splitedMailAddresses[3]) ? $splitedMailAddresses[3] : "");
-      $this->currentSheet->setCellValue('BN' . $row, !empty($splitedMailAddresses[4]) ? $splitedMailAddresses[4] : "");
-      $this->currentSheet->setCellValue('BO' . $row, !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "");
-      $this->currentSheet->setCellValue('BP' . $row, !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "");
+      $this->currentSheet->setCellValue('BL' . $row, !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "");
+      $this->currentSheet->setCellValue('BM' . $row, !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "");
+      $this->currentSheet->setCellValue('BN' . $row, !empty($splitedMailAddresses[2]) ? $splitedMailAddresses[2] : "");
+      $this->currentSheet->setCellValue('BO' . $row, !empty($splitedMailAddresses[3]) ? $splitedMailAddresses[3] : "");
+      $this->currentSheet->setCellValue('BP' . $row, !empty($splitedMailAddresses[4]) ? $splitedMailAddresses[4] : "");
+      $this->currentSheet->setCellValue('BQ' . $row, !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "");
+      $this->currentSheet->setCellValue('BR' . $row, !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "");
     }
   }
 

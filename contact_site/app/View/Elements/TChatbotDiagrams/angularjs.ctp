@@ -239,12 +239,16 @@
         }
       });
 
-      var loadingTimer =
-          setTimeout(function(){
-            loading.load.start();
-          }, 300);
+      var dataForUpdate = $('#TChatbotDiagramActivity').val();
+      var loadingTimer = null;
+      if (dataForUpdate !== null && dataForUpdate !== '') {
+        loadingTimer =
+            setTimeout(function() {
+              loading.load.start();
+            }, 300);
+      }
       paper.on('render:done', function(){
-        clearTimeout(loadingTimer);
+        if(loadingTimer) clearTimeout(loadingTimer);
         loading.load.finish();
       });
 
@@ -252,7 +256,6 @@
       graph.addCell(startNode());
 
       var dragReferencePosition = null;
-      var dataForUpdate = $('#TChatbotDiagramActivity').val();
 
       // default value
       $scope.messageIntervalTimeSec = 2;
@@ -362,6 +365,7 @@
                 $scope.popupHandler();
                 $scope.handleButtonCSS();
                 $scope.popupInit(frame);
+                addTooltipEvent();
                 initPopupCloseEvent();
                 /* Install jscolor after create modal */
                 $(window)[0].jscolor.installByClassName('jscolor');
@@ -914,7 +918,7 @@
               $scope.currentEditCell.attr('text/text', convertTextLength($scope.selectedScenario.value, 30));
               $scope.currentEditCell.attr('nodeBasicInfo/tooltip', $scope.selectedScenario.value);
             }
-            if($scope.callbackToDiagram) {
+            if ($scope.callbackToDiagram && !$scope.currentEditCellParent.hasPort('out')) {
               $scope.currentEditCellParent.addOutPort('out');
               $scope.currentEditCellParent.attr('.outCover', {
                 fill: '#82c0cd',
@@ -950,6 +954,13 @@
                 z: 0,
                 markup: '<rect class="port-body"/>'
               });
+            } else if ($scope.currentEditCellParent.hasPort('out')) {
+              if ($scope.currentEditCellParent.attributes.attrs.nodeBasicInfo.nextNodeId !== '') {
+                $scope.currentEditCellParent.portProp('out', 'attrs/.port-body/fill',
+                    $scope.getPortColor('scenario', 'out'));
+              } else {
+                $scope.currentEditCellParent.portProp('out', 'attrs/.port-body/fill', '#c0c0c0');
+              }
             } else {
               $scope.currentEditCellParent.removeOutPort('out');
             }
@@ -2066,6 +2077,15 @@
         return ('#' + codeR + codeG + codeB).toUpperCase();
       };
 
+      $scope.bindTextTrigger = function(e, forceProcess, index) {
+        $(e.target).on('input', function(event){
+          $scope.changeTextTrigger(event, forceProcess, event.target.value, index);
+        });
+      };
+
+      $scope.blurTextTrigger = function(e, forceProcess, index) {
+        $(e.target).off('input');
+      };
 
       $scope.changeTextTrigger = function(e, forceProcess, text, index){
         $scope.replaceTag(text, index);
@@ -2257,7 +2277,7 @@
           '<div class=\'branch_modal_setting_header\'>' +
           '<div class=\'flex_row_box\'>' +
           '<p>発言内容</p>' +
-          '<resize-textarea ng-keyup="changeTextTrigger($event, true, branchText, \'branch\')" ng-keydown="changeTextTrigger($event, true, branchText, \'branch\')" ng-model="branchText"></resize-textarea>' +
+          '<resize-textarea ng-focus="bindTextTrigger($event, true, \'branch\')" ng-blur="blurTextTrigger($event, true, \'branch\')" ng-model="branchText"></resize-textarea>' +
           '</div>' +
           '<div class="mt20">' +
           '<div class=\'flex_row_box\'>' +
@@ -2318,7 +2338,7 @@
           '<p>発言内容</p>' +
           '<div id="text_modal_contents" >' +
           '<div class=\'text_modal_setting\' ng-repeat="speakText in speakTextList track by $index" finisher>' +
-          '<resize-textarea ng-keyup="changeTextTrigger($event, true, speakText, $index)" ng-keydown="changeTextTrigger($event, true, speakText, $index)" ng-model="speakTextList[$index]"></resize-textarea>' +
+          '<resize-textarea ng-focus="bindTextTrigger($event, true, $index)" ng-blur="blurTextTrigger($event, true, $index)" ng-model="speakTextList[$index]"></resize-textarea>' +
           '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' ng-hide="addBtnHide" ng-click="btnClick(\'add\', speakTextList, $index, \'\')">' +
           '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' ng-hide="deleteBtnHide" ng-click="btnClick(\'delete\', speakTextList, $index)">' +
           '</div>' +
@@ -2359,11 +2379,17 @@
       template: '<div>' +
           '<div id=\'scenario_modal\'>' +
           '<label for=\'scenario\'>シナリオ名</label>' +
-          '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key">' +
+          <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]): ?>
+          '<label for="callTargetScenario" display="inline-block" class="commontooltip disabled" data-text="こちらの機能はオプションの加入が必要です。">' +
+          <?php endif; ?>
+          '<select name=\'scenario\' id=\'callTargetScenario\'ng-model="selectedScenario" ng-options="sc.value for sc in scenarioArrayList track by sc.key" <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) echo 'class="disabled" disabled'; ?>>' +
           '</select>' +
+          <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]): ?>
+          '</label>' +
+          <?php endif; ?>
           '</div>' +
           '<div class="callbackToDiagramWrap">' +
-          '<label for="callbackToDiagram"><input type="checkbox" name=\'callbackToDiagram\' id=\'callbackToDiagram\'ng-model="callbackToDiagram">終了後、このチャットツリーに戻る</label>' +
+          '<label for="callbackToDiagram" <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) echo 'class="disabled"'; ?>><input type="checkbox" name=\'callbackToDiagram\' id=\'callbackToDiagram\'ng-model="callbackToDiagram" <?php if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) echo 'class="disabled" disabled'; ?>>終了後、このチャットツリーに戻る</label>' +
           '</div>' +
           '<div class="scenario_valid_margin">' +
           '<span class="diagram_valid" ng-show="scenarioIsEmpty">シナリオを選択してください</span>' +
