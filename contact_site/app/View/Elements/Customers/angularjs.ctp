@@ -3090,7 +3090,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if(obj.getMessageToken !== chatApi.getMessageToken) return;
 
-      for (var key in obj.chat.messages) {
+      Object.keys(obj.chat.messages).forEach(function(key, idx, arr) {
+        if (key.indexOf('_') !== -1) return;
         var chat = {};
         if ( typeof(obj.chat.messages[key]) === "object" ) {
           chat = obj.chat.messages[key];
@@ -3116,7 +3117,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.messageList.push(chat);
           scDown(); // チャットのスクロール
         }
-      }
+      });
 
       if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
         // 既読にする(ok)

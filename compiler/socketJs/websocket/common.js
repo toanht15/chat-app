@@ -7036,6 +7036,9 @@ var socket, // socket.io
     socket.on('resGetScenario', function(d) {
       var obj = common.jParse(d);
       sinclo.scenarioApi.init(obj.id, obj.activity.scenarios);
+      if (sinclo.diagramApi.callScenario.isCalledFromDiagram()) {
+        sinclo.chatApi.saveFlg = true;
+      }
       sinclo.scenarioApi.begin();
     }); // socket-on: sendChatResult
 
