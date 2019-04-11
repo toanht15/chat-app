@@ -1313,7 +1313,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       chatApi.getMessage(data); // Nodeサーバーより最新のチャットメッセージを取得
       // 新着チャットチェック
       // 3秒後にチェック
-      setTimeout(function(){
+      setTimeout(function() {
         // タブを開いている、表示チャットが０件
         if ( $scope.detailId === tabId && $scope.messageList.length === 0 ) {
           // HTTPサーバーより最新のチャットメッセージを取得
@@ -3002,7 +3002,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var prev = angular.copy($scope.monitorList[obj.tabId].chat);
       $scope.monitorList[obj.tabId].chat = obj.userId;
 
-      if ( Number(obj.messageType) === 98 ) {
+      if (Number(obj.messageType) === 998) {
         $scope.chatOpList.push(obj.userId);
         if ( obj.userId === myUserId ) {
           $scope.achievement = obj.achievementFlg;
@@ -3090,7 +3090,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if(obj.getMessageToken !== chatApi.getMessageToken) return;
 
-      for (var key in obj.chat.messages) {
+      Object.keys(obj.chat.messages).forEach(function(key, idx, arr) {
+        if (key.indexOf('_') !== -1) return;
         var chat = {};
         if ( typeof(obj.chat.messages[key]) === "object" ) {
           chat = obj.chat.messages[key];
@@ -3098,7 +3099,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         else {
           chat.text = obj.chat.messages[key];
         }
-        if ( Number(chat.messageType) === 98 ) {
+        if (Number(chat.messageType) === 998) {
           $scope.chatOpList.push(chat.userId);
           if ( chat.userId === myUserId ) {
             $scope.achievement = String(chat.achievementFlg);
@@ -3116,7 +3117,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.messageList.push(chat);
           scDown(); // チャットのスクロール
         }
-      }
+      });
 
       if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
         // 既読にする(ok)
