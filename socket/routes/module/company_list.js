@@ -3,6 +3,7 @@ var customerList = {};
 var initialized = false;
 var database = require('../database');
 var CommonUtil = require('./class/util/common_utility');
+var SharedData = require('./shared_data');
 // mysql
 var mysql = require('mysql2'),
     pool = mysql.createPool({

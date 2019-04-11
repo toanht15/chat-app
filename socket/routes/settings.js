@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var common = require('./module/common');
 var list = require('./module/company_list');
+var SharedData = require('./module/shared_data');
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
