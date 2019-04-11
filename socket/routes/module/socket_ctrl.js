@@ -918,6 +918,7 @@ io.sockets.on('connection', function(socket) {
           for (var i = 0; i < messages.length; i++) {
             var chatMessageDate = messages[i].created;
             chatMessageDate = new Date(chatMessageDate);
+            messages[i].sort = fullDateTime(chatMessageDate);
             // if ( ('userName' in messages[i]) && obj.showName !== 1 ) {
             //   delete messages[i].userName;
             // }
@@ -1099,7 +1100,8 @@ io.sockets.on('connection', function(socket) {
           siteKey: d.siteKey,
           matchAutoSpeech: !d.notifyToCompany,
           isScenarioMessage: d.isScenarioMessage,
-          hideMessage: noReturnSelfMessage ? noReturnSelfMessage : false
+          hideMessage: noReturnSelfMessage ? noReturnSelfMessage : false,
+          shownMessage: isset(d.shownMessage) ? d.shownMessage : false
         };
 
         // 担当者のいない消費者からのメッセージの場合
@@ -4728,6 +4730,7 @@ io.sockets.on('connection', function(socket) {
     var diagramData = obj;
     diagramData.created = CommonUtil.formatDateParse();
     diagramData.sort = CommonUtil.fullDateTime(new Date(diagramData.created));
+    diagramData.shownMessage = true;
 
     var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
     if (CommonUtil.isset(sincloSession) &&
@@ -4793,7 +4796,8 @@ io.sockets.on('connection', function(socket) {
             created: elm.created,
             sort: elm.sort,
             messageDistinction: messageDistinction,
-            achievementFlg: elm.requireCv ? -1 : null
+            achievementFlg: elm.requireCv ? -1 : null,
+            shownMessage: isset(elm.shownMessage) ? elm.shownMessage : false
           };
           chatApi.set(ret);
         });
