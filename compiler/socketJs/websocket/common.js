@@ -5129,7 +5129,8 @@ var socket, // socket.io
         if (!sinclo.scenarioApi.isProcessing()) {
           return;
         }
-      } else if (obj.messageType === sinclo.diagramApi.messageType.message.text
+      } else if (obj.messageType === sinclo.chatApi.messageType.sorry
+          || obj.messageType === sinclo.diagramApi.messageType.message.text
         || obj.messageType === sinclo.diagramApi.messageType.message.branch) {
         // 表示する
       } else if (!sinclo.scenarioApi.isProcessing()) {
