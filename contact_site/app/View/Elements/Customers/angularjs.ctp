@@ -3002,7 +3002,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var prev = angular.copy($scope.monitorList[obj.tabId].chat);
       $scope.monitorList[obj.tabId].chat = obj.userId;
 
-      if ( Number(obj.messageType) === 98 ) {
+      if (Number(obj.messageType) === 998) {
         $scope.chatOpList.push(obj.userId);
         if ( obj.userId === myUserId ) {
           $scope.achievement = obj.achievementFlg;
@@ -3099,7 +3099,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         else {
           chat.text = obj.chat.messages[key];
         }
-        if ( Number(chat.messageType) === 98 ) {
+        if (Number(chat.messageType) === 998) {
           $scope.chatOpList.push(chat.userId);
           if ( chat.userId === myUserId ) {
             $scope.achievement = String(chat.achievementFlg);
