@@ -1164,6 +1164,7 @@ io.sockets.on('connection', function(socket) {
           for (var i = 0; i < messages.length; i++) {
             var date = messages[i].created;
             date = new Date(date);
+            messages[i].sort = fullDateTime(date);
             // if ( ('userName' in messages[i]) && obj.showName !== 1 ) {
             //   delete messages[i].userName;
             // }

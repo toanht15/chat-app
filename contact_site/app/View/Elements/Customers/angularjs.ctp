@@ -1313,7 +1313,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       chatApi.getMessage(data); // Nodeサーバーより最新のチャットメッセージを取得
       // 新着チャットチェック
       // 3秒後にチェック
-      setTimeout(function(){
+      setTimeout(function() {
         // タブを開いている、表示チャットが０件
         if ( $scope.detailId === tabId && $scope.messageList.length === 0 ) {
           // HTTPサーバーより最新のチャットメッセージを取得
