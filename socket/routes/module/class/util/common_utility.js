@@ -48,10 +48,22 @@ module.exports = class CommonUtility {
         d.getSeconds() + Math.floor(Math.random() * 1000);
   }
 
+  static makeAccessId() {
+    return ('000' + Math.floor(Math.random() * 10000)).slice(-4);
+  }
+
   static getNow() {
     const d = new Date();
     return '【' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() +
         '】';
+  }
+
+  static getIp(socket) {
+    let ip = '0.0.0.0';
+    if (this.isset(socket.handshake.headers['x-forwarded-for'])) {
+      ip = socket.handshake.headers['x-forwarded-for'];
+    }
+    return ip;
   }
 
   static isset(a) {
@@ -64,6 +76,22 @@ module.exports = class CommonUtility {
       return (Object.keys(a).length !== 0);
     }
     return true;
+  }
+
+  static isKeyExists(obj, path) {
+    const keys = path.split('.');
+    for (let k in keys) {
+      const key = keys[k];
+
+      if (!obj.hasOwnProperty(key)) {
+        return false;
+      }
+
+      if (keys.length > 1) {
+        return _lookup(obj[key], keys.splice(1).join('.'));
+      }
+      return true;
+    }
   }
 
   static calcTime(obj) {

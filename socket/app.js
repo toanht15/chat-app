@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var settings = require('./routes/settings');
+var api = require('./routes/api');
 
 if (cluster.isMaster) {
   var socket = require('./routes/module/socket_ctrl');
@@ -45,6 +46,7 @@ app.use(express.static(path.join(__dirname, 'webroot')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/settings', settings);
+app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -52,7 +54,6 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
-
 // error handlers
 
 // development error handler

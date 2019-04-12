@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var database = require('../database');
-var api = require('../api');
+var api = require('../config');
 var uuid = require('node-uuid');
 var request = require('request');
 var common = require('./common');
@@ -1519,7 +1519,7 @@ io.sockets.on('connection', function(socket) {
               ('0' + (now.getMonth() + 1)).slice(-2) + '/' +
               ('0' + (now.getDate())).slice(-2) + ' ';
 
-      if (common.operationHourSettings[siteKey] != '') {
+      if (CommonUtil.isKeyExists(common.operationHourSettings, siteKey)) {
         for (var i = 0; i <
         common.operationHourSettings[siteKey].length; i++) {
           dayType = JSON.parse(common.operationHourSettings[siteKey][i].type);
@@ -2117,19 +2117,15 @@ io.sockets.on('connection', function(socket) {
     send = data;
 
     if (res.type !== 'admin') {
-      if (res.tabId && (CommonUtil.isset(SharedData.sincloCore[res.siteKey]) &&
-          CommonUtil.isset(SharedData.sincloCore[res.siteKey][res.tabId]) &&
-          !CommonUtil.isset(
-              SharedData.sincloCore[res.siteKey][res.tabId].timeoutTimer))) {
+      if (res.tabId && (CommonUtil.isKeyExists(authData, 'siteKey.tabId') &&
+          !CommonUtil.isKeyExists(authData, 'siteKey.tabId.timeoutTimer'))) {
         // 別タブを開いたときに情報がコピーされてしまっている状態
         console.log(
             'tabId is duplicate. change firstConnection flg ' + res.tabId);
         data.firstConnection = true;
       }
-      if (res.tabId && (CommonUtil.isset(SharedData.sincloCore[res.siteKey]) &&
-          CommonUtil.isset(SharedData.sincloCore[res.siteKey][res.tabId]) &&
-          'timeoutTimer' in
-          SharedData.sincloCore[res.siteKey][res.tabId])) {
+      if (res.tabId &&
+          CommonUtil.isKeyExists(authData, 'siteKey.tabId.timeoutTimer')) {
         var currentSincloSessionId = SharedData.sincloCore[res.siteKey][res.tabId].sincloSessionId;
         if (currentSincloSessionId) {
           var oldSessionId = SharedData.sincloCore[res.siteKey][res.tabId].sessionId;
@@ -2168,7 +2164,7 @@ io.sockets.on('connection', function(socket) {
       }
       if (data.firstConnection || data.accessId === undefined ||
           data.accessId === '' || data.accessId === null) {
-        send.accessId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
+        send.accessId = CommonUtil.makeAccessId();
       }
       if (res.token !== undefined) {
         send.token = res.token;
