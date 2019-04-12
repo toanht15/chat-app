@@ -7,7 +7,7 @@ const CommonUtil = require('./module/class/util/common_utility');
 const SharedData = require('./module/shared_data');
 const SCChecker = require('./module/class/checker/SCChecker');
 
-router.options('*', function(req, res) {
+router.options('/*', function(req, res) {
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', '*');
   // Request methods you wish to allow
@@ -18,6 +18,8 @@ router.options('*', function(req, res) {
   // Set to true if you need the website to include cookies in the requests sent
   // to the API (e.g. in case you use sessions)
   res.setHeader('Access-Control-Allow-Credentials', true);
+
+  res.sendStatus(200);
 });
 
 router.post('/auth/customer', function(req, res, next) {
