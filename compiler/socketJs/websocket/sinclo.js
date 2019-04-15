@@ -9617,7 +9617,8 @@
         if (sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
           setTimeout(function() {
             common.chatBotTyping({forceWaitAnimation: true});
-          }, 100);
+            sinclo.chatApi.scDown();
+          }, 800);
           sinclo.diagramApi.callScenario.goToNextNode();
         }
       },
