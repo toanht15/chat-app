@@ -9584,7 +9584,9 @@
       _end: function() {
         // シナリオ終了
         console.log('シナリオ終了時にそもそもウェイトアニメーションを出さない');
-        common.chatBotTypingTimerClear();
+        if (!sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
+          common.chatBotTypingTimerClear();
+        }
         var self = sinclo.scenarioApi;
         self.syncScenarioData.sendDetail('endScenario');
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
