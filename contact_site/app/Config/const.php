@@ -71,7 +71,7 @@ define('C_COMPANY_USE_CUSTOM_WIDGET_SIZE', 'customWidgetSize');  // ウィジェ
 define('C_COMPANY_USE_CHATBOT_TREE_EDITOR', 'chatbotTreeEditor');  // オプション：チャットツリー
 
 // リアルタイムモニタ - ポーリングモード定数
-define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
+define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 5000);
 
 // 簡易メッセージ入力機能種別
 define('C_DICTIONARY_TYPE_COMP', 1); // 企業で使用する
