@@ -5126,16 +5126,14 @@ var socket, // socket.io
           sinclo.chatApi.messageType.scenario.message.receiveFile
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.customer.sendFile) {
-        if (!sinclo.scenarioApi.isProcessing() &&
-            !sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
+        if (!sinclo.scenarioApi.isProcessing()) {
           return;
         }
       } else if (obj.messageType === sinclo.chatApi.messageType.sorry
           || obj.messageType === sinclo.diagramApi.messageType.message.text
         || obj.messageType === sinclo.diagramApi.messageType.message.branch) {
         // 表示する
-      } else if (!sinclo.scenarioApi.isProcessing() &&
-          !sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
+      } else if (!sinclo.scenarioApi.isProcessing()) {
         return;
       }
       var widget = window.sincloInfo.widget;
