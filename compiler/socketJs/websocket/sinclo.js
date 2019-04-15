@@ -7362,6 +7362,7 @@
             isScenarioMessage = true;
           } else if (value.did && value.sourceNodeId) {
             sinclo.diagramApi.common.changeAllowSaving();
+            sinclo.chatApi.saveFlg = true;
             messageType = sinclo.diagramApi.storage.getSendCustomerMessageType(
                 value.did, value.sourceNodeId);
             isDiagramMessage = true;
