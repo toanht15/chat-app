@@ -9586,6 +9586,8 @@
         console.log('シナリオ終了時にそもそもウェイトアニメーションを出さない');
         if (!sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
           common.chatBotTypingTimerClear();
+        } else {
+          common.chatBotTypingCall({forceWaitAnimation: true});
         }
         var self = sinclo.scenarioApi;
         self.syncScenarioData.sendDetail('endScenario');
