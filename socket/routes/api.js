@@ -5,7 +5,9 @@ const router = express.Router();
 const uuid = require('node-uuid');
 const CommonUtil = require('./module/class/util/common_utility');
 var SCChecker = require('./module/SCChecker');
+var list = require('./module/company_list');
 var SharedData = require('./module/shared_data');
+var LandscapeAPI = require('./module/landscape');
 // socket.joinは別途やる
 var checker = new SCChecker();
 
@@ -119,7 +121,7 @@ router.post('/auth/customer', function(req, res, next) {
     send.accessId = CommonUtil.makeAccessId();
   }
 
-  if (!CommonUtil.isset(d.token)) {
+  if (CommonUtil.isset(d.token)) {
     send.token = d.token;
   }
 
@@ -182,7 +184,6 @@ router.post('/auth/info', function(req, res, next) {
 
   let d = {
     siteKey: '',
-    type: 'user',
     tabId: '',
     sincloSessionId: '',
     token: '',
@@ -201,9 +202,179 @@ router.post('/auth/info', function(req, res, next) {
   };
 
   let reqData = req.body;
+  let obj = Object.assign(d, reqData);
 
-  d = Object.assign(d, reqData);
+  if (!CommonUtil.isset(SharedData.sincloCore[obj.siteKey])) {
+    SharedData.sincloCore[obj.siteKey] = {};
+  }
+  if (!CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.tabId])) {
+    SharedData.sincloCore[obj.siteKey][obj.tabId] = {
+      sincloSessionId: null,
+      sessionId: null,
+      subWindow: false,
+      chatUnreadCnt: 0
+    };
+  }
+  if (CommonUtil.isset(obj.sincloSessionId) &&
+      !CommonUtil.isset(
+          SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])) {
+    SharedData.sincloCore[obj.siteKey][obj.sincloSessionId] = {
+      sessionIds: {},
+      autoMessages: {},
+      scenario: {},
+      diagram: []
+    };
+  }
+  if ('timeoutTimer' in SharedData.sincloCore[obj.siteKey][obj.tabId]) {
+    clearTimeout(SharedData.sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
+    SharedData.sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
+  }
 
+  var oldSessionId = SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId;
+  if (oldSessionId && CommonUtil.isset(obj.sincloSessionId)) {
+    var sessionIds = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds;
+    console.log('delete id : ' + oldSessionId);
+    delete sessionIds[oldSessionId];
+    console.log('remains : ' + Object.keys(sessionIds).length);
+    Object.keys(sessionIds).forEach(function(key) {
+      if (!CommonUtil.isset(io.sockets.connected[key])) {
+        console.log('delete not exist sessionId : ' + key);
+        delete sessionIds[key];
+        console.log('remains : ' + Object.keys(sessionIds).length);
+        var keys = Object.keys(list.customerList[obj.siteKey]);
+        if (keys && keys.length > 0) {
+          keys.forEach(function(customerListId) {
+            if (customerListId.indexOf(key) >= 0) {
+              console.log(
+                  'delete not exist list.customerList : ' + customerListId);
+              delete list.customerListId[info.siteKey][customerListId];
+            }
+          });
+        }
+      }
+    });
+  }
+
+  SharedData.connectList[obj.socketId] = {
+    siteKey: obj.siteKey,
+    tabId: obj.tabId,
+    userId: null,
+    sincloSessionId: obj.sincloSessionId
+  };
+  SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId = obj.socketId;
+  if (CommonUtil.isset(obj.sincloSessionId)) {
+    SharedData.sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
+    SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
+  }
+  if (CommonUtil.isset(obj.tmpAutoMessages)) {
+    try {
+      Object.keys(obj.tmpAutoMessages).
+          forEach(function(automessageKey, index, array) {
+            if (typeof (obj.tmpAutoMessages[automessageKey]['created']) ===
+                'string') {
+              obj.tmpAutoMessages[automessageKey]['created'] = new Date(
+                  obj.tmpAutoMessages[automessageKey]['created']);
+            }
+            if (CommonUtil.isset(
+                SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) &&
+                !CommonUtil.isset(
+                    SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages)) {
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages = {};
+            }
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[automessageKey] = obj.tmpAutoMessages[automessageKey];
+          });
+    } catch (e) {
+
+    }
+  }
+  if (CommonUtil.isset(obj.tmpDiagramMessages)) {
+    try {
+      Object.keys(obj.tmpDiagramMessages).
+          forEach(function(diagramKey, index, array) {
+            if (typeof (obj.tmpDiagramMessages[diagramKey]['created']) ===
+                'string') {
+              obj.tmpDiagramMessages[diagramKey]['created'] = new Date(
+                  obj.tmpDiagramMessages[diagramKey]['created']);
+            }
+            if (CommonUtil.isset(
+                SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) &&
+                !CommonUtil.isset(
+                    SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
+            }
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram.push(
+                obj.tmpDiagramMessages[diagramKey]);
+          });
+    } catch (e) {
+
+    }
+  }
+
+  // SharedData.sincloCoreオブジェクトからセッションIDを取得する関数
+  var getSessionId = function getSessionId(siteKey, tabId, key) {
+    if ((siteKey in SharedData.sincloCore) &&
+        (tabId in SharedData.sincloCore[siteKey]) &&
+        (key in SharedData.sincloCore[siteKey][tabId])) {
+      return SharedData.sincloCore[siteKey][tabId][key];
+    }
+  };
+
+  if (!getSessionId(obj.siteKey, obj.tabId, 'parentTabId')) {
+    SharedData.connectList[obj.socketId] = {
+      siteKey: obj.siteKey,
+      tabId: obj.tabId,
+      userId: obj.userId,
+      sincloSessionId: obj.sincloSessionId
+    };
+
+    // 履歴作成
+    //db.addHistory(obj, socket);
+    // カスタム情報自動登録
+    //db.upsertCustomerInfo(obj, socket, function(result) {
+    // IPアドレスの取得
+    if (!(('ipAddress' in obj) && CommonUtil.isset(obj.ipAddress))) {
+      obj.ipAddress = getIp(socket);
+    }
+
+    var getCompanyInfoFromApi = function(obj, ip, callback) {
+      if (list.functionManager.isEnabled(obj.siteKey,
+          list.functionManager.keyList.refCompanyData)) {
+        var api = new LandscapeAPI('json', 'utf8');
+        api.getFrom(ip, callback);
+      } else {
+        deblogger.debug('refCompanyData is false. siteKey : ' + obj.siteKey);
+        callback({});
+      }
+    };
+
+    //FIXME 企業別機能設定（企業情報連携）
+    getCompanyInfoFromApi(obj, obj.ipAddress, function(data) {
+      try {
+        if (data) {
+          var response = data;
+          obj.orgName = response.orgName;
+          obj.lbcCode = response.lbcCode;
+          SharedData.sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
+          SharedData.sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
+          if (CommonUtil.isset(
+              list.customerList[obj.siteKey][obj.accessId + '_' +
+              obj.ipAddress +
+              '_' + obj.socketId])) {
+            list.customerList[obj.siteKey][obj.accessId + '_' +
+            obj.ipAddress +
+            '_' + obj.socketId]['orgName'] = obj.orgName;
+            list.customerList[obj.siteKey][obj.accessId + '_' +
+            obj.ipAddress +
+            '_' + obj.socketId]['lbcCode'] = obj.lbcCode;
+          }
+        }
+      } catch (e) {
+        console.log(
+            'getCompanyInfoFromApiのcallbackでエラー : ' + data + ' message : ' +
+            e.message);
+      }
+    });
+  }
 });
 
 module.exports = router;

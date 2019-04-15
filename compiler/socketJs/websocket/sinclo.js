@@ -615,10 +615,30 @@
         emitData.forceFirstConnect = true;
       }
 
-      emit('connected', {
-        type: 'user',
-        data: emitData
-      });
+      if (window.sincloInfo.contract.disableRealtimeMonitor) {
+        $.ajax({
+          type: 'post',
+          url: window.sincloInfo.site.files + '/api/auth/customer',
+          dataType: 'json',
+          contentType: 'application/JSON',
+          data: JSON.stringify({
+            siteKey: sincloInfo.site.key,
+            type: 'user',
+            tabId: userInfo.tabId,
+            sincloSessionId: userInfo.sincloSessionId,
+            token: common.token,
+            data: emitData
+          }),
+          success: function(json) {
+            sinclo.accessInfo(JSON.stringify(json));
+          }
+        });
+      } else {
+        emit('connected', {
+          type: 'user',
+          data: emitData
+        });
+      }
     },
     retConnectedForSync: function(d) {
       var obj = common.jParse(d);
@@ -725,12 +745,38 @@
         connectSuccessData.tmpAutoMessages = tmpAutoMessages;
       }
 
-      emit('connectSuccess', connectSuccessData, function(ev) {
-        if ((userInfo.gFrame && Number(userInfo.accessType) ===
-            Number(cnst.access_type.guest)) === false) {
-          emit('customerInfo', obj);
-        }
-      });
+      if (!window.sincloInfo.contract.disableRealtimeMonitor) {
+        emit('connectSuccess', connectSuccessData, function(ev) {
+          if ((userInfo.gFrame && Number(userInfo.accessType) ===
+              Number(cnst.access_type.guest)) === false) {
+            emit('customerInfo', obj);
+          }
+        });
+      } else {
+        $.ajax({
+          type: 'post',
+          url: window.sincloInfo.site.files + '/api/auth/info',
+          dataType: 'json',
+          contentType: 'application/JSON',
+          data: JSON.stringify({
+            confirm: false,
+            widget: window.sincloInfo.widgetDisplay,
+            prevList: userInfo.prevList,
+            userAgent: window.navigator.userAgent,
+            time: userInfo.time,
+            ipAddress: userInfo.getIp(),
+            referrer: userInfo.referrer,
+            siteKey: sincloInfo.site.key,
+            socketId: socket.id,
+            tabId: userInfo.tabId,
+            sincloSessionId: userInfo.sincloSessionId,
+            token: common.token
+          }),
+          success: function(json) {
+
+          }
+        });
+      }
 
       // customEvent
       if (document.createEvent) {
