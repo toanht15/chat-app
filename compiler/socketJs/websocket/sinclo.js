@@ -9616,7 +9616,7 @@
         self.setPlaceholderMessage(self.getPlaceholderMessage());
         if (sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
           setTimeout(function() {
-            common.chatBotTypingCall({forceWaitAnimation: true});
+            common.chatBotTyping({forceWaitAnimation: true});
           }, 100);
           sinclo.diagramApi.callScenario.goToNextNode();
         }
