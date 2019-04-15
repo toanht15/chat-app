@@ -4,8 +4,10 @@ const express = require('express');
 const router = express.Router();
 const uuid = require('node-uuid');
 const CommonUtil = require('./module/class/util/common_utility');
-const SharedData = require('./module/shared_data');
-const SCChecker = require('./module/class/checker/SCChecker');
+var SCChecker = require('./module/SCChecker');
+var SharedData = require('./module/shared_data');
+// socket.joinは別途やる
+var checker = new SCChecker();
 
 router.options('/*', function(req, res) {
   // Website you wish to allow to connect
@@ -134,8 +136,6 @@ router.post('/auth/customer', function(req, res, next) {
       req.connection.remoteAddress;
 
   if (d.siteKey) {
-    // socket.joinは別途やる
-    const checker = new SCChecker();
     checker.widgetCheck(d, function(ret) {
       send.activeOperatorCnt = checker.getOperatorCnt(d.siteKey);
       send.widget = ret.opFlg;

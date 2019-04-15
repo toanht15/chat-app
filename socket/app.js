@@ -1,6 +1,4 @@
-var cluster = require('cluster');
 var express = require('express');
-var numCPUs = require('os').cpus().length;
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -11,10 +9,8 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var settings = require('./routes/settings');
 var api = require('./routes/api');
+var socket = require('./routes/module/socket_ctrl');
 
-if (cluster.isMaster) {
-  var socket = require('./routes/module/socket_ctrl');
-}
 // Timezone
 process.env.TZ = 'Asia/Tokyo';
 

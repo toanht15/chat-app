@@ -1,6 +1,7 @@
-const common = require('../../../module/common');
-const CommonUtil = require('../util/common_utility');
-const list = require('../../../module/company_list');
+const common = require('./common');
+const CommonUtil = require('./class/util/common_utility');
+const list = require('./company_list');
+var SharedData = require('./shared_data');
 
 module.exports = class SCChecker {
 
@@ -14,7 +15,6 @@ module.exports = class SCChecker {
       5: 'fri',
       6: 'sat'
     };
-
   }
 
   widgetCheck(d, callback) {
@@ -511,14 +511,16 @@ module.exports = class SCChecker {
   }
 
   isOperatorActive(siteKey) {
-    return (this.isWidgetShowStyleMinimize(siteKey) && getOperatorCnt(siteKey) >
+    return (this.isWidgetShowStyleMinimize(siteKey) &&
+        this.getOperatorCnt(siteKey) >
         0) ||
-        (this.isWidgetShowStyleMaximize(siteKey) && getOperatorCnt(siteKey) >
+        (this.isWidgetShowStyleMaximize(siteKey) &&
+            this.getOperatorCnt(siteKey) >
             0) ||
         (Number(
             common.widgetSettings[siteKey].style_settings.displayStyleType) ===
             4 &&
-            getOperatorCnt(siteKey) > 0);
+            this.getOperatorCnt(siteKey) > 0);
   }
 
   isWidgetShowStyleMaximize(siteKey) {

@@ -1,23 +1,62 @@
-let activeOperator = {}, // 待機中オペレーター
-    sincloCore = {}, // socketIDの管理
-    connectList = {}, // socketIDをキーとした管理
-    c_connectList = {}, // socketIDをキーとしたチャット管理
-    vc_connectList = {}, // tabId: socketID
-    doc_connectList = {'socketId': {}, 'timeout': {}}, // tabId: tabId
+var activeOperator, // 待機中オペレーター
+    sincloCore, // socketIDの管理
+    connectList, // socketIDをキーとした管理
+    c_connectList, // socketIDをキーとしたチャット管理
+    vc_connectList, // tabId: socketID
+    doc_connectList, // tabId: tabId
     // siteKeyをキーとした対応上限管理
     // scList = { 'siteKey': { user: { 'userId': '対応上限人数' },  cnt: { 'userId': '対応中人数' } } };
-    scList = {},
-    company = {
-      info: {}, // siteKeyをキーとした企業側ユーザー人数管理
-      user: {}, // socket.idをキーとした企業側ユーザー管理
-      timeout: {} // userIdをキーとした企業側ユーザー管理
-    }; // list.functionManager[siteKey][<accessId>_<socket.id>][<userObj>]
+    scList,
+    company; // list.functionManager[siteKey][<accessId>_<socket.id>][<userObj>]
 
-module.exports.activeOperator = activeOperator;
-module.exports.sincloCore = sincloCore;
-module.exports.connectList = connectList;
-module.exports.c_connectList = c_connectList;
-module.exports.vc_connectList = vc_connectList;
-module.exports.doc_connectList = doc_connectList;
-module.exports.scList = scList;
-module.exports.company = company;
+if (!activeOperator) {
+  activeOperator = {};
+}
+
+if (!sincloCore) {
+  sincloCore = {};
+}
+
+if (!connectList) {
+  connectList = {};
+}
+
+if (!c_connectList) {
+  c_connectList = {};
+}
+
+if (!vc_connectList) {
+  vc_connectList = {};
+}
+
+if (!doc_connectList) {
+  doc_connectList = {};
+}
+
+if (!scList) {
+  scList = {};
+}
+
+if (!company) {
+  company = {
+    info: {},
+    user: {},
+    timeout: {}
+  };
+}
+
+var SharedObject = (function() {
+  this.activeOperator = activeOperator;
+  this.sincloCore = sincloCore;
+  this.connectList = connectList;
+  this.c_connectList = c_connectList;
+  this.vc_connectList = vc_connectList;
+  this.doc_connectList = doc_connectList;
+  this.scList = scList;
+  this.company = company;
+
+  return this;
+})();
+
+module.exports = SharedObject;
+
