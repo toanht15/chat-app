@@ -4019,13 +4019,14 @@ io.sockets.on('connection', function(socket) {
   //新着チャット
   socket.on('sendChat', function(d, ack) {
     var obj = JSON.parse(d);
-    if (list.functionManager.isEnabled(d.siteKey,
+    if (list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.disableRealtimeMonitor)
         && !CommonUtil.isset(obj.historyId)) {
       let historyManager = new HistoryManager();
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       historyManager.addHistory(obj).then((result) => {
+        emit.toMine('setHistoryId', result, socket);
         SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
         SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
         SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
