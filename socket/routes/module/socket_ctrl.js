@@ -11,6 +11,8 @@ var LandscapeAPI = require('./landscape');
 var CogmoAttendAPICaller = require('./cogmo_attend');
 var ChatLogTimeManager = require('./chat_log_time_manager');
 var CommonUtil = require('./class/util/common_utility');
+var HistoryManager = require('./class/manager/history_manager');
+var CustomerInfoManager = require('./class/manager/customer_info_manager');
 
 // mysql
 var mysql = require('mysql2'),
@@ -4014,6 +4016,25 @@ io.sockets.on('connection', function(socket) {
   //新着チャット
   socket.on('sendChat', function(d, ack) {
     var obj = JSON.parse(d);
+    if (list.functionManager.isEnabled(d.siteKey,
+        list.functionManager.keyList.disableRealtimeMonitor)
+        && !CommonUtil.isset(obj.historyId)) {
+      let historyManager = new HistoryManager();
+      let customerInfoManager = new CustomerInfoManager();
+      let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
+      historyManager.addHistory(obj).then((result) => {
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
+        processSendChat(result, ack);
+      });
+    } else {
+      processSendChat(obj, ack);
+    }
+  });
+
+  var processSendChat = function(obj, ack) {
     //応対件数検索、登録
     getConversationCountUser(obj.userId, function(results) {
       if (results !== null) {
@@ -4067,7 +4088,7 @@ io.sockets.on('connection', function(socket) {
         }
       }
     });
-  });
+  };
 
   //新着チャット
   socket.on('sendFile', function(d, ack) {

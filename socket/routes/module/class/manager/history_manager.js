@@ -8,7 +8,7 @@ module.exports = class HistoryManager extends DatabaseManager {
     super();
   }
 
-  addHistory() {
+  addHistory(obj) {
     return new Promise((resolve, reject) => {
       if (CommonUtil.isset(obj.tabId) && CommonUtil.isset(obj.siteKey)) {
         if (!CommonUtil.isset(list.companyList[obj.siteKey]) ||

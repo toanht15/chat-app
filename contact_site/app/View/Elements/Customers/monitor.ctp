@@ -91,7 +91,7 @@
           }
           ?>
         </ul>
-        <?php if(empty($coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR]) || !$coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR] ): ?>
+      <?php if (!$coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] || (!empty($coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR]) && $coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR])): ?>
         <p class="tRight <?=$nowCntClass?>" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
         <?php endif; ?>
     </div>
