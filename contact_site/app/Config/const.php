@@ -69,6 +69,7 @@ define('C_COMPANY_USE_MESSAGE_RANKING', 'useMessageRanking');  // メッセー�
 define('C_COMPANY_USE_ICON_SETTINGS', 'iconSettings');  // ボット・有人時のアイコン設定
 define('C_COMPANY_USE_CUSTOM_WIDGET_SIZE', 'customWidgetSize');  // ウィジェットサイズ「カスタム」
 define('C_COMPANY_USE_CHATBOT_TREE_EDITOR', 'chatbotTreeEditor');  // オプション：チャットツリー
+define('C_COMPANY_DISABLE_REAL_TIME_MONITOR', 'disableRealtimeMonitor');  // リアルタイムモニタ無効
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 5000);

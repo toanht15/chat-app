@@ -1,7 +1,7 @@
 <!-- タイトル -->
 <div id='customer_title'>
     <div class="fLeft"><i class="fal fa-home fa-2x"></i></div>
-    <h1>リアルタイムモニタ
+    <h1><?php echo($coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] ? '有人応対' : 'リアルタイムモニタ') ?>
 <?php if ( $widgetCheck ){ ?>
   <?php if(strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
     <?php if(isset($coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]) && $coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]): ?>
