@@ -3468,7 +3468,7 @@
         message = message ? message : '';
         return message.replace(/{{(.+?)\}}/g, function(param) {
           var name = param.replace(/^{{(.+)}}$/, '$1');
-          return LocalStorageService.getItem('chatbotVariables', name) || name;
+          return LocalStorageService.getItem('chatbotVariables', name) || '';
         });
       };
 
