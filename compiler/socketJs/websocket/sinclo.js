@@ -10523,7 +10523,7 @@
         if (message) {
           return message.replace(/\{\{(.+?)\}\}/g, function(param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-            return self._getStoredVariable(name) || name;
+            return self._getStoredVariable(name) || '';
           });
         } else {
           return '';
