@@ -349,10 +349,11 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
       <span id="BanedType1Label">
         <label class="forcheckbox <?php if((($count >= 3)&&$uncheckedflg))echo "grayfont commontooltip"?>" data-text="一覧表示に登録できるのは3つまでです。" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
           <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => (($count >= 3)&&$uncheckedflg)]) ?>
-          この項目をリアルタイムモニターや履歴の一覧に表示する
+          この項目を<?php echo($coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] ? '有人応対' : 'リアルタイムモニタ') ?>や履歴の一覧に表示する
         </label>
         <div class="questionBallon">
-          <icon class="questionBtn commontooltip" data-text="リアルタイムモニタやチャット履歴の一覧画面に表示させる場合にチェックをしてください。（一覧に表示できる項目は最大で３つまでとなります。）">?</icon>
+          <icon class="questionBtn commontooltip"
+                data-text="<?php echo($coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] ? '有人応対' : 'リアルタイムモニタ') ?>やチャット履歴の一覧画面に表示させる場合にチェックをしてください。（一覧に表示できる項目は最大で３つまでとなります。）">?</icon>
         </div>
       </span>
     </div>

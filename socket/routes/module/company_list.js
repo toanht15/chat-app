@@ -150,7 +150,8 @@ var CompanyFunctionManager = function() {
       importExcelAutoMessage: 'importExcelAutoMessage',
       operatorPresenceView: 'operatorPresenceView',
       monitorPollingMode: 'monitorPollingMode',
-      useCogmoAttendApi: 'useCogmoAttendApi'
+      useCogmoAttendApi: 'useCogmoAttendApi',
+      disableRealtimeMonitor: 'disableRealtimeMonitor'
     },
     set: function(companyKey, coreSettings) {
       try {

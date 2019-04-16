@@ -88,7 +88,7 @@ module.exports = class CommonUtility {
       }
 
       if (keys.length > 1) {
-        return _lookup(obj[key], keys.splice(1).join('.'));
+        return CommonUtility.isKeyExists(obj[key], keys.splice(1).join('.'));
       }
       return true;
     }

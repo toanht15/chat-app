@@ -773,7 +773,7 @@
             token: common.token
           }),
           success: function(json) {
-
+            sinclo.setHistoryId(JSON.stringify(json));
           }
         });
       }

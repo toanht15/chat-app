@@ -112,7 +112,7 @@ router.post('/auth/customer', function(req, res, next) {
           )
       )
   ) {
-    send.sincloSessionId = uuid.v4;
+    send.sincloSessionId = uuid.v4();
     send.sincloSessionIdIsNew = true;
     d.data.firstConnection = true;
   } else {
@@ -238,6 +238,7 @@ router.post('/auth/info', function(req, res, next) {
     console.log('delete id : ' + oldSessionId);
     delete sessionIds[oldSessionId];
     console.log('remains : ' + Object.keys(sessionIds).length);
+    /* FIXME
     Object.keys(sessionIds).forEach(function(key) {
       if (!CommonUtil.isset(io.sockets.connected[key])) {
         console.log('delete not exist sessionId : ' + key);
@@ -255,6 +256,7 @@ router.post('/auth/info', function(req, res, next) {
         }
       }
     });
+     */
   }
 
   SharedData.connectList[obj.socketId] = {
@@ -266,7 +268,7 @@ router.post('/auth/info', function(req, res, next) {
   SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId = obj.socketId;
   if (CommonUtil.isset(obj.sincloSessionId)) {
     SharedData.sincloCore[obj.siteKey][obj.tabId].sincloSessionId = obj.sincloSessionId;
-    SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
+    SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[obj.socketId] = obj.socketId;
   }
   if (CommonUtil.isset(obj.tmpAutoMessages)) {
     try {
@@ -376,7 +378,7 @@ router.post('/auth/info', function(req, res, next) {
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = obj.customerInfo;
           }
           // socket.joinは後でやる
-          res.json(send);
+          res.json(obj);
         };
 
         if (CommonUtil.isset(SharedData.company.info[obj.siteKey]) &&
