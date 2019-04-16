@@ -7415,6 +7415,7 @@
             isScenarioMessage = true;
           } else if (value.did && value.sourceNodeId) {
             sinclo.diagramApi.common.changeAllowSaving();
+            sinclo.chatApi.saveFlg = true;
             messageType = sinclo.diagramApi.storage.getSendCustomerMessageType(
                 value.did, value.sourceNodeId);
             isDiagramMessage = true;
@@ -9636,7 +9637,9 @@
       _end: function() {
         // シナリオ終了
         console.log('シナリオ終了時にそもそもウェイトアニメーションを出さない');
-        common.chatBotTypingTimerClear();
+        if (!sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
+          common.chatBotTypingTimerClear();
+        }
         var self = sinclo.scenarioApi;
         self.syncScenarioData.sendDetail('endScenario');
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
@@ -9665,6 +9668,10 @@
         self._unsetUploadedFileData();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
         if (sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
+          setTimeout(function() {
+            common.chatBotTyping({forceWaitAnimation: true});
+            sinclo.chatApi.scDown();
+          }, 800);
           sinclo.diagramApi.callScenario.goToNextNode();
         }
       },
