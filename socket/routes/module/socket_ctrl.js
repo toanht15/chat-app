@@ -2459,8 +2459,8 @@ io.sockets.on('connection', function(socket) {
         }
       });
     }
-    if (CommonUtil.isset(list.functionManager[siteKey]) &&
-        Object.keys(list.functionManager[siteKey]).length === 0) {
+    if (!CommonUtil.isset(list.customerList[siteKey]) ||
+        Object.keys(list.customerList[siteKey]).length === 0) {
       emit.toMine('receiveAccessInfo', arr, socket);
       if (list.functionManager.isEnabled(siteKey,
           list.functionManager.keyList.monitorPollingMode)) {
@@ -5455,7 +5455,8 @@ io.sockets.on('connection', function(socket) {
     console.log('【' + socket.id + '】ON DISCONNECT');
     var info = {};
     // 資料共有の場合
-    if (SharedData.doc_connectList.socketId.hasOwnProperty(socket.id)) {
+    if (CommonUtil.isKeyExists(SharedData.doc_connectList, 'socketId') &&
+        SharedData.doc_connectList.socketId.hasOwnProperty(socket.id)) {
       info = SharedData.doc_connectList.socketId[socket.id]; // tabId, type(company or customer)
       var partner = (info.type === 'company') ? 'customer' : 'company';
       SharedData.doc_connectList.timeout[socket.id] = setTimeout(function() { // 3 minutes
