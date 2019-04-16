@@ -296,6 +296,12 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         $scope.createMessage();
       });
 
+      $scope.$watch('action_type', function(n, o) {
+        if (Number(n) === 1) {
+          $scope.$emit('resizeWidget');
+        }
+      });
+
       $(document).on('keyup', 'input[name^="keyword_"]', function(e){
         var val = $(this).val();
         console.log(val);
