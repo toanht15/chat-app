@@ -1733,7 +1733,35 @@ var socket, // socket.io
         } else {
           widgetWidth = $(window).width() - 20;
         }
-        ratio = widgetWidth * (1 / 285);
+
+        var viewportMetaTag = document.querySelector('meta[name="viewport"]');
+        var viewportMetaTagIsUsed = viewportMetaTag && viewportMetaTag.hasAttribute('content') ? true : false;
+        if (viewportMetaTagIsUsed) {
+          ratio = widgetWidth * (1 / 285);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + ratio);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
+        } else {
+          ratio = widgetWidth * (1 / 775);
+          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + ratio);
+          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
+          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
+          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
+          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
+          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
+          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
+        }
+
 
         html += '#sincloBox { -webkit-transition: 100ms linear 0ms;  transition: opacity 100ms linear 0ms; }';
         html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { position: relative }';
