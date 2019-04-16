@@ -4,7 +4,9 @@ const express = require('express');
 const router = express.Router();
 const uuid = require('node-uuid');
 const CommonUtil = require('./module/class/util/common_utility');
-var SCChecker = require('./module/SCChecker');
+var SCChecker = require('./module/class/checker/SCChecker');
+var CustomerInfoManager = require(
+    './module/class/manager/customer_info_manager');
 var list = require('./module/company_list');
 var SharedData = require('./module/shared_data');
 var LandscapeAPI = require('./module/landscape');
@@ -310,16 +312,7 @@ router.post('/auth/info', function(req, res, next) {
     }
   }
 
-  // SharedData.sincloCoreオブジェクトからセッションIDを取得する関数
-  var getSessionId = function getSessionId(siteKey, tabId, key) {
-    if ((siteKey in SharedData.sincloCore) &&
-        (tabId in SharedData.sincloCore[siteKey]) &&
-        (key in SharedData.sincloCore[siteKey][tabId])) {
-      return SharedData.sincloCore[siteKey][tabId][key];
-    }
-  };
-
-  if (!getSessionId(obj.siteKey, obj.tabId, 'parentTabId')) {
+  if (!SharedData.getSessionId(obj.siteKey, obj.tabId, 'parentTabId')) {
     SharedData.connectList[obj.socketId] = {
       siteKey: obj.siteKey,
       tabId: obj.tabId,
@@ -347,7 +340,6 @@ router.post('/auth/info', function(req, res, next) {
       }
     };
 
-    //FIXME 企業別機能設定（企業情報連携）
     getCompanyInfoFromApi(obj, obj.ipAddress, function(data) {
       try {
         if (data) {
@@ -367,6 +359,35 @@ router.post('/auth/info', function(req, res, next) {
             obj.ipAddress +
             '_' + obj.socketId]['lbcCode'] = obj.lbcCode;
           }
+        }
+
+        obj.term = CommonUtil.timeCalculator(obj);
+        if (SharedData.getSessionId(obj.siteKey, obj.tabId, 'chat')) {
+          obj.chat = SharedData.getSessionId(obj.siteKey, obj.tabId, 'chat');
+        }
+
+        var afterGetInformationProcess = function() {
+          list.customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress +
+          '@@' +
+          obj.socketId] = obj;
+
+          if (CommonUtil.isset(
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])) {
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = obj.customerInfo;
+          }
+          // socket.joinは後でやる
+          res.json(send);
+        };
+
+        if (CommonUtil.isset(SharedData.company.info[obj.siteKey]) &&
+            Object.keys(SharedData.company.info[obj.siteKey]).length > 0) {
+          let customerApi = new CustomerInfoManager();
+          customerApi.getInfo(obj.userId, obj.siteKey).then((information) => {
+            obj.customerInfo = information;
+            afterGetInformationProcess();
+          });
+        } else {
+          afterGetInformationProcess();
         }
       } catch (e) {
         console.log(

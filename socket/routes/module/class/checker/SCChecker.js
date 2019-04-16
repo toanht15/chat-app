@@ -1,7 +1,7 @@
-const common = require('./common');
-const CommonUtil = require('./class/util/common_utility');
-const list = require('./company_list');
-var SharedData = require('./shared_data');
+const common = require('../../common');
+const CommonUtil = require('../util/common_utility');
+const list = require('../../company_list');
+var SharedData = require('../../shared_data');
 
 module.exports = class SCChecker {
 

@@ -55,6 +55,14 @@ var SharedObject = (function() {
   this.scList = scList;
   this.company = company;
 
+  this.getSessionId = (siteKey, tabId, key) => {
+    if ((siteKey in this.sincloCore) &&
+        (tabId in this.sincloCore[siteKey]) &&
+        (key in this.sincloCore[siteKey][tabId])) {
+      return this.sincloCore[siteKey][tabId][key];
+    }
+  };
+
   return this;
 })();
 
