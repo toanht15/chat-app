@@ -2119,15 +2119,18 @@ io.sockets.on('connection', function(socket) {
     send = data;
 
     if (res.type !== 'admin') {
-      if (res.tabId && (CommonUtil.isKeyExists(authData, 'siteKey.tabId') &&
-          !CommonUtil.isKeyExists(authData, 'siteKey.tabId.timeoutTimer'))) {
+      if (res.tabId &&
+          (CommonUtil.isKeyExists(SharedData.sincloCore, 'siteKey.tabId') &&
+              !CommonUtil.isKeyExists(SharedData.sincloCore,
+                  'siteKey.tabId.timeoutTimer'))) {
         // 別タブを開いたときに情報がコピーされてしまっている状態
         console.log(
             'tabId is duplicate. change firstConnection flg ' + res.tabId);
         data.firstConnection = true;
       }
       if (res.tabId &&
-          CommonUtil.isKeyExists(authData, 'siteKey.tabId.timeoutTimer')) {
+          CommonUtil.isKeyExists(SharedData.sincloCore,
+              'siteKey.tabId.timeoutTimer')) {
         var currentSincloSessionId = SharedData.sincloCore[res.siteKey][res.tabId].sincloSessionId;
         if (currentSincloSessionId) {
           var oldSessionId = SharedData.sincloCore[res.siteKey][res.tabId].sessionId;
