@@ -1,6 +1,6 @@
 var database = require('../database');
 /* EXPORT TARGET VARIABLES */
-var mysql = require('mysql'),
+var mysql = require('mysql2'),
   pool = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',

@@ -10,7 +10,7 @@ var companySettings = {},
     operationHourSettings = {},
     chatSettings = {},
     customerInfoSettings = {},
-    mysql = require('mysql'),
+    mysql = require('mysql2'),
     pool = mysql.createPool({
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
