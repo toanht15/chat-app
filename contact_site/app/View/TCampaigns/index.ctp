@@ -8,7 +8,7 @@
     <h1>キャンペーン設定<span id="sortMessage"></span></h1>
   </div>
   <div id='tcampaigns_description'>
-      <span class="pre">サイトアクセス時のURL（ランディングURL）に特定のパラメータを含む場合に<?php echo($coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] ? '有人応対' : 'リアルタイムモニタ') ?>（および履歴）に任意のキャンペーン名を表示させることができます。&#10;どの広告からの流入かを可視化したい場合などに本設定をお使いください。
+      <span class="pre">サイトアクセス時のURL（ランディングURL）に特定のパラメータを含む場合に<?php echo($coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR] ? 'リアルタイムモニタ' : '有人応対') ?>（および履歴）に任意のキャンペーン名を表示させることができます。&#10;どの広告からの流入かを可視化したい場合などに本設定をお使いください。
       </span>
   </div>
 

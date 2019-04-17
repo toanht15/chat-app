@@ -615,7 +615,7 @@
         emitData.forceFirstConnect = true;
       }
 
-      if (window.sincloInfo.contract.disableRealtimeMonitor) {
+      if (!window.sincloInfo.contract.enableRealtimeMonitor) {
         $.ajax({
           type: 'post',
           url: window.sincloInfo.site.files + '/api/auth/customer',
@@ -745,7 +745,7 @@
         connectSuccessData.tmpAutoMessages = tmpAutoMessages;
       }
 
-      if (!window.sincloInfo.contract.disableRealtimeMonitor) {
+      if (window.sincloInfo.contract.enableRealtimeMonitor) {
         emit('connectSuccess', connectSuccessData, function(ev) {
           if ((userInfo.gFrame && Number(userInfo.accessType) ===
               Number(cnst.access_type.guest)) === false) {
@@ -3548,7 +3548,9 @@
           sinclo.displayTextarea();
         }
 
-        emit('getChatMessage', {showName: sincloInfo.widget.showName});
+        if (sincloInfo.contract.enableRealtimeMonitor) {
+          emit('getChatMessage', {showName: sincloInfo.widget.showName});
+        }
         common.reloadWidgetRemove();
       },
       initEvent: function() {

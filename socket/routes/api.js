@@ -136,7 +136,8 @@ router.post('/auth/customer', function(req, res, next) {
     send.time = send.pagetime;
   }
 
-  send.ipAddress = req.headers['x-forwarded-for'] ||
+  send.ipAddress = '127.0.0.1' ||
+      req.headers['x-forwarded-for'] ||
       req.connection.remoteAddress;
 
   if (d.siteKey) {
@@ -372,7 +373,8 @@ router.post('/auth/info', function(req, res, next) {
           list.customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress +
           '@@' +
           obj.socketId] = obj;
-
+          let mergedObj = Object.assign(
+              SharedData.sincloCore[obj.siteKey][obj.tabId], obj);
           if (CommonUtil.isset(
               SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])) {
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = obj.customerInfo;

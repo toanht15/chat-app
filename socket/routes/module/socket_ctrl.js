@@ -597,7 +597,11 @@ function getConversationCountUser(visitors_id, callback) {
 function addChatActiveUser(t_history_chat_logs_id, m_users_id, siteKey) {
   pool.query(
       'INSERT INTO t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',
-      [t_history_chat_logs_id, companyList[siteKey], m_users_id, new Date()],
+      [
+        t_history_chat_logs_id,
+        list.companyList[siteKey],
+        m_users_id,
+        new Date()],
       function(err, results) {
         if (CommonUtil.isset(err)) {
           console.log(
@@ -1149,7 +1153,9 @@ io.sockets.on('connection', function(socket) {
                   d.notifyToCompany
             };
             if (list.functionManager.isEnabled(d.siteKey,
-                list.functionManager.keyList.monitorPollingMode)) {
+                list.functionManager.keyList.monitorPollingMode)
+                || !list.functionManager.isEnabled(d.siteKey,
+                    list.functionManager.keyList.enableRealtimeMonitor)) {
               var sId = SharedData.sincloCore[d.siteKey][d.tabId].sessionId;
               Object.keys(list.customerList[d.siteKey]).forEach(function(key) {
                 if (key.indexOf(sId) >= 0) {
@@ -4019,12 +4025,13 @@ io.sockets.on('connection', function(socket) {
   //新着チャット
   socket.on('sendChat', function(d, ack) {
     var obj = JSON.parse(d);
-    if (list.functionManager.isEnabled(obj.siteKey,
-        list.functionManager.keyList.disableRealtimeMonitor)
+    if (!list.functionManager.isEnabled(obj.siteKey,
+        list.functionManager.keyList.enableRealtimeMonitor)
         && !CommonUtil.isset(obj.historyId)) {
       let historyManager = new HistoryManager();
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
+      obj = Object.assign(obj, target);
       historyManager.addHistory(obj).then((result) => {
         emit.toMine('setHistoryId', result, socket);
         SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;

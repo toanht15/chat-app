@@ -151,7 +151,7 @@ var CompanyFunctionManager = function() {
       operatorPresenceView: 'operatorPresenceView',
       monitorPollingMode: 'monitorPollingMode',
       useCogmoAttendApi: 'useCogmoAttendApi',
-      disableRealtimeMonitor: 'disableRealtimeMonitor'
+      enableRealtimeMonitor: 'enableRealtimeMonitor'
     },
     set: function(companyKey, coreSettings) {
       try {

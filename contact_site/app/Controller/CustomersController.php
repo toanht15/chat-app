@@ -17,7 +17,7 @@ class CustomersController extends AppController {
   public function beforeRender(){
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     $this->set('muserId', $this->userInfo['id']);
-    $this->set('title_for_layout', ($this->coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] ? '有人応対' : 'リアルタイムモニタ'));
+    $this->set('title_for_layout', ($this->coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR] ? '有人応対' : 'リアルタイムモニタ'));
   }
 
   /* *

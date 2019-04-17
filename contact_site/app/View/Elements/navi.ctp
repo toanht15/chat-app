@@ -107,7 +107,7 @@ if( strtolower($iconMainColor) === "#b2d251") {
         <div class="icon <?=$monitorSelected?>">
           <?php
           $homeTitle = 'ﾘｱﾙﾀｲﾑﾓﾆﾀ';
-          if ($coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR]) {
+          if (!$coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR]) {
             $homeTitle = '有人応対';
           }
           echo $this->htmlEx->naviFaIconLink($homeTitle, 'fa-home',
@@ -246,7 +246,7 @@ if( strtolower($iconMainColor) === "#b2d251") {
         <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('チャット履歴', '', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
-        <?php if (!$coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR]): ?>
+        <?php if ($coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR]): ?>
             <div class="icon">
               <?= $this->htmlEx->naviFaIconLink('アクセス履歴', '', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
             </div>

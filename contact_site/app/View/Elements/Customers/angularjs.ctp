@@ -513,7 +513,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.beforeInputValue = '';
     $scope.searchResult = [];
     $scope.search = function(array, forceResult){
-      var isHideRealTimeMonitor = (contract.hideRealtimeMonitor || contract.disableRealtimeMonitor);
+      var isHideRealTimeMonitor = (contract.hideRealtimeMonitor || !contract.enableRealtimeMonitor);
       var result = {}, targetField;
       targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
       if(isHideRealTimeMonitor) {
@@ -2619,7 +2619,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.tmpMonitorList[obj[index].tabId] = obj[index];
         });
       } else {
-        if (!contract.hideRealtimeMonitor || !contract.disableRealtimeMonitor) {
+        if (!contract.hideRealtimeMonitor || contract.enableRealtimeMonitor) {
           setTimeout(function(){
             $scope.$apply(function(){
               obj.forEach(function(elm, index, arr) {
@@ -2657,7 +2657,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
       Object.keys($scope.monitorList).forEach(function(elm, index, arr){
         if ($scope.tmpMonitorList[elm] ||
-            ((contract.hideRealtimeMonitor || contract.disableRealtimeMonitor) && $scope.searchText.length === 4)) {
+            ((contract.hideRealtimeMonitor || !contract.enableRealtimeMonitor) && $scope.searchText.length === 4)) {
           return;
         } else {
           delete $scope.monitorList[elm];

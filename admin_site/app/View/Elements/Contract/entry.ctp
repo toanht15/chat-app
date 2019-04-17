@@ -101,15 +101,15 @@
     <span><label>オプション</label></span>
     <div>
       <?php if (ALLOW_DISABLE_REALTIME_MONITOR): ?>
-        <?= $this->Form->input('MCompany.options.disableRealtimeMonitor', array(
+        <?= $this->Form->input('MCompany.options.enableRealtimeMonitor', array(
             'type' => 'checkbox',
-            'default' => true,
-            'label' => 'リアルタイムモニタ無効',
+            'default' => false,
+            'label' => 'リアルタイムモニター',
             'div' => ['id' => 'chatbotTreeEditor']
         )) ?>
       <?php else: ?>
-        <?= $this->Form->input('MCompany.options.disableRealtimeMonitor',
-            array('type' => 'hidden', 'default' => true, 'label' => 'リアルタイムモニタ無効', 'div' => false)) ?>
+        <?= $this->Form->input('MCompany.options.enableRealtimeMonitor',
+            array('type' => 'hidden', 'default' => false, 'label' => 'リアルタイムモニター', 'div' => false)) ?>
       <?php endif; ?>
       <?= $this->Form->input('MCompany.options.refCompanyData', array(
           'type' => 'checkbox',
