@@ -1181,7 +1181,10 @@ io.sockets.on('connection', function(socket) {
                   insertData.t_histories_id, 3, insertData.created);
               if ((d.messageType === 1 || d.messageType === 303) &&
                   insertData.message_read_flg != 1) {
-                SharedData.sincloCore[d.siteKey][d.tabId].chatUnreadId = results.insertId;
+                if (!CommonUtil.isset(
+                    SharedData.sincloCore[d.siteKey][d.tabId].chatUnreadId)) {
+                  SharedData.sincloCore[d.siteKey][d.tabId].chatUnreadId = results.insertId;
+                }
                 SharedData.sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
               }
               pool.query(
@@ -2384,13 +2387,20 @@ io.sockets.on('connection', function(socket) {
             chatApi.getUnreadCnt(val, function(ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
               val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
-              if (list.functionManager.isEnabled(siteKey,
+              if (!list.functionManager.isEnabled(siteKey,
+                  list.functionManager.keyList.enableRealtimeMonitor) && (
+                  (CommonUtil.isset(val['chatUnreadCnt']) &&
+                      val['chatUnreadCnt'] === 0) &&
+                  (!CommonUtil.isset(val['responderId']) &&
+                      !CommonUtil.isset(val['chat'])))) {
+                // 何もしない
+              } else if ((list.functionManager.isEnabled(siteKey,
                   list.functionManager.keyList.hideRealtimeMonitor)
                   && list.functionManager.isEnabled(siteKey,
-                      list.functionManager.keyList.monitorPollingMode)
-                  && ((CommonUtil.isset(val['chatUnreadCnt']) &&
-                      val['chatUnreadCnt'] ===
-                      0) && !CommonUtil.isset(val['responderId']) &&
+                      list.functionManager.keyList.monitorPollingMode))
+                  && (CommonUtil.isset(val['chatUnreadCnt']) &&
+                      val['chatUnreadCnt'] === 0 &&
+                      !CommonUtil.isset(val['responderId']) &&
                       !CommonUtil.isset(val['chat']))) {
                 // 何もしない
               } else {
@@ -2413,13 +2423,19 @@ io.sockets.on('connection', function(socket) {
               totalCounter++;
             });
           } else {
-            if (list.functionManager.isEnabled(siteKey,
-                list.functionManager.keyList.hideRealtimeMonitor)
-                && list.functionManager.isEnabled(siteKey,
-                    list.functionManager.keyList.monitorPollingMode)
-                &&
-                ((!CommonUtil.isset(val['chatUnreadCnt']) ||
-                    val['chatUnreadCnt'] === 0) &&
+            if (!list.functionManager.isEnabled(siteKey,
+                list.functionManager.keyList.enableRealtimeMonitor) && (
+                (CommonUtil.isset(val['chatUnreadCnt']) &&
+                    val['chatUnreadCnt'] === 0) ||
+                (!CommonUtil.isset(val['responderId']) &&
+                    !CommonUtil.isset(val['chat'])))
+                ||
+                (list.functionManager.isEnabled(siteKey,
+                    list.functionManager.keyList.hideRealtimeMonitor)
+                    && list.functionManager.isEnabled(siteKey,
+                        list.functionManager.keyList.monitorPollingMode))
+                && (CommonUtil.isset(val['chatUnreadCnt']) &&
+                    val['chatUnreadCnt'] === 0 &&
                     !CommonUtil.isset(val['responderId']) &&
                     !CommonUtil.isset(val['chat']))) {
               // 何もしない

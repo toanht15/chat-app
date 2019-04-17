@@ -624,6 +624,7 @@
           data: JSON.stringify({
             siteKey: sincloInfo.site.key,
             type: 'user',
+            userId: userInfo.userId,
             tabId: userInfo.tabId,
             sincloSessionId: userInfo.sincloSessionId,
             token: common.token,

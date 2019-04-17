@@ -107,8 +107,8 @@ router.post('/auth/customer', function(req, res, next) {
           && (!CommonUtil.isset(d.sincloSessionId)
               || !CommonUtil.isKeyExists(SharedData.sincloCore,
                   d.siteKey + '.' + d.sincloSessionId)
-              || !CommonUtil.isKeyExists(d,
-                  d.siteKey + '.' + d.sincloSessionId + '.sessionIds')
+              || !CommonUtil.isKeyExists(SharedData.sincloCore,
+                  d.siteKfey + '.' + d.sincloSessionId + '.sessionIds')
           )
       )
   ) {
