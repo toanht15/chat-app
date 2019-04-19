@@ -2,6 +2,7 @@ var companyList = {};
 var customerList = {};
 var initialized = false;
 var database = require('../database');
+var common = require('./common');
 var CommonUtil = require('./class/util/common_utility');
 var SharedData = require('./shared_data');
 // mysql

@@ -137,6 +137,19 @@
     <?= $this->Form->input('MCompany.limit_users', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
     <?php if (!empty($errors['limit_users'])) echo "<li class='error-message'>" . h($errors['limit_users'][0]) . "</li>"; ?>
   </li>
+<?php if (ALLOW_SET_CV_VALUE): ?>
+    <!-- /* CV単価 */ -->
+    <li>
+        <div class="labelArea fLeft"><span class="require"><label>CV単価</label></span></div>
+      <?= $this->Form->input('MAgreements.cv_value',
+          array('type' => 'text', 'div' => false, 'label' => false, 'maxlength' => 9)) ?>
+      <?php if (!empty($errors['cv_value'])) {
+        echo "<li class='error-message'>" . h($errors['cv_value'][0]) . "</li>";
+      } ?>
+    </li>
+<?php else: ?>
+
+<?php endif; ?>
   <li><h2>期間設定</h2></li>
   <!-- /* トライアル開始日 */ -->
   <li>

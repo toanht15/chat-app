@@ -74,5 +74,19 @@ $(function(){
     $('#MCompanyLaLimitUsers').prop('disabled', true).css('background-color', "#999");
     $('#laLimitUsers').hide();
   }
+
+  // フォーカスアウト
+  $('#MAgreementsCvValue').on('blur', function() {
+    var num = $(this).val();
+    num = num.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    $(this).val(num);
+  });
+
+  // フォーカス
+  $('#MAgreementsCvValue').on('focus', function() {
+    var num = $(this).val();
+    num = num.replace(/,/g, '');
+    $(this).val(num);
+  });
 });
 </script>

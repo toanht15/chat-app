@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var CommonUtil = require('./module/class/util/common_utility');
 var common = require('./module/common');
 var list = require('./module/company_list');
 var SharedData = require('./module/shared_data');
@@ -36,7 +37,16 @@ router.get("/", function (req, res, next) {
   }
   var siteKey = req['query']['sitekey'];
   var accessType = req['query']['accessType'];
+  var tabId = req['query']['s'];
   var sendData = {status: true, widget: {}, chat: {settings: {}}, messages: {}, customVariable: [], contract: {}};
+
+  if (CommonUtil.isKeyExists(SharedData.sincloCore, siteKey + '.' + tabId)) {
+    res.send({
+      status: true,
+      nm: true // not modified
+    });
+    return true;
+  }
 
   function isNumeric(str) {
     var num = Number(str);

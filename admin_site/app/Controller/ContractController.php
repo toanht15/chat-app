@@ -400,12 +400,13 @@ class ContractController extends AppController
 
       if (empty($agreementEditData)) {
         $this->MAgreements->create();
-        $this->MAgreements->set([
+        $this->MAgreements->set(array(
           'm_companies_id' => $companyEditData['MCompany']['id'],
           'trial_start_day' => $saveData['MAgreements']['application_day'],
           'trial_end_day' => $saveData['MAgreements']['application_day'],
           'agreement_start_day' => $saveData['MAgreements']['agreement_start_day'],
           'agreement_end_day' => $saveData['MAgreements']['agreement_end_day'],
+            'cv_value' => str_replace(',', '', $saveData['MAgreements']['cv_value']),
           'application_department' => $saveData['MAgreements']['application_department'],
           'application_position' => $saveData['MAgreements']['application_position'],
           'application_name' => $saveData['MAgreements']['application_name'],
@@ -416,11 +417,15 @@ class ContractController extends AppController
           'administrator_mail_address' => $saveData['MAgreements']['administrator_mail_address'],
           'installation_url' => $saveData['MAgreements']['installation_url'],
           'business_model' => $saveData['MAgreements']['business_model'],
-        ]);
+        ));
         $this->MAgreements->save();
       } else {
         $agreementSaveData = [];
         $agreementSaveData['MAgreements'] = array_merge($agreementEditData['MAgreements'], $saveData['MAgreements']);
+        if (!empty($agreementSaveData['MAgreements']['cv_value'])) {
+          $agreementSaveData['MAgreements']['cv_value'] = str_replace(',', '',
+              $agreementSaveData['MAgreements']['cv_value']);
+        }
         $this->MAgreements->save($agreementSaveData, false);
       }
 
@@ -673,6 +678,9 @@ class ContractController extends AppController
     if (empty($agreementInfo['trial_end_day'])) {
       $agreementInfo['trial_end_day'] = "";
     }
+    if (empty($agreementInfo['cv_value'])) {
+      $agreementInfo['cv_value'] = 0;
+    }
     if (empty($agreementInfo['memo'])) {
       $agreementInfo['memo'] = "";
     }
@@ -709,6 +717,7 @@ class ContractController extends AppController
       'trial_end_day' => $agreementInfo['trial_end_day'],
       'agreement_start_day' => $agreementInfo['agreement_start_day'],
       'agreement_end_day' => $agreementInfo['agreement_end_day'],
+        'cv_value' => str_replace(',', '', $agreementInfo['cv_value']),
       'application_department' => $agreementInfo['application_department'],
       'application_position' => $agreementInfo['application_position'],
       'application_name' => $agreementInfo['application_name'],
