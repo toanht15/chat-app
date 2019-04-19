@@ -617,10 +617,14 @@
 
       if (!window.sincloInfo.contract.enableRealtimeMonitor) {
         $.ajax({
+          headers: {
+            'Accept': 'text/plain, application/json; charset=utf-8',
+            'Content-Type': 'application/json; charset=utf-8'
+          },
           type: 'post',
           url: window.sincloInfo.site.files + '/api/auth/customer',
           dataType: 'json',
-          contentType: 'application/JSON',
+          contentType: 'application/json',
           data: JSON.stringify({
             siteKey: sincloInfo.site.key,
             type: 'user',
@@ -734,7 +738,7 @@
       var connectSuccessData = {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
-        prevList: userInfo.prevList,
+        prevList: userInfo.prev,
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
@@ -762,9 +766,10 @@
           data: JSON.stringify({
             confirm: false,
             widget: window.sincloInfo.widgetDisplay,
-            prevList: userInfo.prevList,
+            prevList: userInfo.prev,
             userAgent: window.navigator.userAgent,
             time: userInfo.time,
+            accessId: userInfo.accessId,
             ipAddress: userInfo.getIp(),
             referrer: userInfo.referrer,
             siteKey: sincloInfo.site.key,
