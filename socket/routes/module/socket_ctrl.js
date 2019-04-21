@@ -3451,8 +3451,10 @@ io.sockets.on('connection', function(socket) {
           'is null.');
       return false;
     }
-    if (!list.customerList.isEnabled(chat.siteKey,
-        list.customerList.keyList.monitorPollingMode)) {
+    if (!list.functionManager.isEnabled(chat.siteKey,
+        list.functionManager.keyList.monitorPollingMode)
+        || !list.functionManager.isEnabled(chat.siteKey,
+            list.functionManager.keyList.enableRealtimeMonitor)) {
       emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
     }
     emit.toSameUser('resAutoChatMessage', chat, chat.siteKey,
@@ -5773,8 +5775,8 @@ io.sockets.on('connection', function(socket) {
               if (sincloSessionId) {
                 if (CommonUtil.isset(
                     SharedData.sincloCore[info.siteKey][sincloSessionId])
-                    && CommonUtil.isset(
-                        SharedData.sincloCore[info.siteKey][sincloSessionId]['sessionIds'])) {
+                    && CommonUtil.isKeyExists(SharedData.sincloCore,
+                        info.siteKey + '.' + sincloSessionId + '.sessionIds')) {
                   var sessionIds = SharedData.sincloCore[info.siteKey][sincloSessionId].sessionIds;
                   delete sessionIds[socket.id];
                   if (Object.keys(sessionIds).length === 0) {

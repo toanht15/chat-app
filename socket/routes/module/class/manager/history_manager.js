@@ -72,6 +72,7 @@ module.exports = class HistoryManager extends DatabaseManager {
   }
 
   getChatHistory(obj) { // 最初にデータを取得するとき
+    let self = this;
     return new Promise((resolve, reject) => {
       var chatData = {historyId: null, messages: []};
       var historyId = SharedData.getSessionId(obj.siteKey, obj.tabId,
@@ -85,7 +86,7 @@ module.exports = class HistoryManager extends DatabaseManager {
         sql += 'LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ';
         sql += 'WHERE t_histories_id = ? AND chat.hide_flg = 0 ORDER BY created';
 
-        pool.query(sql, [chatData.historyId], function(err, rows) {
+        self.dbPool.query(sql, [chatData.historyId], function(err, rows) {
           if (err !== null && err !== '') reject(null); // DB接続断対応
           var messages = (CommonUtil.isset(rows)) ? rows : [];
           var setList = {};
@@ -169,6 +170,7 @@ module.exports = class HistoryManager extends DatabaseManager {
           resolve(obj);
         });
       } else {
+        var setList = {};
         obj.chat = chatData;
         var autoMessages = [];
         if (obj.sincloSessionId in SharedData.sincloCore[obj.siteKey] &&
@@ -243,7 +245,8 @@ module.exports = class HistoryManager extends DatabaseManager {
     });
   }
 
-  timeUpdate(historyId, obj, time, callback) {
+  timeUpdate(historyId, obj, time) {
+    let self = this;
     return new Promise((resolve, reject) => {
       var insertStayData = {
             t_histories_id: historyId,
@@ -252,8 +255,7 @@ module.exports = class HistoryManager extends DatabaseManager {
             stay_time: '',
             created: time,
             modified: time
-          },
-          self = this;
+      };
 
       self.dbPool.query(
           'SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;',

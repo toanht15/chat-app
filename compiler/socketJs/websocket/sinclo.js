@@ -811,6 +811,15 @@
             if (window.sincloInfo.contract.chat) {
               // チャット情報読み込み
               sinclo.chatApi.init();
+              if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+                sinclo.chatMessageData(JSON.stringify({
+                  siteKey: obj.siteKey,
+                  token: obj.token,
+                  chat: obj.chat,
+                  tabId: obj.tabId,
+                  sincloSessionId: obj.sincloSessionId
+                }));
+              }
             }
           };
 
