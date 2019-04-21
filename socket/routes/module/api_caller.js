@@ -1,13 +1,7 @@
 'use strict';
 var database = require('../database');
 /* EXPORT TARGET VARIABLES */
-var mysql = require('mysql2'),
-  pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || 'password',
-    database: process.env.DB_NAME || 'sinclo_db'
-  });
+var DBConnector = require('./class/util/db_connector_util');
 var request = require('request');
 var moment = require('moment');
 /* Private Variables */
@@ -54,7 +48,10 @@ module.exports = class APICaller {
 
   processSave (insertData, stayLogsId, created) {
     return new Promise(((resolve, reject) => {
-      pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id, (err, rows) => {
+      DBConnector.getPool().
+          query(
+              'SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;',
+              insertData.t_histories_id, (err, rows) => {
         if (err !== null && err !== '') {
           reject(err);
         }
@@ -62,7 +59,9 @@ module.exports = class APICaller {
           insertData.t_history_stay_logs_id = stayLogsId ? stayLogsId : rows[0].id;
         }
         insertData.created = created ? new Date(created) : new Date();
-        pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, (error, results) => {
+                DBConnector.getPool().
+                    query('INSERT INTO t_history_chat_logs SET ?', insertData,
+                        (error, results) => {
           if (error !== null && error !== '') {
             reject(error);
           }

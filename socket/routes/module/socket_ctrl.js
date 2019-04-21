@@ -14,15 +14,7 @@ var CommonUtil = require('./class/util/common_utility');
 var HistoryManager = require('./class/manager/history_manager');
 var CustomerInfoManager = require('./class/manager/customer_info_manager');
 
-// mysql
-var mysql = require('mysql2'),
-    pool = mysql.createPool({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
-    });
-
+var DBConnector = require('./class/util/db_connector_util');
 // log4js
 var log4js = require('log4js'); // log4jsモジュール読み込み
 
@@ -65,7 +57,7 @@ function timeUpdate(historyId, obj, time, callback) {
     modified: time
   };
 
-  pool.query(
+  DBConnector.getPool().query(
       'SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;',
       historyId,
       function(err, rows) {
@@ -76,7 +68,7 @@ function timeUpdate(historyId, obj, time, callback) {
         if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
           // UPDATE
           var stayTime = CommonUtil.calcTime(rows[0].created, time);
-          pool.query(
+          DBConnector.getPool().query(
               'UPDATE t_history_stay_logs SET stay_time = ? WHERE id = ?',
               [stayTime, rows[0].id],
               function(error, results, fields) {
@@ -85,7 +77,7 @@ function timeUpdate(historyId, obj, time, callback) {
         } else {
           rows[0] = {url: null};
         }
-        pool.query(
+        DBConnector.getPool().query(
             'UPDATE t_histories SET out_date = ?, modified = ? WHERE id = ?',
             [time, time, historyId],
             function(error, results, fields) {
@@ -96,7 +88,8 @@ function timeUpdate(historyId, obj, time, callback) {
           callback(rows[0].id);
           return true;
         }
-        pool.query('INSERT INTO t_history_stay_logs SET ?', insertStayData,
+        DBConnector.getPool().
+            query('INSERT INTO t_history_stay_logs SET ?', insertStayData,
             function(error, results, fields) {
               callback(results.insertId);
               return true;
@@ -118,7 +111,7 @@ function makeToken() {
 };
 
 function getCompanyList(forceReload) {
-  pool.query('select * from m_companies where del_flg = 0;',
+  DBConnector.getPool().query('select * from m_companies where del_flg = 0;',
       function(err, rows) {
         if (err !== null && err !== '') return false; // DB接続断対応
         var key = Object.keys(rows);
@@ -578,7 +571,7 @@ function sincloReconnect(socket) {
 
 //応対件数カウント
 function getConversationCountUser(visitors_id, callback) {
-  pool.query(
+  DBConnector.getPool().query(
       'SELECT conversation_count FROM t_conversation_count WHERE visitors_id = ?',
       [visitors_id], function(err, results) {
         if (CommonUtil.isset(err)) {
@@ -595,7 +588,7 @@ function getConversationCountUser(visitors_id, callback) {
 
 //待機中オペレータ情報登録
 function addChatActiveUser(t_history_chat_logs_id, m_users_id, siteKey) {
-  pool.query(
+  DBConnector.getPool().query(
       'INSERT INTO t_history_chat_active_users(t_history_chat_logs_id,m_companies_id,m_users_id,created) VALUES(?,?,?,?)',
       [
         t_history_chat_logs_id,
@@ -640,7 +633,8 @@ var db = {
           start_time: now,
           finish_time: now
         };
-        pool.query('INSERT INTO t_history_share_displays SET ?', insertData,
+        DBConnector.getPool().
+            query('INSERT INTO t_history_share_displays SET ?', insertData,
             function(error, results, fields) {
               if (error !== null && error !== '') return false; // DB接続断対応
               SharedData.sincloCore[obj.siteKey][tabId].sdHistoryId = results.insertId;
@@ -656,13 +650,14 @@ var db = {
   },
   timeUpdateToDisplayShare: function(now, sdHistoryId) {
     // 渡されたIDをもとに検索
-    pool.query('SELECT * FROM t_history_share_displays WHERE id = ?;',
+    DBConnector.getPool().
+        query('SELECT * FROM t_history_share_displays WHERE id = ?;',
         [sdHistoryId], function(err, rows) {
           if (err !== null && err !== '') return false; // DB接続断対応
           // データが見つかった場合
           if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
             // アップデートする
-            pool.query(
+            DBConnector.getPool().query(
                 'UPDATE t_history_share_displays SET finish_time = ? WHERE id = ?',
                 [now, sdHistoryId],
                 function(error, results, fields) {
@@ -676,7 +671,7 @@ var db = {
       if (!CommonUtil.isset(list.companyList[obj.siteKey]) ||
           obj.subWindow) return false;
       var siteId = list.companyList[obj.siteKey];
-      pool.query(
+      DBConnector.getPool().query(
           'SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;',
           [siteId, obj.sincloSessionId || obj.tabId, obj.userId],
           function(err, rows) {
@@ -707,7 +702,8 @@ var db = {
                 modified: now
               };
 
-              pool.query('INSERT INTO t_histories SET ?', insertData,
+              DBConnector.getPool().
+                  query('INSERT INTO t_histories SET ?', insertData,
                   function(error, results, fields) {
                     if (error && (error !== null && error !== '')) return false; // DB接続断対応
                     var historyId = results.insertId;
@@ -750,7 +746,7 @@ var db = {
         });
       }
       if (found) {
-        pool.query(
+        DBConnector.getPool().query(
             'SELECT * from m_customers where m_companies_id = ? AND visitors_id = ? order by id desc',
             [list.companyList[obj.siteKey], obj.userId], function(err, row) {
               if (err !== null && err !== '') {
@@ -768,7 +764,7 @@ var db = {
                     currentData[key] = customVariables[key];
                   }
                 });
-                pool.query(
+                DBConnector.getPool().query(
                     'UPDATE m_customers set informations = ? where id = ? ',
                     [JSON.stringify(currentData), row[0].id],
                     function(err, result) {
@@ -779,7 +775,7 @@ var db = {
                       });
                     });
               } else {
-                pool.query(
+                DBConnector.getPool().query(
                     'INSERT INTO m_customers VALUES (NULL, ?, ?, ?, now(), 0, NULL, NULL, NULL, NULL)',
                     [
                       list.companyList[obj.siteKey],
@@ -806,7 +802,7 @@ var db = {
    */
 
   addLeadInformation: function(obj) {
-    pool.query(
+    DBConnector.getPool().query(
         'INSERT INTO t_lead_lists VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, now())', [
           list.companyList[obj.siteKey],
           Number(obj.leadSettingsId),
@@ -906,7 +902,8 @@ io.sockets.on('connection', function(socket) {
         sql += 'LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ';
         sql += 'WHERE t_histories_id = ? AND chat.hide_flg = 0 ORDER BY created';
 
-        pool.query(sql, [chatData.historyId], function(err, rows) {
+        DBConnector.getPool().
+            query(sql, [chatData.historyId], function(err, rows) {
           if (err !== null && err !== '') return false; // DB接続断対応
           var messages = (CommonUtil.isset(rows)) ? rows : [];
           var setList = {};
@@ -1008,7 +1005,7 @@ io.sockets.on('connection', function(socket) {
         achievement_flg: d.achievementFlg
       };
 
-      pool.query(
+      DBConnector.getPool().query(
           'SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;',
           insertData.t_histories_id,
           function(err, rows) {
@@ -1041,7 +1038,8 @@ io.sockets.on('connection', function(socket) {
               insertData.message_distinction = d.messageDistinction;
             }
 
-            pool.query('INSERT INTO t_history_chat_logs SET ?', insertData,
+            DBConnector.getPool().
+                query('INSERT INTO t_history_chat_logs SET ?', insertData,
                 function(error, results) {
                   chatApi._handleInsertData(error, results, d,
                       noReturnSelfMessage, insertData);
@@ -1187,7 +1185,7 @@ io.sockets.on('connection', function(socket) {
                 }
                 SharedData.sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
               }
-              pool.query(
+              DBConnector.getPool().query(
                   'UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;',
                   [
                     SharedData.sincloCore[d.siteKey][d.tabId].historyId,
@@ -1200,7 +1198,7 @@ io.sockets.on('connection', function(socket) {
 
             // 応対不可だった場合、既読にする
             historyId = SharedData.sincloCore[d.siteKey][d.tabId].historyId;
-            pool.query(
+            DBConnector.getPool().query(
                 'UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;',
                 [historyId, results.insertId], function(err, ret, fields) {
 
@@ -1270,7 +1268,7 @@ io.sockets.on('connection', function(socket) {
         if (d.isDiagramMessage) {
           var obj = d.chatMessage;
           var sql = 'INSERT INTO t_history_diagram_logs VALUES (null,?,?,?,?,?,0,now(),NULL,NULL)';
-          pool.query(sql, [
+          DBConnector.getPool().query(sql, [
             list.companyList[d.siteKey],
             results.insertId,
             obj.did,
@@ -1285,7 +1283,8 @@ io.sockets.on('connection', function(socket) {
         if (d.messageRequestFlg == 1) {
           var companyId = list.companyList[d.siteKey];
           var getUserInfo = 'SELECT chat.sc_flg as sc_flg, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;';
-          pool.query(getUserInfo, [companyId], function(err, result) {
+          DBConnector.getPool().
+              query(getUserInfo, [companyId], function(err, result) {
             //ウィジェットが常に表示する場合
             if (result[0].display_type == 1) {
               //対応数上限設定ある場合
@@ -1378,7 +1377,7 @@ io.sockets.on('connection', function(socket) {
         created: new Date(d.created)
       };
 
-      pool.query(
+      DBConnector.getPool().query(
           'SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;',
           insertData.t_histories_id,
           function(err, rows) {
@@ -1386,7 +1385,8 @@ io.sockets.on('connection', function(socket) {
             if (rows && rows[0]) {
               insertData.t_history_stay_logs_id = rows[0].id;
             }
-            pool.query('INSERT INTO t_history_chat_logs SET ?', insertData,
+            DBConnector.getPool().
+                query('INSERT INTO t_history_chat_logs SET ?', insertData,
                 function(error, results, fields) {
                   if (CommonUtil.isset(error)) {
                     d.error = error;
@@ -1425,7 +1425,8 @@ io.sockets.on('connection', function(socket) {
       sql += ' INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )';
       sql += ' WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1';
       sql += '   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id desc';
-      pool.query(sql, [sincloSessionId, siteId], function(err, rows) {
+      DBConnector.getPool().
+          query(sql, [sincloSessionId, siteId], function(err, rows) {
         if (err !== null && err !== '') return false; // DB接続断対応
         if (!CommonUtil.isset(err) &&
             (rows.length > 0 && CommonUtil.isset(rows[0].chatId))) {
@@ -2103,7 +2104,7 @@ io.sockets.on('connection', function(socket) {
   // 顧客情報取得
   var customerApi = {
     getInformations: function(visitorId, siteKey, callback) {
-      pool.query(
+      DBConnector.getPool().query(
           'SELECT informations FROM m_customers WHERE m_companies_id = ? AND visitors_id = ? order by id desc LIMIT 1;',
           [list.companyList[siteKey], visitorId], function(err, row) {
             if (err !== null && err !== '') callback(null); // DB接続断対応
@@ -2273,7 +2274,8 @@ io.sockets.on('connection', function(socket) {
             // チャット対応上限の設定が無効化されている場合はオブジェクトを削除する
             if (SharedData.scList.hasOwnProperty(res.siteKey)) {
               var getChatSettingSQL = 'SELECT sc_flg FROM m_chat_settings WHERE m_companies_id = ?';
-              pool.query(getChatSettingSQL, [list.companyList[res.siteKey]],
+              DBConnector.getPool().
+                  query(getChatSettingSQL, [list.companyList[res.siteKey]],
                   function(err, rows) {
                     if (err !== null && err !== '') return false; // DB接続断対応
                     if (rows && rows[0] && rows[0].sc_flg === 1) {
@@ -2609,7 +2611,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('link', function(data) {
     var d = new Date();
-    pool.query(
+    DBConnector.getPool().query(
         'INSERT INTO t_history_link_count_logs (m_companies_id,t_histories_id,t_history_stay_logs_id,link_url,created) VALUES(?,?,?,?,?)',
         [
           list.companyList[data.siteKey],
@@ -2862,12 +2864,12 @@ io.sockets.on('connection', function(socket) {
   //閉じるボタンクリック数追加
   socket.on('addClickCloseCounts', function(data) {
     var obj = JSON.parse(data);
-    pool.query(
+    DBConnector.getPool().query(
         'SELECT widget_close_count from t_history_widget_close_counts where m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',
         [list.companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour],
         function(err, results) {
           if (results.length == 0) {
-            pool.query(
+            DBConnector.getPool().query(
                 'INSERT INTO t_history_widget_close_counts (m_companies_id,year,month,day,hour,widget_close_count) VALUES(?,?,?,?,?,?)',
                 [
                   list.companyList[obj.siteKey],
@@ -2883,7 +2885,7 @@ io.sockets.on('connection', function(socket) {
                   }
                 });
           } else {
-            pool.query(
+            DBConnector.getPool().query(
                 'UPDATE t_history_widget_close_counts SET widget_close_count = ? WHERE m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',
                 [
                   results[0].widget_close_count + 1,
@@ -2910,12 +2912,12 @@ io.sockets.on('connection', function(socket) {
   //ウィジェットを最小化した回数追加
   socket.on('addClickMinimizeCounts', function(data) {
     var obj = JSON.parse(data);
-    pool.query(
+    DBConnector.getPool().query(
         'SELECT widget_minimize_count from t_history_widget_minimize_counts where m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',
         [list.companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour],
         function(err, results) {
           if (results.length == 0) {
-            pool.query(
+            DBConnector.getPool().query(
                 'INSERT INTO t_history_widget_minimize_counts (m_companies_id,year,month,day,hour,widget_minimize_count) VALUES(?,?,?,?,?,?)',
                 [
                   list.companyList[obj.siteKey],
@@ -2931,7 +2933,7 @@ io.sockets.on('connection', function(socket) {
                   }
                 });
           } else {
-            pool.query(
+            DBConnector.getPool().query(
                 'UPDATE t_history_widget_minimize_counts SET widget_minimize_count = ? WHERE m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',
                 [
                   results[0].widget_minimize_count + 1,
@@ -2961,7 +2963,8 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(d);
     //ウィジェット件数登録処理
     if (obj.widget === true) {
-      pool.query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?',
+      DBConnector.getPool().
+          query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?',
           [obj.sincloSessionId || obj.tabId], function(err, results) {
             if (CommonUtil.isset(err)) {
               console.log(
@@ -2972,7 +2975,7 @@ io.sockets.on('connection', function(socket) {
             //ウィジェットが初めて表示された場合
             if (Object.keys(results).length === 0) {
               //tabId登録
-              pool.query(
+              DBConnector.getPool().query(
                   'INSERT INTO t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',
                   [
                     list.companyList[obj.siteKey],
@@ -3562,7 +3565,7 @@ io.sockets.on('connection', function(socket) {
     console.log('chatStart-1: [' + logToken + '] ' + d);
     if (SharedData.sincloCore[obj.siteKey][obj.tabId] === null) {
 
-      pool.query(
+      DBConnector.getPool().query(
           'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
           [obj.userId, list.companyList[obj.siteKey]], function(err, result) {
             if (err !== null && err !== '') return false;
@@ -3646,7 +3649,7 @@ io.sockets.on('connection', function(socket) {
         }
       }
 
-      pool.query(
+      DBConnector.getPool().query(
           'SELECT mu.id, mu.display_name, wid.style_settings FROM m_users as mu LEFT JOIN m_widget_settings AS wid ON ( wid.m_companies_id = mu.m_companies_id ) WHERE mu.id = ? AND mu.del_flg != 1 AND wid.del_flg != 1 AND wid.m_companies_id = ?',
           [obj.userId, list.companyList[obj.siteKey]], function(err, rows) {
             if (err !== null && err !== '') return false; // DB接続断対応
@@ -3670,7 +3673,7 @@ io.sockets.on('connection', function(socket) {
                 userId: obj.userId
               };
 
-              pool.query(
+              DBConnector.getPool().query(
                   'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
                   [obj.userId, list.companyList[obj.siteKey]],
                   function(err, result) {
@@ -3719,7 +3722,7 @@ io.sockets.on('connection', function(socket) {
                       0) {
                     obj.messageDistinction = 1;
                     //visitors_id,カウント数一件を登録
-                    pool.query(
+                    DBConnector.getPool().query(
                         'INSERT INTO t_conversation_count(visitors_id,conversation_count) VALUES(?,?)',
                         [visitorId, 1], function(err, result) {
                           if (CommonUtil.isset(err)) {
@@ -3849,7 +3852,7 @@ io.sockets.on('connection', function(socket) {
           if (Object.keys(results) && Object.keys(results).length !== 0) {
             obj.messageDistinction = results[0].conversation_count;
             //カウント数一件追加
-            pool.query(
+            DBConnector.getPool().query(
                 'UPDATE t_conversation_count SET conversation_count = ? WHERE visitors_id = ?',
                 [results[0].conversation_count + 1, visitorId],
                 function(err, result) {
@@ -3995,7 +3998,7 @@ io.sockets.on('connection', function(socket) {
         //リクエストメッセージの場合
         if (obj.messageRequestFlg == 1) {
           //消費者が初回メッセージを送る前にオペレータが入室した場合
-          pool.query(
+          DBConnector.getPool().query(
               'SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 998',
               [obj.userId, obj.historyId, obj.messageDistinction],
               function(err, results) {
@@ -4098,7 +4101,7 @@ io.sockets.on('connection', function(socket) {
           //リクエストメッセージの場合
           if (obj.messageRequestFlg == 1) {
             //消費者が初回メッセージを送る前にオペレータが入室した場合
-            pool.query(
+            DBConnector.getPool().query(
                 'SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 998',
                 [obj.userId, obj.historyId, obj.messageDistinction],
                 function(err, result) {
@@ -4134,7 +4137,7 @@ io.sockets.on('connection', function(socket) {
         //リクエストメッセージの場合
         if (obj.messageRequestFlg == 1) {
           //消費者が初回メッセージを送る前にオペレータが入室した場合
-          pool.query(
+          DBConnector.getPool().query(
               'SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 998',
               [obj.userId, obj.historyId, obj.messageDistinction],
               function(err, result) {
@@ -4202,7 +4205,7 @@ io.sockets.on('connection', function(socket) {
         };
         for (var i = 0; obj.messageList.length > i; i++) {
           var message = obj.messageList[i];
-          pool.query(
+          DBConnector.getPool().query(
               'SELECT *, ? as inputed, ? as auto_message_type FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1',
               [
                 message.created,
@@ -4267,7 +4270,7 @@ io.sockets.on('connection', function(socket) {
     if (CommonUtil.isset(
         SharedData.sincloCore[obj.siteKey][obj.tabId].historyId)) {
       obj.historyId = SharedData.sincloCore[obj.siteKey][obj.tabId].historyId;
-      pool.query(
+      DBConnector.getPool().query(
           'UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;',
           [obj.historyId, obj.chatId], function(err, ret, fields) {
             chatApi.sendUnreadCnt('retReadChatMessage', obj, true);
@@ -4281,7 +4284,7 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(d);
     if (getSessionId(obj.siteKey, obj.tabId, 'historyId')) {
       obj.historyId = SharedData.sincloCore[obj.siteKey][obj.tabId].historyId;
-      pool.query(
+      DBConnector.getPool().query(
           'UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type != 1;',
           [obj.historyId], function(err, ret, fields) {
             emit.toSameUser('retReadFromCustomer', {
@@ -4343,7 +4346,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('getScenario', function(data, ack) {
     var obj = JSON.parse(data);
     var result = {};
-    pool.query(
+    DBConnector.getPool().query(
         'select activity from t_chatbot_scenarios where m_companies_id = ? and id = ?;',
         [list.companyList[obj.siteKey], obj.scenarioId],
         function(err, row) {
@@ -4435,7 +4438,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('addLastMessageToCV', function(d) {
     var obj = JSON.parse(d);
-    pool.query(
+    DBConnector.getPool().query(
         'select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22) OR (30 <= message_type and message_type <= 32) OR (message_type = 40)) order by created desc limit 0,1;',
         [list.companyList[obj.siteKey], obj.historyId],
         function(err, row) {
@@ -4445,7 +4448,7 @@ io.sockets.on('connection', function(socket) {
             return;
           }
           if (row.length !== 0) {
-            pool.query(
+            DBConnector.getPool().query(
                 'update t_history_chat_logs set achievement_flg=0 where id = ?',
                 [row[0].id], function() {
 
@@ -4497,7 +4500,7 @@ io.sockets.on('connection', function(socket) {
         minChatId = targetChatId;
       }
     }
-    pool.query(
+    DBConnector.getPool().query(
         'update t_history_chat_logs set hide_flg=1 where id >= ? and m_companies_id = ? and visitors_id = ?;',
         [minChatId, list.companyList[obj.siteKey], obj.userId],
         function(err, result) {
@@ -4507,7 +4510,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('callExternalApi', function(data, ack) {
     var obj = JSON.parse(data);
-    pool.query(
+    DBConnector.getPool().query(
         'select * from t_external_api_connections where m_companies_id = ? and id = ? limit 0,1;',
         [list.companyList[obj.siteKey], obj.externalApiConnectionId],
         function(err, row) {
@@ -4582,7 +4585,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('getScenarioDownloadInfo', function(data, ack) {
     var obj = JSON.parse(data);
-    pool.query(
+    DBConnector.getPool().query(
         'select * from t_chatbot_scenario_send_files where m_companies_id = ? and id = ? limit 0,1;',
         [list.companyList[obj.siteKey], obj.sendFileId],
         function(err, row) {
@@ -4634,7 +4637,7 @@ io.sockets.on('connection', function(socket) {
       objForMerge[targetValues[i].id] = targetValues[i].value;
     }
 
-    pool.query(
+    DBConnector.getPool().query(
         'select id, m_companies_id, item_name, delete_flg from t_customer_information_settings where m_companies_id = ? and id in (?);',
         [list.companyList[obj.siteKey], ids], function(err, rows) {
           if (err !== null && err !== '') return false;
@@ -4683,7 +4686,7 @@ io.sockets.on('connection', function(socket) {
 
         console.log(historyId);
         console.log(messageDistinction);
-        pool.query(
+        DBConnector.getPool().query(
             'UPDATE t_history_chat_logs set achievement_flg = -1 where t_histories_id = ? and message_distinction = ? and message_type = 21;',
             [historyId, messageDistinction],
             function(err, row) {
@@ -4769,7 +4772,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('getChatDiagram', function(data, ack) {
     var obj = JSON.parse(data);
     var result = {};
-    pool.query(
+    DBConnector.getPool().query(
         'select activity from t_chatbot_diagrams where m_companies_id = ? and id = ?;',
         [list.companyList[obj.siteKey], obj.diagramId],
         function(err, row) {
@@ -4891,7 +4894,7 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('addLastMessageToConversionFlg', function(d) {
     var obj = JSON.parse(d);
-    pool.query(
+    DBConnector.getPool().query(
         'select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? order by created desc limit 0,1;',
         [list.companyList[obj.siteKey], obj.historyId],
         function(err, row) {
@@ -4901,7 +4904,7 @@ io.sockets.on('connection', function(socket) {
             return;
           }
           if (row.length !== 0) {
-            pool.query(
+            DBConnector.getPool().query(
                 'update t_history_chat_logs set achievement_flg=0 where id = ?',
                 [row[0].id], function() {
 
@@ -5634,7 +5637,7 @@ io.sockets.on('connection', function(socket) {
           !core.shareWindowFlg) {
         // 履歴の更新
         var sincloSessionId = SharedData.sincloCore[info.siteKey][info.tabId].sincloSessionId;
-        pool.query(
+        DBConnector.getPool().query(
             'SELECT * FROM t_histories WHERE m_companies_id = ? AND tab_id = ? AND visitors_id = ? ORDER BY id DESC LIMIT 1;',
             [siteId, sincloSessionId, info.userId], function(err, rows) {
               if (err !== null && err !== '') return false; // DB接続断対応

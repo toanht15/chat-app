@@ -1,12 +1,6 @@
 var database = require('../database');
 /* EXPORT TARGET VARIABLES */
-var mysql = require('mysql2'),
-  pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || 'password',
-    database: process.env.DB_NAME || 'sinclo_db'
-  });
+var DBConnector = require('./class/util/db_connector_util');
 var request = require('request');
 var moment = require('moment');
 /* ======================= */
@@ -107,7 +101,10 @@ module.exports = function(format, charset) {
   var getFromIp = function(callback) {
     var baseData = {};
     var self = this;
-    pool.query('select * from m_landscape_data where ip_address = ? order by updated desc', [this.ip], function(err, rows){
+    DBConnector.getPool().
+        query(
+            'select * from m_landscape_data where ip_address = ? order by updated desc',
+            [this.ip], function(err, rows) {
       if( err !== null && err !== '') {
         throw new Error('m_landscape_dataへのselect実行時にエラーが発生');
       }
@@ -213,7 +210,7 @@ module.exports = function(format, charset) {
         insertQuery = insertQuery.slice(0, -2);
         valuesQuery = valuesQuery.slice(0, -1);
         insertQuery += ") " + valuesQuery + ");";
-        pool.query(insertQuery, null, function(err, result){
+        DBConnector.getPool().query(insertQuery, null, function(err, result) {
           if( err !== null && err !== '') {
             throw new Error('m_landscape_dataへのinsert実行時にエラーが発生 message : ' + err);
           }
@@ -226,7 +223,7 @@ module.exports = function(format, charset) {
         });
         valuesQuery = valuesQuery.slice(0, -1);
         updateQuery += valuesQuery + ' WHERE `ip_address` = "' + saveData['ip_address'] + '"';
-        pool.query(updateQuery, null, function(err, result){
+        DBConnector.getPool().query(updateQuery, null, function(err, result) {
           if( err !== null && err !== '') {
             throw new Error('m_landscape_dataへのupdate実行時にエラーが発生 message : ' + err);
           }

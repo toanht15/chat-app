@@ -4,12 +4,14 @@ const express = require('express');
 const router = express.Router();
 const uuid = require('node-uuid');
 const CommonUtil = require('./module/class/util/common_utility');
-var SCChecker = require('./module/class/checker/SCChecker');
-var CustomerInfoManager = require(
+const SCChecker = require('./module/class/checker/SCChecker');
+const CustomerInfoManager = require(
     './module/class/manager/customer_info_manager');
-var list = require('./module/company_list');
-var SharedData = require('./module/shared_data');
-var LandscapeAPI = require('./module/landscape');
+const list = require('./module/company_list');
+const SharedData = require('./module/shared_data');
+const LandscapeAPI = require('./module/landscape');
+const HistoryManager = require('./module/class/manager/history_manager');
+
 // socket.joinは別途やる
 var checker = new SCChecker();
 
@@ -379,8 +381,11 @@ router.post('/auth/info', function(req, res, next) {
               SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])) {
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = obj.customerInfo;
           }
-          // socket.joinは後でやる
-          res.json(obj);
+
+          let history = new HistoryManager();
+          history.getChatHistory(obj).then((addedObj) => {
+            res.json(obj);
+          });
         };
 
         if (CommonUtil.isset(SharedData.company.info[obj.siteKey]) &&

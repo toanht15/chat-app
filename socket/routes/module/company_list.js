@@ -6,16 +6,10 @@ var common = require('./common');
 var CommonUtil = require('./class/util/common_utility');
 var SharedData = require('./shared_data');
 // mysql
-var mysql = require('mysql2'),
-    pool = mysql.createPool({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
-    });
+var DBConnector = require('./class/util/db_connector_util');
 
 function getCompanyList(forceReload) {
-  pool.query('select * from m_companies where del_flg = 0;',
+  DBConnector.getPool().query('select * from m_companies where del_flg = 0;',
       function(err, rows) {
         if (err !== null && err !== '') return false; // DB接続断対応
         var key = Object.keys(rows);
