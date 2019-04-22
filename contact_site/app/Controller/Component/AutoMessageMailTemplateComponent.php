@@ -428,7 +428,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected function generateScenarioHearingAnswerBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING_INPUT);
-    $message .= $this->createMessageContent($content);
+    $message .= $this->createHearingAnswerMessageContent($content);
     return $message;
   }
 
@@ -521,6 +521,27 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       $message .= '　'.$line."\n";
     }
     return $message;
+  }
+
+  protected function createHearingAnswerMessageContent($content) {
+    $message = '';
+    if ($this->isJson($content)) {
+      $data = json_decode($content, true);
+      if (isset($data['message']) && isset($data['separator'])) {
+        $arr = explode($data['separator'], $data['message']);
+        foreach ($arr as $item) {
+          $message .= '・' . $item . "\n";
+        }
+      }
+      return $message;
+    }
+
+    return $this->createMessageContent($content);
+  }
+
+  protected function isJson($string) {
+    json_decode($string);
+    return (json_last_error() == JSON_ERROR_NONE);
   }
 
   protected function createFileTransferMessageContent($content) {

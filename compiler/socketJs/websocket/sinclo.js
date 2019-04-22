@@ -11737,7 +11737,6 @@
         _process: function() {
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
-          targetVariables = self._parent._handleJsonData(targetVariables);
 
           var sendData = {
             historyId: sinclo.chatApi.historyId,
