@@ -279,10 +279,11 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         if ($chatLog['message_type'] == 53) {
           $json = json_decode($chatLog['message'], TRUE);
           $chatMessage = $json['message'];
+          $separator = $json['separator'];
         } else {
           $chatMessage = $chatLog['message'];
         }
-        $message = $this->generateScenarioHearingAnswerBlockStr($chatLog['created'], $chatMessage);
+        $message = $this->generateScenarioHearingCheckboxAnswerBlockStr($chatLog['created'], $chatMessage, $separator);
         break;
       case 44:
       case 48:
@@ -432,6 +433,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     return $message;
   }
 
+  protected function generateScenarioHearingCheckboxAnswerBlockStr($date, $content, $separator) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING_INPUT);
+    $message .= $this->createHearingAnswerMessageContent($content, $separator);
+    return $message;
+  }
+
   protected function generateScenarioReInputHearingBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING_REINPUT);
@@ -520,6 +528,16 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     foreach($lines as $line) {
       $message .= '　'.$line."\n";
     }
+    return $message;
+  }
+
+  protected function createHearingAnswerMessageContent($content, $seperator) {
+    $message = '';
+    $arr = explode($seperator, $content);
+    foreach ($arr as $item) {
+      $message .= '・' . $item . "\n";
+    }
+
     return $message;
   }
 
