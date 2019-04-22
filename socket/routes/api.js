@@ -189,6 +189,7 @@ router.post('/auth/info', function(req, res, next) {
 
   let d = {
     siteKey: '',
+    userId: '',
     tabId: '',
     sincloSessionId: '',
     token: '',
@@ -208,6 +209,10 @@ router.post('/auth/info', function(req, res, next) {
 
   let reqData = req.body;
   let obj = Object.assign(d, reqData);
+  if (CommonUtil.isKeyExists(obj, 'prevList') &&
+      CommonUtil.isset(obj['prevList'])) {
+    obj.prev = obj.prevList;
+  }
 
   if (!CommonUtil.isset(SharedData.sincloCore[obj.siteKey])) {
     SharedData.sincloCore[obj.siteKey] = {};

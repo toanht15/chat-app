@@ -6896,12 +6896,16 @@ var socket, // socket.io
         clearInterval(tabStateTimer);
       }
       tabStateTimer = setInterval(function() {
-        var newState = browserInfo.getActiveWindow();
-        if (document.getElementById('sincloBox') !== null && tabState !==
-            newState) {
-          tabState = newState;
-          emit('sendTabInfo',
-              {status: tabState, widget: window.sincloInfo.widgetDisplay});
+        var chatSent = storage.s.get('chatAct');
+        if (window.sincloInfo.contract.enableRealtimeMonitor ||
+            Boolean(chatSent)) {
+          var newState = browserInfo.getActiveWindow();
+          if (document.getElementById('sincloBox') !== null && tabState !==
+              newState) {
+            tabState = newState;
+            emit('sendTabInfo',
+                {status: tabState, widget: window.sincloInfo.widgetDisplay});
+          }
         }
       }, 700);
     }); // socket-on: connect
@@ -6915,7 +6919,7 @@ var socket, // socket.io
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('retConnectedForSync', function(d) {
       sinclo.retConnectedForSync(d);
-    }); // socket-on: retConnectedForSync
+    }); // socket-on : retConnectedForSync
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('accessInfo', function(d) {

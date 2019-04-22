@@ -774,6 +774,7 @@
             referrer: userInfo.referrer,
             siteKey: sincloInfo.site.key,
             socketId: socket.id,
+            userId: userInfo.userId,
             tabId: userInfo.tabId,
             sincloSessionId: userInfo.sincloSessionId,
             token: common.token

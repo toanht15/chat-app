@@ -1505,7 +1505,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     /* キャンペーン情報を取得する */
     $scope.getCampaign = function (prev){
       var str = "";
-      if ( !(prev.hasOwnProperty('length') && angular.isDefined(prev[0]) && prev[0].hasOwnProperty('url'))  ) return "";
+      if (!prev ||
+          !(prev.hasOwnProperty('length') && angular.isDefined(prev[0]) && prev[0].hasOwnProperty('url'))) return '';
       var url = prev[0].url;
       if ( !angular.isDefined(url) ) return "";
       angular.forEach(campaignList, function(name, parameter){

@@ -2209,14 +2209,17 @@ io.sockets.on('connection', function(socket) {
             userId: data.userId,
             siteKey: res.siteKey
           };
-          if (!(res.siteKey in SharedData.company.info)) {
+          if (!CommonUtil.isKeyExists(SharedData.company,
+              'info.' + res.siteKey)) {
             SharedData.company.info[res.siteKey] = {};
             SharedData.company.timeout[res.siteKey] = {};
           }
-          if (!(data.userId in SharedData.company.info[res.siteKey])) {
+          if (!CommonUtil.isKeyExists(SharedData.company,
+              'info.' + res.siteKey + '.' + data.userId)) {
             SharedData.company.info[res.siteKey][data.userId] = {};
           }
-          if (data.userId in SharedData.company.timeout[res.siteKey]) {
+          if (CommonUtil.isKeyExists(SharedData.company,
+              'timeout.' + res.siteKey + '.' + data.userId)) {
             clearTimeout(SharedData.company.timeout[res.siteKey][data.userId]);
           }
           SharedData.company.info[res.siteKey][data.userId][socket.id] = null;
@@ -3443,7 +3446,7 @@ io.sockets.on('connection', function(socket) {
 
     var sincloSession = SharedData.sincloCore[chat.siteKey][chat.sincloSessionId];
     if (CommonUtil.isset(sincloSession) &&
-        CommonUtil.isset(sincloSession.autoMessages)) {
+        CommonUtil.isKeyExists(sincloSession, 'autoMessages')) {
       SharedData.sincloCore[chat.siteKey][chat.sincloSessionId].autoMessages[chat.chatId] = chat;
     } else {
       console.log(
@@ -3453,7 +3456,7 @@ io.sockets.on('connection', function(socket) {
     }
     if (!list.functionManager.isEnabled(chat.siteKey,
         list.functionManager.keyList.monitorPollingMode)
-        || !list.functionManager.isEnabled(chat.siteKey,
+        && list.functionManager.isEnabled(chat.siteKey,
             list.functionManager.keyList.enableRealtimeMonitor)) {
       emit.toCompany('resAutoChatMessage', chat, chat.siteKey);
     }
@@ -4885,7 +4888,9 @@ io.sockets.on('connection', function(socket) {
             sort: elm.sort,
             messageDistinction: messageDistinction,
             achievementFlg: elm.requireCv ? -1 : null,
-            shownMessage: isset(elm.shownMessage) ? elm.shownMessage : false
+            shownMessage: CommonUtil.isset(elm.shownMessage) ?
+                elm.shownMessage :
+                false
           };
           chatApi.set(ret);
         });
