@@ -71,10 +71,6 @@ module.exports = class CommonUtility {
         String(a) === 'undefined') {
       return false;
     }
-    if (typeof a === 'object') {
-      var keys = Object.keys(a);
-      return (Object.keys(a).length !== 0);
-    }
     return true;
   }
 

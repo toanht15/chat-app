@@ -75,7 +75,7 @@ module.exports = class HistoryManager extends DatabaseManager {
     let self = this;
     return new Promise((resolve, reject) => {
       var chatData = {historyId: null, messages: []};
-      var historyId = SharedData.getSessionId(obj.siteKey, obj.tabId,
+      var historyId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
           'historyId');
       if (historyId) {
         chatData.historyId = historyId;
@@ -104,6 +104,7 @@ module.exports = class HistoryManager extends DatabaseManager {
               'autoMessages' in
               SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
             var autoMessageObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
+            console.log(JSON.stringify(autoMessageObj));
             try {
               Object.keys(autoMessageObj).
                   forEach(function(automessageKey, index, array) {
@@ -114,19 +115,16 @@ module.exports = class HistoryManager extends DatabaseManager {
             }
           }
           for (var j = 0; j < autoMessages.length; j++) {
-            var autoMessageDate = autoMessages[j].created;
-            autoMessageDate = new Date(autoMessageDate);
-            // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
-            //   delete autoMessages[i].userName;
-            // }
-            setList[CommonUtil.fullDateTime(autoMessageDate) +
-            '_'] = autoMessages[j];
+            if (CommonUtil.isset(autoMessages[j].sort)) {
+              setList[autoMessages[j].sort + '_'] = autoMessages[j];
+            }
           }
           var scenarioMessages = [];
           if (obj.sincloSessionId in SharedData.sincloCore[obj.siteKey] &&
               'scenario' in
               SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
             var scenariosObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].scenario;
+            console.log(JSON.stringify(scenariosObj));
             Object.keys(scenariosObj).forEach(function(scenarioId, index, arr) {
               var scenarioObj = scenariosObj[Number(scenarioId)];
               Object.keys(scenarioObj).
@@ -140,10 +138,9 @@ module.exports = class HistoryManager extends DatabaseManager {
             });
           }
           for (var k = 0; k < scenarioMessages.length; k++) {
-            var scenarioDate = scenarioMessages[k].created;
-            scenarioDate = new Date(scenarioDate);
-            setList[CommonUtil.fullDateTime(scenarioDate) +
-            '_'] = scenarioMessages[k];
+            if (CommonUtil.isset(scenarioMessages[k].sort)) {
+              setList[scenarioMessages[k].sort + '_'] = scenarioMessages[k];
+            }
           }
           var diagram = [];
           if (obj.sincloSessionId in SharedData.sincloCore[obj.siteKey] &&
@@ -156,13 +153,11 @@ module.exports = class HistoryManager extends DatabaseManager {
 
             }
           }
+          console.log(JSON.stringify(diagram));
           for (var l = 0; l < diagram.length; l++) {
-            var diagramDate = diagram[l].created;
-            diagramDate = new Date(diagramDate);
-            // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
-            //   delete autoMessages[i].userName;
-            // }
-            setList[CommonUtil.fullDateTime(diagramDate) + '_'] = diagram[l];
+            if (CommonUtil.isset(diagram[l].sort)) {
+              setList[diagram[l].sort + '_'] = diagram[l];
+            }
           }
           chatData.messages = CommonUtil.objectSort(setList);
           obj.chat = chatData;
@@ -177,6 +172,7 @@ module.exports = class HistoryManager extends DatabaseManager {
             'autoMessages' in
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
           var autoMessageObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
+          console.log(JSON.stringify(autoMessageObj));
           try {
             Object.keys(autoMessageObj).
                 forEach(function(automessageKey, index, array) {
@@ -187,19 +183,16 @@ module.exports = class HistoryManager extends DatabaseManager {
           }
         }
         for (var j = 0; j < autoMessages.length; j++) {
-          var autoMessageDate = autoMessages[j].created;
-          autoMessageDate = new Date(autoMessageDate);
-          // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
-          //   delete autoMessages[i].userName;
-          // }
-          setList[CommonUtil.fullDateTime(autoMessageDate) +
-          '_'] = autoMessages[j];
+          if (CommonUtil.isset(autoMessages[j].sort)) {
+            setList[autoMessages[j].sort + '_'] = autoMessages[j];
+          }
         }
         var scenarioMessages = [];
         if (obj.sincloSessionId in SharedData.sincloCore[obj.siteKey] &&
             'scenario' in
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
           var scenariosObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].scenario;
+          console.log(JSON.stringify(scenariosObj));
           Object.keys(scenariosObj).forEach(function(scenarioId, index, arr) {
             var scenarioObj = scenariosObj[Number(scenarioId)];
             Object.keys(scenarioObj).
@@ -213,10 +206,9 @@ module.exports = class HistoryManager extends DatabaseManager {
           });
         }
         for (var k = 0; k < scenarioMessages.length; k++) {
-          var scenarioDate = scenarioMessages[k].created;
-          scenarioDate = new Date(scenarioDate);
-          setList[CommonUtil.fullDateTime(scenarioDate) +
-          '_'] = scenarioMessages[k];
+          if (CommonUtil.isset(scenarioMessages[k].sort)) {
+            setList[scenarioMessages[k].sort + '_'] = scenarioMessages[k];
+          }
         }
         var diagram = [];
         if (obj.sincloSessionId in SharedData.sincloCore[obj.siteKey] &&
@@ -229,13 +221,11 @@ module.exports = class HistoryManager extends DatabaseManager {
 
           }
         }
+        console.log(JSON.stringify(diagram));
         for (var l = 0; l < diagram.length; l++) {
-          var diagramDate = diagram[l].created;
-          diagramDate = new Date(diagramDate);
-          // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
-          //   delete autoMessages[i].userName;
-          // }
-          setList[CommonUtil.fullDateTime(diagramDate) + '_'] = diagram[l];
+          if (CommonUtil.isset(diagram[l].sort)) {
+            setList[diagram[l].sort + '_'] = diagram[l];
+          }
         }
         chatData.messages = CommonUtil.objectSort(setList);
         obj.chat = chatData;

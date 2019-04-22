@@ -4466,8 +4466,8 @@ io.sockets.on('connection', function(socket) {
   socket.on('sendScenarioMessage', function(d, ack) {
     var obj = JSON.parse(d);
     var scenario = JSON.parse(JSON.stringify(obj));
-    scenario.created = CommonUtil.formatDateParse();
-    scenario.sort = CommonUtil.fullDateTime(new Date(scenario.created));
+    scenario.created = new Date();
+    scenario.sort = CommonUtil.fullDateTime(scenario.created);
 
     var sincloSession = SharedData.sincloCore[scenario.siteKey][scenario.sincloSessionId];
     if (CommonUtil.isset(sincloSession) &&
@@ -4817,13 +4817,12 @@ io.sockets.on('connection', function(socket) {
   socket.on('sendDiagramMessage', function(d, ack) {
     var obj = JSON.parse(d);
     var diagramData = obj;
-    diagramData.created = CommonUtil.formatDateParse();
-    diagramData.sort = CommonUtil.fullDateTime(new Date(diagramData.created));
+    diagramData.created = new Date();
+    diagramData.sort = CommonUtil.fullDateTime(diagramData.created);
     diagramData.shownMessage = true;
 
     var sincloSession = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId];
-    if (CommonUtil.isset(sincloSession) &&
-        CommonUtil.isset(sincloSession.diagram)) {
+    if (CommonUtil.isset(sincloSession)) {
       if (!CommonUtil.isset(
           SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
         SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
