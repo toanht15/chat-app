@@ -1455,7 +1455,11 @@ class ContractController extends AppController
 
   private function getDefaultScenarioConfigurations()
   {
-    return Configure::read('default.scenario');
+    if (defined('ALLOW_SET_SLIM_SETTINGS') && ALLOW_SET_SLIM_SETTINGS) {
+      return Configure::read('default.scenario_slim');
+    } else {
+      return Configure::read('default.scenario');
+    }
   }
 
   private function isChatEnable($m_contact_types_id)

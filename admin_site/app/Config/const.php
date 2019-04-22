@@ -3,6 +3,7 @@
 // システム設定
 define('ALLOW_DISABLE_REALTIME_MONITOR', true);
 define('ALLOW_SET_CV_VALUE', true);
+define('ALLOW_SET_SLIM_SETTINGS', true); // シナリオのサンプルも変わります
 
 // AWS: S3
 define('C_AWS_S3_VERSION', 'latest'); // ウィジェット用参照先
