@@ -4162,8 +4162,7 @@ io.sockets.on('connection', function(socket) {
   // オートチャット
   socket.on('sendAutoChat', function(d) {
     var obj = JSON.parse(d);
-    //応対数検索、登録
-    getConversationCountUser(obj.userId, function(results) {
+    var getConversationCallback = function(results) {
       var messageDistinction;
       if (results !== null) {
         //カウント数が取れなかったとき
@@ -4233,7 +4232,25 @@ io.sockets.on('connection', function(socket) {
           }
         }
       }
-    });
+    };
+    //応対数検索、登録
+    if (!list.functionManager.isEnabled(obj.siteKey,
+        list.functionManager.keyList.enableRealtimeMonitor)
+        && !CommonUtil.isset(obj.historyId)) {
+      let historyManager = new HistoryManager();
+      let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
+      obj = Object.assign(obj, target);
+      historyManager.addHistory(obj).then((result) => {
+        emit.toMine('setHistoryId', result, socket);
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
+        getConversationCountUser(obj.userId, getConversationCallback);
+      });
+    } else {
+      getConversationCountUser(obj.userId, getConversationCallback);
+    }
   });
 
   // チャット呼出中メッセージ
