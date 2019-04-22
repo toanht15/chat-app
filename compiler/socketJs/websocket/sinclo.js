@@ -10585,6 +10585,19 @@
             });
         return resultSet;
       },
+      _handleJsonData: function(data) {
+        for (var key in data) {
+          if (check.isJSON(data[key])) {
+            // handle checkbox json data
+            var checkboxData = JSON.parse(data[key]);
+            if(checkboxData.hasOwnProperty('message')){
+              data[key] = checkboxData.message;
+            }
+          }
+        }
+
+        return data;
+      },
       _getMessage: function() {
         var self = sinclo.scenarioApi;
         return self.get(self._lKey.currentScenario).message;
@@ -10594,7 +10607,7 @@
         if (message) {
           return message.replace(/\{\{(.+?)\}\}/g, function(param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-            return self._getStoredVariable(name) || name;
+            return self._getStoredVariable(name) || '';
           });
         } else {
           return '';
@@ -11795,6 +11808,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
+
           var sendData = {
             historyId: sinclo.chatApi.historyId,
             mailType: self._parent.get(
