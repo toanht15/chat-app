@@ -92,7 +92,7 @@ class AppController extends Controller {
     C_COMPANY_USE_ICON_SETTINGS => false, // ボット・有人時のアイコン設定
     C_COMPANY_USE_CUSTOM_WIDGET_SIZE => false, // ウィジェットサイズ「カスタム」
       C_COMPANY_USE_CHATBOT_TREE_EDITOR => false, // チャットツリー設定
-      C_COMPANY_DISABLE_REAL_TIME_MONITOR => false // リアルタイムモニタ無効
+      C_COMPANY_ENABLE_REAL_TIME_MONITOR => false // リアルタイムモニタ無効
   );
 
   protected $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';

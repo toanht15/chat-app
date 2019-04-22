@@ -50,7 +50,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
       <dt>（２）ウィジェット非表示タグ</dt>
       <dd>
         <pre>ウィジェットを表示させたくないページに埋め込むタグです。
-※ウィジェットは表示させずに、<?php echo($coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] ? '有人応対' : 'リアルタイムモニタ') ?>への表示やアクセス履歴の対象としたいページや、
+※ウィジェットは表示させずに、<?php echo($coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR] ? 'リアルタイムモニタ' : '有人応対') ?>への表示やアクセス履歴の対象としたいページや、
 画面共有の対象としたいページに本タグを埋め込んでください。</pre>
         <p>
           <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1'></script>"; ?>

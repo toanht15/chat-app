@@ -1,7 +1,7 @@
 <!-- タイトル -->
 <div id='customer_title'>
     <div class="fLeft"><i class="fal fa-home fa-2x"></i></div>
-    <h1><?php echo($coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] ? '有人応対' : 'リアルタイムモニタ') ?>
+    <h1><?php echo($coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR] ? 'リアルタイムモニタ' : '有人応対') ?>
 <?php if ( $widgetCheck ){ ?>
   <?php if(strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>
     <?php if(isset($coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]) && $coreSettings[C_COMPANY_USE_OPERATOR_PRESENCE_VIEW]): ?>
@@ -91,7 +91,7 @@
           }
           ?>
         </ul>
-      <?php if (!$coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] || (!empty($coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR]) && $coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR])): ?>
+      <?php if ($coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR] || (!empty($coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR]) && $coreSettings[C_COMPANY_USE_HIDE_REALTIME_MONITOR])): ?>
         <p class="tRight <?=$nowCntClass?>" ng-cloak>現在 <b>{{objCnt(monitorList)}}</b>名がサイト訪問中</p>
         <?php endif; ?>
     </div>

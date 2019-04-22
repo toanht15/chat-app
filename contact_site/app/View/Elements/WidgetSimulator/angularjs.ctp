@@ -154,6 +154,10 @@
         $scope.resizeWidgetHeightByWindowHeight();
       });
 
+      $scope.$on('resizeWidget', function() {
+        $scope.resizeWidgetHeightByWindowHeight();
+      });
+
       /**
        * visitorSendMessage
        * サイト訪問者のメッセージ受信と、呼び出し元アクションへの通知

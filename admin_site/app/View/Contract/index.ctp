@@ -33,6 +33,7 @@
       <thead>
         <tr>
           <th style="width:23em;">会社名</th>
+            <th style="width:8em;">CV単価</th>
           <th style="width:8em;">キー</th>
           <th style="width:15em;">プラン</th>
           <th style="width:20em;">オプション</th>
@@ -71,6 +72,7 @@
             }
             ?> >
             <td><a href="#" class="loginLink"><?=h($val['MCompany']['company_name'])?></a></td>
+              <td><?= number_format($val['MAgreement']['cv_value']) ?></td>
             <td><?=h($val['MCompany']['company_key'])?></td>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>
               <td>プレミアムプラン</td>

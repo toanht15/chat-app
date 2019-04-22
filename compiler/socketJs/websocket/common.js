@@ -6896,12 +6896,16 @@ var socket, // socket.io
         clearInterval(tabStateTimer);
       }
       tabStateTimer = setInterval(function() {
-        var newState = browserInfo.getActiveWindow();
-        if (document.getElementById('sincloBox') !== null && tabState !==
-            newState) {
-          tabState = newState;
-          emit('sendTabInfo',
-              {status: tabState, widget: window.sincloInfo.widgetDisplay});
+        var chatSent = storage.s.get('chatAct');
+        if (window.sincloInfo.contract.enableRealtimeMonitor ||
+            Boolean(chatSent)) {
+          var newState = browserInfo.getActiveWindow();
+          if (document.getElementById('sincloBox') !== null && tabState !==
+              newState) {
+            tabState = newState;
+            emit('sendTabInfo',
+                {status: tabState, widget: window.sincloInfo.widgetDisplay});
+          }
         }
       }, 700);
     }); // socket-on: connect
@@ -6915,7 +6919,7 @@ var socket, // socket.io
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('retConnectedForSync', function(d) {
       sinclo.retConnectedForSync(d);
-    }); // socket-on: retConnectedForSync
+    }); // socket-on : retConnectedForSync
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('accessInfo', function(d) {
@@ -7178,21 +7182,35 @@ var socket, // socket.io
     cache: false,
     data: {
       'sitekey': window.sincloInfo.site.key,
-      accessType: userInfo.accessType
+      accessType: userInfo.accessType,
+      s: (check.isset(userInfo.get(cnst.info_type.tab))) ?
+          userInfo.get(cnst.info_type.tab) :
+          ''
     },
     dataType: 'json',
     success: function(json) {
       if (String(json.status) === 'true') {
-        if (check.smartphone() && json.widget.hasOwnProperty('spShowFlg') &&
-            Number(json.widget.spShowFlg) === 2) {
-          clearTimeout(timer);
-          return false;
+        if (check.isset(json.nm) && json.nm) {
+          console.log('<><><><><><><><>< NOT MODIFIED ><><><><><><><><><>');
+          var settings = JSON.parse(storage.l.get('scl_settings'));
+          window.sincloInfo.widget = settings.widget;
+          window.sincloInfo.messages = settings.messages;
+          window.sincloInfo.contract = settings.contract;
+          window.sincloInfo.chat = settings.chat;
+          window.sincloInfo.customVariable = settings.customVariable;
+        } else {
+          if (check.smartphone() && json.widget.hasOwnProperty('spShowFlg') &&
+              Number(json.widget.spShowFlg) === 2) {
+            clearTimeout(timer);
+            return false;
+          }
+          window.sincloInfo.widget = json.widget;
+          window.sincloInfo.messages = json.messages;
+          window.sincloInfo.contract = json.contract;
+          window.sincloInfo.chat = json.chat;
+          window.sincloInfo.customVariable = json.customVariable;
+          storage.l.set('scl_settings', JSON.stringify(json));
         }
-        window.sincloInfo.widget = json.widget;
-        window.sincloInfo.messages = json.messages;
-        window.sincloInfo.contract = json.contract;
-        window.sincloInfo.chat = json.chat;
-        window.sincloInfo.customVariable = json.customVariable;
       } else {
         clearTimeout(timer);
       }

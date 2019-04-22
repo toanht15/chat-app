@@ -18,7 +18,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 
   <div id='tcustomvariables_description'>
     <span class="pre">お客様のサイト（<?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>sinclo<?php endif; ?>タグが埋め込まれたページ）内にて、CSSセレクタで指定された項目の値を取得することが可能です。（ECサイトや会員制サイトで会員番号や会員名などを取得可）
-    取得した値は<?php echo($coreSettings[C_COMPANY_DISABLE_REAL_TIME_MONITOR] ? '有人応対' : 'リアルタイムモニタ') ?>や履歴に自動で付与することが可能です。</span>
+    取得した値は<?php echo($coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR] ? 'リアルタイムモニタ' : '有人応対') ?>や履歴に自動で付与することが可能です。</span>
   </div>
 
   <div id='tcustomvaliables_menu' style= 'padding-left: 20px;'>
