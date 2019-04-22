@@ -79,6 +79,10 @@ module.exports = class HistoryManager extends DatabaseManager {
           'historyId');
       if (historyId) {
         chatData.historyId = historyId;
+        if (CommonUtil.isset(
+            SharedData.getSessionId(obj.siteKey, obj.tabId, 'historyId'))) {
+          SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = historyId;
+        }
 
         var sql = 'SELECT';
         sql += ' chat.id, chat.id as chatId, chat.message, chat.message_type as messageType, chat.message_distinction as messageDistinction,chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.visitors_id as visitorsId,chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg,chat.notice_flg as noticeFlg, chat.hide_flg, chat.created ';

@@ -14,6 +14,11 @@ $config['default'] = [
       "display_type" => "1",
 
       /**
+       * 初期表示時のスタイル（最小化して表示）
+       */
+        "displayStyleType" => "2",
+
+      /**
        * 表示タイミング（チャット契約時は3を選択できない）
        */
       "showTiming" => "4",
