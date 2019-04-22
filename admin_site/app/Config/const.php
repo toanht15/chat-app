@@ -4,6 +4,8 @@
 define('ALLOW_DISABLE_REALTIME_MONITOR', true);
 define('ALLOW_SET_CV_VALUE', true);
 define('ALLOW_SET_SLIM_SETTINGS', true); // シナリオのサンプルも変わります
+define('ADD_ACCOUNT_TO_M_USER', true);
+define('SET_AGREEMENT_END_DATE', false);
 
 // AWS: S3
 define('C_AWS_S3_VERSION', 'latest'); // ウィジェット用参照先
@@ -145,3 +147,20 @@ $config['sendingMailML'] = [
     C_NOT_SEND_MAIL_ML => "しない",
 ];
 
+$config['defaultValue'] = array(
+    'MCompany' => array(
+        'trial_flg' => '0', // 本契約
+        'm_contact_types_id' => '2',
+        'options' => array(
+            'enableRealtimeMonitor' => false,
+            'refCompanyData' => false,
+            'chatbotScenario' => true,
+            'chatbotTreeEditor' => true,
+            'laCoBrowse' => false
+        ),
+        'limit_users' => 3
+    ),
+    'MAgreements' => array(
+        'agreement_end_day' => date("Y-m-d", strtotime("+100 year"))
+    )
+);

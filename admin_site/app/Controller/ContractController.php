@@ -82,7 +82,7 @@ class ContractController extends AppController
         ],
         [
           'type' => 'left',
-          'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND permission_level = 99 GROUP BY m_companies_id)',
+            'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND permission_level = ' . (ADD_ACCOUNT_TO_M_USER ? C_AUTHORITY_ADMIN : C_AUTHORITY_SUPER) . ' GROUP BY m_companies_id)',
           'alias' => 'AdminUser',
           'conditions' => [
             'AdminUser.m_companies_id = MCompany.id',
@@ -379,7 +379,7 @@ class ContractController extends AppController
           )]
       );
       $transactions = $this->TransactionManager->begin();
-      $saveData = $this->request->data;
+      $saveData = $this->getParams();
       $companySaveData = [];
       $companySaveData['MCompany'] = $saveData['MCompany'];
       $companySaveData['MCompany']['id'] = $companyEditData['MCompany']['id'];
@@ -396,6 +396,9 @@ class ContractController extends AppController
       }
       if ($coreSetting['laCoBrowse'] !== boolval($saveData['MCompany']['options']['laCoBrowse'])) {
         $this->addCompanyJSFile($companyEditData['MCompany']['company_key'], $saveData['MCompany']['options']['laCoBrowse']);
+      }
+      if (!SET_AGREEMENT_END_DATE && empty($saveData['MAgreements']['agreement_end_day'])) {
+        $saveData['MAgreements']['agreement_end_day'] = date("Y-m-d", strtotime("+100 year"));
       }
 
       if (empty($agreementEditData)) {
@@ -499,7 +502,14 @@ class ContractController extends AppController
 
   private function getParams()
   {
-    return $this->request->data;
+    $dat = $this->request->data;
+    $defaultValue = Configure::read('defaultValue');
+    $mergedData = array_replace_recursive($defaultValue, $dat);
+    if (strcmp($mergedData['MCompany']['trial_flg'], '1') === 0) {
+      unset($mergedData['MAgreement']['agreement_start_day']);
+      unset($mergedData['MAgreement']['agreement_end_day']);
+    }
+    return $mergedData;
   }
 
   private function validateParams($action)
@@ -522,7 +532,9 @@ class ContractController extends AppController
       $addedCompanyInfo = $this->createCompany($companyInfo);
       $companyInfo['company_key'] = $addedCompanyInfo['companyKey'];
       $this->createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo);
-      $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo, $agreementInfo);
+      if (!ADD_ACCOUNT_TO_M_USER) {
+        $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo, $agreementInfo);
+      }
       $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultCustomerInformationSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
@@ -708,6 +720,11 @@ class ContractController extends AppController
       $administratorMailAddress = $userInfo["user_mail_address"];
     }
 
+    if (ADD_ACCOUNT_TO_M_USER) {
+      $agreementInfo['administrator_name'] = 'Admin';
+      $administratorMailAddress = $applicationMailAddress;
+    }
+
     $this->MAgreements->set(array(
       'm_companies_id' => $addedCompanyInfo['id'],
       'company_name' => $companyInfo['company_name'],
@@ -744,6 +761,11 @@ class ContractController extends AppController
       "permission_level" => C_AUTHORITY_SUPER,
       "new_password" => $password
     ];
+    if (ADD_ACCOUNT_TO_M_USER) {
+      $tmpData['user_name'] = 'Admin';
+      $tmpData['display_name'] = 'Admin';
+      $tmpData['permission_level'] = C_AUTHORITY_ADMIN;
+    }
     $this->MUser->create();
     $this->MUser->set($tmpData);
     if (!$this->MUser->validates()) {
