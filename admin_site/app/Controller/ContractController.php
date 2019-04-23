@@ -680,7 +680,11 @@ class ContractController extends AppController
       $agreementInfo['agreement_start_day'] = "";
     }
     if (empty($agreementInfo['agreement_end_day'])) {
-      $agreementInfo['agreement_end_day'] = "";
+      if (!SET_AGREEMENT_END_DATE) {
+        $agreementInfo['agreement_end_day'] = date("Y-m-d", strtotime("+100 year"));
+      } else {
+        $agreementInfo['agreement_end_day'] = "";
+      }
     }
     if (empty($agreementInfo['trial_start_day'])) {
       $agreementInfo['trial_start_day'] = "";
@@ -773,7 +777,7 @@ class ContractController extends AppController
     $userInfo["user_name"] = 'テストユーザー';
     $userInfo["user_display_name"] = 'テストユーザー';
     $mailAddress = '';
-    if (!ADD_ACCOUNT_TO_M_USER && parent::isStrongPermission()) {
+    if (ADD_ACCOUNT_TO_M_USER && parent::isStrongPermission()) {
       return;
     } elseif (!empty($agreementInfo['administrator_mail_address'])) {
       $mailAddress = $agreementInfo['administrator_mail_address'];
