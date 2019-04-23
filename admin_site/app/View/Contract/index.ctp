@@ -1,7 +1,7 @@
 <?php
   App::uses('CompanyExpireChecker', 'Vendor/util');
 ?>
-<?= $this->element('Billings/script'); ?>
+<?= $this->element('Contract/script'); ?>
 
 <div id='agreementList_idx'>
   <div id='agreementList_add_title'>
@@ -33,7 +33,9 @@
       <thead>
         <tr>
           <th style="width:23em;">会社名</th>
-            <th style="width:8em;">CV単価</th>
+          <?php if (ALLOW_SET_CV_VALUE): ?>
+              <th style="width:8em;">CV単価</th>
+          <?php endif; ?>
           <th style="width:8em;">キー</th>
           <?php if ($isStrongPermission): ?>
               <th style="width:15em;">プラン</th>
@@ -74,7 +76,9 @@
             }
             ?> >
             <td><a href="#" class="loginLink"><?=h($val['MCompany']['company_name'])?></a></td>
-              <td><?= number_format($val['MAgreement']['cv_value']) ?></td>
+            <?php if (ALLOW_SET_CV_VALUE): ?>
+                <td><?= number_format($val['MAgreement']['cv_value']) ?></td>
+            <?php endif; ?>
             <td><?=h($val['MCompany']['company_key'])?></td>
             <?php if ($isStrongPermission): ?>
               <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>

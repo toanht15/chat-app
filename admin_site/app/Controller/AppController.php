@@ -95,7 +95,7 @@ class AppController extends Controller {
     parent::beforeFilter();
     //Authの情報をセット
     $this->set('auth',$this->Auth);
-    $this->set('isStrongPermission', strcmp($this->userInfo['permission_level'], 1) === 0);
+    $this->set('isStrongPermission', $this->isStrongPermission());
   }
 
   /**
@@ -166,5 +166,10 @@ class AppController extends Controller {
   */
   public function jsonEncode($val) {
     return json_encode($val, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT );
+  }
+
+  protected function isStrongPermission()
+  {
+    return strcmp($this->userInfo['permission_level'], 1) === 0;
   }
 }
