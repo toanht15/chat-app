@@ -1,7 +1,7 @@
 <?php
   App::uses('CompanyExpireChecker', 'Vendor/util');
 ?>
-<?= $this->element('Contract/script'); ?>
+<?= $this->element('Billings/script'); ?>
 
 <div id='agreementList_idx'>
   <div id='agreementList_add_title'>
@@ -93,6 +93,11 @@
                   $coreSettings = json_decode($val['MCompany']['core_settings'], TRUE);
                   foreach($coreSettings as $coreSetting => $enabled) {
                     switch($coreSetting) {
+                      case 'enableRealtimeMonitor':
+                        if ($enabled) {
+                          echo '<p>【リアルタイムモニタ】</p>';
+                        }
+                        break;
                       case 'refCompanyData':
                         if($enabled) {
                           echo '<p>【企業情報付与】</p>';
