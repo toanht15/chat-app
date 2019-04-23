@@ -22,7 +22,7 @@ class BillingsController extends AppController
               ),
               array(
                   'type' => 'left',
-                  'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND permission_level = ' . (ADD_ACCOUNT_TO_M_USER ? C_AUTHORITY_ADMIN : C_AUTHORITY_SUPER) . ' GROUP BY m_companies_id)',
+                  'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND (permission_level = 1 OR permission_level = 99) GROUP BY m_companies_id)',
                   'alias' => 'AdminUser',
                   'conditions' => array(
                       'AdminUser.m_companies_id = MCompany.id',

@@ -51,7 +51,7 @@
     <?= $this->Form->input('MAgreements.telephone_number', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
   </li>
 
-<?php if (!ADD_ACCOUNT_TO_M_USER): ?>
+<?php if (!ADD_ACCOUNT_TO_M_USER || $isStrongPermission): ?>
     <li style="display: flex; align-items: center;">
         <h2>管理者情報</h2>
       <?php if ($this->params->action == 'add'): ?>
@@ -70,13 +70,15 @@
     </li>
     <!-- /* お名前 */ -->
     <li>
-        <div class="labelArea fLeft"><span class="require"><label>お名前</label></span></div>
+        <div class="labelArea fLeft">
+            <span <?= (ADD_ACCOUNT_TO_M_USER) ? "" : 'class="require"' ?>><label>お名前</label></span></div>
       <?= $this->Form->input('MAgreements.administrator_name', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
       <?php if (!empty($errors['application_name'])) echo "<li class='error-message'>" . h($errors['application_name'][0]) . "</li>"; ?>
     </li>
     <!-- /* メールアドレス */ -->
     <li>
-        <div class="labelArea fLeft"><span class="require"><label>メールアドレス</label></span></div>
+        <div class="labelArea fLeft">
+            <span <?= (ADD_ACCOUNT_TO_M_USER) ? "" : 'class="require"' ?>><label>メールアドレス</label></span></div>
       <?= $this->Form->input('MAgreements.administrator_mail_address', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
         <!-- /* 初期管理者情報 */ -->
       <?php if ($this->params->action == 'add'): ?>

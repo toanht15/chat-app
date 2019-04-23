@@ -33,7 +33,9 @@
       <thead>
         <tr>
           <th style="width:23em;">会社名</th>
-            <th style="width:8em;">CV単価</th>
+          <?php if (ALLOW_SET_CV_VALUE): ?>
+              <th style="width:8em;">CV単価</th>
+          <?php endif; ?>
           <th style="width:8em;">キー</th>
           <?php if ($isStrongPermission): ?>
               <th style="width:15em;">プラン</th>
@@ -74,7 +76,9 @@
             }
             ?> >
             <td><a href="#" class="loginLink"><?=h($val['MCompany']['company_name'])?></a></td>
-              <td><?= number_format($val['MAgreement']['cv_value']) ?></td>
+            <?php if (ALLOW_SET_CV_VALUE): ?>
+                <td><?= number_format($val['MAgreement']['cv_value']) ?></td>
+            <?php endif; ?>
             <td><?=h($val['MCompany']['company_key'])?></td>
             <?php if ($isStrongPermission): ?>
               <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>
@@ -93,6 +97,11 @@
                   $coreSettings = json_decode($val['MCompany']['core_settings'], TRUE);
                   foreach($coreSettings as $coreSetting => $enabled) {
                     switch($coreSetting) {
+                      case 'enableRealtimeMonitor':
+                        if ($enabled) {
+                          echo '<p>【リアルタイムモニタ】</p>';
+                        }
+                        break;
                       case 'refCompanyData':
                         if($enabled) {
                           echo '<p>【企業情報付与】</p>';
