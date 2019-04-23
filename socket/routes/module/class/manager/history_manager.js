@@ -241,14 +241,28 @@ module.exports = class HistoryManager extends DatabaseManager {
 
   timeUpdate(historyId, obj, time) {
     let self = this;
-    return new Promise((resolve, reject) => {
-      var insertStayData = {
-            t_histories_id: historyId,
-            title: ('title' in obj) ? obj.title : '',
-            url: ('url' in obj) ? obj.url : '',
-            stay_time: '',
-            created: time,
-            modified: time
+    return new Promise(async (resolve, reject) => {
+      let prevArray = obj.prev;
+      let result = 0;
+      for (let i = 0; i < prevArray.length; i++) {
+        result = await this.processTimeUpdate(self, historyId, prevArray, i);
+      }
+      resolve(result);
+    });
+  }
+
+  processTimeUpdate(self, historyId, prevArray, index) {
+    return new Promise((resolve) => {
+      let prevData = prevArray[index];
+      let lastIndex = prevArray.length - 1;
+      let accessTime = CommonUtil.formatDateParse(prevData.accessTime);
+      let insertStayData = {
+        t_histories_id: historyId,
+        title: ('title' in prevData) ? prevData.title : '',
+        url: ('url' in prevData) ? prevData.url : '',
+        stay_time: '',
+        created: accessTime,
+        modified: accessTime
       };
 
       self.dbPool.query(
@@ -256,12 +270,13 @@ module.exports = class HistoryManager extends DatabaseManager {
           historyId,
           function(err, rows) {
             if (err !== null && err !== '') {
-              reject(null);
+              resolve(null);
               return false;
             } // DB接続断対応
             if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
               // UPDATE
-              var stayTime = CommonUtil.calcTime(rows[0].created, time);
+              var stayTime = CommonUtil.getDiffTime(
+                  CommonUtil.formatDateParse(rows[0].created), accessTime);
               self.dbPool.query(
                   'UPDATE t_history_stay_logs SET stay_time = ? WHERE id = ?',
                   [stayTime, rows[0].id],
@@ -273,7 +288,7 @@ module.exports = class HistoryManager extends DatabaseManager {
             }
             self.dbPool.query(
                 'UPDATE t_histories SET out_date = ?, modified = ? WHERE id = ?',
-                [time, time, historyId],
+                [accessTime, accessTime, historyId],
                 function(error, results, fields) {
                 }
             );
@@ -283,7 +298,8 @@ module.exports = class HistoryManager extends DatabaseManager {
               resolve(rows[0].id);
               return;
             }
-            pool.query('INSERT INTO t_history_stay_logs SET ?', insertStayData,
+            self.dbPool.query('INSERT INTO t_history_stay_logs SET ?',
+                insertStayData,
                 function(error, results, fields) {
                   resolve(results.insertId);
                 }

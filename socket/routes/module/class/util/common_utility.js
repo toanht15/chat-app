@@ -7,7 +7,7 @@ module.exports = class CommonUtility {
     return ('0' + str).slice(-2);
   }
 
-  static calcTime(startTime, endTime) {
+  static getDiffTime(startTime, endTime) {
     const end = new Date(endTime),
         start = new Date(startTime);
     if (isNaN(start.getTime()) || isNaN(end.getTime())) return false;
@@ -15,7 +15,7 @@ module.exports = class CommonUtility {
     const hour = parseInt(req / 3600);
     const min = parseInt((req / 60) % 60);
     const sec = req % 60;
-    return _numPad(hour) + ':' + _numPad(min) + ':' + _numPad(sec); // 表示を更新
+    return this.numPad(hour) + ':' + this.numPad(min) + ':' + this.numPad(sec); // 表示を更新
   }
 
   static timeCalculator(obj) {

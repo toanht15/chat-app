@@ -1197,6 +1197,7 @@ class TAutoMessagesController extends WidgetSettingController
       }
       $this->MMailTransmissionSetting->set([
         'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'from_address' => 'no-reply@sinclo.jp',
         'from_name' => $fromName,
         'to_address' => $toAddresses,
         'subject' => $subject

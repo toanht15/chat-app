@@ -67,7 +67,7 @@ function timeUpdate(historyId, obj, time, callback) {
         } // DB接続断対応
         if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
           // UPDATE
-          var stayTime = CommonUtil.calcTime(rows[0].created, time);
+          var stayTime = CommonUtil.getDiffTime(rows[0].created, time);
           DBConnector.getPool().query(
               'UPDATE t_history_stay_logs SET stay_time = ? WHERE id = ?',
               [stayTime, rows[0].id],
