@@ -95,6 +95,7 @@ class AppController extends Controller {
     parent::beforeFilter();
     //Authの情報をセット
     $this->set('auth',$this->Auth);
+    $this->set('isStrongPermission', strcmp($this->userInfo['permission_level'], 1) === 0);
   }
 
   /**

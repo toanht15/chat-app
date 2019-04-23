@@ -5827,7 +5827,11 @@ var socket, // socket.io
         if (userInfo.prev.length > 0) {
           browserInfo.referrer = userInfo.prev[userInfo.prev.length - 1].url;
         }
-        userInfo.prev.push({url: location.href, title: common.title()});
+        userInfo.prev.push({
+          url: location.href,
+          title: common.title(),
+          accessTime: sincloInfo.accessTime
+        });
         storage.s.set(code, JSON.stringify(userInfo.prev));
       }
     },
@@ -7198,6 +7202,7 @@ var socket, // socket.io
           window.sincloInfo.contract = settings.contract;
           window.sincloInfo.chat = settings.chat;
           window.sincloInfo.customVariable = settings.customVariable;
+          window.sincloInfo.accessTime = json.accessTime;
         } else {
           if (check.smartphone() && json.widget.hasOwnProperty('spShowFlg') &&
               Number(json.widget.spShowFlg) === 2) {
@@ -7210,6 +7215,7 @@ var socket, // socket.io
           window.sincloInfo.chat = json.chat;
           window.sincloInfo.customVariable = json.customVariable;
           storage.l.set('scl_settings', JSON.stringify(json));
+          window.sincloInfo.accessTime = json.accessTime;
         }
       } else {
         clearTimeout(timer);

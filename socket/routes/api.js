@@ -345,7 +345,7 @@ router.post('/auth/info', function(req, res, next) {
         var api = new LandscapeAPI('json', 'utf8');
         api.getFrom(ip, callback);
       } else {
-        deblogger.debug('refCompanyData is false. siteKey : ' + obj.siteKey);
+        console.log('refCompanyData is false. siteKey : ' + obj.siteKey);
         callback({});
       }
     };

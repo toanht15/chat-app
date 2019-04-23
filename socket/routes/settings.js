@@ -43,7 +43,8 @@ router.get("/", function (req, res, next) {
   if (CommonUtil.isKeyExists(SharedData.sincloCore, siteKey + '.' + tabId)) {
     res.send({
       status: true,
-      nm: true // not modified
+      nm: true, // not modified
+      accessTime: (new Date()).getTime()
     });
     return true;
   }
@@ -743,6 +744,7 @@ router.get("/", function (req, res, next) {
         sendData.chat.settings['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
       }
       sendData.customVariable = common.customerInfoSettings[siteKey];
+      sendData.accessTime = (new Date()).getTime();
       res.send(sendData);
     }
     else {

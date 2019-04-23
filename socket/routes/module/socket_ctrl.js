@@ -67,7 +67,7 @@ function timeUpdate(historyId, obj, time, callback) {
         } // DB接続断対応
         if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
           // UPDATE
-          var stayTime = CommonUtil.calcTime(rows[0].created, time);
+          var stayTime = CommonUtil.getDiffTime(rows[0].created, time);
           DBConnector.getPool().query(
               'UPDATE t_history_stay_logs SET stay_time = ? WHERE id = ?',
               [stayTime, rows[0].id],
@@ -4162,8 +4162,7 @@ io.sockets.on('connection', function(socket) {
   // オートチャット
   socket.on('sendAutoChat', function(d) {
     var obj = JSON.parse(d);
-    //応対数検索、登録
-    getConversationCountUser(obj.userId, function(results) {
+    var getConversationCallback = function(results) {
       var messageDistinction;
       if (results !== null) {
         //カウント数が取れなかったとき
@@ -4233,7 +4232,25 @@ io.sockets.on('connection', function(socket) {
           }
         }
       }
-    });
+    };
+    //応対数検索、登録
+    if (!list.functionManager.isEnabled(obj.siteKey,
+        list.functionManager.keyList.enableRealtimeMonitor)
+        && !CommonUtil.isset(obj.historyId)) {
+      let historyManager = new HistoryManager();
+      let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
+      obj = Object.assign(obj, target);
+      historyManager.addHistory(obj).then((result) => {
+        emit.toMine('setHistoryId', result, socket);
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
+        getConversationCountUser(obj.userId, getConversationCallback);
+      });
+    } else {
+      getConversationCountUser(obj.userId, getConversationCallback);
+    }
   });
 
   // チャット呼出中メッセージ
@@ -4466,8 +4483,8 @@ io.sockets.on('connection', function(socket) {
   socket.on('sendScenarioMessage', function(d, ack) {
     var obj = JSON.parse(d);
     var scenario = JSON.parse(JSON.stringify(obj));
-    scenario.created = CommonUtil.formatDateParse();
-    scenario.sort = CommonUtil.fullDateTime(new Date(scenario.created));
+    scenario.created = new Date();
+    scenario.sort = CommonUtil.fullDateTime(scenario.created);
 
     var sincloSession = SharedData.sincloCore[scenario.siteKey][scenario.sincloSessionId];
     if (CommonUtil.isset(sincloSession) &&
@@ -4817,13 +4834,12 @@ io.sockets.on('connection', function(socket) {
   socket.on('sendDiagramMessage', function(d, ack) {
     var obj = JSON.parse(d);
     var diagramData = obj;
-    diagramData.created = CommonUtil.formatDateParse();
-    diagramData.sort = CommonUtil.fullDateTime(new Date(diagramData.created));
+    diagramData.created = new Date();
+    diagramData.sort = CommonUtil.fullDateTime(diagramData.created);
     diagramData.shownMessage = true;
 
     var sincloSession = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId];
-    if (CommonUtil.isset(sincloSession) &&
-        CommonUtil.isset(sincloSession.diagram)) {
+    if (CommonUtil.isset(sincloSession)) {
       if (!CommonUtil.isset(
           SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
         SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
