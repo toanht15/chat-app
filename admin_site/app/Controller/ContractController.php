@@ -82,7 +82,7 @@ class ContractController extends AppController
         ],
         [
           'type' => 'left',
-          'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND permission_level = 99 GROUP BY m_companies_id)',
+            'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND (permission_level = 1 OR permission_level = 99) GROUP BY m_companies_id)',
           'alias' => 'AdminUser',
           'conditions' => [
             'AdminUser.m_companies_id = MCompany.id',
@@ -379,7 +379,7 @@ class ContractController extends AppController
           )]
       );
       $transactions = $this->TransactionManager->begin();
-      $saveData = $this->request->data;
+      $saveData = $this->getParams();
       $companySaveData = [];
       $companySaveData['MCompany'] = $saveData['MCompany'];
       $companySaveData['MCompany']['id'] = $companyEditData['MCompany']['id'];
@@ -397,15 +397,19 @@ class ContractController extends AppController
       if ($coreSetting['laCoBrowse'] !== boolval($saveData['MCompany']['options']['laCoBrowse'])) {
         $this->addCompanyJSFile($companyEditData['MCompany']['company_key'], $saveData['MCompany']['options']['laCoBrowse']);
       }
+      if (!SET_AGREEMENT_END_DATE && empty($saveData['MAgreements']['agreement_end_day'])) {
+        $saveData['MAgreements']['agreement_end_day'] = date("Y-m-d", strtotime("+100 year"));
+      }
 
       if (empty($agreementEditData)) {
         $this->MAgreements->create();
-        $this->MAgreements->set([
+        $this->MAgreements->set(array(
           'm_companies_id' => $companyEditData['MCompany']['id'],
           'trial_start_day' => $saveData['MAgreements']['application_day'],
           'trial_end_day' => $saveData['MAgreements']['application_day'],
           'agreement_start_day' => $saveData['MAgreements']['agreement_start_day'],
           'agreement_end_day' => $saveData['MAgreements']['agreement_end_day'],
+            'cv_value' => str_replace(',', '', $saveData['MAgreements']['cv_value']),
           'application_department' => $saveData['MAgreements']['application_department'],
           'application_position' => $saveData['MAgreements']['application_position'],
           'application_name' => $saveData['MAgreements']['application_name'],
@@ -416,11 +420,15 @@ class ContractController extends AppController
           'administrator_mail_address' => $saveData['MAgreements']['administrator_mail_address'],
           'installation_url' => $saveData['MAgreements']['installation_url'],
           'business_model' => $saveData['MAgreements']['business_model'],
-        ]);
+        ));
         $this->MAgreements->save();
       } else {
         $agreementSaveData = [];
         $agreementSaveData['MAgreements'] = array_merge($agreementEditData['MAgreements'], $saveData['MAgreements']);
+        if (!empty($agreementSaveData['MAgreements']['cv_value'])) {
+          $agreementSaveData['MAgreements']['cv_value'] = str_replace(',', '',
+              $agreementSaveData['MAgreements']['cv_value']);
+        }
         $this->MAgreements->save($agreementSaveData, false);
       }
 
@@ -434,6 +442,8 @@ class ContractController extends AppController
       $editData['MCompany']['options']['chatbotScenario'] = json_decode($editData['MCompany']['core_settings'], TRUE)['chatbotScenario'];
       $editData['MCompany']['options']['laCoBrowse'] = json_decode($editData['MCompany']['core_settings'], TRUE)['laCoBrowse'];
       $editData['MCompany']['options']['chatbotTreeEditor'] = json_decode($editData['MCompany']['core_settings'], TRUE)['chatbotTreeEditor'];
+      $editData['MCompany']['options']['enableRealtimeMonitor'] = json_decode($editData['MCompany']['core_settings'],
+          true)['enableRealtimeMonitor'];
 
       // ここまで
       $agreementData = $this->MAgreements->find('first', [
@@ -492,7 +502,14 @@ class ContractController extends AppController
 
   private function getParams()
   {
-    return $this->request->data;
+    $dat = $this->request->data;
+    $defaultValue = Configure::read('defaultValue');
+    $mergedData = array_replace_recursive($defaultValue, $dat);
+    if (strcmp($mergedData['MCompany']['trial_flg'], '1') === 0) {
+      unset($mergedData['MAgreement']['agreement_start_day']);
+      unset($mergedData['MAgreement']['agreement_end_day']);
+    }
+    return $mergedData;
   }
 
   private function validateParams($action)
@@ -663,13 +680,20 @@ class ContractController extends AppController
       $agreementInfo['agreement_start_day'] = "";
     }
     if (empty($agreementInfo['agreement_end_day'])) {
-      $agreementInfo['agreement_end_day'] = "";
+      if (!SET_AGREEMENT_END_DATE) {
+        $agreementInfo['agreement_end_day'] = date("Y-m-d", strtotime("+100 year"));
+      } else {
+        $agreementInfo['agreement_end_day'] = "";
+      }
     }
     if (empty($agreementInfo['trial_start_day'])) {
       $agreementInfo['trial_start_day'] = "";
     }
     if (empty($agreementInfo['trial_end_day'])) {
       $agreementInfo['trial_end_day'] = "";
+    }
+    if (empty($agreementInfo['cv_value'])) {
+      $agreementInfo['cv_value'] = 0;
     }
     if (empty($agreementInfo['memo'])) {
       $agreementInfo['memo'] = "";
@@ -707,6 +731,7 @@ class ContractController extends AppController
       'trial_end_day' => $agreementInfo['trial_end_day'],
       'agreement_start_day' => $agreementInfo['agreement_start_day'],
       'agreement_end_day' => $agreementInfo['agreement_end_day'],
+        'cv_value' => str_replace(',', '', $agreementInfo['cv_value']),
       'application_department' => $agreementInfo['application_department'],
       'application_position' => $agreementInfo['application_position'],
       'application_name' => $agreementInfo['application_name'],
@@ -733,6 +758,11 @@ class ContractController extends AppController
       "permission_level" => C_AUTHORITY_SUPER,
       "new_password" => $password
     ];
+    if (empty($agreementInfo['administrator_name']) && empty($agreementInfo['administrator_mail_address'])) {
+      $tmpData['user_name'] = 'Admin';
+      $tmpData['display_name'] = 'Admin';
+      $tmpData['permission_level'] = C_AUTHORITY_ADMIN;
+    }
     $this->MUser->create();
     $this->MUser->set($tmpData);
     if (!$this->MUser->validates()) {
@@ -747,7 +777,9 @@ class ContractController extends AppController
     $userInfo["user_name"] = 'テストユーザー';
     $userInfo["user_display_name"] = 'テストユーザー';
     $mailAddress = '';
-    if (!empty($agreementInfo['administrator_mail_address'])) {
+    if (ADD_ACCOUNT_TO_M_USER && parent::isStrongPermission()) {
+      return;
+    } elseif (!empty($agreementInfo['administrator_mail_address'])) {
       $mailAddress = $agreementInfo['administrator_mail_address'];
     }
 
@@ -1444,7 +1476,11 @@ class ContractController extends AppController
 
   private function getDefaultScenarioConfigurations()
   {
-    return Configure::read('default.scenario');
+    if (defined('ALLOW_SET_SLIM_SETTINGS') && ALLOW_SET_SLIM_SETTINGS) {
+      return Configure::read('default.scenario_slim');
+    } else {
+      return Configure::read('default.scenario');
+    }
   }
 
   private function isChatEnable($m_contact_types_id)

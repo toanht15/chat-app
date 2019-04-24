@@ -615,10 +615,35 @@
         emitData.forceFirstConnect = true;
       }
 
-      emit('connected', {
-        type: 'user',
-        data: emitData
-      });
+      if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+        $.ajax({
+          headers: {
+            'Accept': 'text/plain, application/json; charset=utf-8',
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          type: 'post',
+          url: window.sincloInfo.site.files + '/api/auth/customer',
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            siteKey: sincloInfo.site.key,
+            type: 'user',
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            sincloSessionId: userInfo.sincloSessionId,
+            token: common.token,
+            data: emitData
+          }),
+          success: function(json) {
+            sinclo.accessInfo(JSON.stringify(json));
+          }
+        });
+      } else {
+        emit('connected', {
+          type: 'user',
+          data: emitData
+        });
+      }
     },
     retConnectedForSync: function(d) {
       var obj = common.jParse(d);
@@ -713,7 +738,7 @@
       var connectSuccessData = {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
-        prevList: userInfo.prevList,
+        prevList: userInfo.prev,
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
@@ -725,12 +750,40 @@
         connectSuccessData.tmpAutoMessages = tmpAutoMessages;
       }
 
-      emit('connectSuccess', connectSuccessData, function(ev) {
-        if ((userInfo.gFrame && Number(userInfo.accessType) ===
-            Number(cnst.access_type.guest)) === false) {
-          emit('customerInfo', obj);
-        }
-      });
+      if (window.sincloInfo.contract.enableRealtimeMonitor) {
+        emit('connectSuccess', connectSuccessData, function(ev) {
+          if ((userInfo.gFrame && Number(userInfo.accessType) ===
+              Number(cnst.access_type.guest)) === false) {
+            emit('customerInfo', obj);
+          }
+        });
+      } else {
+        $.ajax({
+          type: 'post',
+          url: window.sincloInfo.site.files + '/api/auth/info',
+          dataType: 'json',
+          contentType: 'application/JSON',
+          data: JSON.stringify({
+            confirm: false,
+            widget: window.sincloInfo.widgetDisplay,
+            prevList: userInfo.prev,
+            userAgent: window.navigator.userAgent,
+            time: userInfo.time,
+            accessId: userInfo.accessId,
+            ipAddress: userInfo.getIp(),
+            referrer: userInfo.referrer,
+            siteKey: sincloInfo.site.key,
+            socketId: socket.id,
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            sincloSessionId: userInfo.sincloSessionId,
+            token: common.token
+          }),
+          success: function(json) {
+            sinclo.setHistoryId(JSON.stringify(json));
+          }
+        });
+      }
 
       // customEvent
       if (document.createEvent) {
@@ -759,6 +812,15 @@
             if (window.sincloInfo.contract.chat) {
               // チャット情報読み込み
               sinclo.chatApi.init();
+              if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+                sinclo.chatMessageData(JSON.stringify({
+                  siteKey: obj.siteKey,
+                  token: obj.token,
+                  chat: obj.chat,
+                  tabId: obj.tabId,
+                  sincloSessionId: obj.sincloSessionId
+                }));
+              }
             }
           };
 
@@ -3502,7 +3564,9 @@
           sinclo.displayTextarea();
         }
 
-        emit('getChatMessage', {showName: sincloInfo.widget.showName});
+        if (sincloInfo.contract.enableRealtimeMonitor) {
+          emit('getChatMessage', {showName: sincloInfo.widget.showName});
+        }
         common.reloadWidgetRemove();
       },
       initEvent: function() {
@@ -6145,6 +6209,13 @@
           case 4:
             data.containerWidth = 310;
             data.width = settings.lineUpStyle === '1' ? 310 : 193;
+            break;
+          case 5:
+            data.containerWidth = $('.grid_for_icon').width() -
+                $('.iconDiv').width();
+            data.width = settings.lineUpStyle === '1' ?
+                data.containerWidth :
+                193;
             break;
           default:
             data.containerWidth = 310;
