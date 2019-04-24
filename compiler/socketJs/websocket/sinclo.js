@@ -521,8 +521,9 @@
       };
 
       // チャットの契約をしている場合
-      if (window.sincloInfo.contract.chat &&
-          !(userInfo.gFrame && Number(userInfo.accessType) ===
+      if (window.sincloInfo.contract.chat
+          && window.sincloInfo.contract.enableRealtimeMonitor
+          && !(userInfo.gFrame && Number(userInfo.accessType) ===
               Number(cnst.access_type.guest))) {
         sinclo.chatApi.observeType.emit(false, '');
       }
