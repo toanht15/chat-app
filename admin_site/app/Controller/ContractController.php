@@ -397,9 +397,12 @@ class ContractController extends AppController
       if ($coreSetting['laCoBrowse'] !== boolval($saveData['MCompany']['options']['laCoBrowse'])) {
         $this->addCompanyJSFile($companyEditData['MCompany']['company_key'], $saveData['MCompany']['options']['laCoBrowse']);
       }
-      if (!SET_AGREEMENT_END_DATE && empty($saveData['MAgreements']['agreement_end_day']) && strcmp($companySaveData['MCompany']['trial_flg'],
-              0) === 0) {
+
+      if (!SET_AGREEMENT_END_DATE && empty($saveData['MAgreements']['agreement_end_day']) && strcmp($saveData['MCompany']['trial_flg'],
+              1) !== 0) {
         $saveData['MAgreements']['agreement_end_day'] = date("Y-m-d", strtotime("+100 year"));
+      } elseif (strcmp($saveData['MCompany']['trial_flg'], 1) === 0) {
+        $saveData['MAgreements']['agreement_end_day'] = '';
       }
 
       if (empty($agreementEditData)) {
@@ -681,7 +684,7 @@ class ContractController extends AppController
       $agreementInfo['agreement_start_day'] = "";
     }
     if (empty($agreementInfo['agreement_end_day'])) {
-      if (!SET_AGREEMENT_END_DATE && strcmp($companyInfo['trial_flg'], 0) === 0) {
+      if (!SET_AGREEMENT_END_DATE && strcmp($companyInfo['trial_flg'], 1) !== 0) {
         $agreementInfo['agreement_end_day'] = date("Y-m-d", strtotime("+100 year"));
       } else {
         $agreementInfo['agreement_end_day'] = "";
