@@ -778,7 +778,8 @@
             userId: userInfo.userId,
             tabId: userInfo.tabId,
             sincloSessionId: userInfo.sincloSessionId,
-            token: common.token
+            token: common.token,
+            customVariables: userInfo.customVariables
           }),
           success: function(json) {
             sinclo.setHistoryId(JSON.stringify(json));
