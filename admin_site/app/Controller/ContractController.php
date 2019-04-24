@@ -1472,7 +1472,11 @@ class ContractController extends AppController
 
   private function getDefaultDiagramConfigurations()
   {
-    return Configure::read('default.diagrams');
+    if (defined('ALLOW_SET_SLIM_SETTINGS') && ALLOW_SET_SLIM_SETTINGS) {
+      return Configure::read('default.diagrams_slim');
+    } else {
+      return Configure::read('default.diagrams');
+    }
   }
 
   private function getDefaultMailTemplateConfigurations()

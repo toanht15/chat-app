@@ -521,8 +521,9 @@
       };
 
       // チャットの契約をしている場合
-      if (window.sincloInfo.contract.chat &&
-          !(userInfo.gFrame && Number(userInfo.accessType) ===
+      if (window.sincloInfo.contract.chat
+          && window.sincloInfo.contract.enableRealtimeMonitor
+          && !(userInfo.gFrame && Number(userInfo.accessType) ===
               Number(cnst.access_type.guest))) {
         sinclo.chatApi.observeType.emit(false, '');
       }
@@ -12752,7 +12753,7 @@
       syncScenarioData: {
         sendLockFlg: false,
         sendDetail: function(param, otherInformation) {
-          if (this.sendLockFlg) return;
+          if (this.sendLockFlg || !sinclo.scenarioApi.isProcessing()) return;
           var self = sinclo.scenarioApi;
           var currentScenarioSeqNo = 0;
           var currentHearingSeqNo = 0;
