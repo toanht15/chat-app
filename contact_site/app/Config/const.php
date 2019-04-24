@@ -208,8 +208,8 @@ define('C_AUTO_TRIGGER_SPEECH_CONTENT', 8); // 発言内容
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 9); // 最初の滞在ページ
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 define('C_AUTO_TRIGGER_VISITOR_DEVICE', 11); // 訪問者の端末
-define('C_AUTO_TRIGGER_COMPANY_INFOMATION', 12); // 企業情報
-define('C_AUTO_TRIGGER_SITE_VISITOR_INFOMATION', 13); // サイト訪問者情報
+define('C_AUTO_TRIGGER_COMPANY_INFORMATION', 12); // 企業情報
+define('C_AUTO_TRIGGER_VISITOR_INFORMATION', 13); // サイト訪問者情報
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -851,7 +851,7 @@ $config['outMessageTriggerList'] = array(
     )
   ),
   // 訪問者の端末
-  C_AUTO_TRIGGER_VISITOR_DEVICE => array(
+  C_AUTO_TRIGGER_VISITOR_DEVICE      => array(
     'label' => 'サイト訪問者の端末',
     'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
     'key' => 'visitor_device',
@@ -862,25 +862,37 @@ $config['outMessageTriggerList'] = array(
     )
   ),
   //　企業情報
-  C_AUTO_TRIGGER_COMPANY_INFOMATION => array(
+  C_AUTO_TRIGGER_COMPANY_INFORMATION => array(
     'label' => '企業情報',
     'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
     'key' => 'visitor_device',
     'default' => array(
-      "pc" => false,
-      "smartphone" => false,
-      "tablet" => false
+      "getInfoStatus" => '1',
+      "settingCondition" => '1',
+      "settings" => array(
+        array(
+          'type' => '1',
+          'content' => '',
+          'matchCondition' => '1'
+        )
+      )
     )
   ),
   //　サイト訪問者情報
-  C_AUTO_TRIGGER_SITE_VISITOR_INFOMATION => array(
-  'label' => 'サイト訪問者情報',
+  C_AUTO_TRIGGER_VISITOR_INFORMATION => array(
+  'label' => '訪問ユーザ情報',
   'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
   'key' => 'visitor_device',
   'default' => array(
-    "pc" => false,
-    "smartphone" => false,
-    "tablet" => false
+    "getInfoStatus" => '1',
+    "settingCondition" => '1',
+    "settings" => array(
+      array(
+        'name' => '',
+        'content' => '',
+        'matchCondition' => '1'
+      )
+    )
   )
 )
 );
