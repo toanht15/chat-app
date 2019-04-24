@@ -5794,7 +5794,7 @@ io.sockets.on('connection', function(socket) {
               }
               if (!list.functionManager.isEnabled(info.siteKey,
                   list.functionManager.keyList.enableRealtimeMonitor)) {
-                if (CommonUtil.isKeyExists(ShareData.sincloCore,
+                if (CommonUtil.isKeyExists(SharedData.sincloCore,
                     info.siteKey + '.' + tabId + '.historyId')) {
                   emit.toCompany('unsetUser', sendData, info.siteKey);
                 }

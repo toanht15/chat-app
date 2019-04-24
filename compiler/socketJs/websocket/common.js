@@ -6871,7 +6871,8 @@ var socket, // socket.io
     socket.on('connect', function() {
       // ウィジェットがある状態での再接続があった場合
       var sincloBox = document.getElementById('sincloBox');
-      if (sincloBox && userInfo.accessType === Number(cnst.access_type.guest)) {
+      if (sincloBox && userInfo.accessType === Number(cnst.access_type.guest) &&
+          window.sincloInfo.contract.enableRealtimeMonitor) {
         sinclo.trigger.flg = true;
         var emitData = userInfo.getSendList();
         emitData.widget = window.sincloInfo.widgetDisplay;
