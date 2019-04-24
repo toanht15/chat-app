@@ -778,7 +778,9 @@ class ContractController extends AppController
     $userInfo["user_name"] = 'テストユーザー';
     $userInfo["user_display_name"] = 'テストユーザー';
     $mailAddress = '';
-    if (ADD_ACCOUNT_TO_M_USER && parent::isStrongPermission()) {
+    if (parent::isStrongPermission() && !empty($agreementInfo['administrator_mail_address'])) {
+      $mailAddress = $agreementInfo['administrator_mail_address'];
+    } elseif (ADD_ACCOUNT_TO_M_USER) {
       return;
     } elseif (!empty($agreementInfo['administrator_mail_address'])) {
       $mailAddress = $agreementInfo['administrator_mail_address'];
