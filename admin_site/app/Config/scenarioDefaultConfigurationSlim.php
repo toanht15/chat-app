@@ -1939,125 +1939,127 @@ $config['default'] = array(
       'relation_auto_message_index' => 11
     ),
     6 => array(
-      "chatbotType" => "1",
-      "scenarios" => array(
-        "0" => array(
-          "actionType" => "2",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "1",
-          "hearings" => array(
-            array(
-              "variableName" => "問い合わせ内容",
-              "inputType" => 1,
-              "uiType" => "2",
-              "message" => "お問い合わせですね。\nどのようなお問い合わせでしょうか？",
-              "required" => true,
-              "errorMessage" => "",
-              "inputLFType" => 2
-            )
+      'name' => '【サンプル】問い合わせフォーム',
+      'activity' => array(
+        "chatbotType" => "1",
+        "scenarios" => array(
+          "0" => array(
+            "actionType" => "2",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "1",
+            "hearings" => array(
+              array(
+                "variableName" => "問い合わせ内容",
+                "inputType" => 1,
+                "uiType" => "2",
+                "message" => "お問い合わせですね。\nどのようなお問い合わせでしょうか？",
+                "required" => true,
+                "errorMessage" => "",
+                "inputLFType" => 2
+              )
+            ),
+            "restore" => false,
+            "isConfirm" => "2",
+            "confirmMessage" => "",
+            "success" => "",
+            "cancel" => "",
+            "cv" => "2"
           ),
-          "restore" => false,
-          "isConfirm" => "2",
-          "confirmMessage" => "",
-          "success" => "",
-          "cancel" => "",
-          "cv" => "2"
-        ),
-        "1" => array(
-          "actionType" => "1",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "2",
-          "message" => "ただいま担当の者が不在にしておりますので、改めてこちらからご連絡させて頂きます。",
-          "restore" => false
-        ),
-        "2" => array(
-          "actionType" => "1",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "2",
-          "message" => "お客様の会社名、お名前、電話番号、メールアドレスを入力して下さい。\n\n※普段お使いのメール署名をそのままコピー＆ペーストして頂く形でもご利用頂けます。",
-          "restore" => false
-        ),
-        "3" => array(
-          "actionType" => "12",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "2",
-          "multipleHearings" => array(
-            array(
-              "variableName" => "会社名",
-              "inputType" => "1",
-              "label" => "会社名",
-              "required" => true
-            ),
-            array(
-              "variableName" => "名前",
-              "inputType" => "2",
-              "label" => "名前",
-              "required" => true
-            ),
-            array(
-              "variableName" => "部署名",
-              "inputType" => "5",
-              "label" => "部署名",
-              "required" => false
-            ),
-            array(
-              "variableName" => "電話番号",
-              "inputType" => "7",
-              "label" => "電話番号",
-              "required" => true
-            ),
-            array(
-              "variableName" => "メールアドレス",
-              "inputType" => "10",
-              "label" => "メールアドレス",
-              "required" => true
-            )
+          "1" => array(
+            "actionType" => "1",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "2",
+            "message" => "ただいま担当の者が不在にしておりますので、改めてこちらからご連絡させて頂きます。",
+            "restore" => false
           ),
-          "restore" => false
-        ),
-        "4" => array(
-          "actionType" => "2",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "1",
-          "hearings" => array(
-            array(
-              "variableName" => "追記事項",
-              "inputType" => 1,
-              "uiType" => "2",
-              "message" => "他に追記されることがございましたら、こちらにご記入ください。\n※ 特にない場合は「なし」とご記入ください",
-              "required" => true,
-              "errorMessage" => "",
-              "inputLFType" => 2
-            )
+          "2" => array(
+            "actionType" => "1",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "2",
+            "message" => "お客様の会社名、お名前、電話番号、メールアドレスを入力して下さい。\n\n※普段お使いのメール署名をそのままコピー＆ペーストして頂く形でもご利用頂けます。",
+            "restore" => false
           ),
-          "restore" => false,
-          "isConfirm" => "2",
-          "confirmMessage" => "",
-          "success" => "",
-          "cancel" => "",
-          "cv" => "1"
-        ),
-        "5" => array(
-          "actionType" => "1",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "2",
-          "message" => "array(array(名前))様からのお問い合わせを受付いたしました。",
-          "restore" => false
-        ),
-        "6" => array(
-          "actionType" => "4",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "2",
-          "mailType" => "3",
-          "mailTransmission" => array(
-            'from_address' => 'no-reply@cv-agaru.com',
-            'from_name' => '★★★自由に編集してください★★★',
-            'to_address' => '{{メールアドレス}}',
-            'subject' => 'お問い合わせを受付いたしました'
-          ), // FIXME
-          "mailTemplate" => array(
-            'mail_type_cd' => 'CS001',
-            'template' => '--------------------------------------------------------------------
+          "3" => array(
+            "actionType" => "12",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "2",
+            "multipleHearings" => array(
+              array(
+                "variableName" => "会社名",
+                "inputType" => "1",
+                "label" => "会社名",
+                "required" => true
+              ),
+              array(
+                "variableName" => "名前",
+                "inputType" => "2",
+                "label" => "名前",
+                "required" => true
+              ),
+              array(
+                "variableName" => "部署名",
+                "inputType" => "5",
+                "label" => "部署名",
+                "required" => false
+              ),
+              array(
+                "variableName" => "電話番号",
+                "inputType" => "7",
+                "label" => "電話番号",
+                "required" => true
+              ),
+              array(
+                "variableName" => "メールアドレス",
+                "inputType" => "10",
+                "label" => "メールアドレス",
+                "required" => true
+              )
+            ),
+            "restore" => false
+          ),
+          "4" => array(
+            "actionType" => "2",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "1",
+            "hearings" => array(
+              array(
+                "variableName" => "追記事項",
+                "inputType" => 1,
+                "uiType" => "2",
+                "message" => "他に追記されることがございましたら、こちらにご記入ください。\n※ 特にない場合は「なし」とご記入ください",
+                "required" => true,
+                "errorMessage" => "",
+                "inputLFType" => 2
+              )
+            ),
+            "restore" => false,
+            "isConfirm" => "2",
+            "confirmMessage" => "",
+            "success" => "",
+            "cancel" => "",
+            "cv" => "1"
+          ),
+          "5" => array(
+            "actionType" => "1",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "2",
+            "message" => "{{名前}}様からのお問い合わせを受付いたしました。",
+            "restore" => false
+          ),
+          "6" => array(
+            "actionType" => "4",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "2",
+            "mailType" => "3",
+            "mailTransmission" => array(
+              'from_address' => 'no-reply@cv-agaru.com',
+              'from_name' => '★★★自由に編集してください★★★',
+              'to_address' => '{{メールアドレス}}',
+              'subject' => 'お問い合わせを受付いたしました'
+            ), // FIXME
+            "mailTemplate" => array(
+              'mail_type_cd' => 'CS001',
+              'template' => '--------------------------------------------------------------------
 このメールは自動返信にてお届けしています。
 本メールへの返信は受け付けておりませんのでご了承ください。
 --------------------------------------------------------------------
@@ -2095,22 +2097,22 @@ $config['default'] = array(
 ★★★署名を自由に編集してください★★★
 
 ────────────────────────────'
-          )
-        ),
-        "7" => array(
-          "actionType" => "4",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "2",
-          "mailType" => "1",
-          "mailTransmission" => array(
-            'from_address' => 'no-reply@cv-agaru.com',
-            'from_name' => 'コンバージョンあがるくん',
-            'to_address' => '★★★貴社アドレスを設定して下さい★★★',
-            'subject' => 'お問い合わせ通知'
-          ), // FIXME
-          "mailTemplate" => array(
-            'mail_type_cd' => 'CS001',
-            'template' => '※このメールはコンバージョンあがるくんから自動送信されました。
+            )
+          ),
+          "7" => array(
+            "actionType" => "4",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "2",
+            "mailType" => "1",
+            "mailTransmission" => array(
+              'from_address' => 'no-reply@cv-agaru.com',
+              'from_name' => 'コンバージョンあがるくん',
+              'to_address' => '★★★貴社アドレスを設定して下さい★★★',
+              'subject' => 'お問い合わせ通知'
+            ), // FIXME
+            "mailTemplate" => array(
+              'mail_type_cd' => 'CS001',
+              'template' => '※このメールはコンバージョンあがるくんから自動送信されました。
 
 ご担当者様
 
@@ -2118,141 +2120,145 @@ $config['default'] = array(
 以下のメッセージ内容をご確認下さい。
 
 ##SCENARIO_ALL_MESSAGE_BLOCK##'
-          )
-        ),
-        "8" => array(
-          "actionType" => "1",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "2",
-          "message" => "この度は、お問い合わせ頂き誠にありがとうございました。",
-          "restore" => false
-        ),
-        "9" => array(
-          "actionType" => "2",
-          "messageIntervalTimeSec" => "2",
-          "chatTextArea" => "1",
-          "hearings" => array(
-            array(
-              "variableName" => "メニューに戻る",
-              "uiType" => "7",
-              "message" => "",
-              "required" => true,
-              "errorMessage" => "",
-              "settings" => array(
-                "options" => array(
-                  "メニューに戻る"
-                ),
-                "disablePastDate" => true,
-                "isSetDisableDate" => false,
-                "isDisableDayOfWeek" => false,
-                "isSetSpecificDate" => false,
-                "isEnableAfterDate" => false,
-                "enableAfterDate" => null,
-                "isDisableAfterData" => false,
-                "dayOfWeekSetting" => array(
-                  false,
-                  false,
-                  false,
-                  false,
-                  false,
-                  false,
-                  false
-                ),
-                "setSpecificDateType" => "",
-                "specificDateData" => array(
-                  ""
-                ),
-                "language" => 1,
-                "pulldownCustomDesign" => false,
-                "calendarCustomDesign" => false,
-                "carouselCustomDesign" => false,
-                "buttonUICustomDesign" => false,
-                "checkboxCustomDesign" => false,
-                "radioCustomDesign" => false,
-                "balloonStyle" => "1",
-                "lineUpStyle" => "1",
-                "carouselPattern" => "2",
-                "arrowType" => "4",
-                "titlePosition" => "1",
-                "subTitlePosition" => "1",
-                "outCarouselNoneBorder" => false,
-                "inCarouselNoneBorder" => false,
-                "outButtonUINoneBorder" => true,
-                "checkboxNoneBorder" => false,
-                "checkboxNoneBackground" => true,
-                "checkboxStyle" => "1",
-                "radioNoneBorder" => false,
-                "radioNoneBackground" => true,
-                "radioStyle" => "1",
-                "aspectRatio" => null,
-                "checkboxSeparator" => "1",
-                "customDesign" => array(
-                  "borderColor" => "#ABCD05",
-                  "backgroundColor" => "#FFFFFF",
-                  "textColor" => "#666666",
-                  "headerBackgroundColor" => "#ABCD05",
-                  "headerTextColor" => "#FFFFFF",
-                  "headerWeekdayBackgroundColor" => "#F6FAE6",
-                  "calendarBackgroundColor" => "#FFFFFF",
-                  "calendarTextColor" => "#666666",
-                  "saturdayColor" => "#666666",
-                  "sundayColor" => "#666666",
-                  "titleColor" => "#333333",
-                  "subTitleColor" => "#333333",
-                  "arrowColor" => "#ABCD05",
-                  "titleFontSize" => 14,
-                  "subTitleFontSize" => 13,
-                  "outBorderColor" => "#E8E7E0",
-                  "inBorderColor" => "#E8E7E0",
-                  "messageAlign" => "2",
-                  "buttonBackgroundColor" => "#F6FAE6",
-                  "buttonTextColor" => "#007AFF",
-                  "buttonAlign" => "2",
-                  "buttonActiveColor" => "#D5E682",
-                  "buttonBorderColor" => "#E3E3E3",
-                  "buttonUIBackgroundColor" => "#333333",
-                  "buttonUITextAlign" => "2",
-                  "buttonUITextColor" => "#F6FAE6",
-                  "buttonUIActiveColor" => "#D5E682",
-                  "buttonUIBorderColor" => "#E3E3E3",
-                  "checkboxEntireBackgroundColor" => "#D5E682",
-                  "checkboxEntireActiveColor" => "#ABCD05",
-                  "checkboxSelectionDistance" => 4,
-                  "checkboxBackgroundColor" => "#FFFFFF",
-                  "checkboxActiveColor" => "#FFFFFF",
-                  "checkboxBorderColor" => "#ABCD05",
-                  "checkboxCheckmarkColor" => "#ABCD05",
-                  "checkboxTextColor" => "#333333",
-                  "checkboxActiveTextColor" => "#333333",
-                  "radioBackgroundColor" => "#FFFFFF",
-                  "radioEntireBackgroundColor" => "#D5E682",
-                  "radioEntireActiveColor" => "#ABCD05",
-                  "radioActiveColor" => "#ABCD05",
-                  "radioSelectionDistance" => 4,
-                  "radioBorderColor" => "#ABCD05",
-                  "radioTextColor" => "#333333",
-                  "radioActiveTextColor" => "#333333"
-                ),
-                "images" => array(
-                  array(
-                    "title" => "",
-                    "subTitle" => "",
-                    "answer" => "",
-                    "url" => ""
-                  )
-                )
-              ),
-              "inputLFType" => 2
             )
           ),
-          "restore" => false,
-          "isConfirm" => "2",
-          "confirmMessage" => "",
-          "success" => "",
-          "cancel" => "",
-          "cv" => "2"
+          "8" => array(
+            "actionType" => "1",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "2",
+            "message" => "この度は、お問い合わせ頂き誠にありがとうございました。",
+            "restore" => false
+          ),
+          "9" => array(
+            "actionType" => "2",
+            "messageIntervalTimeSec" => "2",
+            "chatTextArea" => "1",
+            "hearings" => array(
+              array(
+                "variableName" => "メニューに戻る",
+                "uiType" => "7",
+                "message" => "",
+                "required" => true,
+                "errorMessage" => "",
+                "settings" => array(
+                  "options" => array(
+                    "メニューに戻る"
+                  ),
+                  "disablePastDate" => true,
+                  "isSetDisableDate" => false,
+                  "isDisableDayOfWeek" => false,
+                  "isSetSpecificDate" => false,
+                  "isEnableAfterDate" => false,
+                  "enableAfterDate" => null,
+                  "isDisableAfterData" => false,
+                  "dayOfWeekSetting" => array(
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                  ),
+                  "setSpecificDateType" => "",
+                  "specificDateData" => array(
+                    ""
+                  ),
+                  "language" => 1,
+                  "pulldownCustomDesign" => false,
+                  "calendarCustomDesign" => false,
+                  "carouselCustomDesign" => false,
+                  "buttonUICustomDesign" => false,
+                  "checkboxCustomDesign" => false,
+                  "radioCustomDesign" => false,
+                  "balloonStyle" => "1",
+                  "lineUpStyle" => "1",
+                  "carouselPattern" => "2",
+                  "arrowType" => "4",
+                  "titlePosition" => "1",
+                  "subTitlePosition" => "1",
+                  "outCarouselNoneBorder" => false,
+                  "inCarouselNoneBorder" => false,
+                  "outButtonUINoneBorder" => true,
+                  "checkboxNoneBorder" => false,
+                  "checkboxNoneBackground" => true,
+                  "checkboxStyle" => "1",
+                  "radioNoneBorder" => false,
+                  "radioNoneBackground" => true,
+                  "radioStyle" => "1",
+                  "aspectRatio" => null,
+                  "checkboxSeparator" => "1",
+                  "customDesign" => array(
+                    "borderColor" => "#ABCD05",
+                    "backgroundColor" => "#FFFFFF",
+                    "textColor" => "#666666",
+                    "headerBackgroundColor" => "#ABCD05",
+                    "headerTextColor" => "#FFFFFF",
+                    "headerWeekdayBackgroundColor" => "#F6FAE6",
+                    "calendarBackgroundColor" => "#FFFFFF",
+                    "calendarTextColor" => "#666666",
+                    "saturdayColor" => "#666666",
+                    "sundayColor" => "#666666",
+                    "titleColor" => "#333333",
+                    "subTitleColor" => "#333333",
+                    "arrowColor" => "#ABCD05",
+                    "titleFontSize" => 14,
+                    "subTitleFontSize" => 13,
+                    "outBorderColor" => "#E8E7E0",
+                    "inBorderColor" => "#E8E7E0",
+                    "messageAlign" => "2",
+                    "buttonBackgroundColor" => "#F6FAE6",
+                    "buttonTextColor" => "#007AFF",
+                    "buttonAlign" => "2",
+                    "buttonActiveColor" => "#D5E682",
+                    "buttonBorderColor" => "#E3E3E3",
+                    "buttonUIBackgroundColor" => "#333333",
+                    "buttonUITextAlign" => "2",
+                    "buttonUITextColor" => "#F6FAE6",
+                    "buttonUIActiveColor" => "#D5E682",
+                    "buttonUIBorderColor" => "#E3E3E3",
+                    "checkboxEntireBackgroundColor" => "#D5E682",
+                    "checkboxEntireActiveColor" => "#ABCD05",
+                    "checkboxSelectionDistance" => 4,
+                    "checkboxBackgroundColor" => "#FFFFFF",
+                    "checkboxActiveColor" => "#FFFFFF",
+                    "checkboxBorderColor" => "#ABCD05",
+                    "checkboxCheckmarkColor" => "#ABCD05",
+                    "checkboxTextColor" => "#333333",
+                    "checkboxActiveTextColor" => "#333333",
+                    "radioBackgroundColor" => "#FFFFFF",
+                    "radioEntireBackgroundColor" => "#D5E682",
+                    "radioEntireActiveColor" => "#ABCD05",
+                    "radioActiveColor" => "#ABCD05",
+                    "radioSelectionDistance" => 4,
+                    "radioBorderColor" => "#ABCD05",
+                    "radioTextColor" => "#333333",
+                    "radioActiveTextColor" => "#333333"
+                  ),
+                  "images" => array(
+                    array(
+                      "title" => "",
+                      "subTitle" => "",
+                      "answer" => "",
+                      "url" => ""
+                    )
+                  )
+                ),
+                "inputLFType" => 2
+              )
+            ),
+            "restore" => false,
+            "isConfirm" => "2",
+            "confirmMessage" => "",
+            "success" => "",
+            "cancel" => "",
+            "cv" => "2"
+          )
         )
-      )
+      ),
+      'del_flg' => 0,
+      'sort' => 6,
+      'relation_auto_message_index' => 12
     )
   )
 );
