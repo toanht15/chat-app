@@ -40,7 +40,9 @@ router.get("/", function (req, res, next) {
   var tabId = req['query']['s'];
   var sendData = {status: true, widget: {}, chat: {settings: {}}, messages: {}, customVariable: [], contract: {}};
 
-  if (CommonUtil.isKeyExists(SharedData.sincloCore, siteKey + '.' + tabId)) {
+  if (!list.functionManager.isEnabled(siteKey,
+      list.functionManager.keyList.enableRealtimeMonitor) &&
+      CommonUtil.isKeyExists(SharedData.sincloCore, siteKey + '.' + tabId)) {
     res.send({
       status: true,
       nm: true, // not modified
