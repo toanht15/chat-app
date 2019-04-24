@@ -54,10 +54,9 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         if(<?= $operatingHourData ?> == 2 && itemId == 4) {
           //ツールチップ表示
           $('#triggerList div ul li').each(function(i){
-            if(i == 3 || i == 11) {
+            if(i == 3) {
               $(this).addClass("commontooltip");
-              // $(this).attr('data-text', 'こちらの機能は営業時間設定で「利<br>用する」を選択すると、ご利用いただけます。');
-              $(this).attr('data-text', 'こちらの機能はご利用できません。');
+              $(this).attr('data-text', 'こちらの機能は営業時間設定で「利<br>用する」を選択すると、ご利用いただけます。');
               $(this).attr('data-balloon-position', '14');
               $(this).attr('operatingHours', 'widgetHoursPage');
             }
@@ -65,12 +64,26 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
           return true;
         }
 
-        if (itemId == "<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>" && this.visitorInfoList.length == 0) {
+      <?php if(!isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) || !$coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
+        if (itemId == "<?= C_AUTO_TRIGGER_COMPANY_INFORMATION ?>") {
+          $('#triggerList div ul li').each(function(i) {
+            if (i == 11) {
+              $(this).addClass("commontooltip");
+              $(this).attr('data-text', 'こちらの機能はオプションの加入が必要です。');
+              $(this).attr('data-balloon-position', '14');
+              $(this).attr('operatingHours', 'widgetHoursPage');
+            }
+          });
+          return true;
+        }
+      <?php endif ?>
+
+      if (itemId == "<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>" && this.visitorInfoList.length == 0) {
           //ツールチップ表示
           $('#triggerList div ul li').each(function(i){
             if(i == 12) {
               $(this).addClass("commontooltip");
-              $(this).attr('data-text', 'こちらの機能はご利用できません。');
+              $(this).attr('data-text', 'こちらの機能はオプションの加入が必要です。');
               $(this).attr('data-balloon-position', '14');
             }
           });
@@ -97,6 +110,12 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
             if (tmpId == "<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>" && this.visitorInfoList.length == 0) {
               return false;
             }
+
+            <?php if(!isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) || !$coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
+              if (tmpId == "<?= C_AUTO_TRIGGER_COMPANY_INFORMATION ?>") {
+                return false;
+              }
+            <?php endif ?>
 
             if(tmpId === "<?= C_AUTO_TRIGGER_STAY_PAGE ?>"
               || tmpId === "<?= C_AUTO_TRIGGER_REFERRER ?>"
