@@ -2838,7 +2838,7 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(data);
     if (!list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.monitorPollingMode)
-        || list.functionManager.isEnabled(obj.siteKey,
+        && list.functionManager.isEnabled(obj.siteKey,
             list.functionManager.keyList.enableRealtimeMonitor)) {
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
     }

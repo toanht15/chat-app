@@ -12753,7 +12753,7 @@
       syncScenarioData: {
         sendLockFlg: false,
         sendDetail: function(param, otherInformation) {
-          if (this.sendLockFlg) return;
+          if (this.sendLockFlg || !sinclo.scenarioApi.isProcessing()) return;
           var self = sinclo.scenarioApi;
           var currentScenarioSeqNo = 0;
           var currentHearingSeqNo = 0;
