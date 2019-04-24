@@ -117,6 +117,9 @@ router.post('/auth/customer', function(req, res, next) {
     send.sincloSessionId = uuid.v4();
     send.sincloSessionIdIsNew = true;
     d.data.firstConnection = true;
+    let history = new HistoryManager();
+    history.incrementAccessCount(list.companyList[d.siteKey],
+        CommonUtil.formatDateParse());
   } else {
     send.sincloSessionIdIsnew = false;
   }
@@ -396,10 +399,13 @@ router.post('/auth/info', function(req, res, next) {
         if (CommonUtil.isset(SharedData.company.info[obj.siteKey]) &&
             Object.keys(SharedData.company.info[obj.siteKey]).length > 0) {
           let customerApi = new CustomerInfoManager();
-          customerApi.getInfo(obj.userId, obj.siteKey).then((information) => {
+          customerApi.upsertCustomerInfo(obj).
+              then(customerApi.getInfo(obj.userId, obj.siteKey)).
+              then((information) => {
             obj.customerInfo = information;
             afterGetInformationProcess();
           });
+          ;
         } else {
           afterGetInformationProcess();
         }
