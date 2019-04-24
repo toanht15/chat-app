@@ -397,7 +397,7 @@ class ContractController extends AppController
       if ($coreSetting['laCoBrowse'] !== boolval($saveData['MCompany']['options']['laCoBrowse'])) {
         $this->addCompanyJSFile($companyEditData['MCompany']['company_key'], $saveData['MCompany']['options']['laCoBrowse']);
       }
-      if (!SET_AGREEMENT_END_DATE && empty($saveData['MAgreements']['agreement_end_day']) &&  && strcmp($companySaveData['MCompany']['trial_flg'],
+      if (!SET_AGREEMENT_END_DATE && empty($saveData['MAgreements']['agreement_end_day']) && strcmp($companySaveData['MCompany']['trial_flg'],
               1) === 0) {
         $saveData['MAgreements']['agreement_end_day'] = date("Y-m-d", strtotime("+100 year"));
       }
