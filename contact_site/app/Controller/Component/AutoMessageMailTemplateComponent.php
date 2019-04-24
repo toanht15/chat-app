@@ -279,10 +279,11 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         if ($chatLog['message_type'] == 53) {
           $json = json_decode($chatLog['message'], TRUE);
           $chatMessage = $json['message'];
+          $separator = $json['separator'];
         } else {
           $chatMessage = $chatLog['message'];
         }
-        $message = $this->generateScenarioHearingAnswerBlockStr($chatLog['created'], $chatMessage);
+        $message = $this->generateScenarioHearingCheckboxAnswerBlockStr($chatLog['created'], $chatMessage, $separator);
         break;
       case 44:
       case 48:
@@ -428,7 +429,14 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected function generateScenarioHearingAnswerBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING_INPUT);
-    $message .= $this->createHearingAnswerMessageContent($content);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateScenarioHearingCheckboxAnswerBlockStr($date, $content, $separator) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING_INPUT);
+    $message .= $this->createHearingAnswerMessageContent($content, $separator);
     return $message;
   }
 
@@ -523,25 +531,14 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     return $message;
   }
 
-  protected function createHearingAnswerMessageContent($content) {
+  protected function createHearingAnswerMessageContent($content, $seperator) {
     $message = '';
-    if ($this->isJson($content)) {
-      $data = json_decode($content, true);
-      if (isset($data['message']) && isset($data['separator'])) {
-        $arr = explode($data['separator'], $data['message']);
-        foreach ($arr as $item) {
-          $message .= '・' . $item . "\n";
-        }
-      }
-      return $message;
+    $arr = explode($seperator, $content);
+    foreach ($arr as $item) {
+      $message .= '・' . $item . "\n";
     }
 
-    return $this->createMessageContent($content);
-  }
-
-  protected function isJson($string) {
-    json_decode($string);
-    return (json_last_error() == JSON_ERROR_NONE);
+    return $message;
   }
 
   protected function createFileTransferMessageContent($content) {
