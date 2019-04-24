@@ -50,6 +50,14 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   public function replaceVariables($message) {
     foreach($this->variables as $variable => $value) {
       if(strcmp($variable, self::RECEIVE_FILE_VARIABLE_KEY) === 0) continue;
+
+      if ($this->isJson($value)) {
+        $data = json_decode($value, true);
+        if (isset($data['message']) && isset($data['separator'])) {
+          $value = trim($this->createHearingAnswerMessageContent($data['message'], $data['separator']), "\n");
+        }
+      }
+
       $message = preg_replace("/{{(".$variable.")\}}/", $value, $message);
     }
     return $message;
@@ -133,9 +141,21 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
 
   private function createVariablesMessageBlock() {
     $this->scenarioMessageBlock .= self::MESSAGE_SEPARATOR."\n";
-    foreach($this->variables as $variableName => $value) {
-      if(strcmp($variableName, self::RECEIVE_FILE_VARIABLE_KEY) === 0) continue;
-      $this->scenarioMessageBlock .= $variableName."：".$value."\n";
+    foreach ($this->variables as $variableName => $value) {
+      if (strcmp($variableName, self::RECEIVE_FILE_VARIABLE_KEY) === 0) continue;
+      if ($this->isJson($value)) {
+        $data = json_decode($value, true);
+        if (isset($data['message']) && isset($data['separator'])) {
+          $value = trim($this->createHearingAnswerMessageContent($data['message'], $data['separator']), "\n");
+        }
+      }
+
+      $this->scenarioMessageBlock .= $variableName . "：" . $value . "\n";
     }
+  }
+
+  private function isJson($string) {
+    json_decode($string);
+    return (json_last_error() == JSON_ERROR_NONE);
   }
 }
