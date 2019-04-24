@@ -2837,7 +2837,9 @@ io.sockets.on('connection', function(socket) {
   socket.on('syncReady', function(data) {
     var obj = JSON.parse(data);
     if (!list.functionManager.isEnabled(obj.siteKey,
-        list.functionManager.keyList.monitorPollingMode)) {
+        list.functionManager.keyList.monitorPollingMode)
+        || list.functionManager.isEnabled(obj.siteKey,
+            list.functionManager.keyList.enableRealtimeMonitor)) {
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
     }
   });
@@ -4853,7 +4855,9 @@ io.sockets.on('connection', function(socket) {
       return false;
     }
     if (!list.functionManager.isEnabled(obj.siteKey,
-        list.functionManager.keyList.monitorPollingMode)) {
+        list.functionManager.keyList.monitorPollingMode)
+        || list.functionManager.isEnabled(obj.siteKey,
+            list.functionManager.keyList.enableRealtimeMonitor)) {
       emit.toCompany('resDiagramMessage', diagramData, obj.siteKey);
     }
     emit.toSameUser('resDiagramMessage', diagramData, obj.siteKey,
@@ -5789,6 +5793,12 @@ io.sockets.on('connection', function(socket) {
                 sendData.scInfo = SharedData.scList[info.siteKey].cnt;
               }
               if (!list.functionManager.isEnabled(info.siteKey,
+                  list.functionManager.keyList.enableRealtimeMonitor)) {
+                if (CommonUtil.isset(
+                    SharedData.sincloCore[info.siteKey][tabId].historyId)) {
+                  emit.toCompany('unsetUser', sendData, info.siteKey);
+                }
+              } else if (!list.functionManager.isEnabled(info.siteKey,
                   list.functionManager.keyList.monitorPollingMode)) {
                 emit.toCompany('unsetUser', sendData, info.siteKey);
               }
