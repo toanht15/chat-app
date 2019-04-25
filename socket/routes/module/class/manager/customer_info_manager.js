@@ -27,6 +27,7 @@ module.exports = class CustomerInfoManager extends DatabaseManager {
   }
 
   upsertCustomerInfo(obj) {
+    var self = this;
     return new Promise((resolve, reject) => {
       if (CommonUtil.isset(obj.customVariables)) {
         var customVariables = obj.customVariables;
@@ -47,7 +48,7 @@ module.exports = class CustomerInfoManager extends DatabaseManager {
           });
         }
         if (found) {
-          DBConnector.getPool().query(
+          self.dbPool.query(
               'SELECT * from m_customers where m_companies_id = ? AND visitors_id = ? order by id desc',
               [list.companyList[obj.siteKey], obj.userId], function(err, row) {
                 if (err !== null && err !== '') {
@@ -66,7 +67,7 @@ module.exports = class CustomerInfoManager extends DatabaseManager {
                           currentData[key] = customVariables[key];
                         }
                       });
-                  DBConnector.getPool().query(
+                  self.dbPool.query(
                       'UPDATE m_customers set informations = ? where id = ? ',
                       [JSON.stringify(currentData), row[0].id],
                       function(err, result) {
@@ -77,7 +78,7 @@ module.exports = class CustomerInfoManager extends DatabaseManager {
                         });
                       });
                 } else {
-                  DBConnector.getPool().query(
+                  self.dbPool.query(
                       'INSERT INTO m_customers VALUES (NULL, ?, ?, ?, now(), 0, NULL, NULL, NULL, NULL)',
                       [
                         list.companyList[obj.siteKey],
