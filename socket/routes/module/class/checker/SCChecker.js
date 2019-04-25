@@ -213,7 +213,7 @@ module.exports = class SCChecker {
       // オペレーターが待機している場合
       if (type === 1 &&
           (Number(
-              common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+              common.widgetSettings[siteKey].display_type) ===
               2 &&
               this.getOperatorCnt(siteKey) > 0)
       ) {
@@ -518,20 +518,20 @@ module.exports = class SCChecker {
             this.getOperatorCnt(siteKey) >
             0) ||
         (Number(
-            common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+            common.widgetSettings[siteKey].display_type) ===
             4 &&
             this.getOperatorCnt(siteKey) > 0);
   }
 
   isWidgetShowStyleMaximize(siteKey) {
     return Number(
-        common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+        common.widgetSettings[siteKey].display_type) ===
         1;
   }
 
   isWidgetShowStyleMinimize(siteKey) {
     return Number(
-        common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+        common.widgetSettings[siteKey].display_type) ===
         2;
   }
 
@@ -540,11 +540,11 @@ module.exports = class SCChecker {
   }
 
   isWidgetActiveInOperatingHour(siteKey) {
-    return common.widgetSettings[siteKey].style_settings.displayType === 4;
+    return common.widgetSettings[siteKey].display_type === 4;
   }
 
   isWidgetAlwaysOpen(siteKey) {
-    return common.widgetSettings[siteKey].style_settings.displayType === 1;
+    return common.widgetSettings[siteKey].display_type === 1;
   }
 
   isTimeSettingInTime(date, publicHolidayData, i, dateParse, endTime) {
@@ -569,7 +569,7 @@ module.exports = class SCChecker {
   }
 
   isWidgetHidden(siteKey) {
-    return common.widgetSettings[siteKey].style_settings.displayType === 3;
+    return common.widgetSettings[siteKey].display_type === 3;
   }
 
   getOperatorCnt(siteKey) {
