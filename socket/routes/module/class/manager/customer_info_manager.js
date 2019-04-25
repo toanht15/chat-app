@@ -1,6 +1,7 @@
 'use strict';
 const DatabaseManager = require('./database_manager');
 const CommonUtil = require('../util/common_utility');
+const SharedData = require('../../shared_data');
 const list = require('../../company_list');
 
 module.exports = class CustomerInfoManager extends DatabaseManager {
