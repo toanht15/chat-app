@@ -127,7 +127,8 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
             }
 
             if (tmpId === "<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>") {
-              this.tmpList[tmpId].default['settings'][0].name = this.visitorInfoList[1];
+              // get first visitor information
+              this.tmpList[tmpId].default['settings'][0].name = this.visitorInfoList[Object.keys(this.visitorInfoList)[0]];
             };
 
             this.setItemList[tmpId].push(angular.copy(this.tmpList[tmpId].default));

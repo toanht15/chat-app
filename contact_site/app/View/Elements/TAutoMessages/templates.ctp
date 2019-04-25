@@ -188,7 +188,7 @@
   <li ng-if="setItem.getInfoStatus === '3'">
     <span></span>
     <label class="pointer">
-      <input type="radio" name="companyInfoSettingCondition" ng-model="setItem.settingCondition" value="1">すべて一致
+      <input type="radio" name="companyInfoSettingCondition" ng-model="setItem.settingCondition" value="1">全て一致
     </label>
     <label class="pointer">
       <input type="radio" name="companyInfoSettingCondition" ng-model="setItem.settingCondition" value="2">いずれかが一致
@@ -276,7 +276,7 @@
   <li ng-if="setItem.getInfoStatus === '3'">
     <span></span>
     <label class="pointer">
-      <input type="radio" name="visitorInfoSettingCondition" ng-model="setItem.settingCondition" value="1">すべて一致
+      <input type="radio" name="visitorInfoSettingCondition" ng-model="setItem.settingCondition" value="1">全て一致
     </label>
     <label class="pointer">
       <input type="radio" name="visitorInfoSettingCondition" ng-model="setItem.settingCondition" value="2">いずれかが一致
