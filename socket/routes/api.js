@@ -146,13 +146,12 @@ router.post('/auth/customer', function(req, res, next) {
       req.connection.remoteAddress;
 
   if (d.siteKey) {
-    checker.widgetCheck(d, function(ret) {
+    checker.widgetCheck(d, function(err, ret) {
       send.activeOperatorCnt = checker.getOperatorCnt(d.siteKey);
       send.widget = ret.opFlg;
       send.opFlg = true;
       send.inactiveReconnect = Boolean(d.data.inactiveReconnect);
       if (ret.opFlg === false) {
-        send.opFlg = false;
         send.opFlg = false;
         if (CommonUtil.isKeyExists(res, 'tabId')
             && CommonUtil.isKeyExists(SharedData.sincloCore,
