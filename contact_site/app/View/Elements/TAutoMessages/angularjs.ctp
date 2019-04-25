@@ -83,7 +83,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
           $('#triggerList div ul li').each(function(i){
             if(i == 12) {
               $(this).addClass("commontooltip");
-              $(this).attr('data-text', 'こちらの機能はオプションの加入が必要です。');
+              $(this).attr('data-text', '訪問ユーザ情報が登録されていません。');
               $(this).attr('data-balloon-position', '14');
             }
           });
@@ -127,7 +127,8 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
             }
 
             if (tmpId === "<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>") {
-              this.tmpList[tmpId].default['settings'][0].name = this.visitorInfoList[1];
+              // get first visitor information
+              this.tmpList[tmpId].default['settings'][0].name = this.visitorInfoList[Object.keys(this.visitorInfoList)[0]];
             };
 
             this.setItemList[tmpId].push(angular.copy(this.tmpList[tmpId].default));
