@@ -108,7 +108,7 @@ module.exports = class HistoryManager extends DatabaseManager {
               'autoMessages' in
               SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
             var autoMessageObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
-            console.log(JSON.stringify(autoMessageObj));
+            //console.log(JSON.stringify(autoMessageObj));
             try {
               Object.keys(autoMessageObj).
                   forEach(function(automessageKey, index, array) {
@@ -128,7 +128,7 @@ module.exports = class HistoryManager extends DatabaseManager {
               'scenario' in
               SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
             var scenariosObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].scenario;
-            console.log(JSON.stringify(scenariosObj));
+            //console.log(JSON.stringify(scenariosObj));
             Object.keys(scenariosObj).forEach(function(scenarioId, index, arr) {
               var scenarioObj = scenariosObj[Number(scenarioId)];
               Object.keys(scenarioObj).
@@ -157,7 +157,7 @@ module.exports = class HistoryManager extends DatabaseManager {
 
             }
           }
-          console.log(JSON.stringify(diagram));
+          //console.log(JSON.stringify(diagram));
           for (var l = 0; l < diagram.length; l++) {
             if (CommonUtil.isset(diagram[l].sort)) {
               setList[diagram[l].sort + '_'] = diagram[l];
@@ -165,7 +165,7 @@ module.exports = class HistoryManager extends DatabaseManager {
           }
           chatData.messages = CommonUtil.objectSort(setList);
           obj.chat = chatData;
-          console.log(chatData);
+          //console.log(chatData);
           resolve(obj);
         });
       } else {
@@ -176,7 +176,7 @@ module.exports = class HistoryManager extends DatabaseManager {
             'autoMessages' in
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
           var autoMessageObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
-          console.log(JSON.stringify(autoMessageObj));
+          //console.log(JSON.stringify(autoMessageObj));
           try {
             Object.keys(autoMessageObj).
                 forEach(function(automessageKey, index, array) {
@@ -196,7 +196,7 @@ module.exports = class HistoryManager extends DatabaseManager {
             'scenario' in
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
           var scenariosObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].scenario;
-          console.log(JSON.stringify(scenariosObj));
+          //console.log(JSON.stringify(scenariosObj));
           Object.keys(scenariosObj).forEach(function(scenarioId, index, arr) {
             var scenarioObj = scenariosObj[Number(scenarioId)];
             Object.keys(scenarioObj).
@@ -225,7 +225,7 @@ module.exports = class HistoryManager extends DatabaseManager {
 
           }
         }
-        console.log(JSON.stringify(diagram));
+        //console.log(JSON.stringify(diagram));
         for (var l = 0; l < diagram.length; l++) {
           if (CommonUtil.isset(diagram[l].sort)) {
             setList[diagram[l].sort + '_'] = diagram[l];
@@ -233,7 +233,7 @@ module.exports = class HistoryManager extends DatabaseManager {
         }
         chatData.messages = CommonUtil.objectSort(setList);
         obj.chat = chatData;
-        console.log(chatData);
+        //console.log(chatData);
         resolve(obj);
       }
     });
