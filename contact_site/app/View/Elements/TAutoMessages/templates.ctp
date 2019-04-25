@@ -268,9 +268,9 @@
   <li>
     <span style="margin-top: 3px;"> 条件</span>
     <select name="companyInfoGetInfoStatus" ng-model="setItem.getInfoStatus">
-      <option value="1">サイト訪問者情報が取得できた場合</option>
-      <option value="2">サイト訪問者情報が取得できなかった場合</option>
-      <option value="3">特定のサイト訪問者情報が取得できた場合</option>
+      <option value="1">訪問ユーザ情報が取得できた場合</option>
+      <option value="2">訪問ユーザ情報が取得できなかった場合</option>
+      <option value="3">特定の訪問ユーザ情報が取得できた場合</option>
     </select>
   </li>
   <li ng-if="setItem.getInfoStatus === '3'">
