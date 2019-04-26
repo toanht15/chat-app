@@ -155,7 +155,12 @@
       });
 
       $scope.$on('resizeWidget', function() {
-        $scope.resizeWidgetHeightByWindowHeight();
+        $timeout(function() {
+          $scope.$apply(function() {
+            $('#chatTalk').height($scope._getMaxChatTalkHeight());
+            $scope.resizeWidgetHeightByWindowHeight();
+          });
+        }, 100);
       });
 
       /**
