@@ -3,7 +3,8 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate']);
 
-sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($scope, SimulatorService) {
+sincloApp.controller('MainController', [
+  '$scope', 'SimulatorService', '$rootScope', function($scope, SimulatorService, $rootScope) {
     //thisを変数にいれておく
     var self = this;
 
@@ -298,7 +299,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
       $scope.$watch('action_type', function(n, o) {
         if (Number(n) === 1) {
-          $scope.$emit('resizeWidget');
+          $rootScope.$broadcast('resizeWidget');
         }
       });
 
