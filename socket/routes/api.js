@@ -101,7 +101,7 @@ router.post('/auth/customer', function(req, res, next) {
   }
 
   if (!CommonUtil.isset(d.userId)) {
-    send.userId - CommonUtil.makeUserId();
+    send.userId = CommonUtil.makeUserId();
   }
 
   if (d.data.forceFirstConnect
@@ -141,8 +141,7 @@ router.post('/auth/customer', function(req, res, next) {
     send.time = send.pagetime;
   }
 
-  send.ipAddress = '127.0.0.1' ||
-      req.headers['x-forwarded-for'] ||
+  send.ipAddress = req.headers['x-forwarded-for'] ||
       req.connection.remoteAddress;
 
   if (d.siteKey) {
