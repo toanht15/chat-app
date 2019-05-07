@@ -3,7 +3,8 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate']);
 
-sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($scope, SimulatorService) {
+sincloApp.controller('MainController', [
+  '$scope', 'SimulatorService', '$rootScope', function($scope, SimulatorService, $rootScope) {
     //thisを変数にいれておく
     var self = this;
 
@@ -294,6 +295,12 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         }
 
         $scope.createMessage();
+      });
+
+      $scope.$watch('action_type', function(n, o) {
+        if (Number(n) === 1) {
+          $rootScope.$broadcast('resizeWidget');
+        }
       });
 
       $(document).on('keyup', 'input[name^="keyword_"]', function(e){

@@ -107,7 +107,10 @@ class ChatHistoriesController extends AppController
           'conditions' => array(
             'm_companies_id' => $this->userInfo['MCompany']['id'],
             'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
-            'THistoryChatLog.message_type' => 1
+              'OR' => array(
+                  'THistoryChatLog.message_type' => 1,
+                  'THistoryChatLog.message_type' => 301
+              )
           ),
           'group' => 'THistoryChatLog.message_type',
           'recursive' => -1

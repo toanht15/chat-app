@@ -6,7 +6,7 @@
  * Time: 12:55
  */
 $config['default'] = array(
-  'diagrams' => array(
+  'diagrams_slim' => array(
     0 => array(
       'name' => 'サンプルツリー',
       'activity' => array(
@@ -142,7 +142,7 @@ $config['default'] = array(
             "outPorts" => array(),
             "size" => array(
               "width" => 250,
-              "height" => 430
+              "height" => 470
             ),
             "ports" => array(
               "groups" => array(
@@ -236,7 +236,8 @@ $config['default'] = array(
               "2fb4d49c-a483-4440-9862-9c43a360818f",
               "80f421f5-5e1b-401d-b5a4-03bc4ba7b899",
               "2b2bf14a-e520-42de-8cdf-99e461567888",
-              "6161f4d6-2f26-4d13-8e38-2edf178fb360"
+              "6161f4d6-2f26-4d13-8e38-2edf178fb360",
+              "39f817ff-ba79-4533-873a-6a1eccfac756"
             ),
             "z" => 2,
             "attrs" => array(
@@ -273,35 +274,48 @@ $config['default'] = array(
                 "selection" => array(
                   array(
                     "type" => "1",
-                    "value" => "基本を覚える"
+                    "value" => "基本を覚える",
+                    "uuid" => "39c262c5-a9fa-41ff-905b-35a4f2cb5fb0"
                   ),
                   array(
                     "type" => "1",
-                    "value" => "画像を使った設定サンプル"
+                    "value" => "画像を使った設定サンプル",
+                    "uuid" => "5b6b3bb9-d4f3-4bab-b4b4-f22a4d4837d2"
                   ),
                   array(
                     "type" => "1",
-                    "value" => "リンクを使った設定サンプル"
+                    "value" => "リンクを使った設定サンプル",
+                    "uuid" => "22166176-b4c5-407c-a3e0-167b0eed3165"
                   ),
                   array(
                     "type" => "2",
-                    "value" => "以下は「シナリオ」を使ったサンプルです。"
+                    "value" => "以下は「シナリオ」を使ったサンプルです。",
+                    "uuid" => "6161f4d6-2f26-4d13-8e38-2edf178fb360"
                   ),
                   array(
                     "type" => "1",
-                    "value" => "資料請求のサンプル"
+                    "value" => "資料請求のサンプル",
+                    "uuid" => "d73b1efc-bdf2-40bb-8efa-b89d6f61e276"
                   ),
                   array(
                     "type" => "1",
-                    "value" => "来店予約のサンプル"
+                    "value" => "来店予約のサンプル",
+                    "uuid" => "2fb4d49c-a483-4440-9862-9c43a360818f"
                   ),
                   array(
                     "type" => "1",
-                    "value" => "会員登録・入会のサンプル"
+                    "value" => "会員登録・入会のサンプル",
+                    "uuid" => "80f421f5-5e1b-401d-b5a4-03bc4ba7b899"
                   ),
                   array(
                     "type" => "1",
-                    "value" => "アンケートのサンプル"
+                    "value" => "アンケートのサンプル",
+                    "uuid" => "2b2bf14a-e520-42de-8cdf-99e461567888"
+                  ),
+                  array(
+                    "type" => "1",
+                    "value" => "問い合わせフォームのサンプル",
+                    "uuid" => "39f817ff-ba79-4533-873a-6a1eccfac756"
                   )
                 ),
                 "customizeDesign" => array(
@@ -1300,7 +1314,7 @@ $config['default'] = array(
                 "width" => 240,
                 "height" => 10,
                 "transform" => "translate(0 26)",
-                "fill-opacity" => 0
+                "fill-opacity" => 1
               )
             )
           ),
@@ -3943,7 +3957,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                        "fill" => "#C8E3E8",
+                      "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,
@@ -4143,7 +4157,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                        "fill" => "#C8E3E8",
+                      "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,
@@ -4410,7 +4424,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                        "fill" => "#C8E3E8",
+                      "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,
@@ -4607,7 +4621,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                        "fill" => "#C8E3E8",
+                      "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,
@@ -4804,7 +4818,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                        "fill" => "#C8E3E8",
+                      "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,
@@ -5118,6 +5132,9 @@ $config['default'] = array(
                   "attrs" => array(
                     ".port-label" => array(
                       "text" => "in"
+                    ),
+                    ".port-body" => array(
+                      "fill" => "#c8d627"
                     )
                   )
                 )
@@ -5957,7 +5974,7 @@ $config['default'] = array(
                 "fill" => "#c73576",
                 "width" => 240,
                 "height" => 5,
-                "fill-opacity" => "1",
+                "fill-opacity" => 0,
                 "stroke" => false
               ),
               ".cover_bottom" => array(
@@ -5965,7 +5982,7 @@ $config['default'] = array(
                 "width" => 240,
                 "height" => 5,
                 "transform" => "translate(0 21)",
-                "fill-opacity" => "1",
+                "fill-opacity" => 1,
                 "stroke" => false
               )
             )
@@ -6158,11 +6175,415 @@ $config['default'] = array(
                 "stroke" => false
               )
             )
+          ),
+          array(
+            "type" => "devs.Model",
+            "inPorts" => array(),
+            "outPorts" => array(
+              "out"
+            ),
+            "size" => array(
+              "width" => 240,
+              "height" => 36
+            ),
+            "ports" => array(
+              "groups" => array(
+                "in" => array(
+                  "position" => array(
+                    "name" => "left"
+                  ),
+                  "attrs" => array(
+                    ".port-label" => array(
+                      "fill" => "#000"
+                    ),
+                    ".port-body" => array(
+                      "fill" => "#fff",
+                      "stroke" => "#000",
+                      "r" => 10,
+                      "magnet" => true
+                    )
+                  ),
+                  "label" => array(
+                    "position" => array(
+                      "name" => "left",
+                      "args" => array(
+                        "y" => 10
+                      )
+                    )
+                  )
+                ),
+                "out" => array(
+                  "position" => array(
+                    "name" => "absolute",
+                    "args" => array(
+                      "x" => 235,
+                      "y" => 3
+                    )
+                  ),
+                  "attrs" => array(
+                    ".port-label" => array(
+                      "fill" => "#000",
+                      "font-size" => 0
+                    ),
+                    ".port-body" => array(
+                      "fill" => "#DD82AB",
+                      "stroke" => false,
+                      "r" => 10,
+                      "magnet" => true,
+                      "fill-opacity" => "0.9",
+                      "height" => 30,
+                      "width" => 30,
+                      "rx" => 3,
+                      "ry" => 3
+                    ),
+                    "type" => "branch"
+                  ),
+                  "label" => array(
+                    "position" => array(
+                      "name" => "right",
+                      "args" => array(
+                        "y" => 10
+                      )
+                    )
+                  ),
+                  "z" => 4,
+                  "markup" => "<rect class=\"port-body\"/>"
+                )
+              ),
+              "items" => array(
+                array(
+                  "id" => "out",
+                  "group" => "out",
+                  "attrs" => array(
+                    ".port-label" => array(
+                      "text" => "out"
+                    ),
+                    ".port-body" => array(
+                      "fill" => "#DD82AB"
+                    )
+                  )
+                )
+              )
+            ),
+            "position" => array(
+              "x" => 340,
+              "y" => 545
+            ),
+            "angle" => 0,
+            "markup" => "<rect class=\"body\"/><text class=\"label\"/><rect class=\"cover_top\"/><rect class=\"cover_bottom\"/>",
+            "id" => "39f817ff-ba79-4533-873a-6a1eccfac756",
+            "parent" => "b938dc97-5042-4c97-b5a7-c319538362be",
+            "z" => 85,
+            "attrs" => array(
+              ".label" => array(
+                "text" => "問い合わせフォームのサ...",
+                "font-size" => "14px",
+                "ref-width" => "70%",
+                "y" => 12
+              ),
+              "text" => array(
+                "text" => "問い合わせフォームのサ...",
+                "ref-width" => "70%",
+                "font-size" => "14px",
+                "fill" => "#000",
+                "y" => 12
+              ),
+              "rect.body" => array(
+                "fill" => "#FFF",
+                "stroke" => false,
+                "rx" => 10,
+                "ry" => 10
+              ),
+              "nodeBasicInfo" => array(
+                "nodeType" => "childPortNode",
+                "nextNode" => "",
+                "tooltip" => "問い合わせフォームのサンプル",
+                "nextNodeId" => "0c73ac1d-3cd4-4271-919b-11eb90729c2f"
+              ),
+              ".cover_top" => array(
+                "fill" => "#FFFFFF",
+                "width" => 240,
+                "height" => 10,
+                "fill-opacity" => "1"
+              ),
+              ".cover_bottom" => array(
+                "fill" => "#FFFFFF",
+                "width" => 240,
+                "height" => 10,
+                "transform" => "translate(0 26)",
+                "fill-opacity" => "0"
+              )
+            )
+          ),
+          array(
+            "type" => "devs.Model",
+            "inPorts" => array(
+              "in"
+            ),
+            "outPorts" => array(
+              "out"
+            ),
+            "size" => array(
+              "width" => 250,
+              "height" => 76
+            ),
+            "ports" => array(
+              "groups" => array(
+                "in" => array(
+                  "position" => array(
+                    "name" => "absolute",
+                    "args" => array(
+                      "x" => -31,
+                      "y" => 23
+                    )
+                  ),
+                  "attrs" => array(
+                    ".port-label" => array(
+                      "fill" => "#000",
+                      "font-size" => 0
+                    ),
+                    ".port-body" => array(
+                      "fill" => "#82c0cd",
+                      "stroke" => false,
+                      "r" => 10,
+                      "magnet" => "passive",
+                      "height" => 33,
+                      "width" => 33,
+                      "rx" => 5,
+                      "ry" => 5,
+                      "fill-opacity" => "0.9"
+                    ),
+                    "type" => "scenario"
+                  ),
+                  "label" => array(
+                    "position" => array(
+                      "name" => "left",
+                      "args" => array(
+                        "y" => 10
+                      )
+                    )
+                  ),
+                  "z" => 0,
+                  "markup" => "<rect class=\"port-body\"/>"
+                ),
+                "out" => array(
+                  "position" => array(
+                    "name" => "absolute",
+                    "args" => array(
+                      "x" => 248,
+                      "y" => 23
+                    )
+                  ),
+                  "attrs" => array(
+                    ".port-label" => array(
+                      "fill" => "#000",
+                      "font-size" => 0
+                    ),
+                    ".port-body" => array(
+                      "fill" => "#C8E3E8",
+                      "stroke" => false,
+                      "r" => 10,
+                      "magnet" => true,
+                      "height" => 33,
+                      "width" => 33,
+                      "rx" => 5,
+                      "ry" => 5,
+                      "fill-opacity" => "0.9"
+                    ),
+                    "type" => "scenario"
+                  ),
+                  "label" => array(
+                    "position" => array(
+                      "name" => "right",
+                      "args" => array(
+                        "y" => 10
+                      )
+                    )
+                  ),
+                  "z" => 0,
+                  "markup" => "<rect class=\"port-body\"/>"
+                )
+              ),
+              "items" => array(
+                array(
+                  "id" => "in",
+                  "group" => "in",
+                  "attrs" => array(
+                    ".port-label" => array(
+                      "text" => "in"
+                    )
+                  )
+                ),
+                array(
+                  "id" => "out",
+                  "group" => "out",
+                  "attrs" => array(
+                    ".port-label" => array(
+                      "text" => "out"
+                    ),
+                    ".port-body" => array(
+                      "fill" => "#C8E3E8"
+                    )
+                  )
+                )
+              )
+            ),
+            "position" => array(
+              "x" => 785,
+              "y" => 1060
+            ),
+            "angle" => 0,
+            "markup" => "<rect class=\"body\"/><path class=\"icon\" d=\"M160 416h64v-32h-64v32zm32-192c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm192 0c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm160 0h-32v-32c0-53-43-96-96-96H304V16c0-8.8-7.2-16-16-16s-16 7.2-16 16v80H160c-53 0-96 43-96 96v32H32c-17.7 0-32 14.3-32 32v128c0 17.7 14.3 32 32 32h32v32c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64v-32h32c17.7 0 32-14.3 32-32V256c0-17.7-14.3-32-32-32zM64 384H32V256h32v128zm416 64c0 17.6-14.4 32-32 32H128c-17.6 0-32-14.4-32-32V192c0-35.3 28.7-64 64-64h256c35.3 0 64 28.7 64 64v256zm64-64h-32V256h32v128zm-192 32h64v-32h-64v32zm-96 0h64v-32h-64v32z\"></path><text class=\"label\"/>",
+            "id" => "0c73ac1d-3cd4-4271-919b-11eb90729c2f",
+            "embeds" => array(
+              "bbd3c479-5115-4d2a-b5d9-906901b08a70"
+            ),
+            "z" => 86,
+            "attrs" => array(
+              ".label" => array(
+                "text" => "シナリオ呼出",
+                "font-size" => "14px",
+                "fill" => "#fff",
+                "font-weight" => "bold",
+                "y" => 12
+              ),
+              ".body" => array(
+                "stroke" => false,
+                "fill" => "#82c0cd",
+                "rx" => 5,
+                "ry" => 5
+              ),
+              ".icon" => array(
+                "transform" => "scale(0.04) translate(150, 150)"
+              ),
+              ".inCover" => array(
+                "fill" => "#82c0cd",
+                "height" => 33,
+                "width" => 2,
+                "x" => -2,
+                "y" => 23
+              ),
+              "nodeBasicInfo" => array(
+                "nodeType" => "scenario",
+                "nextNodeId" => "841927a8-4303-45ae-a45a-f905a3a6c58f"
+              ),
+              "actionParam" => array(
+                "targetScenarioIndex" => 6,
+                "callbackToDiagram" => true,
+                "value" => "【サンプル】問い合わせフォーム"
+              ),
+              ".outCover" => array(
+                "fill" => "#82c0cd",
+                "stroke" => false,
+                "height" => 33,
+                "width" => 2,
+                "x" => 250,
+                "y" => 40
+              )
+            )
+          ),
+          array(
+            "type" => "basic.Rect",
+            "position" => array(
+              "x" => 790,
+              "y" => 1095
+            ),
+            "size" => array(
+              "width" => 240,
+              "height" => 36
+            ),
+            "angle" => 0,
+            "id" => "bbd3c479-5115-4d2a-b5d9-906901b08a70",
+            "parent" => "0c73ac1d-3cd4-4271-919b-11eb90729c2f",
+            "z" => 87,
+            "attrs" => array(
+              "rect" => array(
+                "fill" => "#FFFFFF",
+                "stroke" => false,
+                "rx" => 3,
+                "ry" => 3
+              ),
+              "text" => array(
+                "text" => "【サンプル】問い合わせフォーム",
+                "font-size" => "14px",
+                "y" => 0
+              ),
+              "nodeBasicInfo" => array(
+                "nodeType" => "childViewNode",
+                "tooltip" => "【サンプル】問い合わせフォーム"
+              )
+            )
+          ),
+          array(
+            "type" => "link",
+            "source" => array(
+              "id" => "39f817ff-ba79-4533-873a-6a1eccfac756",
+              "port" => "out"
+            ),
+            "target" => array(
+              "id" => "0c73ac1d-3cd4-4271-919b-11eb90729c2f",
+              "port" => "in"
+            ),
+            "id" => "d1b5a16b-0dbb-49ff-9092-56ca9170acaa",
+            "z" => 88,
+            "attrs" => array(
+              ".connection" => array(
+                "stroke" => "#AAAAAA",
+                "stroke-width" => 2
+              ),
+              ".marker-target" => array(
+                "stroke" => "#AAAAAA",
+                "fill" => "#AAAAAA",
+                "d" => "M 14 0 L 0 7 L 14 14 z"
+              ),
+              ".link-tools .link-tool .tool-remove circle" => array(
+                "class" => "diagram"
+              ),
+              ".marker-arrowhead[end=\"source\"]" => array(
+                "d" => "M 0 0 z"
+              ),
+              ".marker-arrowhead[end=\"target\"]" => array(
+                "d" => "M 0 0 z"
+              )
+            )
+          ),
+          array(
+            "type" => "link",
+            "source" => array(
+              "id" => "0c73ac1d-3cd4-4271-919b-11eb90729c2f",
+              "port" => "out"
+            ),
+            "target" => array(
+              "id" => "841927a8-4303-45ae-a45a-f905a3a6c58f",
+              "port" => "in"
+            ),
+            "id" => "b3c6095a-45a8-46e3-a800-25231795724a",
+            "z" => 89,
+            "attrs" => array(
+              ".connection" => array(
+                "stroke" => "#AAAAAA",
+                "stroke-width" => 2
+              ),
+              ".marker-target" => array(
+                "stroke" => "#AAAAAA",
+                "fill" => "#AAAAAA",
+                "d" => "M 14 0 L 0 7 L 14 14 z"
+              ),
+              ".link-tools .link-tool .tool-remove circle" => array(
+                "class" => "diagram"
+              ),
+              ".marker-arrowhead[end=\"source\"]" => array(
+                "d" => "M 0 0 z"
+              ),
+              ".marker-arrowhead[end=\"target\"]" => array(
+                "d" => "M 0 0 z"
+              )
+            )
           )
-        )
-      ),
-      'del_flg' => 0,
-      'sort' => 1
+        ),
+        'del_flg' => 0,
+        'sort' => 1
+      )
     )
   )
 );

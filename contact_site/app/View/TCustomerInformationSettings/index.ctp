@@ -13,7 +13,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
   </div>
 
   <div id='tcustomerinformationsettings_description'>
-    <span class="pre">訪問ユーザ情報として記録する項目（会社名、氏名、連絡先など）を自由に設定することができます。記録された情報はリアルタイムモニターや履歴から確認可能です。
+    <span class="pre">訪問ユーザ情報として記録する項目（会社名、氏名、連絡先など）を自由に設定することができます。記録された情報は<?php echo($coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR] ? 'リアルタイムモニタ' : '有人応対') ?>や履歴から確認可能です。
     また、<a href="/TCustomVariables">カスタム変数の値</a>（会員番号や会員名などページから取得した値）を訪問ユーザ情報として自動登録する設定も当画面から行います。</span>
   </div>
 
