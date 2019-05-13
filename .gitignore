@@ -1,3 +1,4 @@
 *.log
 sftp-config.json
+package-lock.json
 .idea

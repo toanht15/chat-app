@@ -513,7 +513,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.beforeInputValue = '';
     $scope.searchResult = [];
     $scope.search = function(array, forceResult){
-      var isHideRealTimeMonitor = contract.hideRealtimeMonitor;
+      var isHideRealTimeMonitor = (contract.hideRealtimeMonitor);
       var result = {}, targetField;
       targetField = ( Number($scope.fillterTypeId) === 2 ) ? 'ipAddress' : 'accessId';
       if(isHideRealTimeMonitor) {
@@ -532,7 +532,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         } else if ($scope.searchText.length >= 4 && $scope.searchResult.length > 0) {
           result = $scope.monitorList;
         } else if($scope.searchText.length < 4) {
-          if(!contract.monitorPollingMode) {
+          if (!contract.monitorPollingMode || !contract.enableRealtimeMonitor) {
             $scope.searchResult = [];
             if ($scope.monitorList.length > 0) {
               $scope.monitorList = [];
@@ -544,6 +544,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           } else {
             result = array;
           }
+        }
+      } else if (!contract.enableRealtimeMonitor) {
+        if (forceResult) {
+          $scope.searchResult = array;
+          result = array;
+        } else if ($scope.searchText.length >= 4 && $scope.searchText !== $scope.beforeInputValue) {
+          $scope.searchProcess($scope.searchText, $scope.fillterTypeId);
+          result = array;
+        } else if ($scope.searchText.length >= 4 && $scope.searchResult.length > 0) {
+          result = $scope.monitorList;
+        } else if ($scope.searchText.length < 4) {
+          var targetArray = [];
+          Object.keys($scope.monitorList).forEach(function(elm, idx, arr) {
+            if (!$scope.monitorList[elm].isSearchTarget) {
+              targetArray.push($scope.monitorList[elm]);
+            }
+          });
+          result = targetArray;
         }
       } else {
         if ( $scope.searchText ) {
@@ -578,7 +596,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var obj = JSON.parse(result);
       $scope.search(obj, true);
       if(obj && obj.length > 0) {
-        obj.forEach(function(targetObj){
+        obj.forEach(function(targetObj) {
+          targetObj.isSearchTarget = true;
           pushToList(targetObj);
           if ('chat' in targetObj && String(targetObj.chat) === "<?=$muserId?>") {
             pushToChatList(targetObj.tabId);
@@ -1313,7 +1332,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       chatApi.getMessage(data); // Nodeサーバーより最新のチャットメッセージを取得
       // 新着チャットチェック
       // 3秒後にチェック
-      setTimeout(function(){
+      setTimeout(function() {
         // タブを開いている、表示チャットが０件
         if ( $scope.detailId === tabId && $scope.messageList.length === 0 ) {
           // HTTPサーバーより最新のチャットメッセージを取得
@@ -1486,7 +1505,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     /* キャンペーン情報を取得する */
     $scope.getCampaign = function (prev){
       var str = "";
-      if ( !(prev.hasOwnProperty('length') && angular.isDefined(prev[0]) && prev[0].hasOwnProperty('url'))  ) return "";
+      if (!prev ||
+          !(prev.hasOwnProperty('length') && angular.isDefined(prev[0]) && prev[0].hasOwnProperty('url'))) return '';
       var url = prev[0].url;
       if ( !angular.isDefined(url) ) return "";
       angular.forEach(campaignList, function(name, parameter){
@@ -2619,7 +2639,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.tmpMonitorList[obj[index].tabId] = obj[index];
         });
       } else {
-        if(!contract.hideRealtimeMonitor) {
+        if (!contract.hideRealtimeMonitor) {
           setTimeout(function(){
             $scope.$apply(function(){
               obj.forEach(function(elm, index, arr) {
@@ -2656,7 +2676,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
       });
       Object.keys($scope.monitorList).forEach(function(elm, index, arr){
-        if($scope.tmpMonitorList[elm] || (contract.hideRealtimeMonitor && $scope.searchText.length === 4)) {
+        if ($scope.tmpMonitorList[elm] ||
+            ((contract.hideRealtimeMonitor || !contract.enableRealtimeMonitor) && $scope.searchText.length === 4)) {
           return;
         } else {
           delete $scope.monitorList[elm];
@@ -3002,7 +3023,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var prev = angular.copy($scope.monitorList[obj.tabId].chat);
       $scope.monitorList[obj.tabId].chat = obj.userId;
 
-      if ( Number(obj.messageType) === 98 ) {
+      if (Number(obj.messageType) === 998) {
         $scope.chatOpList.push(obj.userId);
         if ( obj.userId === myUserId ) {
           $scope.achievement = obj.achievementFlg;
@@ -3090,7 +3111,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if(obj.getMessageToken !== chatApi.getMessageToken) return;
 
-      for (var key in obj.chat.messages) {
+      Object.keys(obj.chat.messages).forEach(function(key, idx, arr) {
+        if (key.indexOf('_') !== -1) return;
         var chat = {};
         if ( typeof(obj.chat.messages[key]) === "object" ) {
           chat = obj.chat.messages[key];
@@ -3098,7 +3120,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         else {
           chat.text = obj.chat.messages[key];
         }
-        if ( Number(chat.messageType) === 98 ) {
+        if (Number(chat.messageType) === 998) {
           $scope.chatOpList.push(chat.userId);
           if ( chat.userId === myUserId ) {
             $scope.achievement = String(chat.achievementFlg);
@@ -3116,7 +3138,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.messageList.push(chat);
           scDown(); // チャットのスクロール
         }
-      }
+      });
 
       if ( $scope.monitorList[obj.tabId].chat === myUserId ) {
         // 既読にする(ok)
