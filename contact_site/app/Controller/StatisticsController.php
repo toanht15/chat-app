@@ -2399,46 +2399,50 @@ class StatisticsController extends AppController {
     return $timeFormat;
   }
 
+  /**
+   * @param $csvData
+   * @return array
+   */
   private function insertCsvData($csvData) {
-    $accessNumber = [];
-    $accessNumber[] = '合計アクセス件数';
-    $widgetNumber = [];
-    $widgetNumber[] = 'ウィジェット件数';
-    $requestNumber = [];
-    $requestNumber[] = 'チャットリクエスト件数';
-    $automaticResponseNumber = [];
+    $accessNumber              = [];
+    $accessNumber[]            = '合計アクセス件数';
+    $widgetNumber              = [];
+    $widgetNumber[]            = 'ウィジェット表示件数';
+    $requestNumber             = [];
+    $requestNumber[]           = 'チャットリクエスト件数';
+    $automaticResponseNumber   = [];
     $automaticResponseNumber[] = '自動返信応対件数';
-    $linkNumber = [];
-    $linkNumber[] = 'リンククリック件数';
-    $responseNumber = [];
-    $responseNumber[] = 'チャット応対件数';
-    $requestMannedNumber = [];
-    $requestMannedNumber[] = '有人チャットリクエスト件数';
-    $abandonmentNumber = [];
-    $abandonmentNumber[] = 'チャット放棄件数';
-    $noNumber = [];
-    $noNumber[] = 'チャット拒否件数';
-    $effectivenessNumber = [];
-    $effectivenessNumber[] = 'チャット有効件数';
-    $cvNumber = [];
-    $cvNumber[] = 'チャットCV件数';
-    $requestAvgTime = [];
-    $requestAvgTime[] = '平均チャットリクエスト時間';
-    $consumerWatingAvgTime = [];
-    $consumerWatingAvgTime[] = '平均消費者待機時間';
-    $responseAvgTime = [];
-    $responseAvgTime[] = '平均応答時間';
-    $automaticResponseRate = [];
-    $automaticResponseRate[] = '自動返信応対率';
-    $responseRate = [];
-    $responseRate[] = '有人チャット応対率';
-    $effectivenessRate = [];
-    $effectivenessRate[] = 'チャット有効率';
+    $linkNumber                = [];
+    $linkNumber[]              = 'リンククリック件数';
+    $responseNumber            = [];
+    $responseNumber[]          = 'チャット応対件数';
+    $requestMannedNumber       = [];
+    $requestMannedNumber[]     = '有人チャットリクエスト件数';
+    $abandonmentNumber         = [];
+    $abandonmentNumber[]       = 'チャット放棄件数';
+    $noNumber                  = [];
+    $noNumber[]                = 'チャット拒否件数';
+    $effectivenessNumber       = [];
+    $effectivenessNumber[]     = 'チャット有効件数';
+    $cvNumber                  = [];
+    $cvNumber[]                = 'チャットCV件数';
+    $requestAvgTime            = [];
+    $requestAvgTime[]          = '平均チャットリクエスト時間';
+    $consumerWatingAvgTime     = [];
+    $consumerWatingAvgTime[]   = '平均消費者待機時間';
+    $responseAvgTime           = [];
+    $responseAvgTime[]         = '平均応答時間';
+    $automaticResponseRate     = [];
+    $automaticResponseRate[]   = '自動返信応対率';
+    $responseRate              = [];
+    $responseRate[]            = '有人チャット応対率';
+    $effectivenessRate         = [];
+    $effectivenessRate[]       = 'チャット有効率';
 
-    $csvData = $this->insertEachItemCsvData($csvData,$accessNumber,$widgetNumber,$requestNumber,
-            $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,$linkNumber,$requestMannedNumber,
-            $abandonmentNumber,$requestAvgTime,$consumerWatingAvgTime,$responseAvgTime,$responseRate,$automaticResponseRate,
-            $effectivenessRate);
+    $csvData = $this->insertEachItemCsvData($csvData, $accessNumber, $widgetNumber, $requestNumber,
+      $responseNumber, $automaticResponseNumber, $noNumber, $effectivenessNumber, $cvNumber, $linkNumber, $requestMannedNumber,
+      $abandonmentNumber, $requestAvgTime, $consumerWatingAvgTime, $responseAvgTime, $responseRate, $automaticResponseRate,
+      $effectivenessRate);
 
     $csv[] = $csvData['accessNumber'];
     $csv[] = $csvData['widgetNumber'];

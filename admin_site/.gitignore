@@ -5,6 +5,7 @@
 /app/tmp
 /app/webroot/css/*.css
 /app/webroot/css/*.gz
+/app/Plugin/
 !/app/webroot/css/font-awesome.min.css
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins

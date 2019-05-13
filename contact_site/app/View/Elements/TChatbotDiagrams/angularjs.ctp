@@ -344,7 +344,6 @@
                   $('#popup-content').css('height','auto');
 
                   popupEvent.resize = function() {
-                    debugger;
                     var contHeight = $('#popup-content').height();
                     $('#popup-frame').css('top', 0).css('height', contHeight);
                     $scope.popupFix();
@@ -354,7 +353,6 @@
                   $('#popup-content').css('height','auto');
 
                   popupEvent.resize = function() {
-                    debugger;
                     var contHeight = $('#popup-content').height();
                     $('#popup-frame').css('top', 0).css('height', contHeight);
                     $scope.popupFix();
