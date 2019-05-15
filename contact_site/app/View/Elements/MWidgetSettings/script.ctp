@@ -1872,7 +1872,22 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     angular.element('#fileTagWrap').click(function(e){
       $("#MWidgetSettingUploadImage").val("");
+      $scope.main_image = '';
+      $scope.$apply();
     });
+
+    angular.element('#chatbotIconUploadBtn').click(function(e){
+      $("#MWidgetSettingUploadBotIcon").val("");
+      $scope.chatbot_icon = '';
+      $scope.$apply();
+    });
+
+    angular.element('#operatorIconUploadBtn').click(function(e){
+      $("#MWidgetSettingUploadOpIcon").val("");
+      $scope.operator_icon = '';
+      $scope.$apply();
+    });
+
 
     // メイン画像のトリミング
     angular.element('#MWidgetSettingUploadImage').change(function(e){
@@ -1881,12 +1896,13 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         var file = files[files.length-1];
         // jpeg/jpg/png
         var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
-        if ( !reg.exec(file.type) ) {
-            $("#MWidgetSettingUploadImage").val("");
-            $scope.uploadImageError = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
+        if (!reg.exec(file.type)) {
+          $('#MWidgetSettingUploadImage').val('');
+          $scope.uploadImageError = '画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です';
+          $scope.$apply();
           return false;
         }
-
+        $scope.uploadImageError = "";
         var url = window.URL.createObjectURL(file);
 
         openTrimmingDialog(function(){
@@ -1906,9 +1922,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
         if ( !reg.exec(file.type) ) {
           $("#MWidgetSettingUploadBotIcon").val("");
-          $scope.uploadImageError = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
+          $scope.chatbotIconErrMsg = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
+          $scope.$apply();
+          return false;
         }
-
+        $scope.chatbotIconErrMsg = "";
         var url = window.URL.createObjectURL(file);
 
         openTrimmingDialog(function(){
@@ -1927,10 +1945,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         // jpeg/jpg/png/gif
         var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
         if ( !reg.exec(file.type) ) {
-          $("#MWidgetSettingUploadOpIcon").val("");
-          $scope.uploadImageError = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
+          $scope.operatorIconErrMsg = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です";
+          $scope.$apply();
+          return false;
         }
-
+        $scope.operatorIconErrMsg = "";
         var url = window.URL.createObjectURL(file);
 
         openTrimmingDialog(function(){
