@@ -33,6 +33,15 @@ module.exports = class HistoryManager extends DatabaseManager {
                       obj.historyId = rows[0].id;
                       obj.stayLogsId = stayLogsId;
                       resolve(obj);
+                    }, function() {
+                      let errorObj = {};
+                      Error.captureStackTrace(errorObj);
+                      CommonUtil.warnLog(
+                          'Time Update is failed. ignoreing ' + rows[0].id +
+                          ' => ' + errorObj.stack);
+                      obj.historyId = rows[0].id;
+                      obj.stayLogsId = 0;
+                      resolve(obj);
                     });
               } else {
                 //insert
@@ -61,6 +70,15 @@ module.exports = class HistoryManager extends DatabaseManager {
                           then(function(stayLogsId) {
                             obj.historyId = historyId;
                             obj.stayLogsId = stayLogsId;
+                            resolve(obj);
+                          }, function() {
+                            let errorObj = {};
+                            Error.captureStackTrace(errorObj);
+                            CommonUtil.warnLog(
+                                'Time Update is failed. ignoreing ' +
+                                historyId + ' => ' + errorObj.stack);
+                            obj.historyId = historyId;
+                            obj.stayLogsId = 0;
                             resolve(obj);
                           });
                     }
@@ -108,7 +126,7 @@ module.exports = class HistoryManager extends DatabaseManager {
               'autoMessages' in
               SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
             var autoMessageObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
-            console.log(JSON.stringify(autoMessageObj));
+            //console.log(JSON.stringify(autoMessageObj));
             try {
               Object.keys(autoMessageObj).
                   forEach(function(automessageKey, index, array) {
@@ -128,7 +146,7 @@ module.exports = class HistoryManager extends DatabaseManager {
               'scenario' in
               SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
             var scenariosObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].scenario;
-            console.log(JSON.stringify(scenariosObj));
+            //console.log(JSON.stringify(scenariosObj));
             Object.keys(scenariosObj).forEach(function(scenarioId, index, arr) {
               var scenarioObj = scenariosObj[Number(scenarioId)];
               Object.keys(scenarioObj).
@@ -157,7 +175,7 @@ module.exports = class HistoryManager extends DatabaseManager {
 
             }
           }
-          console.log(JSON.stringify(diagram));
+          //console.log(JSON.stringify(diagram));
           for (var l = 0; l < diagram.length; l++) {
             if (CommonUtil.isset(diagram[l].sort)) {
               setList[diagram[l].sort + '_'] = diagram[l];
@@ -165,7 +183,7 @@ module.exports = class HistoryManager extends DatabaseManager {
           }
           chatData.messages = CommonUtil.objectSort(setList);
           obj.chat = chatData;
-          console.log(chatData);
+          //console.log(chatData);
           resolve(obj);
         });
       } else {
@@ -176,7 +194,7 @@ module.exports = class HistoryManager extends DatabaseManager {
             'autoMessages' in
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
           var autoMessageObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
-          console.log(JSON.stringify(autoMessageObj));
+          //console.log(JSON.stringify(autoMessageObj));
           try {
             Object.keys(autoMessageObj).
                 forEach(function(automessageKey, index, array) {
@@ -196,7 +214,7 @@ module.exports = class HistoryManager extends DatabaseManager {
             'scenario' in
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
           var scenariosObj = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].scenario;
-          console.log(JSON.stringify(scenariosObj));
+          //console.log(JSON.stringify(scenariosObj));
           Object.keys(scenariosObj).forEach(function(scenarioId, index, arr) {
             var scenarioObj = scenariosObj[Number(scenarioId)];
             Object.keys(scenarioObj).
@@ -225,7 +243,7 @@ module.exports = class HistoryManager extends DatabaseManager {
 
           }
         }
-        console.log(JSON.stringify(diagram));
+        //console.log(JSON.stringify(diagram));
         for (var l = 0; l < diagram.length; l++) {
           if (CommonUtil.isset(diagram[l].sort)) {
             setList[diagram[l].sort + '_'] = diagram[l];
@@ -233,7 +251,7 @@ module.exports = class HistoryManager extends DatabaseManager {
         }
         chatData.messages = CommonUtil.objectSort(setList);
         obj.chat = chatData;
-        console.log(chatData);
+        //console.log(chatData);
         resolve(obj);
       }
     });
@@ -242,12 +260,16 @@ module.exports = class HistoryManager extends DatabaseManager {
   timeUpdate(historyId, obj, time) {
     let self = this;
     return new Promise(async (resolve, reject) => {
-      let prevArray = obj.prev;
-      let result = 0;
-      for (let i = 0; i < prevArray.length; i++) {
-        result = await this.processTimeUpdate(self, historyId, prevArray, i);
+      try {
+        let prevArray = obj.prev;
+        let result = 0;
+        for (let i = 0; i < prevArray.length; i++) {
+          result = await this.processTimeUpdate(self, historyId, prevArray, i);
+        }
+        resolve(result);
+      } catch (e) {
+        reject(e);
       }
-      resolve(result);
     });
   }
 
@@ -307,5 +329,49 @@ module.exports = class HistoryManager extends DatabaseManager {
           }
       );
     });
+  }
+
+  incrementAccessCount(companiesId, datetime) {
+    let self = this;
+    let targetDate = datetime.replace(/\//g, '-');
+    self.dbPool.query('SELECT * from t_history_access_counts\n' +
+        'WHERE\n' +
+        '  m_companies_id = ?\n' +
+        'AND\n' +
+        '  year = DATE_FORMAT(?, \'%Y\')\n' +
+        'AND\n' +
+        '  month = DATE_FORMAT(?, \'%m\')\n' +
+        'AND\n' +
+        '  day = DATE_FORMAT(?, \'%d\')\n' +
+        'AND\n' +
+        '  hour = DATE_FORMAT(?, \'%H\')',
+        [companiesId, targetDate, targetDate, targetDate, targetDate],
+        function(err, row) {
+          if (row.length !== 0) {
+            self.dbPool.query('UPDATE  t_history_access_counts\n' +
+                'SET\n' +
+                '  access_count = access_count+1\n' +
+                'WHERE\n' +
+                '  m_companies_id = ?\n' +
+                'AND\n' +
+                '  year = DATE_FORMAT(?, \'%Y\')\n' +
+                'AND\n' +
+                '  month = DATE_FORMAT(?, \'%m\')\n' +
+                'AND\n' +
+                '  day = DATE_FORMAT(?, \'%d\')\n' +
+                'AND\n' +
+                '  hour = DATE_FORMAT(?, \'%H\')',
+                [companiesId, targetDate, targetDate, targetDate, targetDate],
+                function(err, result) {
+                });
+          } else {
+            self.dbPool.query(
+                'INSERT INTO t_history_access_counts(m_companies_id,year,month,day,hour,access_count)\n' +
+                'VALUES(?,DATE_FORMAT(?, \'%Y\'),DATE_FORMAT(?, \'%m\'),DATE_FORMAT(?, \'%d\'),DATE_FORMAT(?, \'%H\'),1)',
+                [companiesId, targetDate, targetDate, targetDate, targetDate],
+                function(err, result) {
+                });
+          }
+        });
   }
 };

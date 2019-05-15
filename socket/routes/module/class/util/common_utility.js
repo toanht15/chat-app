@@ -1,3 +1,8 @@
+let log4js = require('log4js'); // log4jsモジュール読み込み
+log4js.configure('./log4js_setting.json'); // 設定ファイル読み込み
+let debugLogger = log4js.getLogger('debug');
+let errLogger = log4js.getLogger('error');
+
 module.exports = class CommonUtility {
 
   constructor() {
@@ -143,4 +148,19 @@ module.exports = class CommonUtility {
     return obj1;
   }
 
+  static debugLog(msg) {
+    debugLogger.debug(msg);
+  }
+
+  static infoLog(msg) {
+    debugLogger.info(msg);
+  }
+
+  static warnLog(msg) {
+    errLogger.warn(msg);
+  }
+
+  static errorLog(msg) {
+    errLogger.error(msg);
+  }
 };

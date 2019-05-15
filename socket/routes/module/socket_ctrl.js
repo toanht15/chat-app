@@ -1580,11 +1580,11 @@ io.sockets.on('connection', function(socket) {
 
       // ウィジェットが非表示の場合
       if (type == 1 &&
-          common.widgetSettings[siteKey].style_settings.displayType === 3) {
+          common.widgetSettings[siteKey].display_type === 3) {
         return callback(true,
             {opFlg: false, message: no_standby_sorry_message});
       } else if (type == 2 &&
-          common.widgetSettings[siteKey].style_settings.displayType === 3) {
+          common.widgetSettings[siteKey].display_type === 3) {
         //営業時間を利用する場合
         if (active_flg == 1) {
           for (var i2 = 0; i2 <
@@ -1655,13 +1655,13 @@ io.sockets.on('connection', function(socket) {
 
       // ウィジェット表示のジャッジの場合、常に表示は必ずtrue
       if (type === 1 &&
-          common.widgetSettings[siteKey].style_settings.displayType === 1) {
+          common.widgetSettings[siteKey].display_type === 1) {
         return callback(true,
             {opFlg: true, message: no_standby_sorry_message});
       }
       // ウィジェット表示のジャッジの場合、営業時間内のみ表示するの場合、営業時間内の場合はtrue
       if (type === 1 &&
-          common.widgetSettings[siteKey].style_settings.displayType === 4 &&
+          common.widgetSettings[siteKey].display_type === 4 &&
           active_flg == 1) {
         // 祝日の場合
         for (var i2 = 0; i2 <
@@ -1721,7 +1721,7 @@ io.sockets.on('connection', function(socket) {
         // オペレーターが待機している場合
         if (type === 1 &&
             (Number(
-                common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                common.widgetSettings[siteKey].display_type) ===
                 2 &&
                 getOperatorCnt(siteKey) > 0)
         ) {
@@ -1756,15 +1756,15 @@ io.sockets.on('connection', function(socket) {
                           new Date(date + publicHolidayData[i].end))) {
                     // オペレータが待機している場合
                     if ((Number(
-                        common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                        common.widgetSettings[siteKey].display_type) ===
                         2 &&
                         getOperatorCnt(siteKey) > 0) ||
                         (Number(
-                            common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                            common.widgetSettings[siteKey].display_type) ===
                             1 &&
                             getOperatorCnt(siteKey) > 0) ||
                         (Number(
-                            common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                            common.widgetSettings[siteKey].display_type) ===
                             4 &&
                             getOperatorCnt(siteKey) > 0)
                     ) {
@@ -1817,15 +1817,15 @@ io.sockets.on('connection', function(socket) {
                   check = true;
                   //オペレータが待機している場合
                   if ((Number(
-                      common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                      common.widgetSettings[siteKey].display_type) ===
                       2 &&
                       getOperatorCnt(siteKey) > 0) ||
                       (Number(
-                          common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                          common.widgetSettings[siteKey].display_type) ===
                           1 &&
                           getOperatorCnt(siteKey) > 0) ||
                       (Number(
-                          common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                          common.widgetSettings[siteKey].display_type) ===
                           4 &&
                           getOperatorCnt(siteKey) > 0)
                   ) {
@@ -1854,13 +1854,13 @@ io.sockets.on('connection', function(socket) {
         else {
           //オペレータが待機している場合
           if ((Number(
-              common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+              common.widgetSettings[siteKey].display_type) ===
               2 && getOperatorCnt(siteKey) > 0) ||
               (Number(
-                  common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                  common.widgetSettings[siteKey].display_type) ===
                   1 && getOperatorCnt(siteKey) > 0) ||
               (Number(
-                  common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                  common.widgetSettings[siteKey].display_type) ===
                   4 && getOperatorCnt(siteKey) > 0)
           ) {
             return callback(true,
@@ -1883,7 +1883,7 @@ io.sockets.on('connection', function(socket) {
       else if (Number(common.chatSettings[siteKey].sc_flg) === 1) {
         if (type === 1 &&
             Number(
-                common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                common.widgetSettings[siteKey].display_type) ===
             2 &&
             SharedData.scList.hasOwnProperty(siteKey)) {
           var userIds = Object.keys(SharedData.scList[siteKey].user);
@@ -1924,15 +1924,15 @@ io.sockets.on('connection', function(socket) {
                       Date.parse(new Date(date + endTime))) {
                     //オペレータが待機している場合
                     if ((Number(
-                        common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                        common.widgetSettings[siteKey].display_type) ===
                         2 &&
                         getOperatorCnt(siteKey) > 0) ||
                         (Number(
-                            common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                            common.widgetSettings[siteKey].display_type) ===
                             1 &&
                             getOperatorCnt(siteKey) > 0) ||
                         (Number(
-                            common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                            common.widgetSettings[siteKey].display_type) ===
                             4 &&
                             getOperatorCnt(siteKey) > 0)
                     ) {
@@ -2003,15 +2003,15 @@ io.sockets.on('connection', function(socket) {
                   check = true;
                   //オペレータが待機している場合
                   if ((Number(
-                      common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                      common.widgetSettings[siteKey].display_type) ===
                       2 &&
                       getOperatorCnt(siteKey) > 0) ||
                       (Number(
-                          common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                          common.widgetSettings[siteKey].display_type) ===
                           1 &&
                           getOperatorCnt(siteKey) > 0) ||
                       (Number(
-                          common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                          common.widgetSettings[siteKey].display_type) ===
                           4 &&
                           getOperatorCnt(siteKey) > 0)
                   ) {
@@ -2058,13 +2058,13 @@ io.sockets.on('connection', function(socket) {
         else {
           //オペレータが待機している場合
           if ((Number(
-              common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+              common.widgetSettings[siteKey].display_type) ===
               2 && getOperatorCnt(siteKey) > 0) ||
               (Number(
-                  common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                  common.widgetSettings[siteKey].display_type) ===
                   1 && getOperatorCnt(siteKey) > 0) ||
               (Number(
-                  common.widgetSettings[siteKey].style_settings.displayStyleType) ===
+                  common.widgetSettings[siteKey].display_type) ===
                   4 && getOperatorCnt(siteKey) > 0)
           ) {
             // チャット上限数をみる
@@ -2788,6 +2788,15 @@ io.sockets.on('connection', function(socket) {
 
       // 履歴作成
       db.addHistory(obj, socket);
+      if (!CommonUtil.isKeyExists(SharedData.sincloCore,
+          obj.siteKey + '.' + obj.tabId + '.prev')) {
+        SharedData.sincloCore[obj.siteKey][obj.tabId].prev = [];
+      }
+      SharedData.sincloCore[obj.siteKey][obj.tabId].prev.push({
+        url: obj.url,
+        title: obj.title,
+        accessTime: CommonUtil.formatDateParse()
+      });
       // カスタム情報自動登録
       db.upsertCustomerInfo(obj, socket, function(result) {
         // IPアドレスの取得
@@ -2838,7 +2847,7 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(data);
     if (!list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.monitorPollingMode)
-        || list.functionManager.isEnabled(obj.siteKey,
+        && list.functionManager.isEnabled(obj.siteKey,
             list.functionManager.keyList.enableRealtimeMonitor)) {
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
     }
@@ -4053,13 +4062,15 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(d);
     if (!list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.enableRealtimeMonitor)
-        && !CommonUtil.isset(obj.historyId)) {
+        && !CommonUtil.isset(obj.historyId)
+        && obj.messageType !== 2) {
       let historyManager = new HistoryManager();
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
       historyManager.addHistory(obj).then((result) => {
-        emit.toMine('setHistoryId', result, socket);
+        emit.toSameUser('setHistoryId', result, obj.siteKey,
+            obj.sincloSessionId);
         SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
         SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
         SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
@@ -5794,8 +5805,8 @@ io.sockets.on('connection', function(socket) {
               }
               if (!list.functionManager.isEnabled(info.siteKey,
                   list.functionManager.keyList.enableRealtimeMonitor)) {
-                if (CommonUtil.isset(
-                    SharedData.sincloCore[info.siteKey][tabId].historyId)) {
+                if (CommonUtil.isKeyExists(SharedData.sincloCore,
+                    info.siteKey + '.' + info.sincloSessionId + '.historyId')) {
                   emit.toCompany('unsetUser', sendData, info.siteKey);
                 }
               } else if (!list.functionManager.isEnabled(info.siteKey,

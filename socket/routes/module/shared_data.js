@@ -30,7 +30,7 @@ if (!vc_connectList) {
 }
 
 if (!doc_connectList) {
-  doc_connectList = {};
+  doc_connectList = {'socketId': {}, 'timeout': {}};
 }
 
 if (!scList) {

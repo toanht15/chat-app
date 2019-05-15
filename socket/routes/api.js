@@ -101,7 +101,7 @@ router.post('/auth/customer', function(req, res, next) {
   }
 
   if (!CommonUtil.isset(d.userId)) {
-    send.userId - CommonUtil.makeUserId();
+    send.userId = CommonUtil.makeUserId();
   }
 
   if (d.data.forceFirstConnect
@@ -117,6 +117,9 @@ router.post('/auth/customer', function(req, res, next) {
     send.sincloSessionId = uuid.v4();
     send.sincloSessionIdIsNew = true;
     d.data.firstConnection = true;
+    let history = new HistoryManager();
+    history.incrementAccessCount(list.companyList[d.siteKey],
+        CommonUtil.formatDateParse());
   } else {
     send.sincloSessionIdIsnew = false;
   }
@@ -138,18 +141,16 @@ router.post('/auth/customer', function(req, res, next) {
     send.time = send.pagetime;
   }
 
-  send.ipAddress = '127.0.0.1' ||
-      req.headers['x-forwarded-for'] ||
+  send.ipAddress = req.headers['x-forwarded-for'] ||
       req.connection.remoteAddress;
 
   if (d.siteKey) {
-    checker.widgetCheck(d, function(ret) {
+    checker.widgetCheck(d, function(err, ret) {
       send.activeOperatorCnt = checker.getOperatorCnt(d.siteKey);
       send.widget = ret.opFlg;
       send.opFlg = true;
       send.inactiveReconnect = Boolean(d.data.inactiveReconnect);
       if (ret.opFlg === false) {
-        send.opFlg = false;
         send.opFlg = false;
         if (CommonUtil.isKeyExists(res, 'tabId')
             && CommonUtil.isKeyExists(SharedData.sincloCore,
@@ -339,6 +340,14 @@ router.post('/auth/info', function(req, res, next) {
       obj.ipAddress = getIp(socket);
     }
 
+    if (CommonUtil.isKeyExists(SharedData.sincloCore,
+        obj.siteKey + '.' + obj.sincloSessionId + '.historyId')) {
+      obj.historyId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
+          'historyId');
+      obj.stayLogsId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
+          'stayLogsId');
+    }
+
     var getCompanyInfoFromApi = function(obj, ip, callback) {
       if (list.functionManager.isEnabled(obj.siteKey,
           list.functionManager.keyList.refCompanyData)) {
@@ -396,10 +405,13 @@ router.post('/auth/info', function(req, res, next) {
         if (CommonUtil.isset(SharedData.company.info[obj.siteKey]) &&
             Object.keys(SharedData.company.info[obj.siteKey]).length > 0) {
           let customerApi = new CustomerInfoManager();
-          customerApi.getInfo(obj.userId, obj.siteKey).then((information) => {
+          customerApi.upsertCustomerInfo(obj).
+              then(customerApi.getInfo(obj.userId, obj.siteKey)).
+              then((information) => {
             obj.customerInfo = information;
             afterGetInformationProcess();
           });
+          ;
         } else {
           afterGetInformationProcess();
         }

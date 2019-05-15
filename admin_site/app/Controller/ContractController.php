@@ -17,7 +17,7 @@ App::uses('File', 'Utility');
 class ContractController extends AppController
 {
   const ML_MAIL_ADDRESS = "cloud-service@medialink-ml.co.jp";
-  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const PASSWORD = "##PASSWORD##";
@@ -1472,7 +1472,11 @@ class ContractController extends AppController
 
   private function getDefaultDiagramConfigurations()
   {
-    return Configure::read('default.diagrams');
+    if (defined('ALLOW_SET_SLIM_SETTINGS') && ALLOW_SET_SLIM_SETTINGS) {
+      return Configure::read('default.diagrams_slim');
+    } else {
+      return Configure::read('default.diagrams');
+    }
   }
 
   private function getDefaultMailTemplateConfigurations()
@@ -1545,7 +1549,7 @@ class ContractController extends AppController
     if (env('DEV_ENV') === 'dev') { // 開発環境
       return 'masashi.shimizu@medialink-ml.co.jp';
     } else {
-      return 'cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp';
+      return 'cloud-service@medialink-ml.co.jp';
     }
   }
 

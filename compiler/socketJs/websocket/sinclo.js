@@ -778,7 +778,8 @@
             userId: userInfo.userId,
             tabId: userInfo.tabId,
             sincloSessionId: userInfo.sincloSessionId,
-            token: common.token
+            token: common.token,
+            customVariables: userInfo.customVariables
           }),
           success: function(json) {
             sinclo.setHistoryId(JSON.stringify(json));
@@ -2474,7 +2475,54 @@
 
         // diagram
         if (obj.chatMessage.did && obj.chatMessage.nextNodeId) {
-          if (obj.chatMessage.nextNodeId === 'callOperator') return false;
+          // FIXME refactor extract method
+          if (obj.chatMessage.nextNodeId === 'callOperator') {
+            //初回通知メッセージを利用している場合
+            if (obj.notification === true && obj.tabId === userInfo.tabId) {
+              storage.s.set('notificationTime', obj.created);
+              var data = sincloInfo.chat.settings.initial_notification_message ?
+                  JSON.parse(
+                      sincloInfo.chat.settings.initial_notification_message) :
+                  {};
+              for (var i = 0; i < Object.keys(data).length; i++) {
+                (function(times) {
+                  setTimeout(function() {
+                    if (storage.s.get('operatorEntered') !== 'true' &&
+                        data[times].message !== '') {
+                      var userName = '';
+                      if (window.sincloInfo.widget.showAutomessageName === 2) {
+                        userName = '';
+                      } else {
+                        userName = window.sincloInfo.widget.subTitle;
+                      }
+                      sinclo.chatApi.createMessageUnread({
+                        cn: 'sinclo_re',
+                        message: data[times].message,
+                        name: userName,
+                        chatId: obj.chatId,
+                        isBot: true
+                      });
+                      sinclo.chatApi.scDown();
+                      var sendData = {
+                        siteKey: obj.siteKey,
+                        tabId: obj.tabId,
+                        chatMessage: data[times].message,
+                        messageType: sinclo.chatApi.messageType.notification,
+                        messageDistinction: obj.messageDistinction,
+                        chatId: obj.chatId,
+                        mUserId: obj.mUserId,
+                        userId: obj.userId
+                      };
+                      emit('sendInitialNotificationChat',
+                          {messageList: sendData});
+                    }
+                    storage.s.set('callingMessageSeconds', data[times].seconds);
+                  }, data[times].seconds * 1000);
+                })(i);
+              }
+              return false;
+            }
+          }
           var nextNodeId = obj.chatMessage.nextNodeId;
           sinclo.chatApi.createMessageUnread({
             cn: cn,
@@ -12753,7 +12801,7 @@
       syncScenarioData: {
         sendLockFlg: false,
         sendDetail: function(param, otherInformation) {
-          if (this.sendLockFlg) return;
+          if (this.sendLockFlg || !sinclo.scenarioApi.isProcessing()) return;
           var self = sinclo.scenarioApi;
           var currentScenarioSeqNo = 0;
           var currentHearingSeqNo = 0;
