@@ -33,6 +33,15 @@ module.exports = class HistoryManager extends DatabaseManager {
                       obj.historyId = rows[0].id;
                       obj.stayLogsId = stayLogsId;
                       resolve(obj);
+                    }, function() {
+                      let errorObj = {};
+                      Error.captureStackTrace(errorObj);
+                      CommonUtil.warnLog(
+                          'Time Update is failed. ignoreing ' + rows[0].id +
+                          ' => ' + errorObj.stack);
+                      obj.historyId = rows[0].id;
+                      obj.stayLogsId = 0;
+                      resolve(obj);
                     });
               } else {
                 //insert
@@ -61,6 +70,15 @@ module.exports = class HistoryManager extends DatabaseManager {
                           then(function(stayLogsId) {
                             obj.historyId = historyId;
                             obj.stayLogsId = stayLogsId;
+                            resolve(obj);
+                          }, function() {
+                            let errorObj = {};
+                            Error.captureStackTrace(errorObj);
+                            CommonUtil.warnLog(
+                                'Time Update is failed. ignoreing ' +
+                                historyId + ' => ' + errorObj.stack);
+                            obj.historyId = historyId;
+                            obj.stayLogsId = 0;
                             resolve(obj);
                           });
                     }
@@ -242,12 +260,16 @@ module.exports = class HistoryManager extends DatabaseManager {
   timeUpdate(historyId, obj, time) {
     let self = this;
     return new Promise(async (resolve, reject) => {
-      let prevArray = obj.prev;
-      let result = 0;
-      for (let i = 0; i < prevArray.length; i++) {
-        result = await this.processTimeUpdate(self, historyId, prevArray, i);
+      try {
+        let prevArray = obj.prev;
+        let result = 0;
+        for (let i = 0; i < prevArray.length; i++) {
+          result = await this.processTimeUpdate(self, historyId, prevArray, i);
+        }
+        resolve(result);
+      } catch (e) {
+        reject(e);
       }
-      resolve(result);
     });
   }
 
