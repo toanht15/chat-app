@@ -340,6 +340,14 @@ router.post('/auth/info', function(req, res, next) {
       obj.ipAddress = getIp(socket);
     }
 
+    if (CommonUtil.isKeyExists(SharedData.sincloCore,
+        obj.siteKey + '.' + obj.sincloSessionId + '.historyId')) {
+      obj.historyId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
+          'historyId');
+      obj.stayLogsId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
+          'stayLogsId');
+    }
+
     var getCompanyInfoFromApi = function(obj, ip, callback) {
       if (list.functionManager.isEnabled(obj.siteKey,
           list.functionManager.keyList.refCompanyData)) {
