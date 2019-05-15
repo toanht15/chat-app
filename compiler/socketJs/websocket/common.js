@@ -6391,7 +6391,11 @@ var socket, // socket.io
       css += '        font-weight: bold;';
       css += '        display: block;';
       css += '        font-size: 1.2em;';
-      css += '        height: 1.2em;';
+      css += '        height: auto;';
+      css += '        line-height: initial;';
+      css += '        word-break: break-word;';
+      css += '        word-wrap: break-word;';
+      css += '        width: 320px;';
       css += '        margin: 0.4em 0;';
       css += '    }';
       css += '    sinclo-div {';
