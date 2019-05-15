@@ -4061,8 +4061,9 @@ io.sockets.on('connection', function(socket) {
   socket.on('sendChat', function(d, ack) {
     var obj = JSON.parse(d);
     if (!list.functionManager.isEnabled(obj.siteKey,
-        list.functionManager.keyList.enableRealtimeMonitor)
-        && !CommonUtil.isset(obj.historyId)
+        list.functionManager.keyList.enableReaeMonitor)
+        && !CommonUtil.isset(
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)
         && obj.messageType !== 2) {
       let historyManager = new HistoryManager();
       let customerInfoManager = new CustomerInfoManager();
@@ -4249,7 +4250,8 @@ io.sockets.on('connection', function(socket) {
     //応対数検索、登録
     if (!list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.enableRealtimeMonitor)
-        && !CommonUtil.isset(obj.historyId)) {
+        && !CommonUtil.isset(
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
       let historyManager = new HistoryManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
