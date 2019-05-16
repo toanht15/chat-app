@@ -6363,7 +6363,7 @@ var socket, // socket.io
       css += '        line-height: initial;';
       css += '        word-break: break-word;';
       css += '        word-wrap: break-word;';
-      css += '        width: 320px;';
+      css += '        width: 300px;';
       css += '        margin: 0.4em 0;';
       css += '    }';
       css += '    sinclo-div {';

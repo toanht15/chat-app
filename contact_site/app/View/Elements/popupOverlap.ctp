@@ -100,7 +100,7 @@ var popupEventOverlap = {
                 };
                 var closeBtn = _button("キャンセル");
                 closeBtn.onclick = function () {
-                  return popupEventOverlap.closeNoPopupOverlap();
+                  return popupEventOverlap.closeIconProfilePopup();
                 };
                 break;
               case 'p_diagram_delete_alert':
