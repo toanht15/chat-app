@@ -89,14 +89,15 @@ sinclo@medialink-ml.co.jp
    * 一覧画面
    * @return void
    * */
-  public function index() {
+  public function index()
+  {
     $this->paginate['TChatbotScenario']['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TChatbotScenario');
-
     // 呼び出し元情報を取得する
-    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
-    $scenarioList = array_merge($scenarioList, $this->_findScenarioByActionType(C_SCENARIO_ACTION_BRANCH_ON_CONDITION));
-    foreach($data as &$item) {
+    $callActionList        = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $branchOnConditionList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_BRANCH_ON_CONDITION);
+    $scenarioList          = array_merge($callActionList, $branchOnConditionList);
+    foreach ($data as &$item) {
       $item['callerInfo'] = $this->_getScenarioCallerInfo($item['TChatbotScenario']['id'], $scenarioList);
     }
 
@@ -163,8 +164,8 @@ sinclo@medialink-ml.co.jp
     }
 
     // 呼び出し元情報を取得する
-    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
-    $scenarioList = array_merge($scenarioList, $this->_findScenarioByActionType(C_SCENARIO_ACTION_BRANCH_ON_CONDITION));
+    $scenarioList                      = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $scenarioList                      = array_merge($scenarioList, $this->_findScenarioByActionType(C_SCENARIO_ACTION_BRANCH_ON_CONDITION));
     $this->request->data['callerInfo'] = $this->_getScenarioCallerInfo($id, $scenarioList);
     // シナリオ設定の一覧を取得する
     $this->request->data['scenarioList'] = $this->_getScenarioList($id);
@@ -1252,39 +1253,40 @@ sinclo@medialink-ml.co.jp
    * @param  Array  $scenarioList アクション「シナリオ呼び出し」を含むシナリオ一覧
    * @return Array                呼び出し元情報
    */
-  private function _getScenarioCallerInfo($id, $scenarioList) {
+  private function _getScenarioCallerInfo($id, $scenarioList)
+  {
     $callerInfo = [];
 
     // 呼び出し元オートメッセージ情報を取得する
     $callerInfo['TAutoMessage'] = $this->TAutoMessage->coFind('list', [
-      'fileds' => ['DISTINCT id', 'name'],
-      'order' => [
+      'fileds'     => ['DISTINCT id', 'name'],
+      'order'      => [
         'TAutoMessage.sort' => 'asc',
-        'TAutoMessage.id' => 'asc'
+        'TAutoMessage.id'   => 'asc'
       ],
       'conditions' => [
-        'TAutoMessage.del_flg != ' => 1,
+        'TAutoMessage.del_flg != '           => 1,
         'TAutoMessage.t_chatbot_scenario_id' => $id,
-        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+        'TAutoMessage.m_companies_id'        => $this->userInfo['MCompany']['id']
       ]
     ]);
 
     $callerInfo['TChatbotDiagram'] = $this->TChatbotDiagram->coFind('list', array(
-      'fields' => array('id', 'name'),
-      'order' => array(
+      'fields'     => array('id', 'name'),
+      'order'      => array(
         'TChatbotDiagram.sort' => 'asc',
-        'TChatbotDiagram.id' => 'asc'
+        'TChatbotDiagram.id'   => 'asc'
       ),
       'conditions' => array(
-        'TChatbotDiagram.del_flg' => 0,
+        'TChatbotDiagram.del_flg'       => 0,
         'TChatbotDiagram.activity LIKE' => "%\"scenarioId\":\"" . $id . "\"%"
       )
     ));
 
     // 呼び出し元シナリオ情報を取得する
-    $matchScenarioNames = [];
-    $keyword = '"tChatbotScenarioId":"'. $id . '"';
-    $branchOnCondKeyword = '"callScenarioId":"'. $id . '"';
+    $matchScenarioNames         = [];
+    $keyword                    = '"tChatbotScenarioId":"' . $id . '"';
+    $branchOnCondKeyword        = '"callScenarioId":"' . $id . '"';
     $branchOnCondKeywordForSelf = '"callScenarioId":"self"';
     foreach ($scenarioList as $scenario) {
       if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
@@ -1295,7 +1297,7 @@ sinclo@medialink-ml.co.jp
         $matchScenarioNames[] = self::CALL_SELF_SCENARIO_NAME;
       }
     }
-    $callerInfo['TChatbotScenario'] = $matchScenarioNames;
+    $callerInfo['TChatbotScenario'] = array_unique($matchScenarioNames);
 
     return $callerInfo;
   }
