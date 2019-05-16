@@ -496,7 +496,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox .slick-dots {
           position: absolute;
           bottom: -25px;
-          display: block;
+          display: block !important;
           width: 100%;
           padding: 0;
           margin: 0;
@@ -505,10 +505,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         }
         #sincloBox .slick-dots li {
           position: relative;
-          display: inline-block;
+          display: inline-block !important;
           width: 20px;
           height: 20px;
-          margin: 0 5px;
+          margin: 0 5px !important;
           padding: 0;
           cursor: pointer;
         }

@@ -96,7 +96,7 @@ var popupEventOverlap = {
               case 'p-profile-icon-trimming':
                 var entryBtn = _button("トリミング");
                 entryBtn.onclick = function () {
-                  return popupEventOverlap.doTrimming();
+                  return popupEventOverlap.changeIconPath();
                 };
                 var closeBtn = _button("キャンセル");
                 closeBtn.onclick = function () {
