@@ -4,7 +4,8 @@
 <script type="text/javascript">
   <!--
   'use strict';
-  var socket, userId, tabId, iframe, windowSize, windowClose, connectToken, url, emit, resizeApi, iframeLocation, arg = new Object;
+  var socket, userId, tabId, iframe, windowSize, windowClose, connectToken, url, emit, resizeApi, iframeLocation,
+      arg = new Object, timeoutSettings;
 
   (function(){
     // -----------------------------------------------------------------------------
@@ -595,7 +596,7 @@
           popupEvent.closeNoPopup = function(){
             windowClose();
           };
-        }, 5000); // タイムアウト5秒
+        }, <?= (strcmp($siteKey, '5c6610ae982ea') === 0) ? 10000 : 5000; ?>); // タイムアウト5秒
       });
 
       AssistAgentSDK.setRemoteViewCallBack(function(x,y){
