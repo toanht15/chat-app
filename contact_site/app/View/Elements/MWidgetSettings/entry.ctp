@@ -1056,7 +1056,7 @@ $headerNo = 1;
                 </div>
                 <?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
                 <?php if ($this->Form->isFieldError('uploadImage')) echo $this->Form->error('uploadImage', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
-                <span ng-if="uploadImageError">{{uploadImageError}}</span>
+                <span ng-if="uploadImageError && mainImageToggle=='1'" class="error-message">{{uploadImageError}}</span>
                 <label class="pointer" for="showMainImage2"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-change="forceIconOriginal()" ng-model="mainImageToggle" id="showMainImage2" value="2" >画像を表示しない</label>
               </div>
               </div>
@@ -1080,12 +1080,13 @@ $headerNo = 1;
                       </div>
                       <div id="iconChooseDiv">
                         <div class="greenBtn btn-shadow" ng-click="showGallary(<?=WIDGET_GALLERY_TYPE_CHATBOT ?>)">ギャラリーから選択</div>
-                        <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadBotIcon', array('accept' => '.png,.jpeg,.jpg,.gif')); ?>画像をアップロード</div>
+                        <div class="greenBtn btn-shadow" id="chatbotIconUploadBtn"><?php echo $this->Form->file('uploadBotIcon', array('accept' => '.png,.jpeg,.jpg,.gif')); ?>画像をアップロード</div>
                         <input type="hidden" name="data[Trimming][botIconInfo]" ng-model="trimmingBotIconInfo" id="TrimmingBotIconInfo" />
                       </div>
                     </div>
                   </div>
-                  <?php if ($this->Form->isFieldError('chatbot_icon')) echo $this->Form->error('chatbot_icon', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
+                  <?php if ($this->Form->isFieldError('chatbot_icon')) echo $this->Form->error('chatbot_icon', null, ['ng-if'=>'chatbotIconToggle=="1" && chatbotIconType=="2"']); ?>
+                  <span ng-if="chatbotIconErrMsg && chatbotIconToggle=='1' && chatbotIconType=='2'" class="error-message">{{chatbotIconErrMsg}}</span>
                   <label class="pointer" for="showChatbotIcon2"><input type="radio" name="data[MWidgetSetting][show_chatbot_icon]" ng-model="chatbotIconToggle" id="showChatbotIcon2" value="2" >アイコンを表示しない</label>
                 </div>
               </div>
@@ -1110,13 +1111,14 @@ $headerNo = 1;
                       </div>
                       <div id="iconChooseDiv">
                         <div class="greenBtn btn-shadow" ng-click="showGallary(<?=WIDGET_GALLERY_TYPE_OPERATOR ?>)">ギャラリーから選択</div>
-                        <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadOpIcon', array('accept' => '.png,.jpeg,.jpg,.gif')); ?>画像をアップロード</div>
+                        <div class="greenBtn btn-shadow" id="operatorIconUploadBtn"><?php echo $this->Form->file('uploadOpIcon', array('accept' => '.png,.jpeg,.jpg,.gif')); ?>画像をアップロード</div>
                         <input type="hidden" name="data[Trimming][opIconInfo]" ng-model="trimmingOpIconInfo" id="TrimmingOpIconInfo" />
                       </div>
                     </div>
+                    <?php if ($this->Form->isFieldError('operator_icon')) echo $this->Form->error('operator_icon', null, ['ng-if'=>'operatorIconToggle=="1" && operatorIconType=="2"']); ?>
+                    <span ng-if="operatorIconErrMsg && operatorIconToggle=='1' && operatorIconType=='2'" class="error-message">{{operatorIconErrMsg}}</span>
                     <label class="pointer" for="operatorIconType3"><input type="radio" name="data[MWidgetSetting][operator_icon_type]" ng-init="getProfileIconForOperatorIcon(operatorIconType)"  ng-model="operatorIconType" ng-change="getProfileIconForOperatorIcon(operatorIconType)" id="operatorIconType3" value="3" >オペレーター毎に個別のアイコンを利用する</label><br>
                   </div>
-                  <?php if ($this->Form->isFieldError('operator_icon')) echo $this->Form->error('operator_icon', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
                   <label class="pointer" for="showOperatorIcon2"><input type="radio" name="data[MWidgetSetting][show_operator_icon]" ng-model="operatorIconToggle" id="showOperatorIcon2" value="2" >アイコンを表示しない</label>
                 </div>
               </div>

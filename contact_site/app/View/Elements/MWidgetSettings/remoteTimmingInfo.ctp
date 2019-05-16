@@ -12,10 +12,15 @@
   var croppedData = {};
   var ngScope = null;
   var targetImageName = null;
+  var userIconClass = null;
 
   function beforeTrimmingInit(img, viewTag) {
     targetImgTag.attr('src', img);
     viewImgTag = viewTag;
+  }
+
+  function setUserIconClass(className) {
+    userIconClass = className;
   }
 
   function trimmingInit($scope, trimInfoTag, aspectRatio, target) {
@@ -68,6 +73,20 @@
     }
     return popupEventOverlap.close();
   };
+
+  popupEventOverlap.changeIconPath = function(){
+    var currentIcon = document.querySelector('.' + userIconClass);
+    var newIcon = document.createElement('img');
+    var parentElm = currentIcon.parentNode;
+    if (currentIcon.parentNode) {
+      currentIcon.parentNode.removeChild(currentIcon);
+    }
+    newIcon.classList.add(userIconClass);
+    parentElm.appendChild(newIcon);
+    var iconData = document.getElementById('MUserProfileIcon');
+    viewImgTag = $('.' + userIconClass);
+    popupEventOverlap.doTrimming();
+  }
 
   function carouselTrimmingInit($scope, trimInfoTag) {
     ngScope = $scope;
