@@ -89,9 +89,9 @@
         return false;
       }
       var url = window.URL.createObjectURL(file);
-      target = changeIconPath(url, file.name);
       openTrimmingDialog(function() {
         beforeTrimmingInit(url, $('.hover-changer'));
+        setUserIconClass('hover-changer');
         trimmingInit(null, $('#TrimmingInfo'), 1, 'profile_icon');
       });
     }
@@ -105,21 +105,6 @@
     changeProfileIcon(e);
     ableSetDefaultBtn();
   });
-
-  var changeIconPath = function(path, fileName) {
-    var currentIcon = document.querySelector('.hover-changer');
-    var newIcon = document.createElement('img');
-    var parentElm = currentIcon.parentNode;
-    if (currentIcon.parentNode) {
-      currentIcon.parentNode.removeChild(currentIcon);
-    }
-    newIcon.src = path;
-    newIcon.classList.add('hover-changer');
-    parentElm.appendChild(newIcon);
-    var iconData = document.getElementById('MUserProfileIcon');
-    iconData.value = fileName;
-    return newIcon;
-  };
 
   function openTrimmingDialog(callback) {
     $.ajax({
