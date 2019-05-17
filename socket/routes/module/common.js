@@ -10,13 +10,7 @@ var companySettings = {},
     operationHourSettings = {},
     chatSettings = {},
     customerInfoSettings = {},
-    mysql = require('mysql'),
-    pool = mysql.createPool({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
-    });
+    DBConnector = require('./class/util/db_connector_util');
 /* ======================= */
 /* Private Variables */
 var log4js = require('log4js'); // log4jsモジュール読み込み
@@ -49,8 +43,6 @@ function exports() {
   module.exports.reloadOperationHourSettings = loadOperatingHourSettings;
   module.exports.reloadChatSettings = loadChatSettings;
   module.exports.reloadCustomVariableSettings = loadCustomVariableSettings;
-  module.exports.mysql = mysql;
-  module.exports.pool = pool;
 }
 
 function loadWidgetSettings(siteKey, callback) {
@@ -61,7 +53,7 @@ function loadWidgetSettings(siteKey, callback) {
     getWidgetSettingSql += ' INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = ws.m_companies_id )';
     getWidgetSettingSql += ' LEFT JOIN (SELECT * FROM m_agreements) AS ma  ON ( com.id = ma.m_companies_id )';
     getWidgetSettingSql += ' WHERE ws.del_flg = 0 ORDER BY id DESC LIMIT 1;';
-    pool.query(getWidgetSettingSql, siteKey,
+    DBConnector.getPool().query(getWidgetSettingSql, siteKey,
       function(err, row){
         if(err) {
           syslogger.error('Unable load Widget settings. siteKey : ' + siteKey);
@@ -99,7 +91,7 @@ function loadWidgetSettings(siteKey, callback) {
     getWidgetSettingSql += ' INNER JOIN (SELECT * FROM m_companies WHERE del_flg = 0 ) AS com  ON ( com.id = ws.m_companies_id )';
     getWidgetSettingSql += ' LEFT JOIN (SELECT * FROM m_agreements) AS ma  ON ( com.id = ma.m_companies_id )';
     getWidgetSettingSql += ' WHERE ws.del_flg = 0;';
-    pool.query(getWidgetSettingSql,
+    DBConnector.getPool().query(getWidgetSettingSql,
       function(err, rows){
         if(err) {
 
@@ -156,7 +148,8 @@ function loadAutoMessageSettings(siteKey, callback) {
     syslogger.info("loadAutoMessageSettings target : " + siteKey);
     getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
     getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?,?,?) ORDER BY am.sort asc;";
-    pool.query(getTriggerListSql, [siteKey, '1', '2', '3', '4'],
+    DBConnector.getPool().
+        query(getTriggerListSql, [siteKey, '1', '2', '3', '4'],
       function(err, rows){
         if(err) {
           syslogger.error('Unable load AutoMessage settings. siteKey : ' + siteKey);
@@ -178,7 +171,7 @@ function loadAutoMessageSettings(siteKey, callback) {
     // All
     getTriggerListSql += ' INNER JOIN (SELECT * FROM m_companies WHERE del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )';
     getTriggerListSql += ' WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?,?,?) ORDER BY am.sort asc;';
-    pool.query(getTriggerListSql, ['1', '2', '3', '4'],
+    DBConnector.getPool().query(getTriggerListSql, ['1', '2', '3', '4'],
       function(err, rows){
         if(err) {
           syslogger.error('Unable load ALL AutoMessage settings.');
@@ -214,7 +207,9 @@ function loadOperatingHourSettings(siteKey, callback) {
   var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
   if(siteKey) {
     syslogger.info("loadOperatingHourSettings target : " + siteKey);
-    pool.query(getOperatingHourSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
+    DBConnector.getPool().
+        query(getOperatingHourSQL,
+            [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
       function(err, row){
         if(err) {
           syslogger.error('Unable load Operating-hour settings. siteKey : ' + siteKey);
@@ -237,7 +232,7 @@ function loadOperatingHourSettings(siteKey, callback) {
   } else {
     // All
     getOperatingHourSQL = "SELECT * FROM m_operating_hours;";
-    pool.query(getOperatingHourSQL,
+    DBConnector.getPool().query(getOperatingHourSQL,
       function(err, rows){
         if(err) {
           syslogger.error('Unable load ALL Operating-hour settings.');
@@ -271,7 +266,7 @@ function loadPublicHoliday(callback) {
   var getPublicHolidaySQL = "SELECT * FROM public_holidays;";
   publicHolidaySettings = {};
   publicHolidaySettingsArray = [];
-  pool.query(getPublicHolidaySQL,
+  DBConnector.getPool().query(getPublicHolidaySQL,
     function(err, rows){
       if(err) {
         syslogger.error('Unable load ALL Operating-hour settings.');
@@ -302,7 +297,8 @@ function loadChatSettings(siteKey, callback) {
   var getChatSQL = "SELECT * FROM m_chat_settings where m_companies_id = ?;";
   if(siteKey) {
   syslogger.info("loadChatSettings target : " + siteKey);
-   pool.query(getChatSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
+    DBConnector.getPool().
+        query(getChatSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
       function(err, row){
         if(err) {
           syslogger.error('Unable load chat settings. siteKey : ' + siteKey);
@@ -325,7 +321,7 @@ function loadChatSettings(siteKey, callback) {
   } else {
     // All
     getChatSQL = "SELECT * FROM m_chat_settings;";
-    pool.query(getChatSQL,
+    DBConnector.getPool().query(getChatSQL,
       function(err, rows){
         if(err) {
           syslogger.error('Unable load ALL Chat settings.');
@@ -358,7 +354,9 @@ function loadCustomVariableSettings(siteKey, callback) {
     getCustomerInfoSettingsSQL = "SELECT tcis.m_companies_id as m_companies_id, tcis.item_name as item_name, tcv.attribute_value as attribute_value FROM t_customer_information_settings as tcis";
     getCustomerInfoSettingsSQL += " INNER JOIN t_custom_variables as tcv ON (tcis.t_custom_variables_id = tcv.id)";
     getCustomerInfoSettingsSQL += " WHERE tcis.m_companies_id = ? AND tcis.sync_custom_variable_flg = 1 AND tcis.delete_flg = 0;";
-    pool.query(getCustomerInfoSettingsSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
+    DBConnector.getPool().
+        query(getCustomerInfoSettingsSQL,
+            [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
       function(err, rows){
         if(err) {
           syslogger.error('Unable load Customer Info settings. siteKey : ' + siteKey);
@@ -383,7 +381,7 @@ function loadCustomVariableSettings(siteKey, callback) {
     getCustomerInfoSettingsSQL = "SELECT tcis.m_companies_id as m_companies_id, tcis.item_name as item_name, tcv.attribute_value as attribute_value FROM t_customer_information_settings as tcis";
     getCustomerInfoSettingsSQL += " INNER JOIN t_custom_variables as tcv ON (tcis.t_custom_variables_id = tcv.id)";
     getCustomerInfoSettingsSQL += " WHERE tcis.sync_custom_variable_flg = 1 AND tcis.delete_flg = 0;";
-    pool.query(getCustomerInfoSettingsSQL,
+    DBConnector.getPool().query(getCustomerInfoSettingsSQL,
       function(err, rows){
         if(err) {
           syslogger.error('Unable load ALL Customer Info settings.');
