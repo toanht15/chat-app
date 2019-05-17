@@ -828,6 +828,7 @@
 
       if (document.getElementById('sincloBox') === null) return false;
       if (obj.stayLogsId) sinclo.chatApi.stayLogsId = obj.stayLogsId;
+      if (obj.historyId) sinclo.chatApi.historyId = obj.historyId;
 
       createStartTimer = window.setInterval(function() {
         if (window.sincloInfo.widget.showTiming !== 4 ||
