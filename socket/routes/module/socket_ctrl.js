@@ -872,7 +872,7 @@ io.sockets.on('connection', function(socket) {
         return false;
       }
       // 履歴idか(入退室以外に)メッセージがない
-      if (!getSessionId(d.siteKey, d.tabId, 'historyId') ||
+      if (!getSessionId(d.siteKey, d.sincloSessionId, 'historyId') ||
           (!CommonUtil.isset(d.chatMessage) &&
               !(chatApi.cnst.observeType.start && d.messageType ||
                   chatApi.cnst.observeType.end && d.messageType))) {
@@ -993,7 +993,7 @@ io.sockets.on('connection', function(socket) {
     },
     commit: function(d, noReturnSelfMessage) { // DBに書き込むとき
       var insertData = {
-        t_histories_id: SharedData.sincloCore[d.siteKey][d.tabId].historyId,
+        t_histories_id: SharedData.sincloCore[d.siteKey][d.sincloSessionId].historyId,
         m_companies_id: list.companyList[d.siteKey],
         visitors_id: d.userId,
         m_users_id: d.mUserId,
