@@ -4952,13 +4952,75 @@
         if (align) {
           style = 'style="width:100%; text-align:' + align + ';"';
         }
+        var className = '';
+        if (sincloInfo.widget.widgetSizeType === 1 || check.smartphone()) {
+          className = 'smallSizeImg';
+        } else if (sincloInfo.widget.widgetSizeType === 2) {
+          className = 'middleSizeImg';
+        } else if (sincloInfo.widget.widgetSizeType === 3) {
+          className = 'largeSizeImg';
+        }
         for (var i = 0; strings.length > i; i++) {
-          var str = check.escape_html(strings[i]);
-          str = str.replace(/(&lt;)/g, '<').
+          var str = check.escape_html(strings[i]),
+              unEscapeStr = str = str.replace(/(&lt;)/g, '<').
               replace(/(&gt;)/g, '>').
               replace(/(&quot;)/g, '"').
               replace(/(&#39;)/g, '\'').
               replace(/(&amp;)/g, '&');
+
+          // リンク
+          var link = str.match(this.createAnchorTag._regList.linkReg);
+          var linkTab = unEscapeStr.match(
+              this.createAnchorTag._regList.linkTabReg);
+          var option = 'clickLink';
+          if (linkTab !== null) {
+            //aタグが設定されているリンクの場合
+            if (link !== null) {
+              //普通のページリンクの場合は初期値
+            }
+            if (str.match(this.createAnchorTag._regList.mailLinkReg) !==
+                null) {
+              //メールリンクの場合
+              option = 'clickMail';
+              link = str.match(this.createAnchorTag._regList.mailLinkReg);
+            }
+            if (str.match(this.createAnchorTag._regList.telLinkReg) !==
+                null) {
+              //電話リンクの場合
+              option = 'clickTelno';
+              link = str.match(this.createAnchorTag._regList.telLinkReg);
+            }
+            str = sinclo.chatApi.createAnchorTag._linkText(option, link,
+                linkTab, unEscapeStr, str, className);
+          } else {
+            /*aタグが設定されていないリンクの場合
+             *この場合はURLのみしかない為、以下の条件式
+             */
+            if (link !== null) {
+              str = sinclo.chatApi.createAnchorTag._linkWithoutText(option,
+                  link, unEscapeStr, str, className);
+            }
+          }
+          // 電話番号（スマホのみリンク化）
+          var tel = str.match(this.createAnchorTag._regList.telnoTagReg);
+          if (tel !== null) {
+            var telno = tel[1];
+            if (check.smartphone()) {
+              // リンクとして有効化
+              // GA連携時に必要な情報を作成
+              var exceedLink = 'href="tel:' + telno + '"';
+              console.log(exceedLink);
+              var a = '<a class="sincloTelConversion" onclick=sinclo.api.callTelCV(\'' +
+                  telno + '\');link(\'' + telno + '\',\'' + exceedLink +
+                  '\',\'clickTelno\') href=\'tel:' + telno + '\'>' + telno +
+                  '</a>';
+              str = str.replace(tel[0], a);
+            } else {
+              // ただの文字列にする
+              var span = '<span class=\'telno\'>' + telno + '</span>';
+              str = str.replace(tel[0], span);
+            }
+          }
 
           if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
             content += '' + str + '\n';

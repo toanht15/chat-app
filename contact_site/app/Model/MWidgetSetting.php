@@ -262,6 +262,18 @@ class MWidgetSetting extends AppModel {
               'message' => '画像を選択してください'
             ],
         ],
+        'chatbot_icon' => [
+             'validChatbotIcon' => [
+               'rule'    => 'validChatbotIcon',
+               'message' => '画像を選択してください'
+               ],
+        ],
+        'operator_icon' => [
+             'validOperatorIcon' => [
+                'rule'    => 'validOperatorIcon',
+                'message' => '画像を選択してください'
+             ],
+        ],
         'uploadImage' => [
             // ルール：extension => pathInfoを使用して拡張子を検証
             'extension' => [
@@ -402,6 +414,28 @@ class MWidgetSetting extends AppModel {
         }
         return true;
     }
+
+  public function validChatbotIcon($value=['chatbot_icon' => ''])
+  {
+    if (isset($this->data['MWidgetSetting']['show_chatbot_icon']) && strcmp($this->data['MWidgetSetting']['show_chatbot_icon'], 1) === 0) {
+      // 画像をギャラリーから選択や、アップロードをされていない場合
+      if (empty($value['chatbot_icon']) && empty($value['uploadBotIcon'])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public function validOperatorIcon($value=['operator_icon' => ''])
+  {
+    if (isset($this->data['MWidgetSetting']['show_operator_icon']) && strcmp($this->data['MWidgetSetting']['show_operator_icon'], 1) === 0) {
+      // 画像をギャラリーから選択や、アップロードをされていない場合
+      if (empty($value['operator_icon']) && empty($value['uploadOpIcon'])) {
+        return false;
+      }
+    }
+    return true;
+  }
 
     private function isShowTimingTypeSite() {
       return intval($this->data['MWidgetSetting']['show_timing']) === C_WIDGET_SHOW_TIMING_SITE;
