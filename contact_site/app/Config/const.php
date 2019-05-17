@@ -69,6 +69,7 @@ define('C_COMPANY_USE_MESSAGE_RANKING', 'useMessageRanking');  // メッセー�
 define('C_COMPANY_USE_ICON_SETTINGS', 'iconSettings');  // ボット・有人時のアイコン設定
 define('C_COMPANY_USE_CUSTOM_WIDGET_SIZE', 'customWidgetSize');  // ウィジェットサイズ「カスタム」
 define('C_COMPANY_USE_CHATBOT_TREE_EDITOR', 'chatbotTreeEditor');  // オプション：チャットツリー
+define('C_COMPANY_ENABLE_REAL_TIME_MONITOR', 'enableRealtimeMonitor');  // リアルタイムモニター
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 5000);
@@ -646,7 +647,7 @@ $config['widgetSpViewPattern'] = array(
 /* ウィジェット設定 ー Web接客コード */
 $config['widgetShowAccessId'] = array(
   C_SELECT_CAN => "表示する",
-  C_SELECT_CAN_NOT => "表示しない<br>　<s>※ウェブ接客コード（4桁のID）を電話口でヒアリングすることで、リアルタイムモニター上で</s><br><s>　  相手を特定することができます。（電話口の相手のウェブ行動履歴や流入経路の把握が可能）</s>"
+    C_SELECT_CAN_NOT => "表示しない<br>　<s>※ウェブ接客コード（4桁のID）を電話口でヒアリングすることで、モニタ上で</s><br><s>　  相手を特定することができます。（電話口の相手のウェブ行動履歴や流入経路の把握が可能）</s>"
 );
 
 /* ウィジェット設定 － 担当者表示名種別 */

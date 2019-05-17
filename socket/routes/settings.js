@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var database = require('./database');
+var CommonUtil = require('./module/class/util/common_utility');
 var common = require('./module/common');
-
-var getTriggerListSql = "SELECT am.* FROM t_auto_messages AS am ";
-getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
-getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?,?,?);";
+var list = require('./module/company_list');
+var SharedData = require('./module/shared_data');
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -39,7 +37,19 @@ router.get("/", function (req, res, next) {
   }
   var siteKey = req['query']['sitekey'];
   var accessType = req['query']['accessType'];
+  var tabId = req['query']['s'];
   var sendData = {status: true, widget: {}, chat: {settings: {}}, messages: {}, customVariable: [], contract: {}};
+
+  if (!list.functionManager.isEnabled(siteKey,
+      list.functionManager.keyList.enableRealtimeMonitor) &&
+      CommonUtil.isKeyExists(SharedData.sincloCore, siteKey + '.' + tabId)) {
+    res.send({
+      status: true,
+      nm: true, // not modified
+      accessTime: (new Date()).getTime()
+    });
+    return true;
+  }
 
   function isNumeric(str) {
     var num = Number(str);
@@ -736,6 +746,7 @@ router.get("/", function (req, res, next) {
         sendData.chat.settings['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
       }
       sendData.customVariable = common.customerInfoSettings[siteKey];
+      sendData.accessTime = (new Date()).getTime();
       res.send(sendData);
     }
     else {
@@ -954,6 +965,29 @@ router.post("/reload/customVariableSettings", function (req, res, next) {
   }
 });
 
+router.post('/auth/customer', function(req, res, next) {
+
+  /* Cross-Origin */
+  // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers',
+      'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  /* no-cache */
+  // http://garafu.blogspot.jp/2013/06/ajax.html
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Pragma', 'no-cache');
+
+});
+
 /**
  * 10進数表記ののIPアドレスを2進数に変換
  * @params array sample: ['127', '0', '0', '0']
@@ -1022,5 +1056,11 @@ function getIpRange(ipAddress) {
 
   return {min: minIpBit, max: maxIpBit};
 }
+
+router.get('/refreshCompanyList', function(req, res, next) {
+  list.getCompanyList();
+  res.send('OK');
+  res.status(200);
+});
 
 module.exports = router;
