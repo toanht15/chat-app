@@ -88,6 +88,11 @@
     popupEventOverlap.doTrimming();
   }
 
+  popupEventOverlap.closeIconProfilePopup = function(){
+    $('#MUserUploadProfileIcon').val('');
+    popupEventOverlap.closeNoPopupOverlap();
+  }
+
   function carouselTrimmingInit($scope, trimInfoTag) {
     ngScope = $scope;
     trimmingInfoTag = trimInfoTag;
