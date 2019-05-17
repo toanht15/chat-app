@@ -2788,6 +2788,15 @@ io.sockets.on('connection', function(socket) {
 
       // 履歴作成
       db.addHistory(obj, socket);
+      if (!CommonUtil.isKeyExists(SharedData.sincloCore,
+          obj.siteKey + '.' + obj.tabId + '.prev')) {
+        SharedData.sincloCore[obj.siteKey][obj.tabId].prev = [];
+      }
+      SharedData.sincloCore[obj.siteKey][obj.tabId].prev.push({
+        url: obj.url,
+        title: obj.title,
+        accessTime: CommonUtil.formatDateParse()
+      });
       // カスタム情報自動登録
       db.upsertCustomerInfo(obj, socket, function(result) {
         // IPアドレスの取得
@@ -4052,14 +4061,17 @@ io.sockets.on('connection', function(socket) {
   socket.on('sendChat', function(d, ack) {
     var obj = JSON.parse(d);
     if (!list.functionManager.isEnabled(obj.siteKey,
-        list.functionManager.keyList.enableRealtimeMonitor)
-        && !CommonUtil.isset(obj.historyId)) {
+        list.functionManager.keyList.enableReaeMonitor)
+        && !CommonUtil.isset(
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)
+        && obj.messageType !== 2) {
       let historyManager = new HistoryManager();
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
       historyManager.addHistory(obj).then((result) => {
-        emit.toMine('setHistoryId', result, socket);
+        emit.toSameUser('setHistoryId', result, obj.siteKey,
+            obj.sincloSessionId);
         SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
         SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
         SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
@@ -4238,7 +4250,8 @@ io.sockets.on('connection', function(socket) {
     //応対数検索、登録
     if (!list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.enableRealtimeMonitor)
-        && !CommonUtil.isset(obj.historyId)) {
+        && !CommonUtil.isset(
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
       let historyManager = new HistoryManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
@@ -5795,7 +5808,7 @@ io.sockets.on('connection', function(socket) {
               if (!list.functionManager.isEnabled(info.siteKey,
                   list.functionManager.keyList.enableRealtimeMonitor)) {
                 if (CommonUtil.isKeyExists(SharedData.sincloCore,
-                    info.siteKey + '.' + tabId + '.historyId')) {
+                    info.siteKey + '.' + info.sincloSessionId + '.historyId')) {
                   emit.toCompany('unsetUser', sendData, info.siteKey);
                 }
               } else if (!list.functionManager.isEnabled(info.siteKey,

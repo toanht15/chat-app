@@ -2,21 +2,21 @@
     "appenders": {
         "request": {
             "type": "dateFile",
-            "filename": "./logs/request_",
+          "filename": "./logs/request",
             "pattern": "yyyyMMdd.log",
             "daysToKeep": 7,
             "alwaysIncludePattern": "true"
         },
         "error": {
             "type": "dateFile",
-            "filename": "./logs/error_",
+          "filename": "./logs/error",
             "pattern": "yyyyMMdd.log",
             "daysToKeep": 7,
             "alwaysIncludePattern": "true"
         },
         "debug": {
             "type": "dateFile",
-            "filename": "./logs/debug_",
+          "filename": "./logs/debug",
             "pattern": "yyyyMMdd.log",
             "daysToKeep": 7,
             "alwaysIncludePattern": "false"

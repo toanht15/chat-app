@@ -1466,14 +1466,15 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     $scope.revertStandardTextSize = function(target) {
       var widgetSize = $scope.widgetSizeTypeToggle;
-      var size = 0;
-      switch(target + widgetSize) {
+      var size       = 0;
+      switch (target + widgetSize) {
         case 'header_text_size1':
           size = 14;
           break;
         case 'header_text_size2':
         case 'header_text_size3':
         case 'header_text_size4':
+        case 'header_text_size5':
           size = 15;
           break;
         case 're_text_size1':
@@ -1482,6 +1483,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 're_text_size2':
         case 're_text_size3':
         case 're_text_size4':
+        case 're_text_size5':
           size = 13;
           break;
         case 'se_text_size1':
@@ -1490,6 +1492,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'se_text_size2':
         case 'se_text_size3':
         case 'se_text_size4':
+        case 'se_text_size5':
           size = 13;
           break;
         case 'chat_send_btn_text_size1':
@@ -1498,6 +1501,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'chat_send_btn_text_size2':
         case 'chat_send_btn_text_size3':
         case 'chat_send_btn_text_size4':
+        case 'chat_send_btn_text_size5':
           size = 13;
           break;
         case 'message_box_text_size1':
@@ -1506,6 +1510,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'message_box_text_size2':
         case 'message_box_text_size3':
         case 'message_box_text_size4':
+        case 'message_box_text_size5':
+          size = 13;
+          break;
+        default:
           size = 13;
           break;
       }
@@ -1864,7 +1872,22 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     angular.element('#fileTagWrap').click(function(e){
       $("#MWidgetSettingUploadImage").val("");
+      $scope.main_image = '';
+      $scope.$apply();
     });
+
+    angular.element('#chatbotIconUploadBtn').click(function(e){
+      $("#MWidgetSettingUploadBotIcon").val("");
+      $scope.chatbot_icon = '';
+      $scope.$apply();
+    });
+
+    angular.element('#operatorIconUploadBtn').click(function(e){
+      $("#MWidgetSettingUploadOpIcon").val("");
+      $scope.operator_icon = '';
+      $scope.$apply();
+    });
+
 
     // メイン画像のトリミング
     angular.element('#MWidgetSettingUploadImage').change(function(e){
@@ -1873,12 +1896,13 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         var file = files[files.length-1];
         // jpeg/jpg/png
         var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
-        if ( !reg.exec(file.type) ) {
-            $("#MWidgetSettingUploadImage").val("");
-            $scope.uploadImageError = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
+        if (!reg.exec(file.type)) {
+          $('#MWidgetSettingUploadImage').val('');
+          $scope.uploadImageError = '画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です';
+          $scope.$apply();
           return false;
         }
-
+        $scope.uploadImageError = "";
         var url = window.URL.createObjectURL(file);
 
         openTrimmingDialog(function(){
@@ -1898,9 +1922,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
         if ( !reg.exec(file.type) ) {
           $("#MWidgetSettingUploadBotIcon").val("");
-          $scope.uploadImageError = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
+          $scope.chatbotIconErrMsg = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
+          $scope.$apply();
+          return false;
         }
-
+        $scope.chatbotIconErrMsg = "";
         var url = window.URL.createObjectURL(file);
 
         openTrimmingDialog(function(){
@@ -1919,10 +1945,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         // jpeg/jpg/png/gif
         var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
         if ( !reg.exec(file.type) ) {
-          $("#MWidgetSettingUploadOpIcon").val("");
-          $scope.uploadImageError = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
+          $scope.operatorIconErrMsg = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です";
+          $scope.$apply();
+          return false;
         }
-
+        $scope.operatorIconErrMsg = "";
         var url = window.URL.createObjectURL(file);
 
         openTrimmingDialog(function(){
