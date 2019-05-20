@@ -144,6 +144,10 @@ router.post('/auth/customer', function(req, res, next) {
   send.ipAddress = req.headers['x-forwarded-for'] ||
       req.connection.remoteAddress;
 
+  if (process.env.NODE_ENV !== 'production') {
+    send.ipAddress = '127.0.0.1';
+  }
+
   if (d.siteKey) {
     checker.widgetCheck(d, function(err, ret) {
       send.activeOperatorCnt = checker.getOperatorCnt(d.siteKey);
