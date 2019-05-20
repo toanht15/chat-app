@@ -2632,6 +2632,7 @@ io.sockets.on('connection', function(socket) {
     var ret = {
       siteKey: data.siteKey,
       tabId: data.tabId,
+      sincloSessionId: data.sincloSessionId,
       userId: data.userId,
       mUserId: null,
       chatMessage: data.link,
@@ -4193,6 +4194,7 @@ io.sockets.on('connection', function(socket) {
               var ret = {
                 siteKey: obj.siteKey,
                 tabId: obj.tabId,
+                sincloSessionId: obj.sincloSessionId,
                 userId: obj.userId,
                 mUserId: null,
                 chatMessage: activity.message,
@@ -4207,6 +4209,7 @@ io.sockets.on('connection', function(socket) {
               var ret = {
                 siteKey: obj.siteKey,
                 tabId: obj.tabId,
+                sincloSessionId: obj.sincloSessionId,
                 userId: obj.userId,
                 mUserId: null,
                 chatMessage: activity.message,
@@ -4273,6 +4276,7 @@ io.sockets.on('connection', function(socket) {
     var ret = {
       siteKey: obj.messageList.siteKey,
       tabId: obj.messageList.tabId,
+      sincloSessionId: obj.messageList.sincloSessionId,
       chatMessage: obj.messageList.chatMessage,
       messageType: obj.messageList.messageType,
       messageDistinction: obj.messageList.messageDistinction,
@@ -4456,6 +4460,7 @@ io.sockets.on('connection', function(socket) {
           var ret = {
             siteKey: obj.siteKey,
             tabId: obj.tabId,
+            sincloSessionId: obj.sincloSessionId,
             userId: obj.userId,
             mUserId: null,
             chatMessage: elm.message,
