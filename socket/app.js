@@ -10,13 +10,14 @@ var users = require('./routes/users');
 var settings = require('./routes/settings');
 var api = require('./routes/api');
 var socket = require('./routes/module/socket_ctrl');
+var CommonUtil = require('./routes/module/class/util/common_utility');
 
 // Timezone
 process.env.TZ = 'Asia/Tokyo';
 
 process.on('uncaughtException', function(err) {
-  console.log("[" + Date.now() + "]" + err);
-  console.log(err.stack);
+  CommonUtil.errorLog(err);
+  CommonUtil.errorLog(err.stack);
 });
 
 var app = express();
