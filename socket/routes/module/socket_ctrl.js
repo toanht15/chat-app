@@ -4913,6 +4913,7 @@ io.sockets.on('connection', function(socket) {
             siteKey: obj.siteKey,
             tabId: obj.tabId,
             userId: obj.userId,
+            sincloSessionId: obj.sincloSessionId,
             mUserId: null,
             chatMessage: JSON.stringify(elm.message),
             messageType: elm.messageType,
