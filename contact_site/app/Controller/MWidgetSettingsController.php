@@ -459,7 +459,6 @@ class MWidgetSettingsController extends AppController {
         $pattern = "files/".$this->userInfo['MCompany']['company_key']."_"."[0-9]*.*";
         $botIconPattern = "files/".$this->userInfo['MCompany']['company_key']."_botIcon"."[0-9]*.*";
         $opIconPattern = "files/".$this->userInfo['MCompany']['company_key']."_opIcon"."[0-9]*.*";
-
         foreach (glob($pattern) as $file) {
           if ( !empty($uploadImage) && strcmp("files/".$filename, $file) !== 0 ) {
             unlink($file);
