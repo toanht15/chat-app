@@ -4061,11 +4061,13 @@ io.sockets.on('connection', function(socket) {
   //新着チャット
   socket.on('sendChat', function(d, ack) {
     var obj = JSON.parse(d);
-    if (!list.functionManager.isEnabled(obj.siteKey,
-        list.functionManager.keyList.enableReaeMonitor)
+    if (obj.messageType !== 2
+        && !list.functionManager.isEnabled(obj.siteKey,
+            list.functionManager.keyList.enableRealtimeMonitor)
+        && CommonUtil.isset(
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
         && !CommonUtil.isset(
-            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)
-        && obj.messageType !== 2) {
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
       let historyManager = new HistoryManager();
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
