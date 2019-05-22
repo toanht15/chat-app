@@ -1223,6 +1223,13 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper img { max-width: 40px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize i { height: 40px; width: 40px; font-size: 26px }';
 
+      // pulldown
+      html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: 10px; height: 30px; }';
+      // button
+      html += '#sincloBox ul#chatTalk li button { cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px; }';
+      // html += '#sincloBox ul#chatTalk li button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+      // html += '#sincloBox ul#chatTalk li button::last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+
       //TODO カスタムサイズ時は値を取得してアイコンのサイズを変更する必要があるのでは？
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.customSize { max-width: 42px; min-width: 42px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.customSize .img_wrapper { width: 40px; height: 40px; }';
@@ -1433,8 +1440,20 @@ var socket, // socket.io
             colorList['widgetInsideBorderColor'] + '; background-color: ' +
             colorList['chatMessageBackgroundColor'] + ';}';
 
-        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + Number(chatPosition.re.textSize) + 'px;}';
-        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (Number(chatPosition.re.textSize) + 2) + 'px; height: ' + (Number(chatPosition.re.textSize) + 2) + 'px;}';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + Number(chatPosition.re.textSize) + 'px;}';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (Number(chatPosition.re.textSize) + 2) + 'px; height: ' + (Number(chatPosition.re.textSize) + 2) + 'px;}';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' +
+            (Number(chatPosition.re.textSize) - 9) + 'px;top: ' +
+            (Number(chatPosition.re.textSize) - 12) +
+            'px;width: 3px;height: 6px; border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox.labelStyle { background-color: transparent; }';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle .checkmark {top: 9px;left: 8px; }';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: 8px 8px 8px 28px;}';
+
+        html += '#sincloBox ul#chatTalk li span.ok-button {width: 100px; height: 30px; line-height: 30px; cursor: pointer; margin: auto; margin-top: 10px; display: block; text-align:center; justify-content: center; align-items: center; border-radius: 12px; background-color: ' +
+            colorList['chatSendBtnBackgroundColor'] + '; color: ' +
+            colorList['chatSendBtnTextColor'] + ';}';
+
         /* ヒアリング */
         html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
         html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
@@ -1985,6 +2004,41 @@ var socket, // socket.io
                 'px !important; border-radius: ' + (12 * ratio) +
                 'px !important;}';
           }
+
+          html += '#sincloBox ul#chatTalk div.grid_for_icon li.sinclo_re { -ms-grid-column-align: start; -ms-grid-column: ' + 2 * ratio + '; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon li.noneBalloon { -ms-grid-column-align: start; -ms-grid-column: ' + 2 * ratio + '; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.smallSize li.sinclo_re { margin-left: ' + 1 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.smallSize li.noneBalloon { margin-left: ' + 1 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.middleSize li.sinclo_re { margin-left: ' + 3 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.middleSize li.noneBalloon { margin-left: ' + 3 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.largeSize li.sinclo_re { margin-left: ' + 5 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.largeSize li.noneBalloon { margin-left: ' + 5 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.customSize li.sinclo_re { margin-left: ' + 5 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.customSize li.noneBalloon { margin-left: ' + 5 * ratio + 'px; }';
+
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-comment-alt-lines { padding-top: ' + 4 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-comments-alt { padding-top: ' + 2 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-phone { padding-top: ' + 2 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.icon_border { border:' + 1 * ratio + 'px solid;}';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize { max-width: ' + 30 * ratio + 'px; min-width: ' + 30 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize .img_wrapper { width: ' + 30 * ratio + 'px; height:' + 30 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize .img_wrapper img { max-width: ' + 30 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize i { height: ' + 30 * ratio + 'px; width: ' + 30 * ratio + 'px; font-size: ' + 20 * ratio + 'px }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize { max-width: ' + 37 * ratio + 'px; min-width: ' + 37 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize .img_wrapper { width: ' + 35 * ratio + 'px; height: ' + 35 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize .img_wrapper img { max-width: ' + 35 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize i { height: ' + 35 * ratio + 'px; width: ' + 35 * ratio + 'px; font-size: ' + 23 * ratio + 'px }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize { max-width: ' + 42 * ratio + 'px; min-width: ' + 42 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper { width: ' + 40 * ratio + 'px; height: ' + 40 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper img { max-width: ' + 40 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize i { height: ' + 40 * ratio + 'px; width: ' + 40 * ratio + 'px; font-size: ' + 26 * ratio + 'px }';
+          // pulldown
+          html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: ' + 10 * ratio + 'px; height: ' + 30 * ratio + 'px; font-size: ' + 12 * ratio + 'px;}';
+          // button
+          html += '#sincloBox ul#chatTalk li button { cursor: pointer; min-height: ' + 35 * ratio + 'px; margin-bottom: ' + 1 * ratio + 'px; padding: ' + 10 * ratio + 'px ' + 15 * ratio + 'px; }';
+          // html += '#sincloBox ul#chatTalk li button:first-of-type {border-top-left-radius: ' + 8 * ratio + 'px; border-top-right-radius: ' + 8 * ratio + 'px}';
+          // html += '#sincloBox ul#chatTalk li button::last-child {border-bottom-left-radius: ' + 8 * ratio + 'px; border-bottom-right-radius: ' + 8 * ratio + 'px}';
+
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio * { webkit-transform: scale(' +
               (1 * ratio) + '); transform: scale(' + (1 * ratio) +
@@ -2014,11 +2068,39 @@ var socket, // socket.io
               ((19 * ratio) / 2 - (3.5 * ratio)) + 'px; ' +
               ' left: ' + ((11 * ratio) / 4 + (0.1 * ratio)) +
               'px; margin-top: ' + (0 - (11 * ratio) / 4) + 'px; width: ' +
-              (7.5 * ratio) + 'px; height: ' + (7.5 * ratio) + 'px; }';
+              (7 * ratio) + 'px; height: ' + (7 * ratio) + 'px; }';
 
 
           html += ' #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + (12 * ratio) + 'px;}';
           html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (12 * ratio) + 'px; height: ' + (12 * ratio) + 'px;}';
+          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' +
+              (chatPosition.se.textSize - 10) * ratio + 'px;top: ' +
+              (chatPosition.se.textSize - 12.5) * ratio +
+              'px;width: ' + (3 * ratio) + 'px;height: ' + (5 * ratio) + 'px;border-width: 0 ' + (2 * ratio) + 'px ' + (2 * ratio) + 'px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.labelStyle { padding-left: ' + 20 * ratio + 'px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle .checkmark {top: ' + 9 * ratio + 'px;left: ' + 8 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: ' + 8 * ratio + 'px ' + 8 * ratio + 'px ' + 8 * ratio + 'px ' + 28 * ratio + 'px;}';
+          html += '#sincloBox ul#chatTalk li span.ok-button {width: ' + 100 * ratio + 'px; height: ' + 30 * ratio + 'px; line-height: ' + 30 * ratio + 'px; margin-top: ' + 10 * ratio + 'px; border-radius: ' + 12 * ratio + 'px;}';
+
+          html += '#sincloBox ul#chatTalk li .slick-dots li button:before {\n' +
+            '          font-size: ' + 6 * ratio + 'px;\n' +
+            '          line-height: ' + 20 * ratio + 'px;\n' +
+            '          width: ' + 20 * ratio + 'px;\n' +
+            '          height: ' + 20 * ratio + 'px;\n' +
+            '        }';
+
+          html += '#sincloBox ul#chatTalk li.carousel_msg {' +
+          'padding: ' + 10 * ratio + 'px ' + 40 * ratio + 'px;' +
+          '}' + '#sincloBox ul#chatTalk li.insideArrow { ' +
+          'padding: ' + 10 * ratio + 'px ' + 15 * ratio + 'px; ' +
+          '}' + '#sincloBox ul#chatTalk li.outsideArrow { ' +
+          'padding: ' + 10 * ratio + 'px ' + 40 * ratio + 'px; ' +
+          '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
+          'margin-left: 0; ' +
+          '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
+          'margin-left: -25px; ' +
+          'margin-right: -25px; ' +
+          '}';
 
           html += '#sincloBox ul#chatTalk li span.cName { font-size: ' +
               (13 * ratio) + 'px; margin: 0 0 ' + (5 * ratio) + 'px 0; }';
@@ -2361,6 +2443,28 @@ var socket, // socket.io
             html += '#sincloBox ul#chatTalk li.sinclo_re { border: ' +
                 (1 * ratio) + 'px solid ' + chatPosition.re.borderColor + '; }';
           }
+
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-comment-alt-lines { padding-top: 4px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-comments-alt { padding-top: 2px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-phone { padding-top: 2px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.icon_border { border:1px solid;}';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize { max-width: 72px; min-width: 72px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize .img_wrapper { width: 70px; height: 70px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize .img_wrapper img { max-width: 70px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize i { height: 70px; width: 70px; font-size: 40px }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize { max-width: 82px; min-width: 82px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize .img_wrapper { width: 80px; height: 80px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize .img_wrapper img { max-width: 80px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize i { height: 80px; width: 80px; font-size: 50px }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize { max-width: 92px; min-width: 92px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper { width: 90px; height: 90px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper img { max-width: 90px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize i { height: 90px; width: 90px; font-size: 55px }';
+          // pulldown
+          html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: 16px; height: 55px; font-size: 35px;}';
+          // button
+          html += '#sincloBox ul#chatTalk li button { cursor: pointer; min-height: 60px; margin-bottom: 4px; padding: 20px 30px; font-size: 1em;}';
+
           html += '#sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:14px); }';
 
           html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0 0 -1em 0.5em; display: inline-block; } ';
@@ -2384,9 +2488,17 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label:before {left: 0;}';
           html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label:after {top: 9px; left: 4px;}';
 
-          html += '#sincloBox ul#chatTalk li .sinclo-checkbox { font-size: 17px;}';
-          html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: 17px; height: 17px;}';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-checkbox"] span.ok-button {font-size: 17px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox { font-size: 1em;}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: 34px; height: 34px;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-checkbox"] span.ok-button {font-size: 30px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark:after {left: 9px;top: 3px;width: 8px; height: 14px; border-width: 0 5px 5px 0;}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.labelStyle { padding-left: 48px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.labelStyle .checkmark { top: 4px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle .checkmark {top: 14px;left: 12px; }';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: 12px 12px 12px 56px;}';
+          html += '#sincloBox ul#chatTalk li span.ok-button {width: 125px; height: 40px; line-height: 40px; margin-top: 15px; border-radius: 20px;}';
+
+
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
           }
@@ -6395,7 +6507,7 @@ var socket, // socket.io
       css += '        line-height: initial;';
       css += '        word-break: break-word;';
       css += '        word-wrap: break-word;';
-      css += '        width: 300px;';
+      css += '        width: 17em;';
       css += '        margin: 0.4em 0;';
       css += '    }';
       css += '    sinclo-div {';
