@@ -45,7 +45,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
 <head>
   <?php echo $this->Html->charset(); ?>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1">-->
     <?php if(strcmp($this->name, 'ScriptSettings') == 0 && strcmp($this->action, 'index') !== 0) { ?>
       <title><?php echo $this->fetch('title'); ?></title>
     <?php }
