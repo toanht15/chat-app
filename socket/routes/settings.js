@@ -791,7 +791,7 @@ router.post("/reload/widgetSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadWidgetSettings(req['body']['sitekey'], function(){
+    common.reloadWidgetSettings(req['body']['sitekey'], true, function() {
       res.send('OK');
       res.status(200);
     });
@@ -831,7 +831,7 @@ router.post("/reload/autoMessages", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadAutoMessageSettings(req['body']['sitekey'], function(){
+    common.reloadAutoMessageSettings(req['body']['sitekey'], true, function() {
       res.send('OK');
       res.status(200);
     });
@@ -871,7 +871,8 @@ router.post("/reload/operationHour", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadOperationHourSettings(req['body']['sitekey'], function(){
+    common.reloadOperationHourSettings(req['body']['sitekey'], true,
+        function() {
       res.send('OK');
       res.status(200);
     });
@@ -910,7 +911,7 @@ router.post("/reload/chatSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadChatSettings(req['body']['sitekey'], function(){
+    common.reloadChatSettings(req['body']['sitekey'], true, function() {
       res.send('OK');
       res.status(200);
     });
@@ -951,7 +952,8 @@ router.post("/reload/customVariableSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadCustomVariableSettings(req['body']['sitekey'], function(){
+    common.reloadCustomVariableSettings(req['body']['sitekey'], true,
+        function() {
       res.send('OK');
       res.status(200);
     });
