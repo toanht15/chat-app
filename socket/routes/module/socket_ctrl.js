@@ -127,12 +127,12 @@ function getCompanyList(forceReload) {
           }
           if (initialized && !(row.company_key in common.companySettings)) {
             console.log('LOAD NEW COMPANY SETTINGS : ' + row.company_key);
-            common.reloadSettings(row.company_key);
+            common.reloadSettings(row.company_key, true);
           }
         }
         initialized = true;
         if (forceReload) {
-          common.reloadSettings();
+          common.reloadSettings(null, true);
         }
       });
 }
@@ -5333,7 +5333,7 @@ io.sockets.on('connection', function(socket) {
           console.log(
               'BEGIN RELOAD DB-settings --------------------------------------------------');
           console.log('TARGET : ' + targetKey);
-          common.reloadSettings(targetKey);
+          common.reloadSettings(targetKey, true);
           console.log(
               'END   RELOAD DB-settings --------------------------------------------------');
           break;
