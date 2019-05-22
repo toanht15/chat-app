@@ -5851,44 +5851,32 @@
         if (check.smartphone()) {
           widgetWidth = $(window).width();
           ratio       = widgetWidth * (1 / 285);
-          console.log('SHIMIZU ratio => %s', ratio);
-          if (common.isPortrait()) {
-            var tmp = 0;
-            switch (Number(sincloInfo.widget.widgetSizeType)) {
-              case 1:
-                tmp = -5;
-                break;
-              case 2:
-                tmp = 60;
-                break;
-              case 3:
-                tmp = 90;
-                break;
-              default:
-                tmp = 90;
-                break;
-            }
-
-            carouselSize.containerWidth = carouselSize.containerWidth - tmp;
-            carouselSize.containerWidth = carouselSize.containerWidth * ratio;
-            if (settings.lineUpStyle === '2') {
-              carouselSize.width = carouselSize.containerWidth / 1.6;
-            } else {
-              carouselSize.width = carouselSize.containerWidth;
-            }
-
-            carouselSize.height = carouselSize.width / settings.aspectRatio;
-          } else {
-            carouselSize.containerWidth = carouselSize.containerWidth - 90;
-            carouselSize.containerWidth = carouselSize.containerWidth * 4;
-            if (settings.lineUpStyle === '2') {
-              carouselSize.width = carouselSize.containerWidth / 1.6;
-            } else {
-              carouselSize.width = carouselSize.containerWidth;
-            }
-
-            carouselSize.height = carouselSize.width / settings.aspectRatio;
+          var tmp = 0;
+          switch (Number(sincloInfo.widget.widgetSizeType)) {
+            case 1:
+              tmp = -5;
+              break;
+            case 2:
+              tmp = 60;
+              break;
+            case 3:
+              tmp = 90;
+              break;
+            default:
+              tmp = 90;
+              break;
           }
+          if (common.isPortrait()) {
+            carouselSize.containerWidth = (carouselSize.containerWidth - tmp) * ratio;
+          } else {
+            carouselSize.containerWidth = (carouselSize.containerWidth - tmp) * 2.5;
+          }
+          if (settings.lineUpStyle === '2') {
+            carouselSize.width = carouselSize.containerWidth / 1.6;
+          } else {
+            carouselSize.width = carouselSize.containerWidth;
+          }
+          carouselSize.height = carouselSize.width / settings.aspectRatio;
         }
         var thumbnailWidth = carouselSize.width + 2;
         var containerWidth = carouselSize.containerWidth + 2;
@@ -6195,12 +6183,6 @@
       createCarouselStyle: function(settings, id) {
         var arrowPosition = sinclo.chatApi.getArrowPosition(settings);
         var fontFamily = settings.arrowType === '2' ? 'FA5P' : 'SincloFont';
-        if (check.smartphone()) {
-          widgetWidth = $(window).width();
-          ratio = widgetWidth * (1 / 285);
-        } else {
-          ratio = 1;
-        }
         var style = '<style>';
         style += '#sincloBox ul#chatTalk ' + id +
             ' .slick-dots li { border-radius: unset; background: none;}';
@@ -6267,39 +6249,23 @@
             // portrait
             widgetWidth = $(window).width();
             ratio = widgetWidth * (1 / 285);
-
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots { position: relative }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { padding: 0 ' + 5 * ratio + 'px;}';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: ' + 25 * ratio + 'px;}';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before {font-size: ' + 28 * ratio + 'px;}';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-size: ' + 28 * ratio + 'px; }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize * ratio + 'px; }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: ' + 10 * ratio + 'px ' + 12 * ratio + 'px ' + 3 * ratio + 'px ' + 12 * ratio + 'px; }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin:0 ' + 12 * ratio + 'px ' + 8 * ratio + 'px ' + 12 * ratio + 'px; font-size: ' + settings.customDesign.subTitleFontSize * ratio + 'px;}';
-
-            var right = arrowPosition.right > 0 ? (arrowPosition.right * 2) * ratio : (arrowPosition.right / 2) * ratio;
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + right  + 'px }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left * ratio  + 'px }';
+            var right = arrowPosition.right > 0 ? (arrowPosition.right * 2) * ratio : (arrowPosition.right / 1.6) * ratio;
           } else {
-            // landscape
-            // widgetWidth = $(window).width();
-            // ratio = widgetWidth * (1 / 285);
-            ratio = 4;
-
-            console.log('TOAN ratio: ' + ratio);
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots { position: relative }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { padding: 0 ' + 5 * ratio + 'px;}';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: ' + 25 * ratio + 'px;}';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before {font-size: ' + 28 * ratio + 'px;}';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-size: ' + 28 * ratio + 'px; }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize * ratio + 'px; }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: ' + 10 * ratio + 'px ' + 12 * ratio + 'px ' + 3 * ratio + 'px ' + 12 * ratio + 'px; }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin:0 ' + 12 * ratio + 'px ' + 8 * ratio + 'px ' + 12 * ratio + 'px; font-size: ' + settings.customDesign.subTitleFontSize * ratio + 'px;}';
-
+            ratio = 2.5;
             var right = arrowPosition.right > 0 ? (arrowPosition.right * 2) * ratio : (arrowPosition.right / 2) * ratio;
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + right  + 'px }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left * ratio  + 'px }';
           }
+
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots { position: relative; height: auto; }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { padding: 0 ' + 5 * ratio + 'px;}';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: ' + 25 * ratio + 'px;}';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before {font-size: ' + 28 * ratio + 'px;}';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-size: ' + 28 * ratio + 'px; }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize * ratio + 'px; }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: ' + 10 * ratio + 'px ' + 12 * ratio + 'px ' + 3 * ratio + 'px ' + 12 * ratio + 'px; }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin:0 ' + 12 * ratio + 'px ' + 8 * ratio + 'px ' + 12 * ratio + 'px; font-size: ' + settings.customDesign.subTitleFontSize * ratio + 'px;}';
+
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + right  + 'px }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left * ratio  + 'px }';
         } else {
           style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { padding: 0 5px;}';
           style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: 25px;}';
