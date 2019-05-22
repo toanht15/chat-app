@@ -443,7 +443,8 @@
 
           $('#sincloBox').remove();
           $('body').append(html);
-          $('sinclo-chat').append(chatTalk);
+          //$('sinclo-chat').append(chatTalk);
+          emit('getChatMessage', {showName: sincloInfo.widget.showName});
           var sincloBox = document.getElementById('sincloBox');
           document.getElementById(
               'sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
@@ -5557,7 +5558,7 @@
         var html = '';
         var storedValueIsFound = false;
         html += '<select name="' + name + '" id="' + name + '" style="' +
-            style + '">';
+            style + '" class="sinclo-pulldown">';
         html += '<option value="">選択してください</option>';
         settings.options.forEach(function(option, index) {
           if (storedValue === option) {
@@ -5684,6 +5685,7 @@
         var name = 'sinclo-checkbox' + index;
         var style = sinclo.chatApi.createCheckboxStyle(settings, '#' + name);
         var html = '';
+        var checkboxStyle = settings.checkboxStyle === '1' ? 'buttonStyle' : 'labelStyle';
 
         if (storedValue) {
           if (check.isJSON(storedValue)) {
@@ -5702,7 +5704,7 @@
         settings.options.forEach(function(option) {
           if (!option || option === '') return false;
           var hasOldOptionValue = false;
-          html += '<label class="sinclo-checkbox">';
+          html += '<label class="sinclo-checkbox ' + checkboxStyle + '">';
           if (storedValue) {
             oldMessages.forEach(function(oldMessage) {
               if (option === oldMessage) {
@@ -5733,6 +5735,20 @@
         var style = sinclo.chatApi.createCarouselStyle(settings,
             '#carousel-container' + index);
         var carouselSize = sinclo.chatApi.getCarouselSize(settings);
+        if (check.smartphone()) {
+          widgetWidth = $(window).width();
+          ratio       = widgetWidth * (1 / 285);
+          console.log('SHIMIZU ratio => %s', ratio);
+          carouselSize.containerWidth = carouselSize.containerWidth - 90;
+          carouselSize.containerWidth = carouselSize.containerWidth * ratio;
+          if (settings.lineUpStyle === '2') {
+            carouselSize.width = carouselSize.containerWidth / 1.6;
+          } else {
+            carouselSize.width = carouselSize.containerWidth;
+          }
+
+          carouselSize.height = carouselSize.width / settings.aspectRatio;
+        }
         var thumbnailWidth = carouselSize.width + 2;
         var containerWidth = carouselSize.containerWidth + 2;
         var imgWidth = settings.outCarouselNoneBorder ?
@@ -5769,7 +5785,8 @@
       },
       createPulldownStyle: function(settings) {
         var style = '';
-        style += 'margin-top: 10px; height: 30px; width: 100%; word-break: break-all; ';
+        // style += 'margin-top: 10px; height: 30px; width: 100%; word-break: break-all; ';
+        style += 'width: 100%; word-break: break-all; ';
         style += 'background-color: ' + settings.customDesign.backgroundColor +
             ';';
         if (settings.pulldownCustomDesign) {
@@ -5781,16 +5798,16 @@
           style += 'border: 1px solid ' + sincloInfo.widget.mainColor + ';';
         }
 
-        if (check.smartphone()) {
-          style += 'font-size: 16px;';
-        }
+        // if (check.smartphone()) {
+        //   style += 'font-size: 16px;';
+        // }
 
         return style;
       },
       createButtonUIStyle: function(settings, id) {
         var style = '<style>';
-        style += '#sincloBox ul#chatTalk ' + id +
-            ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+        // style += '#sincloBox ul#chatTalk ' + id +
+        //     ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
         if (settings.buttonUICustomDesign) {
           style += '#sincloBox ul#chatTalk ' + id +
               ' button {background-color: ' +
@@ -5881,21 +5898,10 @@
         style += '#sincloBox ' + id +
             ' .sinclo-checkbox .checkmark {position: absolute;top: 1px;left: 0; background-color: ' +
             settings.customDesign.checkboxBackgroundColor + '}';
-        if (check.smartphone()) {
-          style += '#sincloBox ' + id +
-              ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' +
-              (sincloInfo.widget.reTextSize - 8) + 'px;top: ' +
-              (sincloInfo.widget.reTextSize - 11) +
-              'px;width: 3px;height: 6px;border: solid ' + checkmarkColor +
-              ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
-        } else {
-          style += '#sincloBox ' + id +
-              ' .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' +
-              (sincloInfo.widget.reTextSize - 9) + 'px;top: ' +
-              (sincloInfo.widget.reTextSize - 12) +
-              'px;width: 3px;height: 6px;border: solid ' + checkmarkColor +
-              ';border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
-        }
+        style += '#sincloBox ' + id +
+            ' .sinclo-checkbox .checkmark:after {border: solid ' +
+            checkmarkColor +
+            '}';
 
         style += '#sincloBox ' + id +
             ' .sinclo-checkbox input:checked ~ .checkmark {background-color: ' +
@@ -5905,10 +5911,6 @@
         style += '#sincloBox ' + id +
             ' .sinclo-checkbox input:hover ~ .checkmark {background-color: ' +
             settings.customDesign.checkboxActiveColor + '}';
-        style += '#sincloBox ' + id +
-            ' span.ok-button {width: 100px; height: 30px; line-height: 30px; cursor: pointer; margin: auto; margin-top: 10px; display: block; text-align:center; justify-content: center; align-items: center; border-radius: 12px; background-color: ' +
-            sincloInfo.widget.chatSendBtnBackgroundColor + '; color: ' +
-            sincloInfo.widget.chatSendBtnTextColor + ';}';
         style += '#sincloBox ' + id + '{ display: block;}';
         if (settings.checkboxNoneBorder) {
           style += '#sincloBox ' + id +
@@ -5919,23 +5921,7 @@
               borderColor + ';}';
         }
 
-        if (settings.checkboxStyle !== '1') {
-          style += '#sincloBox ' + id +
-              ' .sinclo-checkbox {background-color: transparent;}';
-          if (check.smartphone()) {
-            style += '#sincloBox ' + id +
-                ' .sinclo-checkbox {padding-left: 25px;}';
-          }
-        } else {
-          if (check.smartphone()) {
-            style += '#sincloBox ' + id +
-                ' .sinclo-checkbox {padding: 8px 8px 8px 32px;}';
-          } else {
-            style += '#sincloBox ' + id +
-                ' .sinclo-checkbox {padding: 8px 8px 8px 28px;}';
-          }
-          style += '#sincloBox ' + id +
-              ' .sinclo-checkbox .checkmark {top: 9px;left: 8px; }';
+        if (settings.checkboxStyle === '1') {
           style += '#sincloBox ' + id +
               ' .sinclo-checkbox {background-color: ' +
               settings.customDesign.checkboxEntireBackgroundColor + ';}';
@@ -6068,46 +6054,47 @@
       createCarouselStyle: function(settings, id) {
         var arrowPosition = sinclo.chatApi.getArrowPosition(settings);
         var fontFamily = settings.arrowType === '2' ? 'FA5P' : 'SincloFont';
+        if (check.smartphone()) {
+          widgetWidth = $(window).width();
+          ratio = widgetWidth * (1 / 285);
+        } else {
+          ratio = 1;
+        }
         var style = '<style>';
         style += '#sincloBox ul#chatTalk ' + id +
-            ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
-        style += '#sincloBox ul#chatTalk ' + id +
-            ' .slick-dots li button:before { font-size: 25px;}';
+            ' .slick-dots li { border-radius: unset; background: none;}';
         if (settings.carouselCustomDesign) {
           style += '#sincloBox ul#chatTalk ' + id +
               ' .slick-prev:before { font-family: ' + fontFamily +
-              '; font-size: 28px; opacity: .5; color: ' +
+              '; opacity: .5; color: ' +
               settings.customDesign.arrowColor + ';}';
           style += '#sincloBox ul#chatTalk ' + id +
               ' .slick-next:before { font-family: ' + fontFamily +
-              '; font-size: 28px; opacity: .5; color: ' +
+              '; opacity: .5; color: ' +
               settings.customDesign.arrowColor + ';}';
         } else {
           style += '#sincloBox ul#chatTalk ' + id +
               ' .slick-prev:before { font-family: ' + fontFamily +
-              '; font-size: 28px; opacity: .5; color: ' +
+              '; opacity: .5; color: ' +
               sincloInfo.widget.mainColor + ';}';
           style += '#sincloBox ul#chatTalk ' + id +
               ' .slick-next:before { font-family: ' + fontFamily +
-              '; font-size: 28px; opacity: .5; color: ' +
+              '; opacity: .5; color: ' +
               sincloInfo.widget.mainColor + ';}';
         }
         style += '#sincloBox ul#chatTalk ' + id +
-            ' .thumbnail .caption .title strong { font-size: ' +
-            settings.customDesign.titleFontSize + 'px; color: ' +
+            ' .thumbnail .caption .title strong {  color: ' +
             settings.customDesign.titleColor + '; text-align: ' +
             this.getTitleTextAlign(settings.titlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id +
-            ' .thumbnail .caption .title { margin: 10px 12px 3px 12px; text-align: ' +
+            ' .thumbnail .caption .title { text-align: ' +
             this.getTitleTextAlign(settings.titlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id +
-            ' .thumbnail .caption .sub-title { margin: 0 12px 8px 12px; font-size: ' +
-            settings.customDesign.subTitleFontSize + 'px; color: ' +
+            ' .thumbnail .caption .sub-title { color: ' +
             settings.customDesign.subTitleColor + '; text-align: ' +
             this.getTitleTextAlign(settings.subTitlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id +
             ' .thumbnail:hover { -webkit-filter: brightness(110%); filter: brightness(110%);}';
-
         if (settings.outCarouselNoneBorder) {
           style += '#sincloBox ul#chatTalk ' + id +
               ' .thumbnail { border: none;} ';
@@ -6132,11 +6119,112 @@
           style += '#sincloBox ul#chatTalk ' + id +
               ' .slick-prev:before { font-weight: 900 }';
         }
+
+        // handle css by device
+        if (check.smartphone()) {
+          if (common.isPortrait()) {
+            // portrait
+            widgetWidth = $(window).width();
+            ratio = widgetWidth * (1 / 285);
+
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots { position: relative }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { padding: 0 ' + 5 * ratio + 'px;}';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: ' + 25 * ratio + 'px;}';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before {font-size: ' + 28 * ratio + 'px;}';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-size: ' + 28 * ratio + 'px; }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize * ratio + 'px; }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: ' + 10 * ratio + 'px ' + 12 * ratio + 'px ' + 3 * ratio + 'px ' + 12 * ratio + 'px; }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin:0 ' + 12 * ratio + 'px ' + 8 * ratio + 'px ' + 12 * ratio + 'px; font-size: ' + settings.customDesign.subTitleFontSize * ratio + 'px;}';
+
+            var right = arrowPosition.left > 0 ? (arrowPosition.right + arrowPosition.left) * ratio : (arrowPosition.right - arrowPosition.left) * ratio;
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + right + 'px }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left * ratio + 'px }';
+          } else {
+            // landscape
+          }
+        } else {
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { padding: 0 5px;}';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: 25px;}';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before {font-size: 28px;}';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-size: 28px; }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize + 'px; }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: 10px 12px 3px 12px; }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin:0 12px 8px 12px; font-size: ' + settings.customDesign.subTitleFontSize + 'px;}';
+
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + arrowPosition.right + 'px }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left + 'px }';
+        }
+
+
+
+        // style += '#sincloBox ul#chatTalk ' + id +
+        //     ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
+        // style += '#sincloBox ul#chatTalk ' + id +
+        //     ' .slick-dots li button:before { font-size: 25px;}';
+        // if (settings.carouselCustomDesign) {
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .slick-prev:before { font-family: ' + fontFamily +
+        //       '; font-size: 28px; opacity: .5; color: ' +
+        //       settings.customDesign.arrowColor + ';}';
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .slick-next:before { font-family: ' + fontFamily +
+        //       '; font-size: 28px; opacity: .5; color: ' +
+        //       settings.customDesign.arrowColor + ';}';
+        // } else {
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .slick-prev:before { font-family: ' + fontFamily +
+        //       '; font-size: 28px; opacity: .5; color: ' +
+        //       sincloInfo.widget.mainColor + ';}';
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .slick-next:before { font-family: ' + fontFamily +
+        //       '; font-size: 28px; opacity: .5; color: ' +
+        //       sincloInfo.widget.mainColor + ';}';
+        // }
+        // style += '#sincloBox ul#chatTalk ' + id +
+        //     ' .thumbnail .caption .title strong { font-size: ' +
+        //     settings.customDesign.titleFontSize + 'px; color: ' +
+        //     settings.customDesign.titleColor + '; text-align: ' +
+        //     this.getTitleTextAlign(settings.titlePosition) + ';}';
+        // style += '#sincloBox ul#chatTalk ' + id +
+        //     ' .thumbnail .caption .title { margin: 10px 12px 3px 12px; text-align: ' +
+        //     this.getTitleTextAlign(settings.titlePosition) + ';}';
+        // style += '#sincloBox ul#chatTalk ' + id +
+        //     ' .thumbnail .caption .sub-title { margin:0 12px 8px 12px; font-size: ' +
+        //     settings.customDesign.subTitleFontSize + 'px; color: ' +
+        //     settings.customDesign.subTitleColor + '; text-align: ' +
+        //     this.getTitleTextAlign(settings.subTitlePosition) + ';}';
+        // style += '#sincloBox ul#chatTalk ' + id +
+        //     ' .thumbnail:hover { -webkit-filter: brightness(110%); filter: brightness(110%);}';
+        //
+        // if (settings.outCarouselNoneBorder) {
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .thumbnail { border: none;} ';
+        // } else {
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .thumbnail { border: 1px solid ' +
+        //       settings.customDesign.outBorderColor + ';} ';
+        // }
+        //
+        // if (settings.inCarouselNoneBorder) {
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .thumbnail img { border-bottom: none;} ';
+        // } else {
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .thumbnail img { border-bottom: 1px solid ' +
+        //       settings.customDesign.inBorderColor + ';} ';
+        // }
+        //
+        // if (settings.arrowType !== '2') {
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .slick-next:before { font-weight: 900 }';
+        //   style += '#sincloBox ul#chatTalk ' + id +
+        //       ' .slick-prev:before { font-weight: 900 }';
+        // }
         // custom arrow position
-        style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' +
-            arrowPosition.right + 'px }';
-        style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' +
-            arrowPosition.left + 'px }';
+        // style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' +
+        //     arrowPosition.right + 'px }';
+        // style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' +
+        //     arrowPosition.left + 'px }';
 
         style += '</style>';
 
@@ -6253,6 +6341,8 @@
             data.width = settings.lineUpStyle === '1' ? 340 : 215;
             break;
         }
+        // data.containerWidth = data.containerWidth - 30;
+        // data.width = data.width - 30;
         if ((Number(sincloInfo.widget.showOperatorIcon) === 1 ||
             Number(sincloInfo.widget.showChatbotIcon) === 1) &&
             settings.balloonStyle === '1') {
@@ -6301,6 +6391,8 @@
             data.width = settings.lineUpStyle === '1' ? 260 : 158;
             break;
         }
+        // data.containerWidth = data.containerWidth - 80;
+        // data.width = data.width - 80;
         if ((Number(sincloInfo.widget.showOperatorIcon) === 1 ||
             Number(sincloInfo.widget.showChatbotIcon) === 1) &&
             settings.balloonStyle === '1') {
