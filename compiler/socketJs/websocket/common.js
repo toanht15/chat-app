@@ -2498,6 +2498,19 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: 12px 12px 12px 56px;}';
           html += '#sincloBox ul#chatTalk li span.ok-button {width: 125px; height: 40px; line-height: 40px; margin-top: 15px; border-radius: 20px;}';
 
+          html += '#sincloBox ul#chatTalk li.carousel_msg {' +
+              'padding: 40px 160px;' +
+              '}' + '#sincloBox ul#chatTalk li.insideArrow { ' +
+              'padding: 40px 60px; ' +
+              '}' + '#sincloBox ul#chatTalk li.outsideArrow { ' +
+              'padding: 40px 160px; ' +
+              '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
+              'margin-left: 0; ' +
+              '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
+              'margin-left: -100px; ' +
+              'margin-right: -100px; ' +
+              '}';
+
 
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型

@@ -5852,15 +5852,43 @@
           widgetWidth = $(window).width();
           ratio       = widgetWidth * (1 / 285);
           console.log('SHIMIZU ratio => %s', ratio);
-          carouselSize.containerWidth = carouselSize.containerWidth - 90;
-          carouselSize.containerWidth = carouselSize.containerWidth * ratio;
-          if (settings.lineUpStyle === '2') {
-            carouselSize.width = carouselSize.containerWidth / 1.6;
-          } else {
-            carouselSize.width = carouselSize.containerWidth;
-          }
+          if (common.isPortrait()) {
+            var tmp = 0;
+            switch (Number(sincloInfo.widget.widgetSizeType)) {
+              case 1:
+                tmp = -5;
+                break;
+              case 2:
+                tmp = 60;
+                break;
+              case 3:
+                tmp = 90;
+                break;
+              default:
+                tmp = 90;
+                break;
+            }
 
-          carouselSize.height = carouselSize.width / settings.aspectRatio;
+            carouselSize.containerWidth = carouselSize.containerWidth - tmp;
+            carouselSize.containerWidth = carouselSize.containerWidth * ratio;
+            if (settings.lineUpStyle === '2') {
+              carouselSize.width = carouselSize.containerWidth / 1.6;
+            } else {
+              carouselSize.width = carouselSize.containerWidth;
+            }
+
+            carouselSize.height = carouselSize.width / settings.aspectRatio;
+          } else {
+            carouselSize.containerWidth = carouselSize.containerWidth - 90;
+            carouselSize.containerWidth = carouselSize.containerWidth * 4;
+            if (settings.lineUpStyle === '2') {
+              carouselSize.width = carouselSize.containerWidth / 1.6;
+            } else {
+              carouselSize.width = carouselSize.containerWidth;
+            }
+
+            carouselSize.height = carouselSize.width / settings.aspectRatio;
+          }
         }
         var thumbnailWidth = carouselSize.width + 2;
         var containerWidth = carouselSize.containerWidth + 2;
@@ -6249,11 +6277,28 @@
             style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: ' + 10 * ratio + 'px ' + 12 * ratio + 'px ' + 3 * ratio + 'px ' + 12 * ratio + 'px; }';
             style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin:0 ' + 12 * ratio + 'px ' + 8 * ratio + 'px ' + 12 * ratio + 'px; font-size: ' + settings.customDesign.subTitleFontSize * ratio + 'px;}';
 
-            var right = arrowPosition.left > 0 ? (arrowPosition.right + arrowPosition.left) * ratio : (arrowPosition.right - arrowPosition.left) * ratio;
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + right + 'px }';
-            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left * ratio + 'px }';
+            var right = arrowPosition.right > 0 ? (arrowPosition.right * 2) * ratio : (arrowPosition.right / 2) * ratio;
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + right  + 'px }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left * ratio  + 'px }';
           } else {
             // landscape
+            // widgetWidth = $(window).width();
+            // ratio = widgetWidth * (1 / 285);
+            ratio = 4;
+
+            console.log('TOAN ratio: ' + ratio);
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots { position: relative }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { padding: 0 ' + 5 * ratio + 'px;}';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: ' + 25 * ratio + 'px;}';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before {font-size: ' + 28 * ratio + 'px;}';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-size: ' + 28 * ratio + 'px; }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize * ratio + 'px; }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: ' + 10 * ratio + 'px ' + 12 * ratio + 'px ' + 3 * ratio + 'px ' + 12 * ratio + 'px; }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin:0 ' + 12 * ratio + 'px ' + 8 * ratio + 'px ' + 12 * ratio + 'px; font-size: ' + settings.customDesign.subTitleFontSize * ratio + 'px;}';
+
+            var right = arrowPosition.right > 0 ? (arrowPosition.right * 2) * ratio : (arrowPosition.right / 2) * ratio;
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + right  + 'px }';
+            style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left * ratio  + 'px }';
           }
         } else {
           style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { padding: 0 5px;}';
@@ -6642,6 +6687,84 @@
         }
 
         return data;
+      },
+      getRightArrowPosition: function(setting, right) {
+        var data = {left: 0, right: 0};
+        if (setting.lineUpStyle === '1') {
+          if (setting.carouselPattern === '2') {
+            if (setting.arrowType === '3') {
+              data.left = -30;
+              data.right = -30;
+            } else {
+              data.left = -34;
+              right = right;
+            }
+          } else {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = 8;
+                data.right = 14;
+                break;
+              case '3':
+                data.left = 8;
+                data.right = 8;
+                break;
+              case '4':
+                data.left = 8;
+                data.right = 10;
+                break;
+              default:
+                data.left = 8;
+                data.right = 8;
+                break;
+            }
+          }
+        } else {
+          if (setting.carouselPattern === '2') {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = -27;
+                data.right = -25;
+                break;
+              case '3':
+                data.left = -20;
+                data.right = -25;
+                break;
+              case '4':
+                data.left = -27;
+                data.right = -25;
+                break;
+              default:
+                data.left = -27;
+                data.right = -25;
+                break;
+            }
+          } else {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = 16;
+                data.right = 16;
+                break;
+              case '3':
+                data.left = 12;
+                data.right = 8;
+                break;
+              case '4':
+                data.left = 16;
+                data.right = 16;
+                break;
+              default:
+                data.left = 16;
+                data.right = 16;
+                break;
+            }
+          }
+        }
+
+        return right;
       },
       getChatIconWidth: function() {
         switch (Number(sincloInfo.widget.widgetSizeType)) {
