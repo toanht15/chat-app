@@ -2687,7 +2687,7 @@ var socket, // socket.io
       return html;
     },
     injectCalendarCSS: function() {
-      var css = '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar {\n' +
+      return '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar {\n' +
           '  background: transparent;\n' +
           '  opacity: 0;\n' +
           '  display: none;\n' +
@@ -2964,7 +2964,7 @@ var socket, // socket.io
           '  left: 12.5%;\n' +
           '  padding: 6.16px 0 0 0;\n' +
           '  line-height: 1;\n' +
-          '  height: ' + (28 * ratio) + 'px;\n' +
+          '  height: 28px;\n' +
           '  display: inline-block;\n' +
           '  text-align: center;\n' +
           '  -webkit-transform: translate3d(0, 0, 0);\n' +
@@ -3729,11 +3729,6 @@ var socket, // socket.io
           'margin-left: -25px; ' +
           'margin-right: -25px; ' +
           '}';
-      if (check.smartphone()) {
-        var ratio = 3.4;
-        css += '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line {' +
-            '}';
-      }
     },
     //バナーを生成する関数
     sincloBannerTemplate: function(widget) {
