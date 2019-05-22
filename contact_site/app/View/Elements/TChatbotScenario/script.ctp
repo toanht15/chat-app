@@ -164,7 +164,7 @@ function openCopyDialog(){
     return Number(elm.value);
   });
 
-  modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', 'シナリオ設定設定', 'moment');
+  modalOpen.call(window, 'コピーします、よろしいですか？', 'p-confirm', 'シナリオ設定', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
     $.ajax({
       type: 'post',

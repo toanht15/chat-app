@@ -521,8 +521,9 @@
       };
 
       // チャットの契約をしている場合
-      if (window.sincloInfo.contract.chat &&
-          !(userInfo.gFrame && Number(userInfo.accessType) ===
+      if (window.sincloInfo.contract.chat
+          && window.sincloInfo.contract.enableRealtimeMonitor
+          && !(userInfo.gFrame && Number(userInfo.accessType) ===
               Number(cnst.access_type.guest))) {
         sinclo.chatApi.observeType.emit(false, '');
       }
@@ -615,10 +616,35 @@
         emitData.forceFirstConnect = true;
       }
 
-      emit('connected', {
-        type: 'user',
-        data: emitData
-      });
+      if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+        $.ajax({
+          headers: {
+            'Accept': 'text/plain, application/json; charset=utf-8',
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          type: 'post',
+          url: window.sincloInfo.site.files + '/api/auth/customer',
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            siteKey: sincloInfo.site.key,
+            type: 'user',
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            sincloSessionId: userInfo.sincloSessionId,
+            token: common.token,
+            data: emitData
+          }),
+          success: function(json) {
+            sinclo.accessInfo(JSON.stringify(json));
+          }
+        });
+      } else {
+        emit('connected', {
+          type: 'user',
+          data: emitData
+        });
+      }
     },
     retConnectedForSync: function(d) {
       var obj = common.jParse(d);
@@ -698,7 +724,7 @@
             'sincloSessionId');
         common.widgetHandler.resetMessageAreaState();
         storage.l.set('leaveFlg', 'false');
-        storage.s.unset('amsg');
+        storage.l.unset('amsg');
         storage.s.unset('_scl_d_msg');
         storage.s.unset('chatAct');
         storage.s.unset('chatEmit');
@@ -713,7 +739,7 @@
       var connectSuccessData = {
         confirm: false,
         widget: window.sincloInfo.widgetDisplay,
-        prevList: userInfo.prevList,
+        prevList: userInfo.prev,
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
@@ -725,12 +751,41 @@
         connectSuccessData.tmpAutoMessages = tmpAutoMessages;
       }
 
-      emit('connectSuccess', connectSuccessData, function(ev) {
-        if ((userInfo.gFrame && Number(userInfo.accessType) ===
-            Number(cnst.access_type.guest)) === false) {
-          emit('customerInfo', obj);
-        }
-      });
+      if (window.sincloInfo.contract.enableRealtimeMonitor) {
+        emit('connectSuccess', connectSuccessData, function(ev) {
+          if ((userInfo.gFrame && Number(userInfo.accessType) ===
+              Number(cnst.access_type.guest)) === false) {
+            emit('customerInfo', obj);
+          }
+        });
+      } else {
+        $.ajax({
+          type: 'post',
+          url: window.sincloInfo.site.files + '/api/auth/info',
+          dataType: 'json',
+          contentType: 'application/JSON',
+          data: JSON.stringify({
+            confirm: false,
+            widget: window.sincloInfo.widgetDisplay,
+            prevList: userInfo.prev,
+            userAgent: window.navigator.userAgent,
+            time: userInfo.time,
+            accessId: userInfo.accessId,
+            ipAddress: userInfo.getIp(),
+            referrer: userInfo.referrer,
+            siteKey: sincloInfo.site.key,
+            socketId: socket.id,
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            sincloSessionId: userInfo.sincloSessionId,
+            token: common.token,
+            customVariables: userInfo.customVariables
+          }),
+          success: function(json) {
+            sinclo.setHistoryId(JSON.stringify(json));
+          }
+        });
+      }
 
       // customEvent
       if (document.createEvent) {
@@ -759,11 +814,21 @@
             if (window.sincloInfo.contract.chat) {
               // チャット情報読み込み
               sinclo.chatApi.init();
+              if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+                sinclo.chatMessageData(JSON.stringify({
+                  siteKey: obj.siteKey,
+                  token: obj.token,
+                  chat: obj.chat,
+                  tabId: obj.tabId,
+                  sincloSessionId: obj.sincloSessionId
+                }));
+              }
             }
           };
 
       if (document.getElementById('sincloBox') === null) return false;
       if (obj.stayLogsId) sinclo.chatApi.stayLogsId = obj.stayLogsId;
+      if (obj.historyId) sinclo.chatApi.historyId = obj.historyId;
 
       createStartTimer = window.setInterval(function() {
         if (window.sincloInfo.widget.showTiming !== 4 ||
@@ -2296,6 +2361,35 @@
                 sincloInfo.widget.subTitle);
             this.chatApi.scDown();
             return false;
+          } else if (!obj.shownMessage && obj.messageType ===
+              sinclo.chatApi.messageType.diagram.message.branch) {
+            // 別タブで送信されたチャットツリーのメッセージは表示する
+            // diagram
+            var branches = check.isJSON(obj.chatMessage) ?
+                JSON.parse(obj.chatMessage) :
+                chat.message;
+            var currentNode = {
+              diagramId: branches.did,
+              sourceNodeId: branches.nid,
+              attrs: {
+                actionParam: {
+                  btnType: branches.type
+                }
+              }
+            };
+            sinclo.diagramApi.branch.showMessage(currentNode, branches.message,
+                branches.selectionMap, branches.labels,
+                branches.customizeDesign);
+            return false;
+          } else if (!obj.shownMessage && obj.messageType ===
+              sinclo.chatApi.messageType.diagram.message.text) {
+            sinclo.chatApi.createMessageUnread({
+              cn: cn,
+              message: obj.chatMessage.message,
+              name: userName,
+              chatId: obj.chatId
+            }, false, false, false);
+            return false;
           } else {
             // 別タブで送信されたオートメッセージは何もしない
             return false;
@@ -2382,7 +2476,54 @@
 
         // diagram
         if (obj.chatMessage.did && obj.chatMessage.nextNodeId) {
-          if (obj.chatMessage.nextNodeId === 'callOperator') return false;
+          // FIXME refactor extract method
+          if (obj.chatMessage.nextNodeId === 'callOperator') {
+            //初回通知メッセージを利用している場合
+            if (obj.notification === true && obj.tabId === userInfo.tabId) {
+              storage.s.set('notificationTime', obj.created);
+              var data = sincloInfo.chat.settings.initial_notification_message ?
+                  JSON.parse(
+                      sincloInfo.chat.settings.initial_notification_message) :
+                  {};
+              for (var i = 0; i < Object.keys(data).length; i++) {
+                (function(times) {
+                  setTimeout(function() {
+                    if (storage.s.get('operatorEntered') !== 'true' &&
+                        data[times].message !== '') {
+                      var userName = '';
+                      if (window.sincloInfo.widget.showAutomessageName === 2) {
+                        userName = '';
+                      } else {
+                        userName = window.sincloInfo.widget.subTitle;
+                      }
+                      sinclo.chatApi.createMessageUnread({
+                        cn: 'sinclo_re',
+                        message: data[times].message,
+                        name: userName,
+                        chatId: obj.chatId,
+                        isBot: true
+                      });
+                      sinclo.chatApi.scDown();
+                      var sendData = {
+                        siteKey: obj.siteKey,
+                        tabId: obj.tabId,
+                        chatMessage: data[times].message,
+                        messageType: sinclo.chatApi.messageType.notification,
+                        messageDistinction: obj.messageDistinction,
+                        chatId: obj.chatId,
+                        mUserId: obj.mUserId,
+                        userId: obj.userId
+                      };
+                      emit('sendInitialNotificationChat',
+                          {messageList: sendData});
+                    }
+                    storage.s.set('callingMessageSeconds', data[times].seconds);
+                  }, data[times].seconds * 1000);
+                })(i);
+              }
+              return false;
+            }
+          }
           var nextNodeId = obj.chatMessage.nextNodeId;
           sinclo.chatApi.createMessageUnread({
             cn: cn,
@@ -2391,9 +2532,24 @@
             chatId: obj.chatId
           }, false, false, false);
           sinclo.chatApi.scDown(obj);
-          sinclo.diagramApi.executor.setDiagramId(obj.chatMessage.did);
-          sinclo.diagramApi.executor.setNext(obj.chatMessage.did, nextNodeId);
-          sinclo.diagramApi.executor.execute();
+          if (obj.tabId === userInfo.tabId) {
+            sinclo.diagramApi.executor.setDiagramId(obj.chatMessage.did);
+            sinclo.diagramApi.executor.setNext(obj.chatMessage.did, nextNodeId);
+            sinclo.diagramApi.executor.execute();
+          }
+          // オートメッセージの内容をDBに保存し、オブジェクトから削除する
+          if (!sinclo.chatApi.saveFlg && obj.tabId === userInfo.tabId) {
+            console.log('EMIT sendAutoChat');
+            emit('sendAutoChat',
+                {messageList: sinclo.chatApi.autoMessages.getByArray()});
+            sinclo.chatApi.autoMessages.unset();
+            sinclo.chatApi.saveFlg = true;
+          } else if (obj.tabId !== userInfo.tabId) {
+            // メインのオートメッセージだけ保存してサブのオートメッセージは保存しない
+            console.log('unset automessages');
+            sinclo.chatApi.autoMessages.unset();
+            sinclo.chatApi.saveFlg = true;
+          }
           return false;
         }
 
@@ -2613,7 +2769,9 @@
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.receiveFile
           || obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.radio) {
+          sinclo.chatApi.messageType.scenario.message.radio
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.carousel) {
         if (obj.tabId === userInfo.tabId) {
           common.chatBotTypingCall(obj);
           this.chatApi.scDown();
@@ -3339,19 +3497,19 @@
           var list = this.get(true);
           if (!this.exists(id)) {
             list[id] = obj;
-            storage.s.set('amsg', JSON.stringify(list));
+            storage.l.set('amsg', JSON.stringify(list));
             return true;
           } else if (!('created' in list[id])) {
             console.log('OVERWRITE OBJECT ID: ' + id + 'B : ' +
                 JSON.stringify(list[id]) + 'A : ' + JSON.stringify(obj));
             list[id] = obj;
-            storage.s.set('amsg', JSON.stringify(list));
+            storage.l.set('amsg', JSON.stringify(list));
             return true;
           }
           return false;
         },
         get: function(allData) {
-          var json = storage.s.get('amsg');
+          var json = storage.l.get('amsg');
           var returnData = {};
           if (json) {
             var array = JSON.parse(json);
@@ -3364,12 +3522,12 @@
           return returnData;
         },
         getByArray: function(allData) {
-          var json = storage.s.get('amsg');
+          var json = storage.l.get('amsg');
           var returnData = [];
           if (json) {
             var array = JSON.parse(json);
             Object.keys(array).forEach(function(id, index, ar) {
-              if (allData || !array[id].applied) {
+              if (allData || (array[id].message && !array[id].applied)) {
                 returnData.push(array[id]);
               }
             });
@@ -3387,12 +3545,12 @@
           Object.keys(list).forEach(function(id, index, arr) {
             list[id]['applied'] = true;
           });
-          storage.s.set('amsg', JSON.stringify(list));
+          storage.l.set('amsg', JSON.stringify(list));
         },
         delete: function(id) {
           var list = this.get(true);
           delete list[id];
-          storage.s.set('amsg', JSON.stringify(list));
+          storage.l.set('amsg', JSON.stringify(list));
         }
       },
       diagramMessages: {
@@ -3406,7 +3564,7 @@
             console.log('OVERWRITE OBJECT ID: ' + id + 'B : ' +
                 JSON.stringify(list[id]) + 'A : ' + JSON.stringify(obj));
             list[id] = obj;
-            storage.s.set('amsg', JSON.stringify(list));
+            storage.l.set('amsg', JSON.stringify(list));
             return true;
           }
           return false;
@@ -3469,7 +3627,9 @@
           sinclo.displayTextarea();
         }
 
-        emit('getChatMessage', {showName: sincloInfo.widget.showName});
+        if (sincloInfo.contract.enableRealtimeMonitor) {
+          emit('getChatMessage', {showName: sincloInfo.widget.showName});
+        }
         common.reloadWidgetRemove();
       },
       initEvent: function() {
@@ -4805,13 +4965,75 @@
         if (align) {
           style = 'style="width:100%; text-align:' + align + ';"';
         }
+        var className = '';
+        if (sincloInfo.widget.widgetSizeType === 1 || check.smartphone()) {
+          className = 'smallSizeImg';
+        } else if (sincloInfo.widget.widgetSizeType === 2) {
+          className = 'middleSizeImg';
+        } else if (sincloInfo.widget.widgetSizeType === 3) {
+          className = 'largeSizeImg';
+        }
         for (var i = 0; strings.length > i; i++) {
-          var str = check.escape_html(strings[i]);
-          str = str.replace(/(&lt;)/g, '<').
+          var str = check.escape_html(strings[i]),
+              unEscapeStr = str = str.replace(/(&lt;)/g, '<').
               replace(/(&gt;)/g, '>').
               replace(/(&quot;)/g, '"').
               replace(/(&#39;)/g, '\'').
               replace(/(&amp;)/g, '&');
+
+          // リンク
+          var link = str.match(this.createAnchorTag._regList.linkReg);
+          var linkTab = unEscapeStr.match(
+              this.createAnchorTag._regList.linkTabReg);
+          var option = 'clickLink';
+          if (linkTab !== null) {
+            //aタグが設定されているリンクの場合
+            if (link !== null) {
+              //普通のページリンクの場合は初期値
+            }
+            if (str.match(this.createAnchorTag._regList.mailLinkReg) !==
+                null) {
+              //メールリンクの場合
+              option = 'clickMail';
+              link = str.match(this.createAnchorTag._regList.mailLinkReg);
+            }
+            if (str.match(this.createAnchorTag._regList.telLinkReg) !==
+                null) {
+              //電話リンクの場合
+              option = 'clickTelno';
+              link = str.match(this.createAnchorTag._regList.telLinkReg);
+            }
+            str = sinclo.chatApi.createAnchorTag._linkText(option, link,
+                linkTab, unEscapeStr, str, className);
+          } else {
+            /*aタグが設定されていないリンクの場合
+             *この場合はURLのみしかない為、以下の条件式
+             */
+            if (link !== null) {
+              str = sinclo.chatApi.createAnchorTag._linkWithoutText(option,
+                  link, unEscapeStr, str, className);
+            }
+          }
+          // 電話番号（スマホのみリンク化）
+          var tel = str.match(this.createAnchorTag._regList.telnoTagReg);
+          if (tel !== null) {
+            var telno = tel[1];
+            if (check.smartphone()) {
+              // リンクとして有効化
+              // GA連携時に必要な情報を作成
+              var exceedLink = 'href="tel:' + telno + '"';
+              console.log(exceedLink);
+              var a = '<a class="sincloTelConversion" onclick=sinclo.api.callTelCV(\'' +
+                  telno + '\');link(\'' + telno + '\',\'' + exceedLink +
+                  '\',\'clickTelno\') href=\'tel:' + telno + '\'>' + telno +
+                  '</a>';
+              str = str.replace(tel[0], a);
+            } else {
+              // ただの文字列にする
+              var span = '<span class=\'telno\'>' + telno + '</span>';
+              str = str.replace(tel[0], span);
+            }
+          }
 
           if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
             content += '' + str + '\n';
@@ -6112,6 +6334,13 @@
           case 4:
             data.containerWidth = 310;
             data.width = settings.lineUpStyle === '1' ? 310 : 193;
+            break;
+          case 5:
+            data.containerWidth = $('.grid_for_icon').width() -
+                $('.iconDiv').width();
+            data.width = settings.lineUpStyle === '1' ?
+                data.containerWidth :
+                193;
             break;
           default:
             data.containerWidth = 310;
@@ -9550,7 +9779,9 @@
       _end: function() {
         // シナリオ終了
         console.log('シナリオ終了時にそもそもウェイトアニメーションを出さない');
-        common.chatBotTypingTimerClear();
+        if (!sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
+          common.chatBotTypingTimerClear();
+        }
         var self = sinclo.scenarioApi;
         self.syncScenarioData.sendDetail('endScenario');
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
@@ -9579,6 +9810,10 @@
         self._unsetUploadedFileData();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
         if (sinclo.diagramApi.callScenario.isWaitingEndScenario()) {
+          setTimeout(function() {
+            common.chatBotTyping({forceWaitAnimation: true});
+            sinclo.chatApi.scDown();
+          }, 800);
           sinclo.diagramApi.callScenario.goToNextNode();
         }
       },
@@ -10483,7 +10718,7 @@
         if (message) {
           return message.replace(/\{\{(.+?)\}\}/g, function(param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-            return self._getStoredVariable(name) || name;
+            return self._getStoredVariable(name) || '';
           });
         } else {
           return '';
@@ -11684,6 +11919,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
+
           var sendData = {
             historyId: sinclo.chatApi.historyId,
             mailType: self._parent.get(
@@ -12640,7 +12876,7 @@
       syncScenarioData: {
         sendLockFlg: false,
         sendDetail: function(param, otherInformation) {
-          if (this.sendLockFlg) return;
+          if (this.sendLockFlg || !sinclo.scenarioApi.isProcessing()) return;
           var self = sinclo.scenarioApi;
           var currentScenarioSeqNo = 0;
           var currentHearingSeqNo = 0;
@@ -13439,8 +13675,15 @@
             style += '#sincloBox ul#chatTalk #' + name +
                 ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
           } else {
-            style += '#sincloBox ul#chatTalk #' + name +
-                ' sinclo-radio {padding: 8px;}';
+            if (check.smartphone()) {
+              var widgetWidth = $(window).width() - 20;
+              var ratio = widgetWidth * (1 / 285);
+              style += '#sincloBox ul#chatTalk #' + name +
+                  ' sinclo-radio {padding: ' + (8 * ratio) + 'px;}';
+            } else {
+              style += '#sincloBox ul#chatTalk #' + name +
+                  ' sinclo-radio {padding: 8px;}';
+            }
             if (!check.smartphone()) {
               style += '#sincloBox ul#chatTalk #' + name +
                   ' sinclo-radio [type="radio"] + label {display: block !important;}';
@@ -13455,12 +13698,29 @@
         },
         createButtonUIStyle: function(settings, id) {
           var style = '<style>';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button.sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button.sinclo-button-ui.top {border-top-left-radius: 8px; border-top-right-radius: 8px}';
-          style += '#sincloBox ul#chatTalk ' + id +
-              ' button.sinclo-button-ui.bottom {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+          if (check.smartphone()) {
+            var widgetWidth = $(window).width() - 20;
+            var ratio = widgetWidth * (1 / 285);
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui {cursor: pointer; min-height: ' +
+                (35 * ratio) + 'px; margin-bottom: ' + (1 * ratio) +
+                'px; padding: ' + (10 * ratio) + 'px ' + (15 * ratio) + 'px;}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui.top {border-top-left-radius: ' +
+                (8 * ratio) + 'px; border-top-right-radius: ' + (8 * ratio) +
+                'px}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui.bottom {border-bottom-left-radius: ' +
+                (8 * ratio) + 'px; border-bottom-right-radius: ' + (8 * ratio) +
+                'px}';
+          } else {
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui.top {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui.bottom {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+          }
           style += '#sincloBox ul#chatTalk ' + id +
               ' button.sinclo-button-ui {text-align: center}';
           style += '#sincloBox ul#chatTalk ' + id +
@@ -13612,6 +13872,12 @@
         _lKey: {
           callbackEndScenario: 'sinclo:notifyEndScenario'
         },
+        isCalledFromDiagram: function() {
+          var self = sinclo.diagramApi;
+          var currentNode = self.storage.getCurrentNode();
+          return check.isset(currentNode) &&
+              currentNode.attrs.nodeBasicInfo.nodeType === 'scenario';
+        },
         doAction: function() {
           console.log('<><><><><> CALL SCENARIO <><><><><>');
           if(window.sincloInfo.contract.chatbotScenario) {
@@ -13670,17 +13936,19 @@
           var currentNode = self.storage.getCurrentNode();
           var url = currentNode.attrs.actionParam.link;
           var jumpType = currentNode.attrs.actionParam.linkType;
-          switch (jumpType) {
-            case 'same':
-              window.location.href = url;
-              break;
-            case 'another':
-              window.open(url);
-              break;
-          }
-          var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
-          self.executor.setNext(self.common.getDiagramId(), nextNodeId);
-          self.executor.execute();
+          self.executor.wait(0.5).then(function() {
+            switch (jumpType) {
+              case 'same':
+                window.location.href = url;
+                break;
+              case 'another':
+                window.open(url);
+                break;
+            }
+            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+            self.executor.setNext(self.common.getDiagramId(), nextNodeId);
+            self.executor.execute();
+          });
         }
       },
       callOperator: {

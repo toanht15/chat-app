@@ -154,6 +154,15 @@
         $scope.resizeWidgetHeightByWindowHeight();
       });
 
+      $scope.$on('resizeWidget', function() {
+        $timeout(function() {
+          $scope.$apply(function() {
+            $('#chatTalk').height($scope._getMaxChatTalkHeight());
+            $scope.resizeWidgetHeightByWindowHeight();
+          });
+        }, 100);
+      });
+
       /**
        * visitorSendMessage
        * サイト訪問者のメッセージ受信と、呼び出し元アクションへの通知
