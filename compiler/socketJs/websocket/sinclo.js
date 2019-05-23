@@ -4763,11 +4763,13 @@
         if (check.isJSON(obj.message) && obj.message.indexOf('separator') !==
             -1) {
           // checkbox message
+          widgetWidth = $(window).width();
+          ratio       = check.smartphone() ? widgetWidth * (1 / 285) : 1;
           var checkboxData = JSON.parse(obj.message);
           var array = checkboxData.message.split(checkboxData.separator);
           content += '<ul style="margin-top: -7px; height: auto;">';
           array.forEach(function(item) {
-            content += '<li style="list-style-type: disc; background-color: transparent; margin: 5px 0 0 15px; padding: 0;">' +
+            content += '<li style="list-style-type: disc; background-color: transparent; margin: ' + 5 * ratio + 'px 0 0 ' + 15 * ratio + 'px; padding: 0;">' +
                 item + '</li>';
           });
           content += '</ul>';
