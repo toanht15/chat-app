@@ -687,13 +687,13 @@
               </div>
 
               <label class="pointer"">
-              <input type="checkbox" ng-model="hearingItem.settings.isCustomDesign">デザインをカスタマイズする
+              <input type="checkbox" ng-model="hearingItem.settings.calendarCustomDesign">デザインをカスタマイズする
               <span class="questionBalloon"><icon class="questionBtn"
                                                   data-tooltip="カレンダーのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
               </label>
 
               <div class="calendar-design-custom"
-                   ng-if="hearingItem.settings.isCustomDesign" style="margin-left: 20px">
+                   ng-if="hearingItem.settings.calendarCustomDesign" style="margin-left: 20px">
                 <span class="calendar-custom-items">
                   <label>ヘッダー背景色</label>
                   <input type="text" id="action{{setActionId}}_option{{listId}}_headerBackgroundColor"
