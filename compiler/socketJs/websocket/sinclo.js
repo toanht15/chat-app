@@ -5413,6 +5413,15 @@
         return html;
       },
       createCalendarStyle: function(settings, index) {
+        var ratio = 1;
+        if (check.smartphone()) {
+          if (common.isPortrait()) {
+            widgetWidth = $(window).width();
+            ratio = widgetWidth * (1 / 285);
+          } else {
+            ratio = 2.5;
+          }
+        }
         if (settings.calendarCustomDesign) {
           var borderColor = settings.customDesign.borderColor;
           var headerBackgroundColor = settings.customDesign.headerBackgroundColor;
@@ -5426,7 +5435,7 @@
         var style = '<style>';
         var target = '#sincloBox ul#chatTalk li.sinclo_re #sinclo-calendar' +
             index;
-        style += target + ' .flatpickr-calendar { border: 2px solid ' +
+        style += target + ' .flatpickr-calendar { border: ' + 2 * ratio + 'px solid ' +
             borderColor + '}';
         style += target +
             ' .flatpickr-calendar .flatpickr-months { background: ' +
@@ -5452,14 +5461,14 @@
             sinclo.chatApi.getContrastColor(headerBackgroundColor) +
             ' !important;}';
         style += target +
-            ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { border: 1px solid ' +
+            ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { border: ' + 1 * ratio + 'px solid ' +
             headerBackgroundColor +
-            '; outline: 1px solid ' +
+            '; outline: ' + 1 * ratio + 'px solid ' +
             headerWeekdayBackgroundColor + ';}';
         style += target +
-            ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid ' +
+            ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: ' + 1 * ratio + 'px solid ' +
             headerWeekdayBackgroundColor +
-            '; border-right: 1px solid ' +
+            '; border-right: ' + 1 * ratio + 'px solid ' +
             headerWeekdayBackgroundColor + ';}';
         style += target +
             ' .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none }';
@@ -5730,9 +5739,15 @@
           style += '#sincloBox ul#chatTalk #' + name +
               ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
         } else {
-          style += '#sincloBox ul#chatTalk #' + name +
-              ' sinclo-radio {padding: 8px;}';
-          if (!check.smartphone()) {
+          if (check.smartphone()) {
+            widgetWidth = $(window).width();
+            ratio       = widgetWidth * (1 / 285);
+
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio {padding: ' + 8 * ratio + 'px;}';
+          } else {
+            style += '#sincloBox ul#chatTalk #' + name +
+                ' sinclo-radio {padding: 8px;}';
             style += '#sincloBox ul#chatTalk #' + name +
                 ' sinclo-radio [type="radio"] + label {display: block !important;}';
             style += '#sincloBox ul#chatTalk #' + name +
