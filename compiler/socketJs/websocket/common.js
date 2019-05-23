@@ -2044,10 +2044,10 @@ var socket, // socket.io
 
 
           html += ' #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + (12 * ratio) + 'px;}';
-          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (12 * ratio) + 'px; height: ' + (12 * ratio) + 'px;}';
+          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (13 * ratio) + 'px; height: ' + (13 * ratio) + 'px;}';
           html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' +
-              (chatPosition.se.textSize - 10) * ratio + 'px;top: ' +
-              (chatPosition.se.textSize - 12.5) * ratio +
+              3 * ratio + 'px;top: ' +
+              1 * ratio +
               'px;width: ' + (3 * ratio) + 'px;height: ' + (5 * ratio) + 'px;border-width: 0 ' + (2 * ratio) + 'px ' + (2 * ratio) + 'px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
           html += '#sincloBox ul#chatTalk li .sinclo-checkbox.labelStyle { padding-left: ' + 20 * ratio + 'px}';
           html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle .checkmark {top: ' + 9 * ratio + 'px;left: ' + 8 * ratio + 'px; }';
@@ -5616,6 +5616,8 @@ var socket, // socket.io
       var loadDotSize = fontSize * 0.8;
       var heightWeight = widget.widgetSizeType - 3;
       var html = '';
+      var widgetWidth = $(window).width();
+      ratio       = check.smartphone() ? widgetWidth * (1 / 285) : 1;
       html += '<div class=\'botNowDiv\'>';
       //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
       if (!check.smartphone() && widget.widgetSizeType === 1 &&
@@ -5647,8 +5649,8 @@ var socket, // socket.io
       var css = '';
       //ドットのサイズは共通
       css += '#sincloBox ul#chatTalk div[class^=\'reload\']{';
-      css += '  min-width:' + loadDotSize + 'px;width:' + loadDotSize +
-          'px;min-height:' + loadDotSize + 'px;height:' + loadDotSize +
+      css += '  min-width:' + loadDotSize * ratio + 'px;width:' + loadDotSize * ratio +
+          'px;min-height:' + loadDotSize * ratio + 'px;height:' + loadDotSize * ratio +
           'px;border-radius:100%;';
       css += '}';
       //吹き出しがある場合はテキストカラーを採用
@@ -5702,9 +5704,9 @@ var socket, // socket.io
       //吹き出しの大きさをウィジェットタイプで変える
       //基準(共通)の設定
       css += '#sincloBox ul#chatTalk li[class*=\'botNowTyping\']{';
-      css += '  display:inline-flex;justify-content:space-around;align-items:center;border-radius:12px!important;';
-      css += '  width:' + waitWidth + 'px;padding:0 ' + waitPadding +
-          'px;margin-left: 10px;';
+      css += '  display:inline-flex;justify-content:space-around;align-items:center;border-radius:' + 12 * ratio +'px!important;';
+      css += '  width:' + waitWidth * ratio + 'px;padding:0 ' + waitPadding * ratio +
+          'px;margin-left: ' + 10 * ratio + 'px;';
       if (window.sincloInfo.widget.isSendMessagePositionLeft) {
         css += '  background-color:' + widget.seBackgroundColor + ';';
       } else {
@@ -5713,21 +5715,21 @@ var socket, // socket.io
       css += '}';
       //小(余白あり)の場合
       css += '#sincloBox ul#chatTalk li.botNowTypingSmall{';
-      css += '  height:' + (waitHeight - 8) + 'px;';
+      css += '  height:' + (waitHeight - 8) * ratio + 'px;';
       css += '}';
       //中の場合
       css += '#sincloBox ul#chatTalk li.botNowTypingMedium{';
-      css += '  height:' + (waitHeight - 8) + 'px;';
+      css += '  height:' + (waitHeight - 8) * ratio + 'px;';
       css += '}';
       //大の場合
       css += '#sincloBox ul#chatTalk li.botNowTypingLarge{';
-      css += '  height:' + waitHeight + 'px;';
+      css += '  height:' + waitHeight * ratio + 'px;';
       css += '}';
       //小(余白なし)の場合は、色と大きさが変化する
       css += '#sincloBox ul#chatTalk li.botDotOnlyTyping{';
       css += '  display:flex;justify-content:space-around;align-items:center;border-radius:12px!important;';
-      css += '  width:' + waitWidth + 'px;height:' + (waitHeight - 21) +
-          'px;;padding:0 ' + waitPadding + 'px;margin-left: 10px;';
+      css += '  width:' + waitWidth * ratio + 'px;height:' + (waitHeight - 21) * ratio +
+          'px;;padding:0 ' + waitPadding * ratio + 'px;margin-left: ' + 10 * ratio + 'px;';
       css += '  background-color:' + widget.chatTalkBackgroundColor + ';';
       css += '}';
       //共通アニメーションの設定
