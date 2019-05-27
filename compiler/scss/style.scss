@@ -6521,6 +6521,29 @@ ul.naviBtn {
                     margin-left: 20px;
                   }
                 }
+
+                .setCompanyInformation {
+                  .company-info-input {
+                    width: 480px;
+                    margin-left: 20px;
+                  }
+
+                  .match-condition {
+                    margin-left: 20px;
+                  }
+
+                  .btnBlock {
+                    display: inline-flex;
+                    padding: 0;
+                    border-top: none;
+                    margin-left: 20px;
+                  }
+
+                  .infoList {
+                    padding: 0;
+                    width: 102px;
+                  }
+                }
               }
 
               .pb13 {
@@ -6584,7 +6607,7 @@ ul.naviBtn {
               display: inline-block;
 
               ul {
-                height: 397px;
+                height: 469px;
                 border: 1px solid #969696;
                 overflow-x: hidden;
                 overflow-y: auto;
