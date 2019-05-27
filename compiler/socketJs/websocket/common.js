@@ -163,7 +163,7 @@ var socket, // socket.io
               check.isset(window.sincloInfo.custom.widget.hideFotter) &&
               window.sincloInfo.custom.widget.hideFotter) ?
               '' :
-              '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
+              '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
       // フルプランのPCの場合
       if (window.sincloInfo.contract.chat &&
           (window.sincloInfo.contract.synclo ||
@@ -6395,7 +6395,7 @@ var socket, // socket.io
       css += '        line-height: initial;';
       css += '        word-break: break-word;';
       css += '        word-wrap: break-word;';
-      css += '        width: 300px;';
+      css += '        width: 17em;';
       css += '        margin: 0.4em 0;';
       css += '    }';
       css += '    sinclo-div {';
