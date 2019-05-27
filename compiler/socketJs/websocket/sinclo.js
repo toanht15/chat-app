@@ -6266,7 +6266,7 @@
             // portrait
             widgetWidth = $(window).width();
             ratio = widgetWidth * (1 / 285);
-            var right = arrowPosition.right > 0 ? (arrowPosition.right * 2) * ratio : (arrowPosition.right / 1.6) * ratio;
+            var right = arrowPosition.right > 0 ? (arrowPosition.right * 2) * ratio : (arrowPosition.right / 1.72) * ratio;
           } else {
             ratio = 2.5;
             var right = arrowPosition.right > 0 ? (arrowPosition.right * 2) * ratio : (arrowPosition.right / 2) * ratio;

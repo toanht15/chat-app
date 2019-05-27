@@ -5614,7 +5614,7 @@ var socket, // socket.io
       var heightWeight = widget.widgetSizeType - 3;
       var html = '';
       var widgetWidth = $(window).width();
-      ratio       = check.smartphone() ? widgetWidth * (1 / 285) : 1;
+      var ratio       = check.smartphone() ? widgetWidth * (1 / 285) : 1;
       html += '<div class=\'botNowDiv\'>';
       //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
       if (!check.smartphone() && widget.widgetSizeType === 1 &&
