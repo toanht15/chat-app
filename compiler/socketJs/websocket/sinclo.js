@@ -766,6 +766,9 @@
           contentType: 'application/JSON',
           data: JSON.stringify({
             confirm: false,
+            status: browserInfo.getActiveWindow(),
+            title: common.title(),
+            url: f_url(browserInfo.href),
             widget: window.sincloInfo.widgetDisplay,
             prevList: userInfo.prev,
             userAgent: window.navigator.userAgent,
