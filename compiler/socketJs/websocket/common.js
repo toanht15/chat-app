@@ -3940,12 +3940,12 @@ var socket, // socket.io
       html += '      <sinclo-div class="flexBoxRow" id = "flexBoxHeight">';
       html += '        <textarea name="sincloChat" id="sincloChatMessage" maxlength="1000" placeholder=" ' +
           placeholder + ' "></textarea>';
-      html += '        <a id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
+      html += '        <a href="javascript:void(0)" id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       html += '      </sinclo-div>';
       html += '      <sinclo-div class="flexBoxRow sinclo-hide" id = "miniFlexBoxHeight">';
       html += '        <input type="text" name="miniSincloChat" id="miniSincloChatMessage" maxlength="1000" placeholder=" ' +
           placeholder + ' "></input>';
-      html += '        <a id="miniSincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
+      html += '        <a href="javascript:void(0)" id="miniSincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       html += '      </sinclo-div>';
       html += '    </sinclo-div>';
       if (!check.smartphone() && (window.sincloInfo.contract.synclo ||
