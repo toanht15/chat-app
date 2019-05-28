@@ -2218,14 +2218,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           for(var key in settings){
             var target = "", opt = settings[key];
             // タイトル
-            if (Number(opt.type) === Number(<?=C_NOTIFICATION_TYPE_TITLE?>)) {
+            if (m.title && Number(opt.type) === Number(<?=C_NOTIFICATION_TYPE_TITLE?>)) {
               target = m.title;
             }
             // URL
-            else if (Number(opt.type) === Number(<?=C_NOTIFICATION_TYPE_URL?>)) {
+            else if (m.url && Number(opt.type) === Number(<?=C_NOTIFICATION_TYPE_URL?>)) {
               target = m.url;
             }
-            if (target.indexOf(opt.keyword) >= 0) {
+            if (target !== '' && target.indexOf(opt.keyword) >= 0) {
               options.body = opt.name;
               options.icon = "/img/<?=C_PATH_NOTIFICATION_IMG_DIR?>"+opt.image;
             }
