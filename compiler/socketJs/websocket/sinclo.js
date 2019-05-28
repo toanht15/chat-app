@@ -509,7 +509,6 @@
         userInfo.strageReset();
         userInfo.setReferrer();
         userInfo.gFrame = false;
-        common.widgetHandler.resetMessageAreaState();
       }
       userInfo.init();
       var emitData = {
