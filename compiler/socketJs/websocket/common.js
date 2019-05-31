@@ -2472,19 +2472,16 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: 12px 12px 12px 56px;}';
           html += '#sincloBox ul#chatTalk li span.ok-button {width: 125px; height: 40px; line-height: 40px; margin-top: 15px; border-radius: 20px;}';
 
+          var cRatio = 2.5;
           html += '#sincloBox ul#chatTalk li.carousel_msg {' +
-              'padding: 40px 160px;' +
+              'padding: ' + 10 * cRatio + 'px ' + 40 * cRatio + 'px;' +
               '}' + '#sincloBox ul#chatTalk li.insideArrow { ' +
-              'padding: 40px 60px; ' +
+              'padding: ' + 10 * cRatio + 'px ' + 15 * cRatio + 'px; ' +
               '}' + '#sincloBox ul#chatTalk li.outsideArrow { ' +
-              'padding: 40px 160px; ' +
+              'padding: ' + 10 * cRatio + 'px ' + 40 * cRatio + 'px; ' +
               '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
               'margin-left: 0; ' +
-              '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
-              'margin-left: -100px; ' +
-              'margin-right: -100px; ' +
-              '}';
-
+              '}' ;
 
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
@@ -6272,7 +6269,11 @@ var socket, // socket.io
         if (userInfo.prev.length > 0) {
           browserInfo.referrer = userInfo.prev[userInfo.prev.length - 1].url;
         }
-        userInfo.prev.push({url: location.href, title: common.title()});
+        userInfo.prev.push({
+          url: location.href,
+          title: common.title(),
+          accessTime: sincloInfo.accessTime
+        });
         storage.s.set(code, JSON.stringify(userInfo.prev));
       }
     },
@@ -7316,7 +7317,8 @@ var socket, // socket.io
     socket.on('connect', function() {
       // ウィジェットがある状態での再接続があった場合
       var sincloBox = document.getElementById('sincloBox');
-      if (sincloBox && userInfo.accessType === Number(cnst.access_type.guest)) {
+      if (sincloBox && userInfo.accessType === Number(cnst.access_type.guest) &&
+          window.sincloInfo.contract.enableRealtimeMonitor) {
         sinclo.trigger.flg = true;
         var emitData = userInfo.getSendList();
         emitData.widget = window.sincloInfo.widgetDisplay;
@@ -7345,12 +7347,16 @@ var socket, // socket.io
         clearInterval(tabStateTimer);
       }
       tabStateTimer = setInterval(function() {
-        var newState = browserInfo.getActiveWindow();
-        if (document.getElementById('sincloBox') !== null && tabState !==
-            newState) {
-          tabState = newState;
-          emit('sendTabInfo',
-              {status: tabState, widget: window.sincloInfo.widgetDisplay});
+        var chatSent = storage.s.get('chatAct');
+        if (window.sincloInfo.contract.enableRealtimeMonitor ||
+            Boolean(chatSent)) {
+          var newState = browserInfo.getActiveWindow();
+          if (document.getElementById('sincloBox') !== null && tabState !==
+              newState) {
+            tabState = newState;
+            emit('sendTabInfo',
+                {status: tabState, widget: window.sincloInfo.widgetDisplay});
+          }
         }
       }, 700);
     }); // socket-on: connect
@@ -7364,7 +7370,7 @@ var socket, // socket.io
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('retConnectedForSync', function(d) {
       sinclo.retConnectedForSync(d);
-    }); // socket-on: retConnectedForSync
+    }); // socket-on : retConnectedForSync
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('accessInfo', function(d) {
@@ -7627,21 +7633,37 @@ var socket, // socket.io
     cache: false,
     data: {
       'sitekey': window.sincloInfo.site.key,
-      accessType: userInfo.accessType
+      accessType: userInfo.accessType,
+      s: (check.isset(userInfo.get(cnst.info_type.tab))) ?
+          userInfo.get(cnst.info_type.tab) :
+          ''
     },
     dataType: 'json',
     success: function(json) {
       if (String(json.status) === 'true') {
-        if (check.smartphone() && json.widget.hasOwnProperty('spShowFlg') &&
-            Number(json.widget.spShowFlg) === 2) {
-          clearTimeout(timer);
-          return false;
+        if (check.isset(json.nm) && json.nm) {
+          console.log('<><><><><><><><>< NOT MODIFIED ><><><><><><><><><>');
+          var settings = JSON.parse(storage.l.get('scl_settings'));
+          window.sincloInfo.widget = settings.widget;
+          window.sincloInfo.messages = settings.messages;
+          window.sincloInfo.contract = settings.contract;
+          window.sincloInfo.chat = settings.chat;
+          window.sincloInfo.customVariable = settings.customVariable;
+          window.sincloInfo.accessTime = json.accessTime;
+        } else {
+          if (check.smartphone() && json.widget.hasOwnProperty('spShowFlg') &&
+              Number(json.widget.spShowFlg) === 2) {
+            clearTimeout(timer);
+            return false;
+          }
+          window.sincloInfo.widget = json.widget;
+          window.sincloInfo.messages = json.messages;
+          window.sincloInfo.contract = json.contract;
+          window.sincloInfo.chat = json.chat;
+          window.sincloInfo.customVariable = json.customVariable;
+          storage.l.set('scl_settings', JSON.stringify(json));
+          window.sincloInfo.accessTime = json.accessTime;
         }
-        window.sincloInfo.widget = json.widget;
-        window.sincloInfo.messages = json.messages;
-        window.sincloInfo.contract = json.contract;
-        window.sincloInfo.chat = json.chat;
-        window.sincloInfo.customVariable = json.customVariable;
       } else {
         clearTimeout(timer);
       }
