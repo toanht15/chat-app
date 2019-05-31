@@ -2807,13 +2807,9 @@
       };
 
       this.resetListView = function(type, setActionId) {
-        console.log($scope.setActionList[setActionId]);
-        // if (Number(type) === 2) {
-          $scope.setActionList[setActionId].leadInformations = [{leadLabelName: '', leadVariableName: ''}];
-          $scope.setActionList[setActionId].tLeadListSettingId = null;
-          $scope.setActionList[setActionId].leadTitleLabel = '';
-        // }
-        console.log($scope.setActionList[setActionId]);
+        $scope.setActionList[setActionId].leadInformations   = [{leadLabelName: '', leadVariableName: ''}];
+        $scope.setActionList[setActionId].tLeadListSettingId = null;
+        $scope.setActionList[setActionId].leadTitleLabel     = '';
       };
 
       this.searchList = function(targetId) {
