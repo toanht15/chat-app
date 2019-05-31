@@ -374,4 +374,49 @@ module.exports = class HistoryManager extends DatabaseManager {
           }
         });
   }
+
+  incrementWidgetCount(companiesId, datetime) {
+    let self = this;
+    let targetDate = datetime.replace(/\//g, '-');
+    self.dbPool.query('SELECT * from t_history_widget_counts\n' +
+        'WHERE\n' +
+        '  m_companies_id = ?\n' +
+        'AND\n' +
+        '  year = DATE_FORMAT(?, \'%Y\')\n' +
+        'AND\n' +
+        '  month = DATE_FORMAT(?, \'%m\')\n' +
+        'AND\n' +
+        '  day = DATE_FORMAT(?, \'%d\')\n' +
+        'AND\n' +
+        '  hour = DATE_FORMAT(?, \'%H\')',
+        [companiesId, targetDate, targetDate, targetDate, targetDate],
+        function(err, row) {
+          if (row.length !== 0) {
+            self.dbPool.query('UPDATE  t_history_widget_counts\n' +
+                'SET\n' +
+                '  widget_count = widget_count+1\n' +
+                'WHERE\n' +
+                '  m_companies_id = ?\n' +
+                'AND\n' +
+                '  year = DATE_FORMAT(?, \'%Y\')\n' +
+                'AND\n' +
+                '  month = DATE_FORMAT(?, \'%m\')\n' +
+                'AND\n' +
+                '  day = DATE_FORMAT(?, \'%d\')\n' +
+                'AND\n' +
+                '  hour = DATE_FORMAT(?, \'%H\')',
+                [companiesId, targetDate, targetDate, targetDate, targetDate],
+                function(err, result) {
+                });
+          } else {
+            self.dbPool.query(
+                'INSERT INTO t_history_widget_counts(m_companies_id,year,month,day,hour,widget_count)\n' +
+                'VALUES(?,DATE_FORMAT(?, \'%Y\'),DATE_FORMAT(?, \'%m\'),DATE_FORMAT(?, \'%d\'),DATE_FORMAT(?, \'%H\'),1)',
+                [companiesId, targetDate, targetDate, targetDate, targetDate],
+                function(err, result) {
+                  debugger;
+                });
+          }
+        });
+  }
 };
