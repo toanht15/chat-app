@@ -979,8 +979,9 @@ sinclo@medialink-ml.co.jp
    * @param Object $saveData アクション詳細
    * @return Object          t_chatbot_scenarioに保存するアクション詳細
    * */
-  private function _entryProcessForLeadRegister($saveData){
-    if (empty($saveData->tLeadListSettingId)) {
+  private function _entryProcessForLeadRegister($saveData)
+  {
+    if (empty($saveData->tLeadListSettingId) || $saveData->makeLeadTypeList == 1) {
       $this->TLeadListSetting->create();
     } else {
       $this->TLeadListSetting->read(null, $saveData->tLeadListSettingId);
@@ -988,24 +989,21 @@ sinclo@medialink-ml.co.jp
     $saveData->leadInformations = $this->_makeLeadDataProcess($saveData);
 
     $errors = $this->TLeadListSetting->validationErrors;
-    if(empty($errors)) {
+    if (empty($errors)) {
       $this->TLeadListSetting->save();
       //IDが無い場合
-      if(empty($saveData->tLeadListSettingId)) {
+      if (empty($saveData->tLeadListSettingId) || $saveData->makeLeadTypeList == 1) {
         $saveData->tLeadListSettingId = $this->TLeadListSetting->getLastInsertId();
       }
     } else {
       $exception = new ChatbotScenarioException('バリデーションエラー');
       $exception->setErrors($errors);
-      $exception->setLastPage($nextPage);
       throw $exception;
     }
-
     // リード登録設定DBに保存した情報をオブジェクトから削除する
     unset($saveData->leadTitleLabel);
     unset($saveData->makeLeadTypeList);
     return $saveData;
-
   }
 
   /**
