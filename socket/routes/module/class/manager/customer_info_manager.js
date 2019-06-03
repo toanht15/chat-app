@@ -18,7 +18,8 @@ module.exports = class CustomerInfoManager extends DatabaseManager {
             if (err !== null && err !== '') reject(null); // DB接続断対応
             if (CommonUtil.isset(row) && CommonUtil.isset(row[0]) &&
                 CommonUtil.isset(row[0].informations)) {
-              resolve(JSON.parse(row[0].informations));
+              let obj = JSON.parse(row[0].informations);
+              resolve(obj);
             } else {
               resolve(null);
             }
