@@ -62,6 +62,7 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function forChat() {
+    ini_set("max_execution_time", 1200);
     if($this->request->is('post')) {
       if ($this->THistory->validates() ) {
         $date = $this->request->data['dateFormat'];
@@ -1504,6 +1505,7 @@ class StatisticsController extends AppController {
 
   //時別の場合
   private function calculateHourlyData($data){
+    ini_set("max_execution_time", 1200);
     $startDate = strtotime($data); // 2016-11-02 00:00:00
     $endDate = strtotime("+23 hour",$startDate); // 2016-11-02 23:00:00
     $correctStartDate = date("Y-m-d H:00:00",$startDate);

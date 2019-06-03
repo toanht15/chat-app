@@ -1386,6 +1386,7 @@ class HistoriesController extends AppController
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
     }
+
     $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
       'fields' => [
         't_histories_id',
@@ -2199,6 +2200,7 @@ class HistoriesController extends AppController
         }
       }
     }
+    
     return $stayList;
   }
 
