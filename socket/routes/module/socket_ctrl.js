@@ -3763,9 +3763,13 @@ io.sockets.on('connection', function(socket) {
               /* チャット対応上限の処理（対応人数加算の処理） */
 
               // DBに書き込み
-              var visitorId = SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId ?
-                  SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId :
-                  '';
+              var visitorId = '';
+              if (CommonUtil.isset(
+                  SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId])) {
+                visitorId = SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId ?
+                    SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId :
+                    '';
+              }
 
               //応対数検索、登録
               getConversationCountUser(visitorId, function(results) {
@@ -4291,8 +4295,10 @@ io.sockets.on('connection', function(socket) {
     //応対数検索、登録
     if (!list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.enableRealtimeMonitor)
+    (CommonUtil.isset(
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
         && !CommonUtil.isset(
-            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId))) {
       let historyManager = new HistoryManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
