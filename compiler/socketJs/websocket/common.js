@@ -163,7 +163,7 @@ var socket, // socket.io
               check.isset(window.sincloInfo.custom.widget.hideFotter) &&
               window.sincloInfo.custom.widget.hideFotter) ?
               '' :
-              '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
+              '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
       // フルプランのPCの場合
       if (window.sincloInfo.contract.chat &&
           (window.sincloInfo.contract.synclo ||
@@ -1223,6 +1223,13 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper img { max-width: 40px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize i { height: 40px; width: 40px; font-size: 26px }';
 
+      // pulldown
+      html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: 10px; height: 30px; }';
+      // button
+      html += '#sincloBox ul#chatTalk li button { cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px; }';
+      // html += '#sincloBox ul#chatTalk li button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+      // html += '#sincloBox ul#chatTalk li button::last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+
       //TODO カスタムサイズ時は値を取得してアイコンのサイズを変更する必要があるのでは？
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.customSize { max-width: 42px; min-width: 42px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.customSize .img_wrapper { width: 40px; height: 40px; }';
@@ -1433,8 +1440,20 @@ var socket, // socket.io
             colorList['widgetInsideBorderColor'] + '; background-color: ' +
             colorList['chatMessageBackgroundColor'] + ';}';
 
-        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + Number(chatPosition.re.textSize) + 'px;}';
-        html += '     #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (Number(chatPosition.re.textSize) + 2) + 'px; height: ' + (Number(chatPosition.re.textSize) + 2) + 'px;}';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + Number(chatPosition.re.textSize) + 'px;}';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (Number(chatPosition.re.textSize) + 2) + 'px; height: ' + (Number(chatPosition.re.textSize) + 2) + 'px;}';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' +
+            (Number(chatPosition.re.textSize) - 9) + 'px;top: ' +
+            (Number(chatPosition.re.textSize) - 12) +
+            'px;width: 3px;height: 6px; border-width: 0 2px 2px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox.labelStyle { background-color: transparent; }';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle .checkmark {top: 9px;left: 8px; }';
+        html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: 8px 8px 8px 28px;}';
+
+        html += '#sincloBox ul#chatTalk li span.ok-button {width: 100px; height: 30px; line-height: 30px; cursor: pointer; margin: auto; margin-top: 10px; display: block; text-align:center; justify-content: center; align-items: center; border-radius: 12px; background-color: ' +
+            colorList['chatSendBtnBackgroundColor'] + '; color: ' +
+            colorList['chatSendBtnTextColor'] + ';}';
+
         /* ヒアリング */
         html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
         html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
@@ -1733,35 +1752,7 @@ var socket, // socket.io
         } else {
           widgetWidth = $(window).width() - 20;
         }
-
-        var viewportMetaTag = document.querySelector('meta[name="viewport"]');
-        var viewportMetaTagIsUsed = viewportMetaTag && viewportMetaTag.hasAttribute('content') ? true : false;
-        if (viewportMetaTagIsUsed) {
-          ratio = widgetWidth * (1 / 285);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + ratio);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-          console.log('MMMMMMMMMMMMMMMMMMM   ' + widgetWidth);
-        } else {
-          ratio = widgetWidth * (1 / 775);
-          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + ratio);
-          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
-          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
-          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
-          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
-          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
-          console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVV' + widgetWidth);
-        }
-
+        ratio = widgetWidth * (1 / 285);
 
         html += '#sincloBox { -webkit-transition: 100ms linear 0ms;  transition: opacity 100ms linear 0ms; }';
         html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { position: relative }';
@@ -1985,6 +1976,41 @@ var socket, // socket.io
                 'px !important; border-radius: ' + (12 * ratio) +
                 'px !important;}';
           }
+
+          html += '#sincloBox ul#chatTalk div.grid_for_icon li.sinclo_re { -ms-grid-column-align: start; -ms-grid-column: ' + 2 * ratio + '; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon li.noneBalloon { -ms-grid-column-align: start; -ms-grid-column: ' + 2 * ratio + '; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.smallSize li.sinclo_re { margin-left: ' + 1 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.smallSize li.noneBalloon { margin-left: ' + 1 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.middleSize li.sinclo_re { margin-left: ' + 3 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.middleSize li.noneBalloon { margin-left: ' + 3 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.largeSize li.sinclo_re { margin-left: ' + 5 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.largeSize li.noneBalloon { margin-left: ' + 5 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.customSize li.sinclo_re { margin-left: ' + 5 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon.customSize li.noneBalloon { margin-left: ' + 5 * ratio + 'px; }';
+
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-comment-alt-lines { padding-top: ' + 4 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-comments-alt { padding-top: ' + 2 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-phone { padding-top: ' + 2 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.icon_border { border:' + 1 * ratio + 'px solid;}';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize { max-width: ' + 30 * ratio + 'px; min-width: ' + 30 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize .img_wrapper { width: ' + 30 * ratio + 'px; height:' + 30 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize .img_wrapper img { max-width: ' + 30 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize i { height: ' + 30 * ratio + 'px; width: ' + 30 * ratio + 'px; font-size: ' + 20 * ratio + 'px }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize { max-width: ' + 37 * ratio + 'px; min-width: ' + 37 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize .img_wrapper { width: ' + 35 * ratio + 'px; height: ' + 35 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize .img_wrapper img { max-width: ' + 35 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize i { height: ' + 35 * ratio + 'px; width: ' + 35 * ratio + 'px; font-size: ' + 23 * ratio + 'px }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize { max-width: ' + 42 * ratio + 'px; min-width: ' + 42 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper { width: ' + 40 * ratio + 'px; height: ' + 40 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper img { max-width: ' + 40 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize i { height: ' + 40 * ratio + 'px; width: ' + 40 * ratio + 'px; font-size: ' + 26 * ratio + 'px }';
+          // pulldown
+          html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: ' + 10 * ratio + 'px; height: ' + 30 * ratio + 'px; font-size: ' + 12 * ratio + 'px;}';
+          // button
+          html += '#sincloBox ul#chatTalk li button { cursor: pointer; min-height: ' + 35 * ratio + 'px; margin-bottom: ' + 1 * ratio + 'px; padding: ' + 10 * ratio + 'px ' + 15 * ratio + 'px; }';
+          //calendar
+          html += common.injectMobileCalendarCSS(ratio);
+
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio * { webkit-transform: scale(' +
               (1 * ratio) + '); transform: scale(' + (1 * ratio) +
@@ -2014,11 +2040,39 @@ var socket, // socket.io
               ((19 * ratio) / 2 - (3.5 * ratio)) + 'px; ' +
               ' left: ' + ((11 * ratio) / 4 + (0.1 * ratio)) +
               'px; margin-top: ' + (0 - (11 * ratio) / 4) + 'px; width: ' +
-              (7.5 * ratio) + 'px; height: ' + (7.5 * ratio) + 'px; }';
+              (7 * ratio) + 'px; height: ' + (7 * ratio) + 'px; }';
 
 
           html += ' #sincloBox ul#chatTalk li .sinclo-checkbox { font-size: ' + (12 * ratio) + 'px;}';
-          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (12 * ratio) + 'px; height: ' + (12 * ratio) + 'px;}';
+          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: ' + (13 * ratio) + 'px; height: ' + (13 * ratio) + 'px;}';
+          html += ' #sincloBox ul#chatTalk li .sinclo-checkbox .checkmark:after {content: "";position: absolute;display: none;left: ' +
+              3 * ratio + 'px;top: ' +
+              1 * ratio +
+              'px;width: ' + (3 * ratio) + 'px;height: ' + (5 * ratio) + 'px;border-width: 0 ' + (2 * ratio) + 'px ' + (2 * ratio) + 'px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.labelStyle { padding-left: ' + 20 * ratio + 'px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle .checkmark {top: ' + 9 * ratio + 'px;left: ' + 8 * ratio + 'px; }';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: ' + 8 * ratio + 'px ' + 8 * ratio + 'px ' + 8 * ratio + 'px ' + 28 * ratio + 'px;}';
+          html += '#sincloBox ul#chatTalk li span.ok-button {width: ' + 100 * ratio + 'px; height: ' + 30 * ratio + 'px; line-height: ' + 30 * ratio + 'px; margin-top: ' + 10 * ratio + 'px; border-radius: ' + 12 * ratio + 'px;}';
+
+          html += '#sincloBox ul#chatTalk li .slick-dots li button:before {\n' +
+            '          font-size: ' + 6 * ratio + 'px;\n' +
+            '          line-height: ' + 20 * ratio + 'px;\n' +
+            '          width: ' + 20 * ratio + 'px;\n' +
+            '          height: ' + 20 * ratio + 'px;\n' +
+            '        }';
+
+          html += '#sincloBox ul#chatTalk li.carousel_msg {' +
+          'padding: ' + 10 * ratio + 'px ' + 40 * ratio + 'px;' +
+          '}' + '#sincloBox ul#chatTalk li.insideArrow { ' +
+          'padding: ' + 10 * ratio + 'px ' + 15 * ratio + 'px; ' +
+          '}' + '#sincloBox ul#chatTalk li.outsideArrow { ' +
+          'padding: ' + 10 * ratio + 'px ' + 40 * ratio + 'px; ' +
+          '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
+          'margin-left: 0; ' +
+          '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
+          'margin-left: -25px; ' +
+          'margin-right: -25px; ' +
+          '}';
 
           html += '#sincloBox ul#chatTalk li span.cName { font-size: ' +
               (13 * ratio) + 'px; margin: 0 0 ' + (5 * ratio) + 'px 0; }';
@@ -2361,6 +2415,30 @@ var socket, // socket.io
             html += '#sincloBox ul#chatTalk li.sinclo_re { border: ' +
                 (1 * ratio) + 'px solid ' + chatPosition.re.borderColor + '; }';
           }
+
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-comment-alt-lines { padding-top: 4px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-comments-alt { padding-top: 2px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.fa-phone { padding-top: 2px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv i.icon_border { border:1px solid;}';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize { max-width: 72px; min-width: 72px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize .img_wrapper { width: 70px; height: 70px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize .img_wrapper img { max-width: 70px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.smallSize i { height: 70px; width: 70px; font-size: 40px }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize { max-width: 82px; min-width: 82px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize .img_wrapper { width: 80px; height: 80px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize .img_wrapper img { max-width: 80px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.middleSize i { height: 80px; width: 80px; font-size: 50px }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize { max-width: 92px; min-width: 92px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper { width: 90px; height: 90px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper img { max-width: 90px; }';
+          html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize i { height: 90px; width: 90px; font-size: 55px }';
+          // pulldown
+          html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: 16px; height: 55px; font-size: 35px;}';
+          // button
+          html += '#sincloBox ul#chatTalk li button { cursor: pointer; min-height: 60px; margin-bottom: 4px; padding: 20px 30px; font-size: 1em;}';
+          //calendar
+          html += common.injectMobileCalendarCSS(2.5);
+
           html += '#sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:14px); }';
 
           html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0 0 -1em 0.5em; display: inline-block; } ';
@@ -2368,25 +2446,43 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].labelStyle sinclo-radio { margin: 0 0 0 5px;} ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"], #sincloBox ul#chatTalk li sinclo-radio label { webkit-transform: scale(1.3); transform: scale(1.3); moz-transform: scale(1.3); } ';
-          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1em; font-size: 0.7em; } ';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label {padding: 0 0 0 20px;} ';
-          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 10px; margin-top: -10px; left: -5px; width: 17px; height: 17px; border: 1px solid ' +
+          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 30px; font-size: 30px; } ';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label {padding: 0 0 0 30px;} ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 10px; margin-top: -10px; left: -5px; width: 25px; height: 25px; border: 1px solid ' +
               chatContentTextColor + '; border-radius: 50%; } ';
-          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 10px; left: 0px; margin-top: -5px; width: 11px; height: 11px; background: ' +
+          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 21px; left: 1px; margin-top: -5px; width: 14px; height: 14px; background: ' +
               colorList['mainColor'] + '; border-radius: 50%; } ';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].labelStyle sinclo-radio [type="radio"]:checked + label:after {top: 9px; left: -1px;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].labelStyle sinclo-radio [type="radio"]:checked + label:after {top: 21px; left: 1px;}';
           html += '#sincloBox ul#chatTalk li label, #sincloBox ul#chatTalk li span, #sincloBox ul#chatTalk li a { font-size: 1em; }';
           html += '#sincloBox ul#chatTalk li span.cName { margin: 0 0 0.3em 0 }';
 
           html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio {font-size: 13px;}';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label { font-size: 1.3em; }';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label { padding-left: 25px !important;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"] sinclo-radio [type="radio"] + label { font-size: 30px; }';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label { padding-left: 45px !important;}';
           html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label:before {left: 0;}';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label:after {top: 9px; left: 4px;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-radio-button"].buttonStyle sinclo-radio [type="radio"] + label:after {top: 21px; left: 7px;}';
 
-          html += '#sincloBox ul#chatTalk li .sinclo-checkbox { font-size: 17px;}';
-          html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: 17px; height: 17px;}';
-          html += '#sincloBox ul#chatTalk li [id^="sinclo-checkbox"] span.ok-button {font-size: 17px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox { font-size: 1em;}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark { width: 34px; height: 34px;}';
+          html += '#sincloBox ul#chatTalk li [id^="sinclo-checkbox"] span.ok-button {font-size: 30px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox .checkmark:after {left: 9px;top: 3px;width: 8px; height: 14px; border-width: 0 5px 5px 0;}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.labelStyle { padding-left: 48px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.labelStyle .checkmark { top: 4px}';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle .checkmark {top: 14px;left: 12px; }';
+          html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: 12px 12px 12px 56px;}';
+          html += '#sincloBox ul#chatTalk li span.ok-button {width: 125px; height: 40px; line-height: 40px; margin-top: 15px; border-radius: 20px;}';
+          var cRatio = 2.5;
+          html += '#sincloBox ul#chatTalk li.carousel_msg {' +
+              'padding: ' + 10 * cRatio + 'px ' + 40 * cRatio + 'px;' +
+              '}' + '#sincloBox ul#chatTalk li.insideArrow { ' +
+              'padding: ' + 10 * cRatio + 'px ' + 15 * cRatio + 'px; ' +
+              '}' + '#sincloBox ul#chatTalk li.outsideArrow { ' +
+              'padding: ' + 10 * cRatio + 'px ' + 40 * cRatio + 'px; ' +
+              '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
+              'margin-left: 0; ' +
+              '}' ;
+
+
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
           }
@@ -3481,6 +3577,350 @@ var socket, // socket.io
           '}';
     },
 
+    injectMobileCalendarCSS: function(ratio) {
+      return '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar {\n' +
+          '  font-size: ' + 14 * ratio + 'px;\n' +
+          '  line-height: ' + 24 * ratio + 'px;\n' +
+          '  border-radius: ' + 5 * ratio + 'px;\n' +
+          '  width: ' + 307.875 * ratio + 'px;\n' +
+          '  -webkit-box-shadow: ' + 1 * ratio + 'px 0 0 #e6e6e6, ' + (-1) * ratio + 'px 0 0 #e6e6e6, 0 ' + 1 * ratio + 'px 0 #e6e6e6, 0 ' + (-1) * ratio + 'px 0 #e6e6e6, 0 ' + 3 * ratio + 'px ' + 13 * ratio + 'px rgba(0, 0, 0, 0.08);\n' +
+          '  box-shadow: ' + 1 * ratio + 'px 0 0 #e6e6e6, ' + (-1) * ratio + 'px 0 0 #e6e6e6, 0 ' + 1 * ratio + 'px 0 #e6e6e6, 0 ' + (-1) * ratio + 'px 0 #e6e6e6, 0 ' + 3 * ratio + 'px ' + 13 * ratio + 'px rgba(0, 0, 0, 0.08);\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.open,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.inline {\n' +
+          '  max-height: ' + 640 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.inline {\n' +
+          '  top: ' + 2 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.static {\n' +
+          '  top: calc(100% + ' + 2 * ratio + 'px);\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n+2) .flatpickr-day.inRange:nth-child(7n+1) {\n' +
+          '  -webkit-box-shadow: ' + (-2) * ratio + 'px 0 0 #e6e6e6, ' + 5 * ratio + 'px 0 0 #e6e6e6;\n' +
+          '  box-shadow: ' + (-2) * ratio + 'px 0 0 #e6e6e6, ' + 5 * ratio + 'px 0 0 #e6e6e6;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.showTimeInput.hasTime .flatpickr-time {\n' +
+          '  height: ' + 40 * ratio + 'px;\n' +
+          '  border-top: ' + 1 * ratio + 'px solid #e6e6e6;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar:before,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar:after {\n' +
+          '  left: ' + 22 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.rightMost:before,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.rightMost:after {\n' +
+          '  right: ' + 22 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar:before {\n' +
+          '  border-width: ' + 5 * ratio + 'px;\n' +
+          '  margin: 0 ' + (-5) * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar:after {\n' +
+          '  border-width: ' + 4 * ratio + 'px;\n' +
+          '  margin: 0 ' + (-4) * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-month {\n' +
+          '  height: ' + 28 * ratio + 'px;\n' +
+          '  line-height: 1;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month {\n' +
+          '  top: 0;\n' +
+          '  line-height: ' + 16 * ratio + 'px;\n' +
+          '  height: ' + 28 * ratio + 'px;\n' +
+          '  padding: ' + 10 * ratio + 'px;\n' +
+          '  z-index: 3;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month.flatpickr-prev-month,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month.flatpickr-prev-month {\n' +
+          '  left: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month.flatpickr-next-month,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month.flatpickr-next-month {\n' +
+          '  right: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month svg,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month svg {\n' +
+          '  width: ' + 14 * ratio + 'px;\n' +
+          '  height: ' + 14 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span {\n' +
+          '  right: 0;\n' +
+          '  width: ' + 14 * ratio + 'px;\n' +
+          '  padding: 0 ' + 2 * ratio + 'px 0 ' + 2 * ratio + 'px;\n' +
+          '  border: ' + 1 * ratio + 'px solid rgba(57, 57, 57, 0.15);\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span.arrowUp {\n' +
+          '  top: 0;\n' +
+          '  border-bottom: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span.arrowUp:after {\n' +
+          '  border-left: ' + 4 * ratio + 'px solid transparent;\n' +
+          '  border-right: ' + 4 * ratio + 'px solid transparent;\n' +
+          '  border-bottom: ' + 4 * ratio + 'px solid rgba(57, 57, 57, 0.6);\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span.arrowDown:after {\n' +
+          '  border-left: ' + 4 * ratio + 'px solid transparent;\n' +
+          '  border-right: ' + 4 * ratio + 'px solid transparent;\n' +
+          '  border-top: ' + 4 * ratio + 'px solid rgba(57, 57, 57, 0.6);\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month {\n' +
+          '  font-size: 135%;\n' +
+          '  font-weight: 300;\n' +
+          '  width: 75%;\n' +
+          '  left: 12.5%;\n' +
+          '  padding: ' + 6.16 * ratio + 'px 0 0 0;\n' +
+          '  line-height: 1;\n' +
+          '  height: ' + 28 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month span.cur-month {\n' +
+          '  font-weight: 700;\n' +
+          '  margin-left: ' + 0.5 * ratio + 'ch;\n' +
+          '  padding: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month .numInputWrapper {\n' +
+          '  width: ' + 6 * ratio + 'ch;\n' +
+          '  width: ' + 7 * ratio + 'ch\\0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month input.cur-year {\n' +
+          '  padding: 0 0 0 ' + 0.5 * ratio + 'ch;\n' +
+          '  margin: 0;\n' +
+          '  font-weight: 300;\n' +
+          '  border: 0;\n' +
+          '  border-radius: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month input.cur-year[disabled],\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month input.cur-year[disabled]:hover {\n' +
+          '  font-size: 100%;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekdays {\n' +
+          '  width: 100%;\n' +
+          '  height: ' + 28 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re span.flatpickr-weekday {\n' +
+          '  font-size: 90%;\n' +
+          '  line-height: 1;\n' +
+          '  margin: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .dayContainer,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weeks {\n' +
+          '  padding: ' + 1 * ratio + 'px 0 0 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-days {\n' +
+          '  width: ' + 307.875 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .dayContainer {\n' +
+          '  padding: 0;\n' +
+          '  outline: 0;\n' +
+          '  width: ' + 307.875 * ratio + 'px;\n' +
+          '  min-width: ' + 307.875 * ratio + 'px;\n' +
+          '  max-width: ' + 307.875 * ratio + 'px;\n' +
+          '  -webkit-transform: translate3d(0, 0, 0);\n' +
+          '  transform: translate3d(0, 0, 0);\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .dayContainer + .dayContainer {\n' +
+          '  -webkit-box-shadow: ' + (-1) * ratio + 'px 0 0 #e6e6e6;\n' +
+          '  box-shadow: ' + (-1) * ratio + 'px 0 0 #e6e6e6;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day {\n' +
+          '  border: ' + 1 * ratio + 'px solid transparent;\n' +
+          '  border-radius: ' + 150 * ratio + 'px;\n' +
+          '  font-weight: 400;\n' +
+          '  width: 14.2857143%;\n' +
+          '  -webkit-flex-basis: 14.2857143%;\n' +
+          '  -ms-flex-preferred-size: 14.2857143%;\n' +
+          '  flex-basis: 14.2857143%;\n' +
+          '  max-width: ' + 39 * ratio + 'px;\n' +
+          '  height: ' + 39 * ratio + 'px;\n' +
+          '  line-height: ' + 39 * ratio + 'px;\n' +
+          '  margin: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.inRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.prevMonthDay.inRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.nextMonthDay.inRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.today.inRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.prevMonthDay.today.inRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.nextMonthDay.today.inRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day:hover,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.prevMonthDay:hover,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.nextMonthDay:hover,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day:focus,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.prevMonthDay:focus,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.nextMonthDay:focus {\n' +
+          '  outline: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.startRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.startRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.startRange {\n' +
+          '  border-radius: ' + 50 * ratio + 'px 0 0 ' + 50 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.endRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.endRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.endRange {\n' +
+          '  border-radius: 0 ' + 50 * ratio + 'px ' + 50 * ratio + 'px 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n+1)),\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n+1)),\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.startRange + .endRange:not(:nth-child(7n+1)) {\n' +
+          '  -webkit-box-shadow: ' + (-10) * ratio + 'px 0 0 #569ff7;\n' +
+          '  box-shadow: ' + (-10) * ratio + 'px 0 0 #569ff7;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.startRange.endRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.startRange.endRange,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.startRange.endRange {\n' +
+          '  border-radius: ' + 50 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.inRange {\n' +
+          '  border-radius: 0;\n' +
+          '  -webkit-box-shadow: ' + (-5) * ratio + 'px 0 0 #e6e6e6, ' + 5 * ratio + 'px 0 0 #e6e6e6;\n' +
+          '  box-shadow: ' + (-5) * ratio + 'px 0 0 #e6e6e6, ' + 5 * ratio + 'px 0 0 #e6e6e6;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.week.selected {\n' +
+          '  border-radius: 0;\n' +
+          '  -webkit-box-shadow: ' + (-5) * ratio + 'px 0 0 #569ff7, ' + (-5) * ratio + 'px 0 0 #569ff7;\n' +
+          '  box-shadow: ' + (-5) * ratio + 'px 0 0 #569ff7, ' + 5 * ratio + 'px 0 0 #569ff7;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .rangeMode .flatpickr-day {\n' +
+          '  margin-top: ' + 1 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekwrapper .flatpickr-weeks {\n' +
+          '  padding: 0 ' + 12 * ratio + 'px;\n' +
+          '  -webkit-box-shadow: ' + 1 * ratio + 'px 0 0 #e6e6e6;\n' +
+          '  box-shadow: ' + 1 * ratio + 'px 0 0 #e6e6e6;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekwrapper .flatpickr-weekday {\n' +
+          '  width: 100%;\n' +
+          '  line-height: ' + 28 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekwrapper span.flatpickr-day,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekwrapper span.flatpickr-day:hover {\n' +
+          '  width: 100%;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-rContainer {\n' +
+          '  padding: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time {\n' +
+          '  outline: 0;\n' +
+          '  height: 0;\n' +
+          '  line-height: ' + 40 * ratio + 'px;\n' +
+          '  max-height: ' + 40 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .numInputWrapper {\n' +
+          '  width: 40%;\n' +
+          '  height: ' + 40 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time.hasSeconds .numInputWrapper {\n' +
+          '  width: 26%;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time.time24hr .numInputWrapper {\n' +
+          '  width: 49%;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input {\n' +
+          '  border: 0;\n' +
+          '  border-radius: 0;\n' +
+          '  margin: 0;\n' +
+          '  padding: 0;\n' +
+          '  font-size: ' + 14 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input.flatpickr-minute,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input.flatpickr-second {\n' +
+          '  font-weight: 400;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input:focus {\n' +
+          '  outline: 0;\n' +
+          '  border: 0;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .flatpickr-time-separator,\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .flatpickr-am-pm {\n' +
+          '  width: 2%;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .flatpickr-am-pm {\n' +
+          '  outline: 0;\n' +
+          '  width: 18%;\n' +
+          '  font-weight: 400;\n' +
+          '}\n' +
+          '@-webkit-keyframes fpFadeInDown {\n' +
+          '  from {\n' +
+          '    opacity: 0;\n' +
+          '    -webkit-transform: translate3d(0, ' + (-20) * ratio + 'px, 0);\n' +
+          '    transform: translate3d(0, ' + (-20) * ratio + 'px, 0);\n' +
+          '  }\n' +
+          '  to {\n' +
+          '    opacity: 1;\n' +
+          '    -webkit-transform: translate3d(0, 0, 0);\n' +
+          '    transform: translate3d(0, 0, 0);\n' +
+          '  }\n' +
+          '}\n' +
+          '@keyframes fpFadeInDown {\n' +
+          '  from {\n' +
+          '    opacity: 0;\n' +
+          '    -webkit-transform: translate3d(0, ' + (-20) * ratio + 'px, 0);\n' +
+          '    transform: translate3d(0, ' + (-20) * ratio + 'px, 0);\n' +
+          '  }\n' +
+          '  to {\n' +
+          '    opacity: 1;\n' +
+          '    -webkit-transform: translate3d(0, 0, 0);\n' +
+          '    transform: translate3d(0, 0, 0);\n' +
+          '  }\n' +
+          '}' + '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar {\n' +
+          '  width: ' + 210 * ratio + 'px;\n' +
+          '  height: ' + 252 * ratio + 'px;\n' +
+          '}\n' +
+          '\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-current-month {\n' +
+          '  font-size: ' + 14 * ratio + 'px;\n' +
+          '  padding-top: ' + 8 * ratio + 'px;\n' +
+          '}\n' +
+          '\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdays {\n' +
+          '  width: ' + 206 * ratio + 'px;\n' +
+          '  height: ' + 24 * ratio + 'px;\n' +
+          '}\n' +
+          '\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdaycontainer {\n' +
+          '  padding-top: ' + 4 * ratio + 'px;\n' +
+          '  padding-right: ' + 2 * ratio + 'px;\n' +
+          '  height: ' + 21 * ratio + 'px;\n' +
+          '}\n' +
+          '\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday {\n' +
+          '  font-size: ' + 11 * ratio + 'px;\n' +
+          '  line-height: ' + 10 * ratio + 'px;\n' +
+          '}\n' +
+          '\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer {\n' +
+          '  max-width: ' + 206 * ratio + 'px;\n' +
+          '  min-width: ' + 200 * ratio + 'px;\n' +
+          '}\n' +
+          '\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-months {\n' +
+          '  height: ' + 32 * ratio + 'px;\n' +
+          '}\n' +
+          '\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-months .flatpickr-prev-month {\n' +
+          '  height: ' + 24 * ratio + 'px;\n' +
+          '  padding: ' + 7 * ratio + 'px;\n' +
+          '}\n' +
+          '\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-months .flatpickr-next-month {\n' +
+          '  height: ' + 24 * ratio + 'px;\n' +
+          '  padding: ' + 7 * ratio + 'px;\n' +
+          '}\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day {\n' +
+          '  height: ' + 32 * ratio + 'px;\n' +
+          '  line-height: ' + 32 * ratio + 'px;\n' +
+          '  border-radius: 0;\n' +
+          '  flex-basis: ' + 29.42 * ratio + 'px;\n' +
+          '}\n' +
+          '\n' +
+          '#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: ' + 26 * ratio + 'px;height: ' + 29 * ratio + 'px;display: inline-block;}\n' +
+          '@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {\n' +
+          '  #sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: ' + 28.42 * ratio + 'px;}\n' +
+          '  #sincloBox ul#chatTalk li.sinclo_re  .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: ' + 27 * ratio + 'px;height: ' + 29 * ratio + 'px;display: inline-block;}\n' +
+          '}';
+    },
+
     injectCarouselCss: function() {
       return '#sincloBox ul#chatTalk li .slick-slider {\n' +
           '          position: relative;\n' +
@@ -3968,12 +4408,12 @@ var socket, // socket.io
       html += '      <sinclo-div class="flexBoxRow" id = "flexBoxHeight">';
       html += '        <textarea name="sincloChat" id="sincloChatMessage" maxlength="1000" placeholder=" ' +
           placeholder + ' "></textarea>';
-      html += '        <a id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
+      html += '        <a href="javascript:void(0)" id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       html += '      </sinclo-div>';
       html += '      <sinclo-div class="flexBoxRow sinclo-hide" id = "miniFlexBoxHeight">';
       html += '        <input type="text" name="miniSincloChat" id="miniSincloChatMessage" maxlength="1000" placeholder=" ' +
           placeholder + ' "></input>';
-      html += '        <a id="miniSincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
+      html += '        <a href="javascript:void(0)" id="miniSincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       html += '      </sinclo-div>';
       html += '    </sinclo-div>';
       if (!check.smartphone() && (window.sincloInfo.contract.synclo ||
@@ -5173,6 +5613,8 @@ var socket, // socket.io
       var loadDotSize = fontSize * 0.8;
       var heightWeight = widget.widgetSizeType - 3;
       var html = '';
+      var widgetWidth = $(window).width();
+      var ratio       = check.smartphone() ? widgetWidth * (1 / 285) : 1;
       html += '<div class=\'botNowDiv\'>';
       //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
       if (!check.smartphone() && widget.widgetSizeType === 1 &&
@@ -5204,8 +5646,8 @@ var socket, // socket.io
       var css = '';
       //ドットのサイズは共通
       css += '#sincloBox ul#chatTalk div[class^=\'reload\']{';
-      css += '  min-width:' + loadDotSize + 'px;width:' + loadDotSize +
-          'px;min-height:' + loadDotSize + 'px;height:' + loadDotSize +
+      css += '  min-width:' + loadDotSize * ratio + 'px;width:' + loadDotSize * ratio +
+          'px;min-height:' + loadDotSize * ratio + 'px;height:' + loadDotSize * ratio +
           'px;border-radius:100%;';
       css += '}';
       //吹き出しがある場合はテキストカラーを採用
@@ -5259,9 +5701,9 @@ var socket, // socket.io
       //吹き出しの大きさをウィジェットタイプで変える
       //基準(共通)の設定
       css += '#sincloBox ul#chatTalk li[class*=\'botNowTyping\']{';
-      css += '  display:inline-flex;justify-content:space-around;align-items:center;border-radius:12px!important;';
-      css += '  width:' + waitWidth + 'px;padding:0 ' + waitPadding +
-          'px;margin-left: 10px;';
+      css += '  display:inline-flex;justify-content:space-around;align-items:center;border-radius:' + 12 * ratio +'px!important;';
+      css += '  width:' + waitWidth * ratio + 'px;padding:0 ' + waitPadding * ratio +
+          'px;margin-left: ' + 10 * ratio + 'px;';
       if (window.sincloInfo.widget.isSendMessagePositionLeft) {
         css += '  background-color:' + widget.seBackgroundColor + ';';
       } else {
@@ -5270,21 +5712,21 @@ var socket, // socket.io
       css += '}';
       //小(余白あり)の場合
       css += '#sincloBox ul#chatTalk li.botNowTypingSmall{';
-      css += '  height:' + (waitHeight - 8) + 'px;';
+      css += '  height:' + (waitHeight - 8) * ratio + 'px;';
       css += '}';
       //中の場合
       css += '#sincloBox ul#chatTalk li.botNowTypingMedium{';
-      css += '  height:' + (waitHeight - 8) + 'px;';
+      css += '  height:' + (waitHeight - 8) * ratio + 'px;';
       css += '}';
       //大の場合
       css += '#sincloBox ul#chatTalk li.botNowTypingLarge{';
-      css += '  height:' + waitHeight + 'px;';
+      css += '  height:' + waitHeight * ratio + 'px;';
       css += '}';
       //小(余白なし)の場合は、色と大きさが変化する
       css += '#sincloBox ul#chatTalk li.botDotOnlyTyping{';
       css += '  display:flex;justify-content:space-around;align-items:center;border-radius:12px!important;';
-      css += '  width:' + waitWidth + 'px;height:' + (waitHeight - 21) +
-          'px;;padding:0 ' + waitPadding + 'px;margin-left: 10px;';
+      css += '  width:' + waitWidth * ratio + 'px;height:' + (waitHeight - 21) * ratio +
+          'px;;padding:0 ' + waitPadding * ratio + 'px;margin-left: ' + 10 * ratio + 'px;';
       css += '  background-color:' + widget.chatTalkBackgroundColor + ';';
       css += '}';
       //共通アニメーションの設定
@@ -6413,7 +6855,7 @@ var socket, // socket.io
       css += '        line-height: initial;';
       css += '        word-break: break-word;';
       css += '        word-wrap: break-word;';
-      css += '        width: 300px;';
+      css += '        width: 17em;';
       css += '        margin: 0.4em 0;';
       css += '    }';
       css += '    sinclo-div {';
