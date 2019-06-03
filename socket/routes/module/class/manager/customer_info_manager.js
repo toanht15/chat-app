@@ -72,7 +72,10 @@ module.exports = class CustomerInfoManager extends DatabaseManager {
                       'UPDATE m_customers set informations = ? where id = ? ',
                       [JSON.stringify(currentData), row[0].id],
                       function(err, result) {
-                        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = currentData;
+                        if (CommonUtil.isset(
+                            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])) {
+                          SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = currentData;
+                        }
                         resolve({
                           userId: obj.userId,
                           data: JSON.stringify(currentData)
@@ -86,7 +89,9 @@ module.exports = class CustomerInfoManager extends DatabaseManager {
                         obj.userId,
                         JSON.stringify(customVariables)],
                       function(err, result) {
-                        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = customVariables;
+                        if (SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) {
+                          SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = customVariables;
+                        }
                         resolve({
                           userId: obj.userId,
                           data: JSON.stringify(customVariables)

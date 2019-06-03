@@ -24,12 +24,12 @@ function getCompanyList(forceReload) {
           }
           if (initialized && !(row.company_key in common.companySettings)) {
             console.log('LOAD NEW COMPANY SETTINGS : ' + row.company_key);
-            common.reloadSettings(row.company_key);
+            common.reloadSettings(row.company_key, true);
           }
         }
         initialized = true;
         if (forceReload) {
-          common.reloadSettings();
+          common.reloadSettings(null, true);
         }
       });
 }

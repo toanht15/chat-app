@@ -127,12 +127,12 @@ function getCompanyList(forceReload) {
           }
           if (initialized && !(row.company_key in common.companySettings)) {
             console.log('LOAD NEW COMPANY SETTINGS : ' + row.company_key);
-            common.reloadSettings(row.company_key);
+            common.reloadSettings(row.company_key, true);
           }
         }
         initialized = true;
         if (forceReload) {
-          common.reloadSettings();
+          common.reloadSettings(null, true);
         }
       });
 }
@@ -2612,6 +2612,29 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('link', function(data) {
+    if (!list.functionManager.isEnabled(data.siteKey,
+        list.functionManager.keyList.enableRealtimeMonitor)
+        && CommonUtil.isset(SharedData.sincloCore[data.siteKey][data.tabId])
+        && !CommonUtil.isset(
+            SharedData.sincloCore[data.siteKey][data.tabId].historyId)) {
+      let historyManager = new HistoryManager();
+      let target = SharedData.sincloCore[data.siteKey][data.tabId];
+      obj = Object.assign(data, target);
+      historyManager.addHistory(obj).then((result) => {
+        emit.toSameUser('setHistoryId', result, obj.siteKey,
+            obj.sincloSessionId);
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
+        processAddLink(result);
+      });
+    } else {
+      processAddLink(data);
+    }
+  });
+
+  function processAddLink(data) {
     var d = new Date();
     DBConnector.getPool().query(
         'INSERT INTO t_history_link_count_logs (m_companies_id,t_histories_id,t_history_stay_logs_id,link_url,created) VALUES(?,?,?,?,?)',
@@ -2644,7 +2667,9 @@ io.sockets.on('connection', function(socket) {
       autoMessageId: null
     };
     chatApi.set(ret);
-  });
+  }
+
+
 
   socket.on('connectSuccess', function(data, ack) {
     var obj = JSON.parse(data);
@@ -3000,6 +3025,17 @@ io.sockets.on('connection', function(socket) {
                           'RECORD INSERT ERROR: t_history_widget_displays(tab_id):' +
                           err);
                       return false;
+                    }
+                    if (!list.functionManager.isEnabled(obj.siteKey,
+                        list.functionManager.keyList.enableRealtimeMonitor)
+                        && CommonUtil.isset(
+                            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
+                        && !CommonUtil.isset(
+                            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
+                      let historyManager = new HistoryManager();
+                      historyManager.incrementWidgetCount(
+                          list.companyList[obj.siteKey],
+                          CommonUtil.formatDateParse());
                     }
                   });
             }
@@ -3726,9 +3762,13 @@ io.sockets.on('connection', function(socket) {
               /* チャット対応上限の処理（対応人数加算の処理） */
 
               // DBに書き込み
-              var visitorId = SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId ?
-                  SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId :
-                  '';
+              var visitorId = '';
+              if (CommonUtil.isset(
+                  SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId])) {
+                visitorId = SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId ?
+                    SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId :
+                    '';
+              }
 
               //応対数検索、登録
               getConversationCountUser(visitorId, function(results) {
@@ -4254,8 +4294,12 @@ io.sockets.on('connection', function(socket) {
     //応対数検索、登録
     if (!list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.enableRealtimeMonitor)
-        && !CommonUtil.isset(
-            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
+        && (CommonUtil.isset(
+                SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
+            && !CommonUtil.isset(
+                SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)
+        )
+    ) {
       let historyManager = new HistoryManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
@@ -5333,7 +5377,7 @@ io.sockets.on('connection', function(socket) {
           console.log(
               'BEGIN RELOAD DB-settings --------------------------------------------------');
           console.log('TARGET : ' + targetKey);
-          common.reloadSettings(targetKey);
+          common.reloadSettings(targetKey, true);
           console.log(
               'END   RELOAD DB-settings --------------------------------------------------');
           break;
