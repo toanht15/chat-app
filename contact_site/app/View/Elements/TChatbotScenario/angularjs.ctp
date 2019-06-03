@@ -881,7 +881,8 @@
               }
             }
 
-            definedVariables = $.unique($.merge(variableList, storedVariableList));
+            definedVariables = $.merge(variableList, storedVariableList);
+            definedVariables =  [...new Set(definedVariables)];
             storedVariableList = definedVariables;
           });
           $scope.storedVariableList = definedVariables;
@@ -907,9 +908,6 @@
             });
           });
           if (typeof newObject === 'undefined') return;
-          // 編集されたことを検知する
-
-
           // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
           var variables = searchObj(newObject, /^variableName$/);
 
@@ -2809,12 +2807,9 @@
       };
 
       this.resetListView = function(type, setActionId) {
-        console.log($scope.setActionList[setActionId]);
-        if (Number(type) === 2) {
-          $scope.setActionList[setActionId].leadInformations = [{leadLabelName: '', leadVariableName: ''}];
-          $scope.setActionList[setActionId].tLeadListSettingId = null;
-        }
-        console.log($scope.setActionList[setActionId]);
+        $scope.setActionList[setActionId].leadInformations   = [{leadLabelName: '', leadVariableName: ''}];
+        $scope.setActionList[setActionId].tLeadListSettingId = null;
+        $scope.setActionList[setActionId].leadTitleLabel     = '';
       };
 
       this.searchList = function(targetId) {
