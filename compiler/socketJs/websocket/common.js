@@ -6371,9 +6371,10 @@ var socket, // socket.io
       var scrollHeight = document.body.scrollHeight;
       if (check.smartphone() && !check.android()) {
         // handle overflow bug
+        var overflowValue = document.documentElement.style.overflow;
         document.documentElement.style.overflow = 'visible';
         scrollHeight = document.body.scrollHeight;
-        document.documentElement.style.overflow = '';
+        document.documentElement.style.overflow = overflowValue;
       }
       return {
         x: document.body.scrollWidth - window.innerWidth,
