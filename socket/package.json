@@ -25,6 +25,7 @@
     "sass": "~1.17.4",
     "serve-favicon": "~2.5.0",
     "socket.io": "~2.2.0",
-    "ioredis": "~4.9.5"
+    "ioredis": "~4.9.5",
+    "overload-protection": "~1.1.0"
   }
 }

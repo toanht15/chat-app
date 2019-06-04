@@ -98,6 +98,8 @@ router.post('/auth/customer', function(req, res, next) {
             ' is null.');
       }
     }
+    clearTimeout(SharedData.sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
+    SharedData.sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
   }
 
   if (!CommonUtil.isset(d.userId)) {
@@ -239,10 +241,6 @@ router.post('/auth/info', function(req, res, next) {
       scenario: {},
       diagram: []
     };
-  }
-  if ('timeoutTimer' in SharedData.sincloCore[obj.siteKey][obj.tabId]) {
-    clearTimeout(SharedData.sincloCore[obj.siteKey][obj.tabId].timeoutTimer);
-    SharedData.sincloCore[obj.siteKey][obj.tabId].timeoutTimer = null;
   }
 
   var oldSessionId = SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId;
