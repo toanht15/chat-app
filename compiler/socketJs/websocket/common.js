@@ -6368,9 +6368,16 @@ var socket, // socket.io
     prevList: [],
     // TODO 画面同期時セットするようにする
     scrollSize: function() { // 全体のスクロール幅
+      var scrollHeight = document.body.scrollHeight;
+      if (check.smartphone() && !check.android()) {
+        // handle overflow bug
+        document.documentElement.style.overflow = 'visible';
+        scrollHeight = document.body.scrollHeight;
+        document.documentElement.style.overflow = '';
+      }
       return {
         x: document.body.scrollWidth - window.innerWidth,
-        y: document.body.scrollHeight - window.innerHeight
+        y: scrollHeight - window.innerHeight
       };
     },
     // TODO 画面同期時セットするようにする
