@@ -6369,12 +6369,16 @@ var socket, // socket.io
     scrollSize: function() { // 全体のスクロール幅
       var scrollHeight = document.body.scrollHeight;
       if (check.smartphone() && !check.android()) {
-        // handle overflow bug
-        var overflowValue = document.documentElement.style.overflow;
-        document.documentElement.style.overflow = 'visible';
+        // handle scrollHeight bug on iphone
+        var overflow = document.documentElement.style.overflow;
+        var height = document.documentElement.style.height;
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.height = '';
         scrollHeight = document.body.scrollHeight;
-        document.documentElement.style.overflow = overflowValue;
+        document.documentElement.style.overflow = overflow;
+        document.documentElement.style.height = height;
       }
+      
       return {
         x: document.body.scrollWidth - window.innerWidth,
         y: scrollHeight - window.innerHeight
