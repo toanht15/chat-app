@@ -6373,13 +6373,13 @@ var socket, // socket.io
         // handle scrollHeight bug on iphone
         var overflow = document.documentElement.style.overflow;
         var height = document.documentElement.style.height;
-        document.documentElement.style.overflow = '';
-        document.documentElement.style.height = '';
+        document.documentElement.style.overflow = 'visible';
+        document.documentElement.style.height = 'auto';
         scrollHeight = document.body.scrollHeight;
         document.documentElement.style.overflow = overflow;
         document.documentElement.style.height = height;
       }
-      
+
       return {
         x: document.body.scrollWidth - window.innerWidth,
         y: scrollHeight - window.innerHeight
