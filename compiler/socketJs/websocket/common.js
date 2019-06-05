@@ -7706,7 +7706,7 @@ var socket, // socket.io
   }
 
   var timer = window.setInterval(function() {
-    if (io !== '' && sinclo !== '' && sinclo.trigger !== undefined &&
+    if (io !== '' && check.isset(sinclo) && check.isset(sinclo.trigger) &&
         window.sincloInfo.contract !==
         undefined) {
       window.clearInterval(timer);
