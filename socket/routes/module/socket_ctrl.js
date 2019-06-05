@@ -4294,10 +4294,12 @@ io.sockets.on('connection', function(socket) {
     //応対数検索、登録
     if (!list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.enableRealtimeMonitor)
-    (CommonUtil.isset(
-        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
-        && !CommonUtil.isset(
-            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId))) {
+        && (CommonUtil.isset(
+                SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
+            && !CommonUtil.isset(
+                SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)
+        )
+    ) {
       let historyManager = new HistoryManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
