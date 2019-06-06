@@ -1284,7 +1284,7 @@ var socket, // socket.io
             window.sincloInfo.site.files +
             '/img/widget/close.png"); background-position-y: -1.5px; position: absolute; top: calc(50% - 8px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
         html += '      #sincloBox div#closeBtn:hover {background-color: #999999;}'
-        html += '      #sincloBox #fw-close-btn {top: 4px; right: 5px; position: absolute; z-index: 2; cursor: pointer; ' +
+        html += '      #sincloBox #fw-close-btn {top: 5px; right: 5px; position: absolute; z-index: 2; cursor: pointer; ' +
             'display: inline-flex; align-items: center; justify-content: center; height: 22px; width: 22px; }';
         html += '      #sincloBox #fw-close-btn i {font-size: 22px; color: #FFFFFF; line-height: 1.25}';
         html += '      #sincloBox #fw-close-btn i:before {font-family: FA5P}';
@@ -2614,7 +2614,7 @@ var socket, // socket.io
         html += '      #sincloBox p#widgetTitle { border-radius: ' +
             widget.radiusRatio + 'px ' + widget.radiusRatio +
             'px 0 0; font-size: ' + widget.headerTextSize +
-            'px; padding: 7px 0px 7px 0px; height: auto; line-height: ' +
+            'px; padding: 8px 0px 8px 0px; height: auto; line-height: ' +
             widget.headerTextSize +
             'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
         html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 41px);}';

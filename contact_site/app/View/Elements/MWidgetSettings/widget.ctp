@@ -161,7 +161,7 @@
     #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-left: calc(2.5em + 38px); padding-right: 26px;}
     #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50% - 9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
     #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
-    #sincloBox #fw-close-btn {top: 4px; right: 5px; position: absolute; z-index: 2; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: 22px; width: 22px;}
+    #sincloBox #fw-close-btn {top: 5px; right: 5px; position: absolute; z-index: 2; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: 22px; width: 22px;}
     #sincloBox #fw-close-btn i {font-size: 22px; color: #FFFFFF;}
     #sincloBox #fw-close-btn i:before {font-family: Font Awesome\ 5 Pro; font-weight: 300}
     #sincloBox #fw-close-btn:hover {background-color: {{getCloseBtnHoverColor(main_color, 0.8)}};}
