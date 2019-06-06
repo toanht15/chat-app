@@ -152,12 +152,20 @@
     #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: {{header_text_size}}px; padding: 8px 0px 8px 70px; margin: 0; color: {{string_color}}; height: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size}}px; line-height: {{header_text_size}}px; }
     #sincloBox p#widgetTitle.sp { font-size: 14px; line-height: 15px;}
     #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+    #sincloBox #fw-minimize-btn {top: 2px; right: 7px; position: absolute; z-index: 2; font-size: 22px; color: #FFFFFF; cursor: pointer;}
+    #sincloBox #fw-minimize-btn {font-family: Font Awesome\ 5 Pro; font-weight: 300;}
+
     #sincloBox div.widgetHeaderWrap:not(.sp):hover { opacity: 0.75; }
     #sincloBox div.widgetHeaderWrap #titleWrap { position: relative; }
     #sincloBox p#widgetSubTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 46px) }
     #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-left: calc(2.5em + 38px); padding-right: 26px;}
     #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50% - 9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
     #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
+    #sincloBox #fw-close-btn {top: 4px; right: 5px; position: absolute; z-index: 2; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: 22px; width: 22px;}
+    #sincloBox #fw-close-btn i {font-size: 22px; color: #FFFFFF;}
+    #sincloBox #fw-close-btn i:before {font-family: Font Awesome\ 5 Pro; font-weight: 300}
+    #sincloBox #fw-close-btn:hover {background-color: {{getCloseBtnHoverColor(main_color, 0.8)}};}
+
     #sincloBox p#widgetSubTitle { background-color: {{header_background_color}}; margin: 0; padding: 3px 0; text-align: left; border-width: 0 1px 0 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 74px; font-weight: bold; color: {{main_color}}; height: auto; line-height: calc(1em + 9px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size-2}}px; }
     #sincloBox p#widgetSubTitle.sp { font-size: 12px; padding-top: 5px; padding-bottom: 4px;}
     #sincloBox p#widgetSubTitle:not(.notNoneWidgetOutsideBorder) { border:none; }
@@ -365,14 +373,17 @@
       <img ng-if="isPictureImage(main_image)" ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" ng-class="{sp:showWidgetType === 3}" width="62" height="70" alt="チャット画像">
       <i ng-if="isIconImage(main_image)" class="sinclo-fal {{main_image}}" ng-class="{sp:showWidgetType === 3}" alt="チャット画像"></i>
     </span>
+
+    <div id="fw-close-btn" ng-click="closeAct()" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"><i  class="fal fa-times"></i></div>
+    <i id="fw-minimize-btn" class="fal fa-minus-square widgetOpener"></i>
   <div class="widgetHeaderWrap" ng-class="{sp:showWidgetType === 3}">
     <!-- 画像 -->
     <div id="titleWrap">
       <!-- タイトル -->
       <p id="widgetTitle" class="widgetOpener notSelect" ng-class="viewWidgetSetting('size,sp,toptitle,topimg')">{{title}}</p>
       <!-- タイトル -->
-      <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
-      <div id="closeBtn" ng-click="closeAct()" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
+<!--      <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>-->
+<!--      <div id="closeBtn" ng-click="closeAct()" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>-->
     </div>
     <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || (mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2')">
       <!-- サブタイトル -->
