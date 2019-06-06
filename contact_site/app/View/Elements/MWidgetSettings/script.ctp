@@ -1195,8 +1195,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if($scope.openFlg){
         //最大化時
         $("#minimizeBtn").show();
+        $("#fw-minimize-btn").show();
         $("#addBtn").hide();
         $("#closeBtn").hide();
+        $("#fw-close-btn").hide();
         //画像あるときタイトル位置
         setTimeout(function(){
           if($('#mainImage').is(':visible')) {
@@ -1212,11 +1214,14 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         //最小化時
         $("#addBtn").show();
         $("#minimizeBtn").hide();
+        $("#fw-minimize-btn").hide();
         if($scope.closeButtonSettingToggle === '2'){
           $("#closeBtn").show();
+          $("#fw-close-btn").show();
         }
         else{
           $("#closeBtn").hide();
+          $("#fw-close-btn").hide();
         }
         var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
         if(coreSettingsChat){
@@ -1314,6 +1319,39 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       };
       return res;
     };
+
+  $scope.getCloseBtnHoverColor = function(hex, opacity) {
+    if (!opacity) {
+      opacity = 0.1;
+    }
+    if (hex === '#000000') {
+      var codeR = parseInt('51').toString(16);
+      var codeG = parseInt('51').toString(16);
+      var codeB = parseInt('51').toString(16);
+
+      return ('#' + codeR + codeG + codeB).toUpperCase();
+    };
+
+    var code = hex.substr(1), r, g, b;
+    if (code.length === 3) {
+      r = String(code.substr(0, 1)) + String(code.substr(0, 1));
+      g = String(code.substr(1, 1)) + String(code.substr(1, 1));
+      b = String(code.substr(2)) + String(code.substr(2));
+    } else {
+      r = String(code.substr(0, 2));
+      g = String(code.substr(2, 2));
+      b = String(code.substr(4));
+    }
+
+    var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * opacity));
+    var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * opacity));
+    var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * opacity));
+    var codeR = parseInt(balloonR).toString(16);
+    var codeG = parseInt(balloonG).toString(16);
+    var codeB = parseInt(balloonB).toString(16);
+
+    return ('#' + codeR + codeG + codeB).toUpperCase();
+  };
 
     //テキストカラーの振り分け
     $scope.checkTxtColor = function(cR,cG,cB){

@@ -833,6 +833,9 @@ var socket, // socket.io
     whenMaximizedBtnShow: function() {
       $('#minimizeBtn').show();
       $('#closeBtn').hide();
+
+      $('#fw-minimize-btn').show();
+      $('#fw-close-btn').hide();
     },
     //最小化時ボタン表示
     whenMinimizedBtnShow: function() {
@@ -841,9 +844,13 @@ var socket, // socket.io
         //閉じるボタン無効
         $('#minimizeBtn').hide();
         $('#closeBtn').hide();
+
+        $('#fw-minimize-btn').hide();
+        $('#fw-close-btn').hide();
       } else {
         //閉じるボタン有効
         $('#minimizeBtn').hide();
+        $('#fw-minimize-btn').hide();
         var smartphone = check.smartphone();
         if (smartphone) {
           //スマホ時
@@ -851,11 +858,14 @@ var socket, // socket.io
           if (common.isPortrait()) {
             //縦
             $('#closeBtn').show();
+            $('#fw-close-btn').show();
           } else {
             $('#closeBtn').hide();
+            $('#fw-close-btn').hide();
           }
         } else {
           $('#closeBtn').show();
+          $('#fw-close-btn').show();
         }
       }
     },
@@ -1273,6 +1283,16 @@ var socket, // socket.io
         html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' +
             window.sincloInfo.site.files +
             '/img/widget/close.png"); background-position-y: -1.5px; position: absolute; top: calc(50% - 8px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+        html += '      #sincloBox div#closeBtn:hover {background-color: #999999;}'
+        html += '      #sincloBox #fw-close-btn {top: 4px; right: 5px; position: absolute; z-index: 2; cursor: pointer; ' +
+            'display: inline-flex; align-items: center; justify-content: center; height: 22px; width: 22px; }';
+        html += '      #sincloBox #fw-close-btn i {font-size: 22px; color: #FFFFFF; line-height: 1.25}';
+        html += '      #sincloBox #fw-close-btn i:before {font-family: FA5P}';
+        html += '      #sincloBox #fw-close-btn:hover {background-color: ' + common.getThinColor(colorList['mainColor'], 0.8) + ';}';
+
+        html += '      #sincloBox #fw-minimize-btn {top: 1px; right: 8px; position: absolute; z-index: 2; font-size: 22px; color: #FFFFFF; cursor: pointer;}';
+        html += '      #sincloBox #fw-minimize-btn:before {font-family: FA5P}';
+        // html += '      #sincloBox #fw-minimize-btn:hover {color: #999999;}';
       }
 
       html += '      #sincloBox div#sincloWidgetBox { position: relative; top: 0px; }';
@@ -4277,14 +4297,17 @@ var socket, // socket.io
           }
           html += '  </span>';
         }
+        html += '    <div id="fw-close-btn" onclick="sinclo.operatorInfo.closeBtn()"><i  class="fal fa-times"></i></div>';
+        html += '    <i id="fw-minimize-btn" onclick="sinclo.operatorInfo.toggle()" class="fal fa-minus-square"></i>';
+
         html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
         html += '  <sinclo-div id="titleWrap">';
         // タイトル
         html += '    <p id="widgetTitle">' + check.escape_html(widget.title) +
             '</p>';
         //ボタン差し替え対応
-        html += '    <div id="minimizeBtn"></div>';
-        html += '    <div id="closeBtn" onclick="sinclo.operatorInfo.closeBtn()"></div>';
+        // html += '    <div id="minimizeBtn"></div>';
+        // html += '    <div id="closeBtn" onclick="sinclo.operatorInfo.closeBtn()"></div>';
         html += '  </sinclo-div>';
         var subTitle = (widget.subTitle === undefined &&
             Number(widget.showSubtitle) === 1) ? '' : widget.subTitle;
