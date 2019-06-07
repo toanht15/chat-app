@@ -8924,6 +8924,10 @@
               sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
+            // 自動最大化
+            if (!('widgetOpen' in cond) || (check.smartphone() &&
+                sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
+                Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
             var flg = sinclo.widget.condifiton.get();
             if (Number(cond.widgetOpen) === 1 && String(flg) === 'false') {
               console.log('シナリオ最大化処理');
@@ -8969,6 +8973,10 @@
               sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
+            // 自動最大化
+            if (!('widgetOpen' in cond) || (check.smartphone() &&
+                sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
+                Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
             var flg = sinclo.widget.condifiton.get();
             if (Number(cond.widgetOpen) === 1 && String(flg) === 'false') {
               console.log('シナリオ最大化処理');
