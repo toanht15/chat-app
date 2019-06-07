@@ -1100,7 +1100,3 @@
 
 <?php echo $this->Html->script("flatpickr.js"); ?>
 
-
-
-
-
