@@ -790,9 +790,8 @@
           var array        = checkboxData.message.split(checkboxData.separator);
           var text         = '';
           array.forEach(function(item) {
-            text = text + '\n   ' + '・' + item;
+            text = text + '・' + item + '\n';
           });
-          text += '\n';
 
           return text;
         }
