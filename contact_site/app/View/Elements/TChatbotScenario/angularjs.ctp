@@ -1075,7 +1075,7 @@
                     self.controllListView(<?= C_SCENARIO_ACTION_HEARING ?>, targetElmList, targetElmList);
                   }
 
-                  if (hearing.settings.isCustomDesign) {
+                  if (hearing.settings.calendarCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   } else {
                     self.setDefaultColorHearing($scope.setActionList[index].hearings[hearingIndex]);
