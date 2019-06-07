@@ -51,6 +51,13 @@ switch ($this->name) {
     <ul>
       <li class="nav-group <?=$agreements?>"><i class="fa fa-building fa-lg" aria-hidden="true"></i>システム</li>
       <li class="link <?=$agreements?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'index'))?>';">契約管理</li>
+      <?php if (ALLOW_SET_CV_VALUE): ?>
+          <li class="link <?= $agreements ?>" onclick="location.href = '<?= $this->Html->url(array(
+              'controller' => 'Billings',
+              'action' => 'cv'
+          )) ?>';">CV請求額一覧
+          </li>
+      <?php endif; ?>
       <li class="nav-group <?=$settingSelected?>"><i class="fa fa-cog fa-lg" aria-hidden="true"></i>設定</li>
       <li class="link <?=$personalSettingsSelected?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'PersonalSettings', 'action' => 'index'))?>';">個人設定</a></li>
       <li class="link <?=$MailTemplateSettingsSelected?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'MailTemplateSettings', 'action' => 'index'))?>';">メール設定</a></li>

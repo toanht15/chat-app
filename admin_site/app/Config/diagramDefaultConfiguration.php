@@ -3943,7 +3943,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                      "fill" => "#c0c0c0",
+                        "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,
@@ -4143,7 +4143,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                      "fill" => "#c0c0c0",
+                        "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,
@@ -4410,7 +4410,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                      "fill" => "#c0c0c0",
+                        "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,
@@ -4607,7 +4607,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                      "fill" => "#c0c0c0",
+                        "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,
@@ -4804,7 +4804,7 @@ $config['default'] = array(
                       "font-size" => 0
                     ),
                     ".port-body" => array(
-                      "fill" => "#c0c0c0",
+                        "fill" => "#C8E3E8",
                       "stroke" => false,
                       "r" => 10,
                       "magnet" => true,

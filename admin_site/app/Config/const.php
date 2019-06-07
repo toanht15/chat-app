@@ -1,5 +1,12 @@
 <?php
 
+// システム設定
+define('ALLOW_DISABLE_REALTIME_MONITOR', true);
+define('ALLOW_SET_CV_VALUE', true);
+define('ALLOW_SET_SLIM_SETTINGS', true); // シナリオのサンプルも変わります
+define('ADD_ACCOUNT_TO_M_USER', true);
+define('SET_AGREEMENT_END_DATE', false);
+
 // AWS: S3
 define('C_AWS_S3_VERSION', 'latest'); // ウィジェット用参照先
 define('C_AWS_S3_REGION', 'ap-northeast-1'); // ウィジェット用参照先
@@ -34,16 +41,16 @@ define('C_AUTHORITY_SUPER', 99); // ML管理者
 //契約プラン
 // プレミアムプラン
 define('C_CONTRACT_FULL_PLAN',
-    "{\"chat\": true, \"synclo\": true, \"document\": true, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"deleteHistory\": true, \"dictionaryCategory\": true, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": true, \"cv\": true, \"autoMessageSendMail\": true, \"sendFile\": true, \"loginIpFilter\": true, \"importExcelAutoMessage\": true, \"operatorPresenceView\": true, \"monitorPollingMode\": true, \"chatbotScenario\": false, \"campaign\": true, \"chatCallMessages\": true, \"customVariables\": true, \"editCustomerInformations\": true, \"useCogmoAttendApi\": false, \"useMessageRanking\": true, \"iconSettings\": true, \"customWidgetSize\": true, \"chatbotTreeEditor\": false}");
+    "{\"chat\": true, \"synclo\": true, \"document\": true, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"deleteHistory\": true, \"dictionaryCategory\": true, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": true, \"cv\": true, \"autoMessageSendMail\": true, \"sendFile\": true, \"loginIpFilter\": true, \"importExcelAutoMessage\": true, \"operatorPresenceView\": true, \"monitorPollingMode\": false, \"chatbotScenario\": false, \"campaign\": true, \"chatCallMessages\": true, \"customVariables\": true, \"editCustomerInformations\": true, \"useCogmoAttendApi\": false, \"useMessageRanking\": true, \"iconSettings\": true, \"customWidgetSize\": true, \"chatbotTreeEditor\": false, \"enableRealtimeMonitor\": true}");
 // チャットベーシックプラン
 define('C_CONTRACT_CHAT_BASIC_PLAN',
-    "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"deleteHistory\": false, \"dictionaryCategory\": false, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": false, \"refCompanyData\": false, \"freeInput\": false, \"cv\": false, \"autoMessageSendMail\": false, \"sendFile\": false, \"loginIpFilter\": false, \"importExcelAutoMessage\": false, \"operatorPresenceView\": false, \"monitorPollingMode\": true, \"chatbotScenario\": false, \"campaign\": false,\"chatCallMessages\": false, \"customVariables\": false, \"editCustomerInformations\": false, \"useCogmoAttendApi\": false, \"useMessageRanking\": false, \"iconSettings\": true, \"customWidgetSize\": false, \"chatbotTreeEditor\": true, \"chatbotTreeEditor\": false}");
+    "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"deleteHistory\": false, \"dictionaryCategory\": false, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": false, \"refCompanyData\": false, \"freeInput\": false, \"cv\": false, \"autoMessageSendMail\": false, \"sendFile\": false, \"loginIpFilter\": false, \"importExcelAutoMessage\": false, \"operatorPresenceView\": false, \"monitorPollingMode\": false, \"chatbotScenario\": false, \"campaign\": false,\"chatCallMessages\": false, \"customVariables\": false, \"editCustomerInformations\": false, \"useCogmoAttendApi\": false, \"useMessageRanking\": false, \"iconSettings\": true, \"customWidgetSize\": false, \"chatbotTreeEditor\": true, \"enableRealtimeMonitor\": true}");
 // チャットスタンダードプラン
 define('C_CONTRACT_CHAT_PLAN',
-    "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"deleteHistory\": true, \"dictionaryCategory\": true, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": true, \"cv\": true, \"autoMessageSendMail\": true, \"sendFile\": true, \"loginIpFilter\": true, \"importExcelAutoMessage\": true, \"operatorPresenceView\": true, \"monitorPollingMode\": true, \"chatbotScenario\": false, \"campaign\": true,\"chatCallMessages\": true, \"customVariables\": true, \"editCustomerInformations\": true, \"useCogmoAttendApi\": false, \"useMessageRanking\": true, \"iconSettings\": true, \"customWidgetSize\": true, \"chatbotTreeEditor\": false}");
+    "{\"chat\": true, \"synclo\": false, \"document\": false, \"statistics\": true, \"chatLimitation\": true, \"exportHistory\": true, \"deleteHistory\": true, \"dictionaryCategory\": true, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": true, \"cv\": true, \"autoMessageSendMail\": true, \"sendFile\": true, \"loginIpFilter\": true, \"importExcelAutoMessage\": true, \"operatorPresenceView\": true, \"monitorPollingMode\": false, \"chatbotScenario\": false, \"campaign\": true,\"chatCallMessages\": true, \"customVariables\": true, \"editCustomerInformations\": true, \"useCogmoAttendApi\": false, \"useMessageRanking\": true, \"iconSettings\": true, \"customWidgetSize\": true, \"chatbotTreeEditor\": false, \"enableRealtimeMonitor\": true}");
 // 画面同期プラン
 define('C_CONTRACT_SCREEN_SHARING_PLAN',
-    "{\"chat\": false, \"synclo\": true, \"document\": true, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"deleteHistory\": false, \"dictionaryCategory\": false, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": false, \"cv\": false, \"autoMessageSendMail\": false, \"sendFile\": false, \"loginIpFilter\": true, \"importExcelAutoMessage\": false, \"operatorPresenceView\": true, \"monitorPollingMode\": true, \"chatbotScenario\": false, \"campaign\": true,\"chatCallMessages\": false, \"customVariables\": true, \"editCustomerInformations\": true, \"useCogmoAttendApi\": false, \"useMessageRanking\": false, \"iconSettings\": false, \"customWidgetSize\": true, \"chatbotTreeEditor\": false}");
+    "{\"chat\": false, \"synclo\": true, \"document\": true, \"statistics\": false, \"chatLimitation\": false, \"exportHistory\": false, \"deleteHistory\": false, \"dictionaryCategory\": false, \"laCoBrowse\": false, \"hideRealtimeMonitor\": false, \"operatingHour\": true, \"refCompanyData\": false, \"freeInput\": false, \"cv\": false, \"autoMessageSendMail\": false, \"sendFile\": false, \"loginIpFilter\": true, \"importExcelAutoMessage\": false, \"operatorPresenceView\": true, \"monitorPollingMode\": false, \"chatbotScenario\": false, \"campaign\": true,\"chatCallMessages\": false, \"customVariables\": true, \"editCustomerInformations\": true, \"useCogmoAttendApi\": false, \"useMessageRanking\": false, \"iconSettings\": false, \"customWidgetSize\": true, \"chatbotTreeEditor\": false, \"enableRealtimeMonitor\": true}");
 
 //契約プランID
 define('C_CONTRACT_FULL_PLAN_ID',"1");
@@ -140,3 +147,20 @@ $config['sendingMailML'] = [
     C_NOT_SEND_MAIL_ML => "しない",
 ];
 
+$config['defaultValue'] = array(
+    'MCompany' => array(
+        'trial_flg' => '0', // 本契約
+        'm_contact_types_id' => '2',
+        'options' => array(
+            'enableRealtimeMonitor' => false,
+            'refCompanyData' => false,
+            'chatbotScenario' => true,
+            'chatbotTreeEditor' => true,
+            'laCoBrowse' => false
+        ),
+        'limit_users' => 3
+    ),
+    'MAgreements' => array(
+        'agreement_end_day' => date("Y-m-d", strtotime("+100 year"))
+    )
+);
