@@ -863,6 +863,16 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         element.style.backgroundColor = rgbcode;
         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
       }
+      if(id === 'close_btn_color') {
+        var colorid = '<?=CLOSE_BTN_COLOR?>';
+        $scope.close_btn_color = colorid;
+        //MWidgetSettingCloseBtnColor
+        var rgb = $scope.checkRgbColor(colorid);
+        var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+        var element = document.getElementById('MWidgetSettingCloseBtnColor');
+        element.style.backgroundColor = rgbcode;
+        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
       jscolor.installByClassName("jscolor");
     };
 
@@ -1320,18 +1330,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       return res;
     };
 
-  $scope.getCloseBtnHoverColor = function(hex, opacity) {
-    if (!opacity) {
-      opacity = 0.1;
-    }
-    if (hex === '#000000') {
-      var codeR = parseInt('51').toString(16);
-      var codeG = parseInt('51').toString(16);
-      var codeB = parseInt('51').toString(16);
-
-      return ('#' + codeR + codeG + codeB).toUpperCase();
-    };
-
+  $scope.getCloseBtnHoverColor = function(hex) {
     var code = hex.substr(1), r, g, b;
     if (code.length === 3) {
       r = String(code.substr(0, 1)) + String(code.substr(0, 1));
@@ -1343,9 +1342,9 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       b = String(code.substr(4));
     }
 
-    var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * opacity));
-    var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * opacity));
-    var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * opacity));
+    var balloonR = String(255 - parseInt(r, 16));
+    var balloonG = String(255 - parseInt(g, 16));
+    var balloonB = String(255 - parseInt(b, 16));
     var codeR = parseInt(balloonR).toString(16);
     var codeG = parseInt(balloonG).toString(16);
     var codeB = parseInt(balloonB).toString(16);
