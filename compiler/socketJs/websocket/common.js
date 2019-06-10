@@ -46,6 +46,45 @@ var socket, // socket.io
     sync_type: {inner: 1, outer: 2}
   };
 
+  var WSConnector = function() {
+    this.connector = io.connect(sincloInfo.site.socket,
+        {
+          port: 9090,
+          rememberTransport: false,
+          autoConnect: false,
+          transports: ['websocket']
+        });
+
+    this.connect = function() {
+      var defer = $.Deferred();
+      this.connector.connect();
+      this.connector.on('connect', function() {
+        defer.resolve();
+      });
+      return defer.promise();
+    };
+
+    this.on = function(event, callback) {
+      this.connector.on(event, callback);
+    };
+
+    this.emit = function(event, data, callback) {
+      this.connector.emit(event, data, callback);
+    };
+
+    this.close = function() {
+      this.connector.close();
+    };
+
+    this.disconnect = function() {
+      this.connector.disconnect();
+    };
+
+    this.isConnected = function() {
+      return this.connector.connected;
+    };
+  };
+
   common = {
     n: 20,
     str: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
@@ -7328,11 +7367,15 @@ var socket, // socket.io
       console.log('Widget Show flg clear.');
       common.widgetHandler.clearShownFlg();
     }
-    socket = io.connect(sincloInfo.site.socket,
-        {port: 9090, rememberTransport: false});
 
-    // 接続時
-    socket.on('connect', function() {
+    socket = new WSConnector();
+    if (window.sincloInfo.contract.enableRealtimeMonitor) {
+      socket.connect().then(function() {
+        console.log('WS connected');
+      });
+    }
+
+    var handleInit = function() {
       // ウィジェットがある状態での再接続があった場合
       var sincloBox = document.getElementById('sincloBox');
       if (sincloBox && userInfo.accessType === Number(cnst.access_type.guest) &&
@@ -7377,7 +7420,14 @@ var socket, // socket.io
           }
         }
       }, 700);
+    };
+
+    // 接続時
+    socket.on('connect', function() {
+
     }); // socket-on: connect
+
+    handleInit();
 
     socket.on('changeTabId', function(d) {
       var obj = common.jParse(d);

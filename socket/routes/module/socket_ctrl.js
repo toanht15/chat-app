@@ -4107,6 +4107,8 @@ io.sockets.on('connection', function(socket) {
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
         && !CommonUtil.isset(
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
+      SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
+      SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[obj.socketId] = socket.id;
       let historyManager = new HistoryManager();
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];

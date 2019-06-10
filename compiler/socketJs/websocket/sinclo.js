@@ -617,27 +617,8 @@
       }
 
       if (!window.sincloInfo.contract.enableRealtimeMonitor) {
-        $.ajax({
-          headers: {
-            'Accept': 'text/plain, application/json; charset=utf-8',
-            'Content-Type': 'application/json; charset=utf-8'
-          },
-          type: 'post',
-          url: window.sincloInfo.site.files + '/api/auth/customer',
-          dataType: 'json',
-          contentType: 'application/json',
-          data: JSON.stringify({
-            siteKey: sincloInfo.site.key,
-            type: 'user',
-            userId: userInfo.userId,
-            tabId: userInfo.tabId,
-            sincloSessionId: userInfo.sincloSessionId,
-            token: common.token,
-            data: emitData
-          }),
-          success: function(json) {
-            sinclo.accessInfo(JSON.stringify(json));
-          }
+        sinclo.callApiAuth(emitData).then(function(data) {
+          sinclo.accessInfo(data);
         });
       } else {
         emit('connected', {
@@ -759,34 +740,8 @@
           }
         });
       } else {
-        $.ajax({
-          type: 'post',
-          url: window.sincloInfo.site.files + '/api/auth/info',
-          dataType: 'json',
-          contentType: 'application/JSON',
-          data: JSON.stringify({
-            confirm: false,
-            status: browserInfo.getActiveWindow(),
-            title: common.title(),
-            url: f_url(browserInfo.href),
-            widget: window.sincloInfo.widgetDisplay,
-            prevList: userInfo.prev,
-            userAgent: window.navigator.userAgent,
-            time: userInfo.time,
-            accessId: userInfo.accessId,
-            ipAddress: userInfo.getIp(),
-            referrer: userInfo.referrer,
-            siteKey: sincloInfo.site.key,
-            socketId: socket.id,
-            userId: userInfo.userId,
-            tabId: userInfo.tabId,
-            sincloSessionId: userInfo.sincloSessionId,
-            token: common.token,
-            customVariables: userInfo.customVariables
-          }),
-          success: function(json) {
-            sinclo.setHistoryId(JSON.stringify(json));
-          }
+        sinclo.callApiInfo().then(function(json) {
+          sinclo.setHistoryId(json);
         });
       }
 
@@ -799,6 +754,65 @@
         var evt = document.createEventObject();
         document.fireEvent('sinclo:connected', evt);
       }
+    },
+    callApiAuth: function(emitData) {
+      var defer = $.Deferred();
+      $.ajax({
+        headers: {
+          'Accept': 'text/plain, application/json; charset=utf-8',
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        type: 'post',
+        url: window.sincloInfo.site.files + '/api/auth/customer',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          siteKey: sincloInfo.site.key,
+          type: 'user',
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          sincloSessionId: userInfo.sincloSessionId,
+          token: common.token,
+          data: emitData
+        }),
+        success: function(json) {
+          defer.resolve(JSON.stringify(json));
+        }
+      });
+      return defer.promise();
+    },
+    callApiInfo: function() {
+      var defer = $.Deferred();
+      $.ajax({
+        type: 'post',
+        url: window.sincloInfo.site.files + '/api/auth/info',
+        dataType: 'json',
+        contentType: 'application/JSON',
+        data: JSON.stringify({
+          confirm: false,
+          status: browserInfo.getActiveWindow(),
+          title: common.title(),
+          url: f_url(browserInfo.href),
+          widget: window.sincloInfo.widgetDisplay,
+          prevList: userInfo.prev,
+          userAgent: window.navigator.userAgent,
+          time: userInfo.time,
+          accessId: userInfo.accessId,
+          ipAddress: userInfo.getIp(),
+          referrer: userInfo.referrer,
+          siteKey: sincloInfo.site.key,
+          socketId: socket.id,
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          sincloSessionId: userInfo.sincloSessionId,
+          token: common.token,
+          customVariables: userInfo.customVariables
+        }),
+        success: function(json) {
+          defer.resolve(JSON.stringify(json));
+        }
+      });
+      return defer.promise();
     },
     setHistoryId: function(d) {
       var obj = common.jParse(d),
@@ -7703,6 +7717,17 @@
         this.pushFlg = false;
       },
       send: function(value) {
+        if (!socket) return false;
+        var self = this;
+        if (socket && !socket.isConnected()) {
+          socket.connect().then(function() {
+            self.executeSend(value);
+          });
+        } else {
+          self.executeSend(value);
+        }
+      },
+      executeSend: function(value) {
         var messageType = sinclo.chatApi.messageType.customer;
         // 自動返信の処理中でなければ
         if (!sinclo.trigger.processing) {
@@ -7820,7 +7845,6 @@
         if (check.smartphone()) {
           this.sendErrCatch();
         }
-
       },
       observeType: { // 入力中監視処理
         timer: null,
