@@ -55,6 +55,8 @@ class MWidgetSetting extends AppModel {
       'sub_title_text_color' => "subTitleTextColor",
       //8.説明文文字色
       'description_text_color' => "descriptionTextColor",
+      //閉じるボタン色
+      'close_btn_color' => "closeBtnColor",
       //9.チャットエリア背景色
       'chat_talk_background_color' => "chatTalkBackgroundColor",
       //10.企業名担当者名文字色

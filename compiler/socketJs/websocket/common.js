@@ -227,6 +227,27 @@ var socket, // socket.io
       var codeB = parseInt(balloonB).toString(16);
       return ('#' + codeR + codeG + codeB).toUpperCase();
     },
+    getContrastColor: function(colorCode) {
+      var code = colorCode.substr(1), r, g, b;
+      if (code.length === 3) {
+        r = String(code.substr(0, 1)) + String(code.substr(0, 1));
+        g = String(code.substr(1, 1)) + String(code.substr(1, 1));
+        b = String(code.substr(2)) + String(code.substr(2));
+      } else {
+        r = String(code.substr(0, 2));
+        g = String(code.substr(2, 2));
+        b = String(code.substr(4));
+      }
+
+      var balloonR = String(255 - parseInt(r, 16));
+      var balloonG = String(255 - parseInt(g, 16));
+      var balloonB = String(255 - parseInt(b, 16));
+      var codeR = parseInt(balloonR).toString(16);
+      var codeG = parseInt(balloonG).toString(16);
+      var codeB = parseInt(balloonB).toString(16);
+
+      return ('#' + codeR + codeG + codeB).toUpperCase();
+    },
     //サイズを返す関数
     getColorList: function(widget) {
       var widget = window.sincloInfo.widget;
@@ -1284,15 +1305,14 @@ var socket, // socket.io
             window.sincloInfo.site.files +
             '/img/widget/close.png"); background-position-y: -1.5px; position: absolute; top: calc(50% - 8px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
         html += '      #sincloBox div#closeBtn:hover {background-color: #999999;}'
-        html += '      #sincloBox #fw-close-btn {top: 5px; right: 5px; position: absolute; z-index: 2; cursor: pointer; ' +
-            'display: inline-flex; align-items: center; justify-content: center; height: 22px; width: 22px; }';
-        html += '      #sincloBox #fw-close-btn i {font-size: 22px; color: #FFFFFF; line-height: 1.25}';
+        html += '      #sincloBox #fw-close-btn {top: 3px; right: 5px; position: absolute; z-index: 2; cursor: pointer; ' +
+            'display: inline-flex; align-items: center; justify-content: center; height: 27px; width: 27px; }';
+        html += '      #sincloBox #fw-close-btn i {font-size: 27px; color: #FFFFFF; line-height: 1.25}';
         html += '      #sincloBox #fw-close-btn i:before {font-family: FA5P}';
-        html += '      #sincloBox #fw-close-btn:hover {background-color: ' + common.getThinColor(colorList['mainColor'], 0.8) + ';}';
+        html += '      #sincloBox #fw-close-btn:hover {background-color: ' + common.getContrastColor(colorList['mainColor']) + ';}';
 
-        html += '      #sincloBox #fw-minimize-btn {top: 1px; right: 8px; position: absolute; z-index: 2; font-size: 22px; color: #FFFFFF; cursor: pointer;}';
-        html += '      #sincloBox #fw-minimize-btn:before {font-family: FA5P}';
-        // html += '      #sincloBox #fw-minimize-btn:hover {color: #999999;}';
+        html += '      #sincloBox #fw-minimize-btn i {top: -1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: #FFFFFF; cursor: pointer;}';
+        html += '      #sincloBox #fw-minimize-btn i:before {font-family: FA5P}';
       }
 
       html += '      #sincloBox div#sincloWidgetBox { position: relative; top: 0px; }';
@@ -4300,8 +4320,8 @@ var socket, // socket.io
           }
           html += '  </span>';
         }
-        html += '    <div id="fw-close-btn" onclick="sinclo.operatorInfo.closeBtn()"><i  class="fal fa-times"></i></div>';
-        html += '    <i id="fw-minimize-btn" onclick="sinclo.operatorInfo.toggle()" class="fal fa-minus-square"></i>';
+        html += '    <div id="fw-close-btn" onclick="sinclo.operatorInfo.closeBtn()"><i class="fal fa-times"></i></div>';
+        html += '    <div id="fw-minimize-btn" onclick="sinclo.operatorInfo.toggle()"><i class="fal fa-minus-square"></i></div>';
 
         html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
         html += '  <sinclo-div id="titleWrap">';
