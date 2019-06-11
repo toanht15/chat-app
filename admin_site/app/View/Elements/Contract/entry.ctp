@@ -51,90 +51,135 @@
     <?= $this->Form->input('MAgreements.telephone_number', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
   </li>
 
-  <li style="display: flex; align-items: center;">
-    <h2>管理者情報</h2>
-    <?php if ($this->params->action == 'add'): ?>
-    <?= $this->Form->input('same_as_application', array('type' => 'checkbox', 'div' => false, 'label' => '申込者情報と同じ', 'style' => "margin-left:0.5em;")) ?>
-    <?php endif; ?>
-  </li>
-  <!-- /* 部署名 */ -->
-  <li>
-    <div class="labelArea fLeft"><span><label>部署名</label></span></div>
-    <?= $this->Form->input('MAgreements.administrator_department', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
-  </li>
-  <!-- /* 役職 */ -->
-  <li>
-    <div class="labelArea fLeft"><span><label>役職</label></span></div>
-    <?= $this->Form->input('MAgreements.administrator_position', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
-  </li>
-  <!-- /* お名前 */ -->
-  <li>
-    <div class="labelArea fLeft"><span class="require"><label>お名前</label></span></div>
-    <?= $this->Form->input('MAgreements.administrator_name', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
-    <?php if (!empty($errors['application_name'])) echo "<li class='error-message'>" . h($errors['application_name'][0]) . "</li>"; ?>
-  </li>
-  <!-- /* メールアドレス */ -->
-  <li>
-    <div class="labelArea fLeft"><span class="require"><label>メールアドレス</label></span></div>
-    <?= $this->Form->input('MAgreements.administrator_mail_address', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
-    <!-- /* 初期管理者情報 */ -->
-    <?php if ($this->params->action == 'add'): ?>
-      <span>※ 初期登録ユーザーのメールアドレスとして利用されます。</span>
-    <?php endif; ?>
-  </li>
+<?php if (!ADD_ACCOUNT_TO_M_USER || $isStrongPermission): ?>
+    <li style="display: flex; align-items: center;">
+        <h2>管理者情報</h2>
+      <?php if ($this->params->action == 'add'): ?>
+        <?= $this->Form->input('same_as_application', array('type' => 'checkbox', 'div' => false, 'label' => '申込者情報と同じ', 'style' => "margin-left:0.5em;")) ?>
+      <?php endif; ?>
+    </li>
+    <!-- /* 部署名 */ -->
+    <li>
+        <div class="labelArea fLeft"><span><label>部署名</label></span></div>
+      <?= $this->Form->input('MAgreements.administrator_department', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
+    </li>
+    <!-- /* 役職 */ -->
+    <li>
+        <div class="labelArea fLeft"><span><label>役職</label></span></div>
+      <?= $this->Form->input('MAgreements.administrator_position', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
+    </li>
+    <!-- /* お名前 */ -->
+    <li>
+        <div class="labelArea fLeft">
+            <span <?= (ADD_ACCOUNT_TO_M_USER) ? "" : 'class="require"' ?>><label>お名前</label></span></div>
+      <?= $this->Form->input('MAgreements.administrator_name', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
+      <?php if (!empty($errors['application_name'])) echo "<li class='error-message'>" . h($errors['application_name'][0]) . "</li>"; ?>
+    </li>
+    <!-- /* メールアドレス */ -->
+    <li>
+        <div class="labelArea fLeft">
+            <span <?= (ADD_ACCOUNT_TO_M_USER) ? "" : 'class="require"' ?>><label>メールアドレス</label></span></div>
+      <?= $this->Form->input('MAgreements.administrator_mail_address', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
+        <!-- /* 初期管理者情報 */ -->
+      <?php if ($this->params->action == 'add'): ?>
+          <span>※ 初期登録ユーザーのメールアドレスとして利用されます。</span>
+      <?php endif; ?>
+    </li>
+<?php endif; ?>
 
   <!-- /* サイトキー サイトキーは登録日（MD5）のハッシュ値 */ -->
   <!-- /* テスト利用 */ -->
-  <li><h2>プラン設定</h2></li>
-  <li>
-    <div class="labelArea fLeft"><span class="require"><label>テスト利用</label></span></div>
-    <?= $this->Form->checkbox('MCompany.trial_flg') ?>
-  </li>
-  <!-- 契約プラン -->
-  <li>
-    <span class="require"><label>契約プラン</label></span>
-    <?php $plans=array('1'=>'プレミアムプラン','4'=>'チャットベーシックプラン','2'=>'チャットスタンダードプラン','3'=>'シェアリングプラン'); ?>
-    <?= $this->Form->input('MCompany.m_contact_types_id', array('type' => 'select', 'options' => $plans,'default' => 1,'label'=>false, 'div' => ['id' => 'planListArea'])) ?>
-  </li>
-  <!-- オプション -->
-  <li style="display:flex">
-    <span><label>オプション</label></span>
-    <div>
-    <?= $this->Form->input('MCompany.options.refCompanyData', array('type' => 'checkbox', 'default' => false, 'label'=>'企業情報付与', 'div' => ['id' => 'refCompanyDataOptionArea'])) ?>
-    <?= $this->Form->input('MCompany.options.chatbotScenario', array('type' => 'checkbox', 'default' => false, 'label'=>'シナリオ設定', 'div' => ['id' => 'chatbotScenario'])) ?>
-    <?= $this->Form->input('MCompany.options.laCoBrowse', array('type' => 'checkbox', 'default' => false, 'label'=>'画面キャプチャ共有', 'div' => ['id' => 'laCoBrowse'])) ?>
-    <?= $this->Form->input('MCompany.la_limit_users', array('type' => 'number', 'default' => 0, 'label'=>'最大セッション数：', 'div' => ['id' => 'laLimitUsers'])) ?>
-    <?= $this->Form->input('MCompany.options.chatbotTreeEditor', array('type' => 'checkbox', 'default' => false, 'label'=>'チャットツリー設定', 'div' => ['id' => 'chatbotTreeEditor'])) ?>
-    </div>
-  </li>
-  <!-- /* 契約ID数 */ -->
-  <li>
-    <div class="labelArea fLeft"><span class="require"><label>契約ID数</label></span></div>
-    <?= $this->Form->input('MCompany.limit_users', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
-    <?php if (!empty($errors['limit_users'])) echo "<li class='error-message'>" . h($errors['limit_users'][0]) . "</li>"; ?>
-  </li>
+<?php if ($isStrongPermission): ?>
+    <li><h2>プラン設定</h2></li>
+    <li>
+        <div class="labelArea fLeft"><span class="require"><label>テスト利用</label></span></div>
+      <?= $this->Form->checkbox('MCompany.trial_flg') ?>
+    </li>
+    <!-- 契約プラン -->
+    <li>
+        <span class="require"><label>契約プラン</label></span>
+      <?php $plans = array('1' => 'プレミアムプラン', '4' => 'チャットベーシックプラン', '2' => 'チャットプラン', '3' => 'シェアリングプラン'); ?>
+      <?= $this->Form->input('MCompany.m_contact_types_id', array('type' => 'select', 'options' => $plans,'default' => 1,'label'=>false, 'div' => ['id' => 'planListArea'])) ?>
+    </li>
+    <!-- オプション -->
+    <li style="display:flex">
+        <span><label>オプション</label></span>
+        <div>
+          <?php if (ALLOW_DISABLE_REALTIME_MONITOR): ?>
+            <?= $this->Form->input('MCompany.options.enableRealtimeMonitor', array(
+                'type' => 'checkbox',
+                'default' => false,
+                'label' => 'リアルタイムモニター',
+                'div' => ['id' => 'chatbotTreeEditor']
+            )) ?>
+          <?php else: ?>
+            <?= $this->Form->input('MCompany.options.enableRealtimeMonitor',
+                array('type' => 'hidden', 'default' => false, 'label' => 'リアルタイムモニター', 'div' => false)) ?>
+          <?php endif; ?>
+          <?= $this->Form->input('MCompany.options.refCompanyData', array(
+              'type' => 'checkbox',
+              'default' => false,
+              'label' => '企業情報付与',
+              'div' => ['id' => 'refCompanyDataOptionArea']
+          )) ?>
+          <?= $this->Form->input('MCompany.options.chatbotScenario',
+              array('type' => 'checkbox', 'default' => false, 'label' => 'シナリオ設定', 'div' => ['id' => 'chatbotScenario'])) ?>
+          <?= $this->Form->input('MCompany.options.chatbotTreeEditor', array(
+              'type' => 'checkbox',
+              'default' => false,
+              'label' => 'チャットツリー設定',
+              'div' => ['id' => 'chatbotTreeEditor']
+          )) ?>
+          <?= $this->Form->input('MCompany.options.laCoBrowse',
+              array('type' => 'checkbox', 'default' => false, 'label' => '画面キャプチャ共有', 'div' => ['id' => 'laCoBrowse'])) ?>
+          <?= $this->Form->input('MCompany.la_limit_users',
+              array('type' => 'number', 'default' => 0, 'label' => '最大セッション数：', 'div' => ['id' => 'laLimitUsers'])) ?>
+        </div>
+    </li>
+    <!-- /* 契約ID数 */ -->
+    <li>
+        <div class="labelArea fLeft"><span class="require"><label>契約ID数</label></span></div>
+      <?= $this->Form->input('MCompany.limit_users', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
+      <?php if (!empty($errors['limit_users'])) echo "<li class='error-message'>" . h($errors['limit_users'][0]) . "</li>"; ?>
+    </li>
+<?php endif; ?>
+<?php if (ALLOW_SET_CV_VALUE): ?>
+    <!-- /* CV単価 */ -->
+    <li>
+        <div class="labelArea fLeft"><span class="require"><label>CV単価</label></span></div>
+      <?= $this->Form->input('MAgreements.cv_value',
+          array('type' => 'text', 'div' => false, 'label' => false, 'maxlength' => 9)) ?>
+      <?php if (!empty($errors['cv_value'])) {
+        echo "<li class='error-message'>" . h($errors['cv_value'][0]) . "</li>";
+      } ?>
+    </li>
+<?php else: ?>
+
+<?php endif; ?>
   <li><h2>期間設定</h2></li>
-  <!-- /* トライアル開始日 */ -->
-  <li>
-    <div class="labelArea fLeft"><span><label>トライアル開始日</label></span></div>
-    <?= $this->Form->input('MAgreements.trial_start_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' => $isTrial ? '' : 'disabled','readonly' => $isTrial)) ?>
-    <?php if (!empty($agreementerrors['MAgreements.trial_start_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.trial_start_day'][0]) . "</li>"; ?>
-  </li>
-  <!-- /* トライアル終了日 */ -->
-  <li>
-    <div class="labelArea fLeft"><span><label>トライアル終了日</label></span></div>
-    <?= $this->Form->input('MAgreements.trial_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' =>  $isTrial ? '' : 'disabled','readonly' => $isTrial)) ?>
-    <?php if (!empty($agreementerrors['MAgreements.trial_end_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.trial_end_day'][0]) . "</li>"; ?>
-  </li>
+<?php if ($isStrongPermission): ?>
+    <!-- /* トライアル開始日 */ -->
+    <li>
+        <div class="labelArea fLeft"><span><label>トライアル開始日</label></span></div>
+      <?= $this->Form->input('MAgreements.trial_start_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' => $isTrial ? '' : 'disabled','readonly' => $isTrial)) ?>
+      <?php if (!empty($agreementerrors['MAgreements.trial_start_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.trial_start_day'][0]) . "</li>"; ?>
+    </li>
+    <!-- /* トライアル終了日 */ -->
+    <li>
+        <div class="labelArea fLeft"><span><label>トライアル終了日</label></span></div>
+      <?= $this->Form->input('MAgreements.trial_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' =>  $isTrial ? '' : 'disabled','readonly' => $isTrial)) ?>
+      <?php if (!empty($agreementerrors['MAgreements.trial_end_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.trial_end_day'][0]) . "</li>"; ?>
+    </li>
+<?php endif; ?>
   <!-- /* 契約開始日 */ -->
   <li>
     <div class="labelArea fLeft"><span class="require"><label>契約開始日</label></span></div>
     <?= $this->Form->input('MAgreements.agreement_start_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' =>  $isTrial ? 'disabled' : '', 'readonly' => !$isTrial)) ?>
     <?php if (!empty($agreementerrors['MAgreements.agreement_start_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.agreement_start_day'][0]) . "</li>"; ?>
   </li>
-  <!-- /* 契約開始日 */ -->
   <li>
-    <div class="labelArea fLeft"><span class="require"><label>契約終了日</label></span></div>
+      <div class="labelArea fLeft">
+          <span <?= (SET_AGREEMENT_END_DATE) ? 'class="require"' : '' ?>><label>契約終了日</label></span></div>
     <?= $this->Form->input('MAgreements.agreement_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' =>  $isTrial ? 'disabled' : '','readonly' => !$isTrial)) ?>
     <?php if (!empty($agreementerrors['MAgreements.agreement_end_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.agreement_end_day'][0]) . "</li>"; ?>
   </li>

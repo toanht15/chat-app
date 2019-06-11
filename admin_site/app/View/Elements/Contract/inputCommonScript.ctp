@@ -14,7 +14,7 @@
         inputDisabled($('#MAgreementsTrialStartDay'));
         inputDisabled($('#MAgreementsTrialEndDay'));
         inputEnabled($('#MAgreementsAgreementStartDay'));
-        inputEnabled($('#MAgreementsAgreementEndDay'));
+        inputEnabled($('#MAgreementsAgreementEndDay'), <?= (SET_AGREEMENT_END_DATE) ? 'true' : 'false' ?>);
       }
     }
 
@@ -35,8 +35,16 @@
       jqObj.datepicker( "option", "disabled", true ).prop("readonly", true).addClass("disabled").prev('div').find('span').first().removeClass('require');
     }
 
-    var inputEnabled = function(jqObj) {
-      jqObj.datepicker( "option", "disabled", false ).prop("readonly", false).removeClass("disabled").prev('div').find('span').first().addClass('require')
+    var inputEnabled = function(jqObj, addRequire) {
+      jqObj.datepicker('option', 'disabled', false).
+          prop('readonly', false).
+          removeClass('disabled').
+          prev('div').
+          find('span').
+          first();
+      if (Boolean(addRequire)) {
+        jqObj.addClass('require');
+      }
     }
 
     $('#MCompanyTrialFlg').on('change', function(event){

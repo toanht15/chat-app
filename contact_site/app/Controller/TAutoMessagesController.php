@@ -13,6 +13,7 @@
 
 App::uses('WidgetSettingController', 'Controller');
 App::uses('AutoMessageException', 'Lib/Error');
+App::uses('LandscapeCodeMapper', 'Vendor/Util/Landscape');
 
 class TAutoMessagesController extends WidgetSettingController
 {
@@ -27,7 +28,8 @@ class TAutoMessagesController extends WidgetSettingController
     'MMailTemplate',
     'MWidgetSetting',
     'TChatbotScenario',
-    'TChatbotDiagram'
+    'TChatbotDiagram',
+    'TCustomerInformationSettings'
   );
   public $components = array('AutoMessageExcelExport', 'NodeSettingsReload', 'AutoMessageExcelImport');
   public $helpers = array('AutoMessage');
@@ -1197,6 +1199,7 @@ class TAutoMessagesController extends WidgetSettingController
       }
       $this->MMailTransmissionSetting->set([
         'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'from_address' => 'no-reply@sinclo.jp',
         'from_name' => $fromName,
         'to_address' => $toAddresses,
         'subject' => $subject
@@ -1332,6 +1335,23 @@ class TAutoMessagesController extends WidgetSettingController
     $this->set('gallaryPath', C_NODE_SERVER_ADDR . C_NODE_SERVER_FILE_PORT . '/img/widget/');
 
     $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
+
+    $this->set('companyInfoMap', $this->loadLandscapeCodeMap());
+    // TCustomerInformationSettings
+    $visitorInfoList = $this->TCustomerInformationSettings->find('list', array(
+      'fields' => array('sort', 'item_name'),
+      'order' => array(
+        'TCustomerInformationSettings.sort' => 'asc',
+        'TCustomerInformationSettings.id' => 'asc'
+      ),
+      'conditions' => array(
+        'TCustomerInformationSettings.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'TCustomerInformationSettings.delete_flg != ' => 1
+      )
+    ));
+
+    $this->set('visitorInfoList', $visitorInfoList);
+
     // 最後に表示していたページ番号
     if (!empty($this->request->query['lastpage'])) {
       $this->set('lastPage', $this->request->query['lastpage']);
@@ -1593,5 +1613,17 @@ class TAutoMessagesController extends WidgetSettingController
       'data' => $resultArray,
       'disallowActiveChanging' => $disallowActiveChanging
     );
+  }
+
+  private function loadLandscapeCodeMap()
+  {
+    $map                           = [];
+    $map['ipoTypeList']            = LandscapeCodeMapper::$orgIpoTypeMap;
+    $map['grossList']              = LandscapeCodeMapper::$orgGrossCodeMap;
+    $map['capitalList']            = LandscapeCodeMapper::$orgCapitalCodeMap;
+    $map['employeesList']          = LandscapeCodeMapper::$orgEmployeesCodeMap;
+    $map['industrialCategoryList'] = LandscapeCodeMapper::$orgIndustrialCategoryMMap;
+
+    return $map;
   }
 }

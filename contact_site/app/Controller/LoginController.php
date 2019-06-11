@@ -740,7 +740,7 @@ class LoginController extends AppController {
       case 1:
         return 'プレミアムプラン';
       case 2:
-        return 'スタンダードプラン';
+        return 'チャットプラン';
       case 3:
         return 'シェアリングプラン';
       case 4:
@@ -802,7 +802,7 @@ class LoginController extends AppController {
     if (env('DEV_ENV') === 'dev') { // 開発環境
       return 'masashi.shimizu@medialink-ml.co.jp';
     } else {
-      return 'cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp';
+      return 'cloud-service@medialink-ml.co.jp';
     }
   }
 }

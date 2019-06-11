@@ -1,4 +1,7 @@
 var database = require('../database');
+var Redis = require('ioredis');
+var redis = new Redis(process.env.REDIS_PORT, process.env.REDIS_HOST);
+var publisher = new Redis(process.env.REDIS_PORT, process.env.REDIS_HOST);
 /* EXPORT TARGET VARIABLES */
 var companySettings = {},
     siteKeyIdMap = {},
@@ -10,13 +13,7 @@ var companySettings = {},
     operationHourSettings = {},
     chatSettings = {},
     customerInfoSettings = {},
-    mysql = require('mysql'),
-    pool = mysql.createPool({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
-    });
+    DBConnector = require('./class/util/db_connector_util');
 /* ======================= */
 /* Private Variables */
 var log4js = require('log4js'); // log4jsモジュール読み込み
@@ -24,15 +21,21 @@ log4js.configure('./log4js_setting.json'); // 設定ファイル読み込み
 var syslogger = log4js.getLogger('system'); // リクエスト用のロガー取得
 /* ================= */
 
-function initialize(siteKey) {
+function initialize(siteKey, needNotify) {
   // コール順厳守
-  loadWidgetSettings(siteKey,function(){
-    loadAutoMessageSettings(siteKey, function(){
-      loadCustomVariableSettings(siteKey, function(){
-        loadOperatingHourSettings(siteKey, function(){
-          loadPublicHoliday(function(){
-            loadChatSettings(siteKey, function(){
+  loadWidgetSettings(siteKey, false, function() {
+    loadAutoMessageSettings(siteKey, false, function() {
+      loadCustomVariableSettings(siteKey, false, function() {
+        loadOperatingHourSettings(siteKey, false, function() {
+          loadPublicHoliday(false, function() {
+            loadChatSettings(siteKey, false, function() {
               syslogger.info("ALL DATA LOADING IS SUCCESSFUL =====");
+              if (needNotify) {
+                publisher.publish('notifyUpdateSettings', JSON.stringify({
+                  type: 'all',
+                  siteKey: siteKey
+                }));
+              }
             });
           });
         });
@@ -49,11 +52,9 @@ function exports() {
   module.exports.reloadOperationHourSettings = loadOperatingHourSettings;
   module.exports.reloadChatSettings = loadChatSettings;
   module.exports.reloadCustomVariableSettings = loadCustomVariableSettings;
-  module.exports.mysql = mysql;
-  module.exports.pool = pool;
 }
 
-function loadWidgetSettings(siteKey, callback) {
+function loadWidgetSettings(siteKey, needNotify, callback) {
   'use strict';
   var getWidgetSettingSql  = 'SELECT ws.*, com.id as m_companies_id, com.trial_flg as trial_flg, ma.trial_end_day as trial_end_day, ma.agreement_end_day as agreement_end_day, com.company_key, com.core_settings, com.exclude_ips FROM m_widget_settings AS ws';
   if(siteKey) {
@@ -61,7 +62,7 @@ function loadWidgetSettings(siteKey, callback) {
     getWidgetSettingSql += ' INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = ws.m_companies_id )';
     getWidgetSettingSql += ' LEFT JOIN (SELECT * FROM m_agreements) AS ma  ON ( com.id = ma.m_companies_id )';
     getWidgetSettingSql += ' WHERE ws.del_flg = 0 ORDER BY id DESC LIMIT 1;';
-    pool.query(getWidgetSettingSql, siteKey,
+    DBConnector.getPool().query(getWidgetSettingSql, siteKey,
       function(err, row){
         if(err) {
           syslogger.error('Unable load Widget settings. siteKey : ' + siteKey);
@@ -91,7 +92,15 @@ function loadWidgetSettings(siteKey, callback) {
           module.exports.idSiteKeyMap = idSiteKeyMap;
           module.exports.widgetSettings = widgetSettings;
         }
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'widget',
+            siteKey: siteKey
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   } else {
@@ -99,7 +108,7 @@ function loadWidgetSettings(siteKey, callback) {
     getWidgetSettingSql += ' INNER JOIN (SELECT * FROM m_companies WHERE del_flg = 0 ) AS com  ON ( com.id = ws.m_companies_id )';
     getWidgetSettingSql += ' LEFT JOIN (SELECT * FROM m_agreements) AS ma  ON ( com.id = ma.m_companies_id )';
     getWidgetSettingSql += ' WHERE ws.del_flg = 0;';
-    pool.query(getWidgetSettingSql,
+    DBConnector.getPool().query(getWidgetSettingSql,
       function(err, rows){
         if(err) {
 
@@ -134,7 +143,15 @@ function loadWidgetSettings(siteKey, callback) {
           module.exports.idSiteKeyMap = idSiteKeyMap;
           module.exports.widgetSettings = widgetSettings;
         }
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'widget',
+            siteKey: 'all'
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   }
@@ -149,14 +166,15 @@ function initializeSettings(siteKey) {
   }
 }
 
-function loadAutoMessageSettings(siteKey, callback) {
+function loadAutoMessageSettings(siteKey, needNotify, callback) {
   'use strict';
   var getTriggerListSql  = "SELECT am.*, company_key FROM t_auto_messages AS am ";
   if(siteKey) {
     syslogger.info("loadAutoMessageSettings target : " + siteKey);
     getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
     getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?,?,?) ORDER BY am.sort asc;";
-    pool.query(getTriggerListSql, [siteKey, '1', '2', '3', '4'],
+    DBConnector.getPool().
+        query(getTriggerListSql, [siteKey, '1', '2', '3', '4'],
       function(err, rows){
         if(err) {
           syslogger.error('Unable load AutoMessage settings. siteKey : ' + siteKey);
@@ -171,14 +189,22 @@ function loadAutoMessageSettings(siteKey, callback) {
           autoMessageSettings[siteKey] = [];
           module.exports.autoMessageSettings = autoMessageSettings;
         }
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'autoMessage',
+            siteKey: siteKey
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   } else {
     // All
     getTriggerListSql += ' INNER JOIN (SELECT * FROM m_companies WHERE del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )';
     getTriggerListSql += ' WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?,?,?) ORDER BY am.sort asc;';
-    pool.query(getTriggerListSql, ['1', '2', '3', '4'],
+    DBConnector.getPool().query(getTriggerListSql, ['1', '2', '3', '4'],
       function(err, rows){
         if(err) {
           syslogger.error('Unable load ALL AutoMessage settings.');
@@ -203,18 +229,28 @@ function loadAutoMessageSettings(siteKey, callback) {
           syslogger.info('Load ALL Auto Message settings is successful.');
           module.exports.autoMessageSettings = autoMessageSettings;
         }
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'autoMessage',
+            siteKey: 'all'
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   }
 }
 
-function loadOperatingHourSettings(siteKey, callback) {
+function loadOperatingHourSettings(siteKey, needNotify, callback) {
   'use strict';
   var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
   if(siteKey) {
     syslogger.info("loadOperatingHourSettings target : " + siteKey);
-    pool.query(getOperatingHourSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
+    DBConnector.getPool().
+        query(getOperatingHourSQL,
+            [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
       function(err, row){
         if(err) {
           syslogger.error('Unable load Operating-hour settings. siteKey : ' + siteKey);
@@ -231,13 +267,21 @@ function loadOperatingHourSettings(siteKey, callback) {
           operationHourSettings[siteKey] = [];
           module.exports.operationHourSettings = operationHourSettings;
         }
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'operatingHour',
+            siteKey: siteKey
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   } else {
     // All
     getOperatingHourSQL = "SELECT * FROM m_operating_hours;";
-    pool.query(getOperatingHourSQL,
+    DBConnector.getPool().query(getOperatingHourSQL,
       function(err, rows){
         if(err) {
           syslogger.error('Unable load ALL Operating-hour settings.');
@@ -261,17 +305,25 @@ function loadOperatingHourSettings(siteKey, callback) {
           syslogger.info('Load ALL Operating-hour settings is successful.');
           module.exports.operationHourSettings = operationHourSettings;
         }
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'operatingHour',
+            siteKey: 'all'
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   }
 }
 
-function loadPublicHoliday(callback) {
+function loadPublicHoliday(needNotify, callback) {
   var getPublicHolidaySQL = "SELECT * FROM public_holidays;";
   publicHolidaySettings = {};
   publicHolidaySettingsArray = [];
-  pool.query(getPublicHolidaySQL,
+  DBConnector.getPool().query(getPublicHolidaySQL,
     function(err, rows){
       if(err) {
         syslogger.error('Unable load ALL Operating-hour settings.');
@@ -292,17 +344,26 @@ function loadPublicHoliday(callback) {
         module.exports.publicHolidaySettingsArray = publicHolidaySettingsArray;
         syslogger.info(JSON.stringify(publicHolidaySettingsArray));
       }
-      if(callback) callback();
+      if (needNotify) {
+        publisher.publish('notifyUpdateSettings', JSON.stringify({
+          type: 'publicHoliday',
+          siteKey: 'all'
+        }));
+      }
+      if (callback) {
+        callback();
+      }
     }
   );
 }
 
-function loadChatSettings(siteKey, callback) {
+function loadChatSettings(siteKey, needNotify, callback) {
   'use strict';
   var getChatSQL = "SELECT * FROM m_chat_settings where m_companies_id = ?;";
   if(siteKey) {
   syslogger.info("loadChatSettings target : " + siteKey);
-   pool.query(getChatSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
+    DBConnector.getPool().
+        query(getChatSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
       function(err, row){
         if(err) {
           syslogger.error('Unable load chat settings. siteKey : ' + siteKey);
@@ -319,13 +380,21 @@ function loadChatSettings(siteKey, callback) {
           chatSettings[siteKey] = [];
           module.exports.chatSettings = chatSettings;
         }
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'chatSetting',
+            siteKey: siteKey
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   } else {
     // All
     getChatSQL = "SELECT * FROM m_chat_settings;";
-    pool.query(getChatSQL,
+    DBConnector.getPool().query(getChatSQL,
       function(err, rows){
         if(err) {
           syslogger.error('Unable load ALL Chat settings.');
@@ -343,13 +412,21 @@ function loadChatSettings(siteKey, callback) {
           syslogger.info('Load ALL Chat settings is successful.');
           module.exports.chatSettings = chatSettings;
         }
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'chatSetting',
+            siteKey: 'all'
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   }
 }
 
-function loadCustomVariableSettings(siteKey, callback) {
+function loadCustomVariableSettings(siteKey, needNotify, callback) {
   'use strict';
   var getCustomerInfoSettingsSQL = "";
   if(siteKey) {
@@ -358,7 +435,9 @@ function loadCustomVariableSettings(siteKey, callback) {
     getCustomerInfoSettingsSQL = "SELECT tcis.m_companies_id as m_companies_id, tcis.item_name as item_name, tcv.attribute_value as attribute_value FROM t_customer_information_settings as tcis";
     getCustomerInfoSettingsSQL += " INNER JOIN t_custom_variables as tcv ON (tcis.t_custom_variables_id = tcv.id)";
     getCustomerInfoSettingsSQL += " WHERE tcis.m_companies_id = ? AND tcis.sync_custom_variable_flg = 1 AND tcis.delete_flg = 0;";
-    pool.query(getCustomerInfoSettingsSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
+    DBConnector.getPool().
+        query(getCustomerInfoSettingsSQL,
+            [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
       function(err, rows){
         if(err) {
           syslogger.error('Unable load Customer Info settings. siteKey : ' + siteKey);
@@ -375,7 +454,15 @@ function loadCustomVariableSettings(siteKey, callback) {
           customerInfoSettings[siteKey] = [];
           module.exports.customerInfoSettings = customerInfoSettings;
         }
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'customVariable',
+            siteKey: siteKey
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   } else {
@@ -383,7 +470,7 @@ function loadCustomVariableSettings(siteKey, callback) {
     getCustomerInfoSettingsSQL = "SELECT tcis.m_companies_id as m_companies_id, tcis.item_name as item_name, tcv.attribute_value as attribute_value FROM t_customer_information_settings as tcis";
     getCustomerInfoSettingsSQL += " INNER JOIN t_custom_variables as tcv ON (tcis.t_custom_variables_id = tcv.id)";
     getCustomerInfoSettingsSQL += " WHERE tcis.sync_custom_variable_flg = 1 AND tcis.delete_flg = 0;";
-    pool.query(getCustomerInfoSettingsSQL,
+    DBConnector.getPool().query(getCustomerInfoSettingsSQL,
       function(err, rows){
         if(err) {
           syslogger.error('Unable load ALL Customer Info settings.');
@@ -415,13 +502,60 @@ function loadCustomVariableSettings(siteKey, callback) {
           });
         }
         module.exports.customerInfoSettings = customerInfoSettings;
-        if(callback) callback();
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'customVariable',
+            siteKey: 'all'
+          }));
+        }
+        if (callback) {
+          callback();
+        }
       }
     );
   }
 }
 
+redis.subscribe('notifyUpdateSettings', function(err, count) {
+});
+
+redis.on('message', function(channel, message) {
+  if (channel === 'notifyUpdateSettings') {
+    let obj = JSON.parse(message);
+    let siteKey = obj.siteKey === 'all' ? null : obj.siteKey;
+    switch (obj.type) {
+      case 'all':
+        initialize(siteKey, false);
+        break;
+      case 'widget':
+        loadWidgetSettings(siteKey, false, function() {
+        });
+        break;
+      case 'autoMessage':
+        loadAutoMessageSettings(siteKey, false, function() {
+        });
+        break;
+      case 'customVariable':
+        loadCustomVariableSettings(siteKey, false, function() {
+        });
+        break;
+      case 'operationHour':
+        loadOperatingHourSettings(siteKey, false, function() {
+        });
+        break;
+      case 'publicHoliday':
+        loadPublicHoliday(siteKey, false, function() {
+        });
+        break;
+      case 'chatSetting':
+        loadChatSettings(siteKey, false, function() {
+        });
+        break;
+    }
+  }
+});
+
 if(Object.keys(companySettings).length === 0) {
-  initialize();
+  initialize(null, false);
 }
 exports();
