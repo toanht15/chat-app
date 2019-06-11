@@ -6386,9 +6386,21 @@ var socket, // socket.io
     prevList: [],
     // TODO 画面同期時セットするようにする
     scrollSize: function() { // 全体のスクロール幅
+      var scrollHeight = document.body.scrollHeight;
+      if (check.smartphone() && !check.android()) {
+        // handle scrollHeight bug on iphone
+        var overflow = document.documentElement.style.overflow;
+        var height = document.documentElement.style.height;
+        document.documentElement.style.overflow = 'visible';
+        document.documentElement.style.height = 'auto';
+        scrollHeight = document.body.scrollHeight;
+        document.documentElement.style.overflow = overflow;
+        document.documentElement.style.height = height;
+      }
+
       return {
         x: document.body.scrollWidth - window.innerWidth,
-        y: document.body.scrollHeight - window.innerHeight
+        y: scrollHeight - window.innerHeight
       };
     },
     // TODO 画面同期時セットするようにする
