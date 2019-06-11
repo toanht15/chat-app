@@ -740,7 +740,7 @@ class LoginController extends AppController {
       case 1:
         return 'プレミアムプラン';
       case 2:
-        return 'スタンダードプラン';
+        return 'チャットプラン';
       case 3:
         return 'シェアリングプラン';
       case 4:
