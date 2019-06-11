@@ -931,17 +931,15 @@ sinclo@medialink-ml.co.jp
     return $uniqueKey;
   }
 
-
   /**
    * リードリスト保存時、該当IDのリスト設定内に同名の項目が存在するか
-   *
-   *
    * */
-  private function _makeLeadDataProcess($saveData){
+  private function _makeLeadDataProcess($saveData)
+  {
     $labelArray = [];
     $valueArray = [];
     $targetId = $saveData->tLeadListSettingId;
-    if(!empty($targetId)) {
+    if (!empty($targetId)) {
       $currentLabelArray = $this->TLeadListSetting->find('list', [
         'recursive' => -1,
         'fields' => [
@@ -952,13 +950,17 @@ sinclo@medialink-ml.co.jp
         ]
       ]);
     }
-    foreach($saveData->leadInformations as $key => $result) {
-      if(empty($result->leadUniqueHash)) {
+    foreach ($saveData->leadInformations as $key => $result) {
+      if (empty($result->leadUniqueHash)) {
         $uniqueKey = empty($targetId) ? "" : $this->_getSameNameHash($currentLabelArray[$targetId], $result);
         $result->leadUniqueHash = $uniqueKey == "" ? $this->_makeHashProcess($result->leadLabelName) : $uniqueKey;
       }
-      $labelArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadLabelName' => $result->leadLabelName , 'deleted' => 0];
-      $valueArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadVariableName' => $result->leadVariableName];
+      $labelArray[] = [
+        'leadUniqueHash' => $result->leadUniqueHash,
+        'leadLabelName' => $result->leadLabelName,
+        'deleted' => 0
+      ];
+      $valueArray[] = ['leadUniqueHash' => $result->leadUniqueHash, 'leadVariableName' => $result->leadVariableName];
     }
     // 現在保存しようとしている対象のデータを取得
     if (!empty($currentLabelArray)) {
@@ -979,8 +981,9 @@ sinclo@medialink-ml.co.jp
    * @param Object $saveData アクション詳細
    * @return Object          t_chatbot_scenarioに保存するアクション詳細
    * */
-  private function _entryProcessForLeadRegister($saveData){
-    if (empty($saveData->tLeadListSettingId)) {
+  private function _entryProcessForLeadRegister($saveData)
+  {
+    if (empty($saveData->tLeadListSettingId) || $saveData->makeLeadTypeList == 1) {
       $this->TLeadListSetting->create();
     } else {
       $this->TLeadListSetting->read(null, $saveData->tLeadListSettingId);
@@ -988,24 +991,21 @@ sinclo@medialink-ml.co.jp
     $saveData->leadInformations = $this->_makeLeadDataProcess($saveData);
 
     $errors = $this->TLeadListSetting->validationErrors;
-    if(empty($errors)) {
+    if (empty($errors)) {
       $this->TLeadListSetting->save();
       //IDが無い場合
-      if(empty($saveData->tLeadListSettingId)) {
+      if (empty($saveData->tLeadListSettingId) || $saveData->makeLeadTypeList == 1) {
         $saveData->tLeadListSettingId = $this->TLeadListSetting->getLastInsertId();
       }
     } else {
       $exception = new ChatbotScenarioException('バリデーションエラー');
       $exception->setErrors($errors);
-      $exception->setLastPage($nextPage);
       throw $exception;
     }
-
     // リード登録設定DBに保存した情報をオブジェクトから削除する
     unset($saveData->leadTitleLabel);
     unset($saveData->makeLeadTypeList);
     return $saveData;
-
   }
 
   /**
