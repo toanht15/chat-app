@@ -98,7 +98,7 @@
     <!-- 契約プラン -->
     <li>
         <span class="require"><label>契約プラン</label></span>
-      <?php $plans=array('1'=>'プレミアムプラン','4'=>'チャットベーシックプラン','2'=>'チャットスタンダードプラン','3'=>'シェアリングプラン'); ?>
+      <?php $plans = array('1' => 'プレミアムプラン', '4' => 'チャットベーシックプラン', '2' => 'チャットプラン', '3' => 'シェアリングプラン'); ?>
       <?= $this->Form->input('MCompany.m_contact_types_id', array('type' => 'select', 'options' => $plans,'default' => 1,'label'=>false, 'div' => ['id' => 'planListArea'])) ?>
     </li>
     <!-- オプション -->

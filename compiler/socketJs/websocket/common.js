@@ -7341,7 +7341,7 @@ var socket, // socket.io
       common.widgetHandler.clearShownFlg();
     }
     socket = io.connect(sincloInfo.site.socket,
-        {port: 9090, rememberTransport: false});
+        {port: 9090, rememberTransport: false, transports: ['websocket']});
 
     // 接続時
     socket.on('connect', function() {
