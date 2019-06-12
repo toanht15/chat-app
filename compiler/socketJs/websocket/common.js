@@ -434,7 +434,11 @@ var socket, // socket.io
           //27.ウィジット内枠線なし
           widgetInsideBorderNone: widgetInsideBorderNone,
           //28.ウィジット外枠線なし
-          widgetBorderNone: widgetBorderNone
+          widgetBorderNone: widgetBorderNone,
+          // 閉じるボタン色
+          closeBtnColor: widget.closeBtnColor,
+          // 閉じるマウスオーバー
+          closeBtnHoverColor: widget.closeBtnHoverColor
         };
       }
       return portioneArray;
@@ -1307,11 +1311,11 @@ var socket, // socket.io
         html += '      #sincloBox div#closeBtn:hover {background-color: #999999;}'
         html += '      #sincloBox #fw-close-btn {top: 3px; right: 5px; position: absolute; z-index: 2; cursor: pointer; ' +
             'display: inline-flex; align-items: center; justify-content: center; height: 27px; width: 27px; }';
-        html += '      #sincloBox #fw-close-btn i {font-size: 27px; color: #FFFFFF; line-height: 1.25}';
+        html += '      #sincloBox #fw-close-btn i {font-size: 23px; color: ' + colorList['closeBtnColor'] + '; line-height: 1.25}';
         html += '      #sincloBox #fw-close-btn i:before {font-family: FA5P}';
-        html += '      #sincloBox #fw-close-btn:hover {background-color: ' + common.getContrastColor(colorList['mainColor']) + ';}';
+        html += '      #sincloBox #fw-close-btn:hover {background-color: ' + colorList['closeBtnHoverColor'] + ';}';
 
-        html += '      #sincloBox #fw-minimize-btn i {top: -1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: #FFFFFF; cursor: pointer;}';
+        html += '      #sincloBox #fw-minimize-btn i {top: -1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: ' + colorList['closeBtnColor']  + '; cursor: pointer;}';
         html += '      #sincloBox #fw-minimize-btn i:before {font-family: FA5P}';
       }
 

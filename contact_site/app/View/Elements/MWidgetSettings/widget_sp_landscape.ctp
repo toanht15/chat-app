@@ -7,6 +7,8 @@
     #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
     #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; margin: 0;color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
     #sincloBox.open #minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+    #sincloBox #fw-minimize-btn i {top: 1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: {{getCloseBtnColor()}}; cursor: pointer;}
+    #sincloBox #fw-minimize-btn i {font-family: Font Awesome\ 5 Pro; font-weight: 300;}
     #sincloBox div.widgetHeaderWrap:not(.sp):hover { opacity: 0.75; }
     /*
           #sincloBox:not(.open) #addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
@@ -87,12 +89,8 @@
     <!-- タイトル -->
   </div>
   <!-- chat_message_copy 1 end -->
-
-  <div id="minimizeBtn" class="widgetOpener"></div>
+    <div id="fw-minimize-btn" class="widgetOpener fw-minimize-btn-landscape"><i class="fal fa-minus-square"></i></div>
   </div>
-  <!--
-      <div id="addBtn" class="widgetOpener"></div>
-   -->
   <div id="miniTarget">
     <section id="chatTab" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}">
 

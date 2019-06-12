@@ -57,6 +57,8 @@ class MWidgetSetting extends AppModel {
       'description_text_color' => "descriptionTextColor",
       //閉じるボタン色
       'close_btn_color' => "closeBtnColor",
+      // 閉じるマウスオーバー
+      'close_btn_hover_color' => 'closeBtnHoverColor',
       //9.チャットエリア背景色
       'chat_talk_background_color' => "chatTalkBackgroundColor",
       //10.企業名担当者名文字色
