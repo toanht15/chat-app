@@ -1032,7 +1032,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox a:hover { color: {{widget.settings['main_color']}}; }
         #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{widget.settings['main_color']}}; border-bottom: none; background-color: {{widget.settings['main_color']}};text-align: center; font-size: 14px; margin: 0;color: {{widget.settings['string_color']}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 14px;}
         #sincloBox.open #minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-        #sincloBox #fw-minimize-btn i {top: 1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: #FFFFFF; cursor: pointer;}
+        #sincloBox #fw-minimize-btn i {top: 1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: {{getCloseBtnColor()}}; cursor: pointer;}
         #sincloBox #fw-minimize-btn i {font-family: Font Awesome\ 5 Pro; font-weight: 300;}
 
         #sincloBox.spLandscape {width: 444px}

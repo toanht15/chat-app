@@ -111,6 +111,8 @@ class TAutoMessagesController extends WidgetSettingController
       'header_background_color',
       'sub_title_text_color',
       'description_text_color',
+      'close_btn_color',
+      'close_btn_hover_color',
       'chat_talk_background_color',
       'c_name_text_color',
       're_text_color',
