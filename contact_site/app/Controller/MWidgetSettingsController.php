@@ -936,6 +936,14 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'description_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['description_text_color'] = DESCRIPTION_TEXT_COLOR; // デフォルト値
             }
+            //最小化/閉じるボタン色
+            if ( strcmp($v, 'close_btn_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['close_btn_color'] = CLOSE_BTN_COLOR; // デフォルト値
+            }
+            //最小化/閉じるボタン色
+            if ( strcmp($v, 'close_btn_hover_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['close_btn_hover_color'] = CLOSE_BTN_HOVER_COLOR; // デフォルト値
+            }
             //9.チャットエリア背景色
             if ( strcmp($v, 'chat_talk_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_talk_background_color'] = CHAT_TALK_BACKGROUND_COLOR; // デフォルト値
