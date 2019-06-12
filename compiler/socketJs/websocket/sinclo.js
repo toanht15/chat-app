@@ -10971,11 +10971,26 @@
         if (message) {
           return message.replace(/\{\{(.+?)\}\}/g, function(param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-            return self._getStoredVariable(name) || '';
+            var value = self._getStoredVariable(name);
+            if (!value) return '';
+
+            if (check.isJSON(value) && value.indexOf('separator') !== -1) {
+              // checkbox message
+              var checkboxData = JSON.parse(value);
+              var array        = checkboxData.message.split(checkboxData.separator);
+              var text = '';
+              array.forEach(function(item) {
+                text = text + '・' +  item + '\n';
+              });
+
+              return text;
+            }
+
+            return value;
           });
-        } else {
-          return '';
         }
+
+        return '';
       },
       _getIntervalTimeSec: function() {
         var self = sinclo.scenarioApi;
