@@ -856,9 +856,6 @@ var socket, // socket.io
     },
     //最大化時ボタン表示
     whenMaximizedBtnShow: function() {
-      $('#minimizeBtn').show();
-      $('#closeBtn').hide();
-
       $('#fw-minimize-btn').show();
       $('#fw-close-btn').hide();
     },
@@ -867,14 +864,10 @@ var socket, // socket.io
       var widget = window.sincloInfo.widget, displaySet = '';
       if (Number(widget.closeButtonSetting) === 1) {
         //閉じるボタン無効
-        $('#minimizeBtn').hide();
-        $('#closeBtn').hide();
-
         $('#fw-minimize-btn').hide();
         $('#fw-close-btn').hide();
       } else {
         //閉じるボタン有効
-        $('#minimizeBtn').hide();
         $('#fw-minimize-btn').hide();
         var smartphone = check.smartphone();
         if (smartphone) {
@@ -882,14 +875,11 @@ var socket, // socket.io
           //スマホだったら縦か横かを判定
           if (common.isPortrait()) {
             //縦
-            $('#closeBtn').show();
             $('#fw-close-btn').show();
           } else {
-            $('#closeBtn').hide();
             $('#fw-close-btn').hide();
           }
         } else {
-          $('#closeBtn').show();
           $('#fw-close-btn').show();
         }
       }
@@ -1860,6 +1850,11 @@ var socket, // socket.io
               (6 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' +
               (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' +
               (20 * ratio) + 'px; z-index: 2; }';
+
+          html += '#sincloBox #fw-minimize-btn i {top: ' + (-1) * ratio + 'px; right: ' + 7 * ratio + 'px; font-size: ' + 26 * ratio + 'px;}';
+
+          html += '#sincloBox #fw-close-btn {top: ' + 3 * ratio + 'px; right: ' + 5 * ratio + 'px;' + 'height: ' + 27 * ratio + 'px; width: ' + 27 * ratio + 'px; }';
+          html += '#sincloBox #fw-close-btn i {font-size: ' + 27 * ratio +'px; line-height: ' + 1.25 * ratio + '}';
           //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
           if (Number(widget.closeButtonSetting) === 1) {
             //閉じるボタン無効
@@ -2429,6 +2424,7 @@ var socket, // socket.io
           html += '#sincloBox section { width: 100% }';
           html += '#sincloBox section#chatTab ul { height: ' +
               (chatAreaHeight - (6.5 * hRatio)) + 'px }';
+          html += '#sincloBox #fw-minimize-btn i {top: -0.1px; right: 10px; font-size: 1.5em;}';
           if(check.android()){
             html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.25em; bottom: 0; right: 0.3em; }';
           } else {
