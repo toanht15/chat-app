@@ -1061,7 +1061,7 @@ function getIpRange(ipAddress) {
 }
 
 router.get('/refreshCompanyList', function(req, res, next) {
-  list.getCompanyList();
+  list.getCompanyList(true);
   res.send('OK');
   res.status(200);
 });
