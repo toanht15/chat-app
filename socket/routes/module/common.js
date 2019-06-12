@@ -409,6 +409,12 @@ function loadChatSettings(siteKey, needNotify, callback) {
             // row = object
             chatSettings[targetSiteKey] = row;
           });
+          Object.keys(companySettings).forEach(function(elm, index, arr){
+            if(!chatSettings[elm]) {
+              syslogger.info('siteKey: %s chatSettings is not found.',elm);
+              chatSettings[elm] = [];
+            }
+          });
           syslogger.info('Load ALL Chat settings is successful.');
           module.exports.chatSettings = chatSettings;
         }
@@ -521,6 +527,8 @@ redis.subscribe('notifyUpdateSettings', function(err, count) {
 
 redis.on('message', function(channel, message) {
   if (channel === 'notifyUpdateSettings') {
+    syslogger.info('===== NOTIFY UPDATE SETTINGS =====');
+    syslogger.info(message);
     let obj = JSON.parse(message);
     let siteKey = obj.siteKey === 'all' ? null : obj.siteKey;
     switch (obj.type) {
