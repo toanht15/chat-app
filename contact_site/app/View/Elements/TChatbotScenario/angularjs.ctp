@@ -881,7 +881,10 @@
               }
             }
 
-            definedVariables = $.unique($.merge(variableList, storedVariableList));
+            definedVariables = $.merge(variableList, storedVariableList);
+            definedVariables = definedVariables.filter(function(item, pos, self) {
+              return self.indexOf(item) == pos;
+            })
             storedVariableList = definedVariables;
           });
           $scope.storedVariableList = definedVariables;
