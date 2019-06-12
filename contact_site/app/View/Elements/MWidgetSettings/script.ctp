@@ -35,6 +35,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     $scope.beforeSpbPosition = 0;
 
+    $scope.closeBtnHoverDefaultColor = "<?=CLOSE_BTN_HOVER_COLOR?>";
+
     $scope.hideWidget = function(){
       $scope.resetSpView();
       $scope.switchWidget(4);
@@ -874,7 +876,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
       }
       if(id === 'close_btn_hover_color') {
-        //var colorid = '<?//=CLOSE_BTN_COLOR?>//';
         var colorid = $scope.getContrastColor($scope.main_color);
 
         $scope.close_btn_hover_color = colorid;

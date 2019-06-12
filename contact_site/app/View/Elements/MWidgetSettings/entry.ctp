@@ -639,19 +639,9 @@ $headerNo = 1;
                         'entity' => 'MWidgetSetting.close_btn_color'
                       ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;" >標準に戻す</span></span>
 
-                  <span style="height: 35px; width: 35em;"><label>閉じるマウスオーバー</label><?= $this->ngForm->input('close_btn_hover_color', [
-                      'type' => 'text',
-                      'placeholder' => '閉じるマウスオーバー',
-                      'div' => false,
-                      'class' => 'jscolor {hash:true}',
-                      'label' => false,
-                      'maxlength' => 7,
-                      'error' => false,
-                      'style' => 'width: 120px; position: relative; left: 22px;'
-                    ],
-                      [
-                        'entity' => 'MWidgetSetting.close_btn_hover_color'
-                      ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_hover_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;" >標準に戻す</span></span>
+                  <span style="height: 35px; width: 35em;"><label>閉じるマウスオーバー</label>
+                    <input name="data[MWidgetSetting][close_btn_hover_color]" placeholder="閉じるマウスオーバー" class="jscolor {hash:true}" maxlength="7" style="width: 120px; position: relative; left: 22px; background-image: none; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);" ng-model="close_btn_hover_color" ng-init="close_btn_hover_color=closeBtnHoverDefaultColor" type="text" id="MWidgetSettingCloseBtnHoverColor" autocomplete="off">
+                    <span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_hover_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;" >標準に戻す</span></span>
                 </div>
                 <!-- ヘッダー部end -->
 
