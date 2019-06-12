@@ -148,7 +148,7 @@ router.get("/", function (req, res, next) {
       }
       // 閉じるマウスオーバー
       var closeBtnHoverColor = '#5432FA';
-      if (('closeBtnColor' in settings)) {
+      if (('closeBtnHoverColor' in settings)) {
         closeBtnHoverColor = settings.closeBtnHoverColor;
       }
 
@@ -373,9 +373,9 @@ router.get("/", function (req, res, next) {
         //8.説明文文字色
         descriptionTextColor: settings.descriptionTextColor,
         // 閉じるボタン色
-        closeBtnColor: settings.closeBtnColor,
+        closeBtnColor: closeBtnColor,
         // 閉じるマウスオーバー
-        closeBtnHoverColor: settings.closeBtnHoverColor,
+        closeBtnHoverColor: closeBtnHoverColor,
         //9.チャットエリア背景色
         chatTalkBackgroundColor: settings.chatTalkBackgroundColor,
         //10.企業名担当者名文字色
