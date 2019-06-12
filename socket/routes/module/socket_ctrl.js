@@ -678,11 +678,13 @@ var db = {
             if (err !== null && err !== '') return false; // DB接続断対応
             var now = CommonUtil.formatDateParse();
 
-            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
-              if (CommonUtil.isset(obj.sincloSessionId)) {
+            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) { 
+              if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) && CommonUtil.isset(obj.sincloSessionId)) {
                 SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
               }
-              SharedData.sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
+              if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.tabId])) {
+                SharedData.sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
+              }
               timeUpdate(rows[0].id, obj, now, function(stayLogsId) {
                 obj.historyId = rows[0].id;
                 obj.stayLogsId = stayLogsId;
@@ -707,10 +709,12 @@ var db = {
                   function(error, results, fields) {
                     if (error && (error !== null && error !== '')) return false; // DB接続断対応
                     var historyId = results.insertId;
-                    if (CommonUtil.isset(obj.sincloSessionId)) {
+                    if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) && CommonUtil.isset(obj.sincloSessionId)) {
                       SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
                     }
-                    SharedData.sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
+                    if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.tabId])) {
+                      SharedData.sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
+                    }
                     timeUpdate(historyId, obj, now, function(stayLogsId) {
                       obj.historyId = historyId;
                       obj.stayLogsId = stayLogsId;
