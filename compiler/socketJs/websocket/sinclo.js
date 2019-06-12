@@ -502,6 +502,7 @@
     },
     connect: function() {
       // 新規アクセスの場合
+      var defer = $.Deferred();
       var oldIpAddress = userInfo.getIp();
       if (!check.isset(userInfo.getTabId())) {
         userInfo.firstConnection = true;
@@ -618,7 +619,7 @@
 
       if (!window.sincloInfo.contract.enableRealtimeMonitor) {
         sinclo.callApiAuth(emitData).then(function(data) {
-          sinclo.accessInfo(data);
+          defer.resolve(data);
         });
       } else {
         emit('connected', {
@@ -626,6 +627,7 @@
           data: emitData
         });
       }
+      return defer.promise();
     },
     retConnectedForSync: function(d) {
       var obj = common.jParse(d);
@@ -654,20 +656,11 @@
 
       if (check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
         userInfo.set(cnst.info_type.access, obj.accessId, true);
-
-        var setWidgetFnc = function() {
-          if (window.sincloInfo.widget === undefined) {
-            setTimeout(setWidgetFnc, 500);
-          } else {
-            common.makeAccessIdTag();
-          }
-        };
-
-        setWidgetFnc();
-
+        sinclo.executeMakeWidget();
       }
 
       if (obj.firstConnection) {
+        socket.clearOnceConnectedFlg();
         if (!check.isset(userInfo.userId) && check.isset(obj.userId)) {
           userInfo.set(cnst.info_type.user, obj.userId);
         }
@@ -724,25 +717,13 @@
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
-        referrer: userInfo.referrer
+        referrer: userInfo.referrer,
+        sincloSessionIdIsNew: obj.sincloSessionIdIsNew
       };
 
       if (obj.inactiveReconnect) {
         var tmpAutoMessages = sinclo.chatApi.autoMessages.get(true);
         connectSuccessData.tmpAutoMessages = tmpAutoMessages;
-      }
-
-      if (window.sincloInfo.contract.enableRealtimeMonitor) {
-        emit('connectSuccess', connectSuccessData, function(ev) {
-          if ((userInfo.gFrame && Number(userInfo.accessType) ===
-              Number(cnst.access_type.guest)) === false) {
-            emit('customerInfo', obj);
-          }
-        });
-      } else {
-        sinclo.callApiInfo().then(function(json) {
-          sinclo.setHistoryId(json);
-        });
       }
 
       // customEvent
@@ -754,6 +735,38 @@
         var evt = document.createEventObject();
         document.fireEvent('sinclo:connected', evt);
       }
+
+      window.userInfo.accessInfoData = obj;
+
+      return connectSuccessData;
+    },
+    executeConnectSuccess: function(connectSuccessData, obj) {
+      var defer = $.Deferred();
+      if (window.sincloInfo.contract.enableRealtimeMonitor) {
+        emit('connectSuccess', connectSuccessData, function(ev) {
+          if ((userInfo.gFrame && Number(userInfo.accessType) ===
+              Number(cnst.access_type.guest)) === false) {
+            emit('customerInfo', obj);
+            defer.resolve(json);
+          }
+        });
+      } else {
+        sinclo.callApiInfo().then(function(json) {
+          defer.resolve(json);
+        });
+      }
+      return defer.promise();
+    },
+    executeMakeWidget: function() {
+      var setWidgetFnc = function() {
+        if (window.sincloInfo.widget === undefined) {
+          setTimeout(setWidgetFnc, 500);
+        } else {
+          common.makeAccessIdTag();
+        }
+      };
+
+      setWidgetFnc();
     },
     callApiAuth: function(emitData) {
       var defer = $.Deferred();
@@ -784,10 +797,14 @@
     callApiInfo: function() {
       var defer = $.Deferred();
       $.ajax({
+        headers: {
+          'Accept': 'text/plain, application/json; charset=utf-8',
+          'Content-Type': 'application/json; charset=utf-8'
+        },
         type: 'post',
         url: window.sincloInfo.site.files + '/api/auth/info',
         dataType: 'json',
-        contentType: 'application/JSON',
+        contentType: 'application/json',
         data: JSON.stringify({
           confirm: false,
           status: browserInfo.getActiveWindow(),
@@ -801,7 +818,7 @@
           ipAddress: userInfo.getIp(),
           referrer: userInfo.referrer,
           siteKey: sincloInfo.site.key,
-          socketId: socket.id,
+          socketId: socket.getId(),
           userId: userInfo.userId,
           tabId: userInfo.tabId,
           sincloSessionId: userInfo.sincloSessionId,
@@ -7721,6 +7738,10 @@
         var self = this;
         if (socket && !socket.isConnected()) {
           socket.connect().then(function() {
+            return sinclo.executeConnectSuccess(
+                window.userInfo.connectSuccessData,
+                window.userInfo.accessInfoData);
+          }).then(sinclo.setHistoryId).then(function() {
             self.executeSend(value);
           });
         } else {

@@ -55,13 +55,33 @@ var socket, // socket.io
           transports: ['websocket']
         });
 
+    this.getId = function() {
+      return this.connector.id;
+    };
+
     this.connect = function() {
       var defer = $.Deferred();
+      var self = this;
+
       this.connector.connect();
       this.connector.on('connect', function() {
+        self.onceConnected();
         defer.resolve();
       });
       return defer.promise();
+    };
+
+    this.isOnceConnected = function() {
+      var result = storage.l.get('scl_w_connected');
+      return result && result === 'true';
+    };
+
+    this.onceConnected = function() {
+      storage.l.set('scl_w_connected', true);
+    };
+
+    this.clearOnceConnectedFlg = function() {
+      storage.l.unset('scl_w_connected');
     };
 
     this.on = function(event, callback) {
@@ -5008,10 +5028,7 @@ var socket, // socket.io
                 $('#chatTalk') :
                 $('#telContent'),
             delta = windowHeight - common.widgetHandler._currentWindowHeight;
-        console.log("windowHeightは" + windowHeight);
-        console.log("minCurrentWidgetHeightは" + minCurrentWidgetHeight);
-        console.log("currentWidgetHeightは" + currentWidgetHeight);
-        console.log("maxCurrentWidgetHeightは" + maxCurrentWidgetHeight);
+
         if (windowHeight * 0.85 > maxCurrentWidgetHeight) {
           changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
           return;
@@ -6096,6 +6113,8 @@ var socket, // socket.io
     searchKeyword: null,
     userAgent: window.navigator.userAgent,
     customVariables: {},
+    accessInfoData: {},
+    connectSuccessData: {},
     init: function() {
       // トークン初期化
       common.token_add();
@@ -7409,7 +7428,55 @@ var socket, // socket.io
         common.widgetHandler.show();
       } else {
         sinclo.trigger.flg = false;
-        sinclo.connect();
+        if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+          sinclo.connect().
+              then(sinclo.accessInfo).
+              then(function(connectSuccessData) {
+                window.userInfo.connectSuccessData = connectSuccessData;
+                if ((check.isset(connectSuccessData.sincloSessionIdIsNew) &&
+                    !connectSuccessData.sincloSessionIdIsNew) &&
+                    socket.isOnceConnected()) {
+                  socket.connect().then(function() {
+                    return sinclo.executeConnectSuccess(
+                        window.userInfo.connectSuccessData,
+                        window.userInfo.accessInfoData);
+                  }).then(sinclo.setHistoryId);
+                } else {
+                  sinclo.setHistoryId(JSON.stringify({
+                    siteKey: window.sincloInfo.site.key,
+                    userId: userInfo.userId,
+                    tabId: userInfo.tabId,
+                    sincloSessionId: userInfo.sincloSessionId,
+                    token: common.token,
+                    accessId: userInfo.accessId,
+                    chat: {
+                      historyId: null,
+                      messages: []
+                    },
+                    url: f_url(browserInfo.href),
+                    connectToken: userInfo.connectToken,
+                    customVariables: userInfo.customVariables,
+                    confirm: false,
+                    widget: window.sincloInfo.widgetDisplay,
+                    prevList: userInfo.prev,
+                    userAgent: window.navigator.userAgent,
+                    time: userInfo.time ?
+                        userInfo.time :
+                        (new Date()).getTime(),
+                    ipAddress: userInfo.getIp(),
+                    referrer: userInfo.referrer,
+                    status: browserInfo.getActiveWindow(),
+                    title: common.title(),
+                    historyId: null,
+                    stayLogsId: null,
+                    orgName: null,
+                    lbcCode: null
+                  }));
+                }
+              });
+        } else {
+          socket.connect();
+        }
       }
 
       if (userInfo.accessType === Number(cnst.access_type.host) ||
@@ -7728,6 +7795,10 @@ var socket, // socket.io
     window.sincloInfo.customVariable = settings.customVariable;
     window.sincloInfo.accessTime = (new Date()).getTime();
   } else {
+    if (!userInfo.getTime()) {
+      userInfo.time = (new Date()).getTime();
+      userInfo.set(cnst.info_type.time, userInfo.time, true);
+    }
     $.ajax({
       type: 'get',
       url: window.sincloInfo.site.files + '/settings/',
