@@ -117,162 +117,174 @@
                 font-size: 4em;
             }
 
-            /* タブアイコンフォント化対応end */
-        </style>
-        <div id="sincloBox" ng-if="widget.showWidgetType !== 2" ng-hide="widget.showWidgetType === 4" ng-class="widget.viewWidgetSetting('size')">
-            <style>
-                /* http://meyerweb.com/eric/tools/css/reset/
-               v2.0 | 20110126
-               License: none (public domain)
-             */
-                #sincloBox div,
-                #sincloBox span,
-                #sincloBox applet,
-                #sincloBox object,
-                #sincloBox iframe,
-                #sincloBox h1,
-                #sincloBox h2,
-                #sincloBox h3,
-                #sincloBox h4,
-                #sincloBox h5,
-                #sincloBox h6,
-                #sincloBox p,
-                #sincloBox blockquote,
-                #sincloBox pre,
-                #sincloBox a,
-                #sincloBox abbr,
-                #sincloBox acronym,
-                #sincloBox address,
-                #sincloBox big,
-                #sincloBox cite,
-                #sincloBox code,
-                #sincloBox del,
-                #sincloBox dfn,
-                #sincloBox em,
-                #sincloBox img,
-                #sincloBox ins,
-                #sincloBox kbd,
-                #sincloBox q,
-                #sincloBox s,
-                #sincloBox samp,
-                #sincloBox small,
-                #sincloBox strike,
-                #sincloBox strong,
-                #sincloBox sub,
-                #sincloBox sup,
-                #sincloBox tt,
-                #sincloBox var,
-                #sincloBox b,
-                #sincloBox u,
-                #sincloBox i,
-                #sincloBox center,
-                #sincloBox dl,
-                #sincloBox dt,
-                #sincloBox dd,
-                #sincloBox ol,
-                #sincloBox ul,
-                #sincloBox li,
-                #sincloBox fieldset,
-                #sincloBox form,
-                #sincloBox label,
-                #sincloBox legend,
-                #sincloBox table,
-                #sincloBox caption,
-                #sincloBox tbody,
-                #sincloBox tfoot,
-                #sincloBox thead,
-                #sincloBox tr,
-                #sincloBox th,
-                #sincloBox td,
-                #sincloBox article,
-                #sincloBox aside,
-                #sincloBox canvas,
-                #sincloBox details,
-                #sincloBox embed,
-                #sincloBox figure,
-                #sincloBox figcaption,
-                #sincloBox footer,
-                #sincloBox header,
-                #sincloBox hgroup,
-                #sincloBox menu,
-                #sincloBox nav,
-                #sincloBox output,
-                #sincloBox ruby,
-                #sincloBox section,
-                #sincloBox summary,
-                #sincloBox time,
-                #sincloBox mark,
-                #sincloBox audio,
-                #sincloBox video
-                {
-                    font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
-                    font-weight: normal;
-                    font-variant: normal;
-                    position: static;
-                    top: auto;
-                    right: auto;
-                    bottom: auto;
-                    left: auto;
-                    float: none;
-                    box-sizing: border-box;
-                    width: auto;
-                    min-width: 0;
-                    max-width: none;
-                    height: auto;
-                    min-height: 0;
-                    max-height: none;
-                    margin: 0;
-                    padding: 0;
-                    text-align: start;
-                    vertical-align: baseline;
-                    text-decoration: none;
-                    text-indent: 0;
-                    letter-spacing: normal;
-                    word-spacing: normal;
-                    color: #333; /* sinclo-particular value */
-                    border: 0;
-                    background: initial;
-                    box-shadow: none;
-                    text-shadow: none;
-                    -webkit-font-smoothing: subpixel-antialiased;
-                    direction: ltr;
-                }
-                /* HTML5 display-role reset for older browsers */
-                #sincloBox article, #sincloBox aside, #sincloBox details, #sincloBox figcaption, #sincloBox figure, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox section { display: block; }
-                #sincloBox ol, #sincloBox ul { list-style: none; }
-                #sincloBox blockquote, #sincloBox q { quotes: none; }
-                #sincloBox blockquote:before, #sincloBox blockquote:after, #sincloBox q:before, #sincloBox q:after { content: ''; content: none; }
-                #sincloBox table { border-collapse: collapse; border-spacing: 0; }
-                /* END OF reset-css */
-                #sincloBox * { font-size: 12px; line-height: 1.4; }
-                #sincloBox.middleSize  * { font-size: 13px; }
-                #sincloBox.largeSize * { font-size: 13px; }
-                #sincloBox.customSize * { font-size: 13px; }
-                #sincloBox .sinclo-hide { display:none!important; }
-                #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
-                #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 8px; }
-                #sincloBox span#mainImage img { background-color: {{widget.settings['main_color']}}; width: calc(62px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81)); height: calc(70px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81));}
-                #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: calc(62px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81)); height: calc(70px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81)); font-size: calc(43px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81)); border: 1px solid; }
-                #sincloBox span#mainImage i.normal { color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}}; }
-                #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px }
-                #sincloBox .pb07 { padding-bottom: 7px }
-                #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-                #sincloBox .sinclo_re a { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; text-decoration: underline;}
-                #sincloBox .sinclo_se a { color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
-                #sincloBox ul#chatTalk li.sinclo_re span.telno { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; }
-                #sincloBox ul#chatTalk li.sinclo_re span.link { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; }
-                #sincloBox a:hover { color: {{widget.settings['main_color']}}; }
-                #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
-                #sincloBox #titleWrap { position: relative; }
-                #sincloBox div#descriptionSet { cursor: pointer; }
-                #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{widget.settings['radius_ratio']}}px {{widget.settings['radius_ratio']}}px 0 0; border: 1px solid {{widget.settings['main_color']}}; border-bottom:none; background-color: {{widget.settings['main_color']}}; text-align: center; padding: 7px 0px 7px 70px; margin: 0; color: {{widget.settings['string_color']}}; height: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{widget.settings['header_text_size']}}px; line-height: {{widget.settings['header_text_size']}}px; }
-                #sincloBox p#widgetTitle.sp {font-size: 14px; line-height: 14px}
-                /*#sincloBox p#widgetTitle.spText{ text-indent: 1em; }*/
-                #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-                #sincloBox #fw-minimize-btn i {top: -2px; right: 5px; position: absolute; z-index: 2; font-size: 26px; color: {{getCloseBtnColor()}}; cursor: pointer;}
-                #sincloBox #fw-minimize-btn i {font-family: Font Awesome\ 5 Pro; font-weight: 300;}
-                /*
-                      #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+      /* タブアイコンフォント化対応end */
+    </style>
+    <div id="sincloBox" ng-if="widget.showWidgetType !== 2" ng-hide="widget.showWidgetType === 4" ng-class="widget.viewWidgetSetting('size')">
+      <style>
+        /* http://meyerweb.com/eric/tools/css/reset/
+       v2.0 | 20110126
+       License: none (public domain)
+     */
+        #sincloBox div,
+        #sincloBox span,
+        #sincloBox applet,
+        #sincloBox object,
+        #sincloBox iframe,
+        #sincloBox h1,
+        #sincloBox h2,
+        #sincloBox h3,
+        #sincloBox h4,
+        #sincloBox h5,
+        #sincloBox h6,
+        #sincloBox p,
+        #sincloBox blockquote,
+        #sincloBox pre,
+        #sincloBox a,
+        #sincloBox abbr,
+        #sincloBox acronym,
+        #sincloBox address,
+        #sincloBox big,
+        #sincloBox cite,
+        #sincloBox code,
+        #sincloBox del,
+        #sincloBox dfn,
+        #sincloBox em,
+        #sincloBox img,
+        #sincloBox ins,
+        #sincloBox kbd,
+        #sincloBox q,
+        #sincloBox s,
+        #sincloBox samp,
+        #sincloBox small,
+        #sincloBox strike,
+        #sincloBox strong,
+        #sincloBox sub,
+        #sincloBox sup,
+        #sincloBox tt,
+        #sincloBox var,
+        #sincloBox b,
+        #sincloBox u,
+        #sincloBox i,
+        #sincloBox center,
+        #sincloBox dl,
+        #sincloBox dt,
+        #sincloBox dd,
+        #sincloBox ol,
+        #sincloBox ul,
+        #sincloBox li,
+        #sincloBox fieldset,
+        #sincloBox form,
+        #sincloBox label,
+        #sincloBox legend,
+        #sincloBox table,
+        #sincloBox caption,
+        #sincloBox tbody,
+        #sincloBox tfoot,
+        #sincloBox thead,
+        #sincloBox tr,
+        #sincloBox th,
+        #sincloBox td,
+        #sincloBox article,
+        #sincloBox aside,
+        #sincloBox canvas,
+        #sincloBox details,
+        #sincloBox embed,
+        #sincloBox figure,
+        #sincloBox figcaption,
+        #sincloBox footer,
+        #sincloBox header,
+        #sincloBox hgroup,
+        #sincloBox menu,
+        #sincloBox nav,
+        #sincloBox output,
+        #sincloBox ruby,
+        #sincloBox section,
+        #sincloBox summary,
+        #sincloBox time,
+        #sincloBox mark,
+        #sincloBox audio,
+        #sincloBox video
+        {
+          font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
+          font-weight: normal;
+          font-variant: normal;
+          position: static;
+          top: auto;
+          right: auto;
+          bottom: auto;
+          left: auto;
+          float: none;
+          box-sizing: border-box;
+          width: auto;
+          min-width: 0;
+          max-width: none;
+          height: auto;
+          min-height: 0;
+          max-height: none;
+          margin: 0;
+          padding: 0;
+          text-align: start;
+          vertical-align: baseline;
+          text-decoration: none;
+          text-indent: 0;
+          letter-spacing: normal;
+          word-spacing: normal;
+          color: #333; /* sinclo-particular value */
+          border: 0;
+          background: initial;
+          box-shadow: none;
+          text-shadow: none;
+          -webkit-font-smoothing: subpixel-antialiased;
+          direction: ltr;
+        }
+        /* HTML5 display-role reset for older browsers */
+        #sincloBox article, #sincloBox aside, #sincloBox details, #sincloBox figcaption, #sincloBox figure, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox section { display: block; }
+        #sincloBox ol, #sincloBox ul { list-style: none; }
+        #sincloBox blockquote, #sincloBox q { quotes: none; }
+        #sincloBox blockquote:before, #sincloBox blockquote:after, #sincloBox q:before, #sincloBox q:after { content: ''; content: none; }
+        #sincloBox table { border-collapse: collapse; border-spacing: 0; }
+        /* END OF reset-css */
+        #sincloBox * { font-size: 12px; line-height: 1.4; }
+        #sincloBox.middleSize  * { font-size: 13px; }
+        #sincloBox.largeSize * { font-size: 13px; }
+        #sincloBox.customSize * { font-size: 13px; }
+        #sincloBox .sinclo-hide { display:none!important; }
+        #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
+        #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 8px; }
+        #sincloBox span#mainImage img { background-color: {{widget.settings['main_color']}}; width: calc(62px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81)); height: calc(70px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81));}
+        #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: calc(62px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81)); height: calc(70px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81)); font-size: calc(43px * ((3 * {{widget.settings['header_text_size']}} + 36) / 81)); border: 1px solid; }
+        #sincloBox span#mainImage i.normal { color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}}; }
+        #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px }
+        #sincloBox .pb07 { padding-bottom: 7px }
+        #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        #sincloBox .sinclo_re a { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; text-decoration: underline;}
+        #sincloBox .sinclo_se a { color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
+        #sincloBox ul#chatTalk li.sinclo_re span.telno { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; }
+        #sincloBox ul#chatTalk li.sinclo_re span.link { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; }
+        #sincloBox a:hover { color: {{widget.settings['main_color']}}; }
+        #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
+        #sincloBox #titleWrap { position: relative; }
+        #sincloBox div#descriptionSet { cursor: pointer; }
+        #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{widget.settings['radius_ratio']}}px {{widget.settings['radius_ratio']}}px 0 0; border: 1px solid {{widget.settings['main_color']}}; border-bottom:none; background-color: {{widget.settings['main_color']}}; text-align: center; padding: 7px 0px 7px 70px; margin: 0; color: {{widget.settings['string_color']}}; height: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{widget.settings['header_text_size']}}px; line-height: {{widget.settings['header_text_size']}}px; }
+        #sincloBox p#widgetTitle.sp {font-size: 14px; line-height: 14px}
+        /*#sincloBox p#widgetTitle.spText{ text-indent: 1em; }*/
+        #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+
+        #sincloBox #fw-minimize-btn i {
+            top: -2px;
+            right: 5px;
+            position: absolute;
+            z-index: 2;
+            font-size: 26px;
+            color: {{getCloseBtnColor()}};
+            cursor: pointer;
+        }
+        #sincloBox #fw-minimize-btn i {
+            font-family: Font Awesome\ 5 Pro;
+            font-weight: 300;
+        }
+        /*
+              #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
         #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
   */
                 #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50%-9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
@@ -1017,23 +1029,35 @@
             </div>
         </div>
 
-      <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-          <!-- スマホ版 -->
-          <div id="sincloBox" ng-if="widget.showWidgetType === 2" ng-class="{spLandscape: widget.isSpLandscape}">
-              <style>
-                  #sincloBox * { font-size: 12px; }
-                  #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
-                  #sincloBox .pb07 { padding-bottom: 7px }
-                  #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-                  #sincloBox .sinclo_re a { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; text-decoration: underline;}
-                  #sincloBox .sinclo_se a { color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
-                  #sincloBox ul#chatTalk li.sinclo_re span.telno { color: {{widget.settings['re_text_color']}};}
-                  #sincloBox ul#chatTalk li.sinclo_re span.link { color: {{widget.settings['re_text_color']}} !important;}
-                  #sincloBox a:hover { color: {{widget.settings['main_color']}}; }
-                  #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{widget.settings['main_color']}}; border-bottom: none; background-color: {{widget.settings['main_color']}};text-align: center; font-size: 14px; margin: 0;color: {{widget.settings['string_color']}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 14px;}
-                  #sincloBox.open #minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-                  #sincloBox #fw-minimize-btn i {top: 1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: {{getCloseBtnColor()}}; cursor: pointer;}
-                  #sincloBox #fw-minimize-btn i {font-family: Font Awesome\ 5 Pro; font-weight: 300;}
+  <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
+  <!-- スマホ版 -->
+    <div id="sincloBox" ng-if="widget.showWidgetType === 2" ng-class="{spLandscape: widget.isSpLandscape}">
+      <style>
+        #sincloBox * { font-size: 12px; }
+        #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
+        #sincloBox .pb07 { padding-bottom: 7px }
+        #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        #sincloBox .sinclo_re a { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; text-decoration: underline;}
+        #sincloBox .sinclo_se a { color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
+        #sincloBox ul#chatTalk li.sinclo_re span.telno { color: {{widget.settings['re_text_color']}};}
+        #sincloBox ul#chatTalk li.sinclo_re span.link { color: {{widget.settings['re_text_color']}} !important;}
+        #sincloBox a:hover { color: {{widget.settings['main_color']}}; }
+        #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{widget.settings['main_color']}}; border-bottom: none; background-color: {{widget.settings['main_color']}};text-align: center; font-size: 14px; margin: 0;color: {{widget.settings['string_color']}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 14px;}
+        #sincloBox.open #minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+
+        #sincloBox #fw-minimize-btn i {
+            top: 1px;
+            right: 7px;
+            position: absolute;
+            z-index: 2;
+            font-size: 26px;
+            color: {{getCloseBtnColor()}};
+            cursor: pointer;
+        }
+        #sincloBox #fw-minimize-btn i {
+            font-family: Font Awesome\ 5 Pro;
+            font-weight: 300;
+        }
 
                   #sincloBox.spLandscape {width: 444px}
                   #sincloBox section { display: inline-block; width: 285px; border: 1px solid {{widget.settings['widget_border_color']}}; border-top: none; }

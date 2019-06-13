@@ -954,9 +954,13 @@ class MWidgetSettingsController extends AppController {
               $d['close_btn_color'] = CLOSE_BTN_COLOR; // デフォルト値
             }
             //最小化/閉じるボタン色
-            if (strcmp($v,
-                'close_btn_hover_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
-              $d['close_btn_hover_color'] = CLOSE_BTN_HOVER_COLOR; // デフォルト値
+            if (strcmp($v, 'close_btn_hover_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              if ($json['main_color'] || $json['main_color'] !== MAIN_COLOR) {
+                $defColor                   = $this->getContrastColor($json['main_color']);
+                $d['close_btn_hover_color'] = $defColor;
+              } else {
+                $d['close_btn_hover_color'] = CLOSE_BTN_HOVER_COLOR; // デフォルト値
+              }
             }
             //9.チャットエリア背景色
             if ( strcmp($v, 'chat_talk_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
@@ -1270,6 +1274,40 @@ class MWidgetSettingsController extends AppController {
 
   }
 
+  /**
+   * @param $color
+   * @return string
+   */
+  private function getContrastColor($color) {
+    $code = substr($color,1);
+    if(strlen($code) === 3){
+      $r = substr($code,0,1).substr($code,0,1);
+      $g = substr($code,1,1).substr($code,1,1);
+      $b = substr($code,2).substr($code,2);
+    }
+    else{
+      $r = substr($code,0,2);
+      $g = substr($code,2,2);
+      $b = substr($code,4);
+    }
 
+    $balloonR = $this->formatColorCode((dechex((255 - intval($r,16)))));
+    $balloonG = $this->formatColorCode((dechex((255 - intval($g,16)))));
+    $balloonB = $this->formatColorCode((dechex((255 - intval($b,16)))));
 
+    return '#'.$balloonR.$balloonG.$balloonB;
+  }
+
+  /**
+   * @param $code
+   * @return string
+   */
+  private function formatColorCode($code)
+  {
+    if (strlen($code) == 1) {
+      return '0' . $code;
+    }
+
+    return $code;
+  }
 }

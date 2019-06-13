@@ -126,45 +126,78 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* HTML5 display-role reset for older browsers */
-        #sincloBox article, #sincloBox aside, #sincloBox details, #sincloBox figcaption, #sincloBox figure, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox section { display: block; }
-        #sincloBox ol, #sincloBox ul { list-style: none; }
-        #sincloBox blockquote, #sincloBox q { quotes: none; }
-        #sincloBox blockquote:before, #sincloBox blockquote:after, #sincloBox q:before, #sincloBox q:after { content: ''; content: none; }
-        #sincloBox table { border-collapse: collapse; border-spacing: 0; }
-        /* END OF reset-css */
-        #sincloBox * { font-size: 12px; }
-        #sincloBox.middleSize  * { font-size: 13px; }
-        #sincloBox.largeSize * { font-size: 13px; }
-        #sincloBox.customSize * { font-size: {{getFontSizeFromCustomWidgetSize()}}px; }
-        #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
-        #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 8px; }
-        #sincloBox span#mainImage img { background-color: {{main_color}}; width: calc(62px * ((3 * {{header_text_size}} + 36) / 81)); height: calc(70px * ((3 * {{header_text_size}} + 36) / 81)); }
-        #sincloBox span#mainImage img.sp {width: 62px; height: 70px;}
-        #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: calc(62px * ((3 * {{header_text_size}} + 36) / 81)); height: calc(70px * ((3 * {{header_text_size}} + 36) / 81)); font-size: calc(43px * ((3 * {{header_text_size}} + 36) / 81)); border: 1px solid; }
-        #sincloBox span#mainImage i.sp {width: 62px; height: 70px; font-size: 43px;}
-        #sincloBox span#mainImage i.normal { color: {{string_color}}; background-color: {{main_color}}; }
-        #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px}
-        #sincloBox .pb07 { padding-bottom: 7px }
-        #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-        #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
-        #sincloBox div#descriptionSet { cursor: pointer; }
-        #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: {{header_text_size}}px; padding: 8px 0px 8px 70px; margin: 0; color: {{string_color}}; height: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size}}px; line-height: {{header_text_size}}px; }
-        #sincloBox p#widgetTitle.sp { font-size: 14px; line-height: 15px;}
-        #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-        #sincloBox #fw-minimize-btn i {top: 1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: {{getCloseBtnColor()}}; cursor: pointer;}
-        #sincloBox #fw-minimize-btn i {font-family: Font Awesome\ 5 Pro; font-weight: 300;}
+    /* HTML5 display-role reset for older browsers */
+    #sincloBox article, #sincloBox aside, #sincloBox details, #sincloBox figcaption, #sincloBox figure, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox section { display: block; }
+    #sincloBox ol, #sincloBox ul { list-style: none; }
+    #sincloBox blockquote, #sincloBox q { quotes: none; }
+    #sincloBox blockquote:before, #sincloBox blockquote:after, #sincloBox q:before, #sincloBox q:after { content: ''; content: none; }
+    #sincloBox table { border-collapse: collapse; border-spacing: 0; }
+    /* END OF reset-css */
+    #sincloBox * { font-size: 12px; }
+    #sincloBox.middleSize  * { font-size: 13px; }
+    #sincloBox.largeSize * { font-size: 13px; }
+    #sincloBox.customSize * { font-size: {{getFontSizeFromCustomWidgetSize()}}px; }
+    #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
+    #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 8px; }
+    #sincloBox span#mainImage img { background-color: {{main_color}}; width: calc(62px * ((3 * {{header_text_size}} + 36) / 81)); height: calc(70px * ((3 * {{header_text_size}} + 36) / 81)); }
+    #sincloBox span#mainImage img.sp {width: 62px; height: 70px;}
+    #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: calc(62px * ((3 * {{header_text_size}} + 36) / 81)); height: calc(70px * ((3 * {{header_text_size}} + 36) / 81)); font-size: calc(43px * ((3 * {{header_text_size}} + 36) / 81)); border: 1px solid; }
+    #sincloBox span#mainImage i.sp {width: 62px; height: 70px; font-size: 43px;}
+    #sincloBox span#mainImage i.normal { color: {{string_color}}; background-color: {{main_color}}; }
+    #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px}
+    #sincloBox .pb07 { padding-bottom: 7px }
+    #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+    #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
+    #sincloBox div#descriptionSet { cursor: pointer; }
+    #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: {{header_text_size}}px; padding: 8px 0px 8px 70px; margin: 0; color: {{string_color}}; height: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size}}px; line-height: {{header_text_size}}px; }
+    #sincloBox p#widgetTitle.sp { font-size: 14px; line-height: 15px;}
+    #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
 
-        #sincloBox div.widgetHeaderWrap:not(.sp):hover { opacity: 0.75; }
-        #sincloBox div.widgetHeaderWrap #titleWrap { position: relative; }
-        #sincloBox p#widgetSubTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 46px) }
-        #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-left: calc(2.5em + 38px); padding-right: 26px;}
-        #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50% - 9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-        #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
-        #sincloBox #fw-close-btn {top: 3px; right: 5px; position: absolute; z-index: 2; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; height: 27px; width: 27px;}
-        #sincloBox #fw-close-btn i {font-size: 23px; color: {{getCloseBtnColor()}};}
-        #sincloBox #fw-close-btn i:before {font-family: Font Awesome\ 5 Pro; font-weight: 300}
-        #sincloBox #fw-close-btn:hover {background-color: {{getCloseBtnHoverColor()}};}
+    #sincloBox #fw-minimize-btn i {
+        top: 1px;
+        right: 7px;
+        position: absolute;
+        z-index: 2;
+        font-size: 26px;
+        color: {{getCloseBtnColor()}}  ;
+        cursor: pointer;
+    }
+    #sincloBox #fw-minimize-btn i {
+        font-family: Font Awesome\ 5 Pro;
+        font-weight: 300;
+    }
+
+    #sincloBox div.widgetHeaderWrap:not(.sp):hover { opacity: 0.75; }
+    #sincloBox div.widgetHeaderWrap #titleWrap { position: relative; }
+    #sincloBox p#widgetSubTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 46px) }
+    #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-left: calc(2.5em + 38px); padding-right: 26px;}
+    #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50% - 9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+    #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
+
+    #sincloBox #fw-close-btn {
+        top: 3px;
+        right: 5px;
+        position: absolute;
+        z-index: 2;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 27px;
+        width: 27px;
+    }
+
+    #sincloBox #fw-close-btn i {
+        font-size: 23px;
+        color: {{getCloseBtnColor()}};
+    }
+    #sincloBox #fw-close-btn i:before {
+        font-family: Font Awesome\ 5 Pro;
+        font-weight: 300
+    }
+    #sincloBox #fw-close-btn:hover {
+    background-color: {{getCloseBtnHoverColor()}};
+    }
 
         #sincloBox p#widgetSubTitle { background-color: {{header_background_color}}; margin: 0; padding: 3px 0; text-align: left; border-width: 0 1px 0 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 74px; font-weight: bold; color: {{main_color}}; height: auto; line-height: calc(1em + 9px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size-2}}px; }
         #sincloBox p#widgetSubTitle.sp { font-size: 12px; padding-top: 5px; padding-bottom: 4px;}

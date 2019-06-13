@@ -145,7 +145,36 @@ router.get("/", function (req, res, next) {
         closeBtnColor = settings.closeBtnColor;
       }
       // 閉じるマウスオーバー
-      var closeBtnHoverColor = '#5432FA';
+      var code = settings.mainColor.substr(1), r, g, b;
+      if (code.length === 3) {
+        r = String(code.substr(0, 1)) + String(code.substr(0, 1));
+        g = String(code.substr(1, 1)) + String(code.substr(1, 1));
+        b = String(code.substr(2)) + String(code.substr(2));
+      } else {
+        r = String(code.substr(0, 2));
+        g = String(code.substr(2, 2));
+        b = String(code.substr(4));
+      }
+
+      var balloonR = String(255 - parseInt(r, 16));
+      var balloonG = String(255 - parseInt(g, 16));
+      var balloonB = String(255 - parseInt(b, 16));
+      var codeR = parseInt(balloonR).toString(16);
+      var codeG = parseInt(balloonG).toString(16);
+      var codeB = parseInt(balloonB).toString(16);
+      if (codeR.length === 1) {
+        codeR = '0' + codeR;
+      };
+
+      if (codeG.length === 1) {
+        codeG = '0' + codeG;
+      };
+
+      if (codeB.length === 1) {
+        codeB = '0' + codeB;
+      };
+
+      var closeBtnHoverColor = ('#' + codeR + codeG + codeB).toUpperCase();
       if (('closeBtnHoverColor' in settings)) {
         closeBtnHoverColor = settings.closeBtnHoverColor;
       }
