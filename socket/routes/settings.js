@@ -162,6 +162,17 @@ router.get("/", function (req, res, next) {
       var codeR = parseInt(balloonR).toString(16);
       var codeG = parseInt(balloonG).toString(16);
       var codeB = parseInt(balloonB).toString(16);
+      if (codeR.length === 1) {
+        codeR = '0' + codeR;
+      };
+
+      if (codeG.length === 1) {
+        codeG = '0' + codeG;
+      };
+
+      if (codeB.length === 1) {
+        codeB = '0' + codeB;
+      };
 
       var closeBtnHoverColor = ('#' + codeR + codeG + codeB).toUpperCase();
       if (('closeBtnHoverColor' in settings)) {
