@@ -502,7 +502,7 @@
 
       $scope.getCloseBtnColor = function() {
         return getWidgetSettings().close_btn_color ? getWidgetSettings().close_btn_color : '#FFFFFF';
-      }
+      };
 
       /**
        * add radio button in simulator

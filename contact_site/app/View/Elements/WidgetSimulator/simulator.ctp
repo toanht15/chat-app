@@ -269,8 +269,31 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox p#widgetTitle.sp {font-size: 14px; line-height: 14px}
         /*#sincloBox p#widgetTitle.spText{ text-indent: 1em; }*/
         #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-        #sincloBox #fw-minimize-btn i {top: -2px; right: 5px; position: absolute; z-index: 2; font-size: 26px; color: {{getCloseBtnColor()}}; cursor: pointer;}
-        #sincloBox #fw-minimize-btn i {font-family: Font Awesome\ 5 Pro; font-weight: 300;}
+
+        #sincloBox #fw-minimize-btn i {
+            top: -2px;
+            right: 5px;
+            position: absolute;
+            z-index: 2;
+            font-size: 26px;
+
+        color: {
+
+        {
+        getCloseBtnColor
+        (
+        )
+        }
+        }
+        ;
+        cursor: pointer
+
+        ;
+        }
+        #sincloBox #fw-minimize-btn i {
+            font-family: Font Awesome\ 5 Pro;
+            font-weight: 300;
+        }
         /*
               #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
         #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
@@ -912,7 +935,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         <!-- タイトル -->
         <p id="widgetTitle" class="widgetOpener notSelect" ng-class="widget.viewWidgetSetting('size,sp,spText,titlePosition,image')">{{widget.settings['title']}}</p>
         <!-- タイトル -->
-        <div id="fw-minimize-btn" class="widgetOpener"><i class="fal fa-minus-square"></i></div>
+          <div id="fw-minimize-btn" class="widgetOpener"><i class="fal fa-minus-square"></i></div>
         <div id="closeBtn" ng-class="{closeButtonSetting: widget.settings['close_button_mode_type'] === '2'}"></div>
       </div>
 
@@ -1032,8 +1055,31 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox a:hover { color: {{widget.settings['main_color']}}; }
         #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{widget.settings['main_color']}}; border-bottom: none; background-color: {{widget.settings['main_color']}};text-align: center; font-size: 14px; margin: 0;color: {{widget.settings['string_color']}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 14px;}
         #sincloBox.open #minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-        #sincloBox #fw-minimize-btn i {top: 1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: {{getCloseBtnColor()}}; cursor: pointer;}
-        #sincloBox #fw-minimize-btn i {font-family: Font Awesome\ 5 Pro; font-weight: 300;}
+
+        #sincloBox #fw-minimize-btn i {
+            top: 1px;
+            right: 7px;
+            position: absolute;
+            z-index: 2;
+            font-size: 26px;
+
+        color: {
+
+        {
+        getCloseBtnColor
+        (
+        )
+        }
+        }
+        ;
+        cursor: pointer
+
+        ;
+        }
+        #sincloBox #fw-minimize-btn i {
+            font-family: Font Awesome\ 5 Pro;
+            font-weight: 300;
+        }
 
         #sincloBox.spLandscape {width: 444px}
         #sincloBox section { display: inline-block; width: 285px; border: 1px solid {{widget.settings['widget_border_color']}}; border-top: none; }
@@ -1113,9 +1159,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         <!-- タイトル -->
       </div>
   <!-- chat_message_copy 0 end -->
-      <div id="fw-minimize-btn" class="widgetOpener"><i class="fal fa-minus-square"></i></div>
+        <div id="fw-minimize-btn" class="widgetOpener"><i class="fal fa-minus-square"></i></div>
 
-      <div id="miniTarget">
+        <div id="miniTarget">
         <section id="chatTab" ng-class="{spLandscape: widget.isSpLandscape, notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}">
           <ul id="chatTalk" class="details"  ng-class="{spLandscape: widget.isSpLandscape,disableCopy: widget.settings['chat_message_copy'] == '1'}">
             <div style="height: auto!important; padding:0; display: none;" ng-class="{liBoxRight: widget.settings['chat_message_design_type'] == 1, liRight: widget.settings['chat_message_design_type'] == 2}">

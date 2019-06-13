@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var database = require('./database');
+var CommonUtil = require('./module/class/util/common_utility');
 var common = require('./module/common');
-
-var getTriggerListSql = "SELECT am.* FROM t_auto_messages AS am ";
-getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
-getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?,?,?);";
+var list = require('./module/company_list');
+var SharedData = require('./module/shared_data');
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -39,7 +37,17 @@ router.get("/", function (req, res, next) {
   }
   var siteKey = req['query']['sitekey'];
   var accessType = req['query']['accessType'];
+  var tabId = req['query']['s'];
   var sendData = {status: true, widget: {}, chat: {settings: {}}, messages: {}, customVariable: [], contract: {}};
+
+  if (CommonUtil.isKeyExists(SharedData.sincloCore, siteKey + '.' + tabId)) {
+    res.send({
+      status: true,
+      nm: true, // not modified
+      accessTime: (new Date()).getTime()
+    });
+    return true;
+  }
 
   function isNumeric(str) {
     var num = Number(str);
@@ -523,35 +531,38 @@ router.get("/", function (req, res, next) {
         if (!Array.isArray(sendData['messages'])) {
           sendData['messages'] = [];
         }
+        var activityObj = JSON.parse(
+            common.autoMessageSettings[siteKey][i].activity);
         for (var i2 = 0; i2 < common.operationHourSettings[siteKey].length; i2++) {
           if (common.operationHourSettings[siteKey][i2].active_flg == 1 && JSON.parse(common.autoMessageSettings[siteKey][i].activity).conditions[10] != null) {
-            var jsonData = JSON.parse(common.autoMessageSettings[siteKey][i].activity);
+            var timeSetting = JSON.parse(
+                common.operationHourSettings[siteKey][i2].time_settings);
             if (common.operationHourSettings[siteKey][i2].type === 1) {
-              jsonData.conditions[10][0].everyday = JSON.parse(common.operationHourSettings[siteKey][i2].time_settings).everyday;
-              jsonData.conditions[10][0].publicHolidayConditions = JSON.parse(common.operationHourSettings[siteKey][i2].time_settings).everyday.pub;
-              jsonData.conditions[10][0].now = now;
-              jsonData.conditions[10][0].nowDay = nowDay;
-              jsonData.conditions[10][0].dateParse = dateParse;
-              jsonData.conditions[10][0].date = date;
-              jsonData.conditions[10][0].today = today;
+              activityObj.conditions[10][0].everyday = timeSetting.everyday;
+              activityObj.conditions[10][0].publicHolidayConditions = timeSetting.everyday.pub;
+              activityObj.conditions[10][0].now = now;
+              activityObj.conditions[10][0].nowDay = nowDay;
+              activityObj.conditions[10][0].dateParse = dateParse;
+              activityObj.conditions[10][0].date = date;
+              activityObj.conditions[10][0].today = today;
             }
             else {
-              jsonData.conditions[10][0].weekly = JSON.parse(common.operationHourSettings[siteKey][i2].time_settings).weekly;
-              jsonData.conditions[10][0].publicHolidayConditions = JSON.parse(common.operationHourSettings[siteKey][i2].time_settings).weekly.weekpub;
-              jsonData.conditions[10][0].now = now;
-              jsonData.conditions[10][0].nowDay = nowDay;
-              jsonData.conditions[10][0].dateParse = dateParse;
-              jsonData.conditions[10][0].date = date;
-              jsonData.conditions[10][0].today = today;
+              activityObj.conditions[10][0].weekly = timeSetting.weekly;
+              activityObj.conditions[10][0].publicHolidayConditions = timeSetting.weekly.weekpub;
+              activityObj.conditions[10][0].now = now;
+              activityObj.conditions[10][0].nowDay = nowDay;
+              activityObj.conditions[10][0].dateParse = dateParse;
+              activityObj.conditions[10][0].date = date;
+              activityObj.conditions[10][0].today = today;
             }
-            jsonData.conditions[10][0].publicHoliday = common.publicHolidaySettings[now.getFullYear()];
-            jsonData.conditions[10][0].type = common.operationHourSettings[siteKey][i2].type;
-            common.autoMessageSettings[siteKey][i].activity = JSON.stringify(jsonData);
+            activityObj.conditions[10][0].publicHoliday = common.publicHolidaySettings[now.getFullYear()];
+            activityObj.conditions[10][0].type = common.operationHourSettings[siteKey][i2].type;
+            common.autoMessageSettings[siteKey][i].activity = JSON.stringify(
+                activityObj);
           }
         }
         // ページ、参照元URL、発言内容、最初に訪れたページ、前のページの旧IF対応
-        var activityObj = JSON.parse(common.autoMessageSettings[siteKey][i].activity),
-          conditions = activityObj.conditions;
+        var conditions = activityObj.conditions;
         Object.keys(conditions).forEach(function (index, elm, arr) {
           if (index === "3") { // ページ
             var array = [],
@@ -747,6 +758,7 @@ router.get("/", function (req, res, next) {
         sendData.chat.settings['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
       }
       sendData.customVariable = common.customerInfoSettings[siteKey];
+      sendData.accessTime = (new Date()).getTime();
       res.send(sendData);
     }
     else {
@@ -793,7 +805,7 @@ router.post("/reload/widgetSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadWidgetSettings(req['body']['sitekey'], function(){
+    common.reloadWidgetSettings(req['body']['sitekey'], true, function() {
       res.send('OK');
       res.status(200);
     });
@@ -833,7 +845,7 @@ router.post("/reload/autoMessages", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadAutoMessageSettings(req['body']['sitekey'], function(){
+    common.reloadAutoMessageSettings(req['body']['sitekey'], true, function() {
       res.send('OK');
       res.status(200);
     });
@@ -873,7 +885,8 @@ router.post("/reload/operationHour", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadOperationHourSettings(req['body']['sitekey'], function(){
+    common.reloadOperationHourSettings(req['body']['sitekey'], true,
+        function() {
       res.send('OK');
       res.status(200);
     });
@@ -912,7 +925,7 @@ router.post("/reload/chatSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadChatSettings(req['body']['sitekey'], function(){
+    common.reloadChatSettings(req['body']['sitekey'], true, function() {
       res.send('OK');
       res.status(200);
     });
@@ -953,7 +966,8 @@ router.post("/reload/customVariableSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadCustomVariableSettings(req['body']['sitekey'], function(){
+    common.reloadCustomVariableSettings(req['body']['sitekey'], true,
+        function() {
       res.send('OK');
       res.status(200);
     });
@@ -963,6 +977,29 @@ router.post("/reload/customVariableSettings", function (req, res, next) {
     next(err);
     return false;
   }
+});
+
+router.post('/auth/customer', function(req, res, next) {
+
+  /* Cross-Origin */
+  // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers',
+      'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  /* no-cache */
+  // http://garafu.blogspot.jp/2013/06/ajax.html
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Pragma', 'no-cache');
+
 });
 
 /**
@@ -1033,5 +1070,11 @@ function getIpRange(ipAddress) {
 
   return {min: minIpBit, max: maxIpBit};
 }
+
+router.get('/refreshCompanyList', function(req, res, next) {
+  list.getCompanyList(true);
+  res.send('OK');
+  res.status(200);
+});
 
 module.exports = router;

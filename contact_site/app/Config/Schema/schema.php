@@ -1,4 +1,4 @@
-<?php
+<?php 
 class AppSchema extends CakeSchema {
 
 	public function before($event = array()) {
@@ -36,6 +36,13 @@ class AppSchema extends CakeSchema {
 		'trial_end_day' => array('type' => 'date', 'null' => true, 'default' => null, 'comment' => 'トライアル終了日'),
 		'agreement_start_day' => array('type' => 'date', 'null' => true, 'default' => null, 'comment' => '契約開始日'),
 		'agreement_end_day' => array('type' => 'date', 'null' => true, 'default' => null, 'comment' => '契約終了日'),
+        'cv_value' => array(
+            'type' => 'integer',
+            'null' => true,
+            'default' => '0',
+            'unsigned' => false,
+            'comment' => 'CV1件あたりの金額'
+        ),
 		'application_department' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'comment' => '申し込み情報部署名', 'charset' => 'utf8'),
 		'application_position' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'comment' => '申し込み情報役職名', 'charset' => 'utf8'),
 		'application_name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'comment' => '申し込み情報名前', 'charset' => 'utf8'),
@@ -381,7 +388,14 @@ class AppSchema extends CakeSchema {
 		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => '企業ID'),
 		'name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 50, 'collate' => 'utf8_general_ci', 'comment' => 'オートメッセージ名称', 'charset' => 'utf8'),
 		'trigger_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'トリガーの種類'),
-		'activity' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'トリガー設定内容', 'charset' => 'utf8'),
+        'activity' => array(
+            'type' => 'text',
+            'null' => true,
+            'default' => null,
+            'collate' => 'utf8_general_ci',
+            'comment' => 'オートメッセージ設定内容',
+            'charset' => 'utf8'
+        ),
 		'action_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => 'アクションの種類'),
 		'send_mail_flg' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'm_mail_transmission_settings_id' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false),
@@ -428,7 +442,14 @@ class AppSchema extends CakeSchema {
 		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 		't_chatbot_diagram_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'type' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'node_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+        'node_id' => array(
+            'type' => 'string',
+            'null' => true,
+            'default' => null,
+            'length' => 36,
+            'collate' => 'utf8_general_ci',
+            'charset' => 'utf8'
+        ),
 		'node_name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 300, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'del_flg' => array('type' => 'boolean', 'null' => true, 'default' => null),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
@@ -502,9 +523,7 @@ class AppSchema extends CakeSchema {
 	public $t_conversation_count = array(
 		'visitors_id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'conversation_count' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'indexes' => array(
-
-		),
+		'indexes' => array(),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 

@@ -780,9 +780,37 @@
     self.replaceVariable = function(message) {
       message = message ? message : '';
       return message.replace(/{{(.+?)\}}/g, function(param) {
-        var name = param.replace(/^{{(.+)}}$/, '$1');
-        return LocalStorageService.getItem('chatbotVariables', name) || '';
+        var name  = param.replace(/^{{(.+)}}$/, '$1');
+        var value = LocalStorageService.getItem('chatbotVariables', name);
+        if (!value) return '';
+
+        if (self.isJSON(value) && value.indexOf('separator') !== -1) {
+          // checkbox message
+          var checkboxData = JSON.parse(value);
+          var array        = checkboxData.message.split(checkboxData.separator);
+          var text         = '';
+          array.forEach(function(item) {
+            text = text + '・' + item + '\n';
+          });
+
+          return text;
+        }
+
+        return value;
       });
+    };
+
+    self.isJSON = function(arg) {
+      arg = (typeof arg === 'function') ? arg() : arg;
+      if (!isNaN(Number(arg)) || typeof arg !== 'string') {
+        return false;
+      }
+      try {
+        arg = (!JSON) ? eval('(' + arg + ')') : JSON.parse(arg);
+        return true;
+      } catch (e) {
+        return false;
+      }
     };
 
     /**
@@ -1214,53 +1242,11 @@
       }
 
       message = message.join(separator);
+      var checkboxData = {message: message, separator: separator}
       var numbers = prefix.match(/\d+/g).map(Number);
       var actionStep = numbers[0];
       var hearingIndex = numbers[1];
-      self.handleReselectionInput(message, actionStep, hearingIndex);
-    });
-
-    $(document).on('change', '#chatTalk input[type="checkbox"]', function() {
-      if ($(this).is('checked')) {
-        $(this).prop('checked', false);
-      }
-
-      if ($(this).parent().parent().find('input:checked').length > 0) {
-        $(this).parent().parent().find('.checkbox-submit-btn').removeClass('disabledArea');
-      } else {
-        $(this).parent().parent().find('.checkbox-submit-btn').addClass('disabledArea')
-      }
-    });
-
-    $(document).on('click', '#chatTalk .checkbox-submit-btn', function() {
-      $(this).addClass('disabledArea');
-      var prefix = $(this).parents('div').attr('id').replace(/-sinclo-checkbox[0-9a-z-]+$/i, '');
-      var message = [];
-      $(this).parent('div').find('input:checked').each(function(e) {
-        message.push($(this).val());
-      });
-
-      var separator = ',';
-      switch (Number($(this).parents('div').attr('data-separator'))) {
-        case 1:
-          separator = ',';
-          break;
-        case 2:
-          separator = '/';
-          break;
-        case 3:
-          separator = '|';
-          break;
-        default:
-          separator = ',';
-          break;
-      }
-
-      message = message.join(separator);
-      var numbers = prefix.match(/\d+/g).map(Number);
-      var actionStep = numbers[0];
-      var hearingIndex = numbers[1];
-      self.handleReselectionInput(message, actionStep, hearingIndex);
+      self.handleReselectionInput(JSON.stringify(checkboxData), actionStep, hearingIndex);
     });
 
     $(document).on('change', '#chatTalk input[type="checkbox"]', function() {

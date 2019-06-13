@@ -105,7 +105,14 @@ if( strtolower($iconMainColor) === "#b2d251") {
 <div id="sidebar-main">
     <div class="submenulist">
         <div class="icon <?=$monitorSelected?>">
-            <?= $this->htmlEx->naviFaIconLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'fa-home', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
+          <?php
+          $homeTitle = 'ﾘｱﾙﾀｲﾑﾓﾆﾀ';
+          if (!$coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR]) {
+            $homeTitle = '有人応対';
+          }
+          echo $this->htmlEx->naviFaIconLink($homeTitle, 'fa-home',
+              ['href' => ['controller' => 'Customers', 'action' => 'index']])
+          ?>
         </div>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
           <div class="icon <?=$statisticsSelected?> setting-icon" data-type="statistics" >
@@ -235,12 +242,15 @@ if( strtolower($iconMainColor) === "#b2d251") {
         <div class="splitter">
           <i class='fal fa-history'></i><span class="splitter-label">履歴</span>
         </div>
+
         <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('チャット履歴', '', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
-        <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', '', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
-        </div>
+        <?php if ($coreSettings[C_COMPANY_ENABLE_REAL_TIME_MONITOR]): ?>
+            <div class="icon">
+              <?= $this->htmlEx->naviFaIconLink('アクセス履歴', '', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+            </div>
+        <?php endif; ?>
         <div class="splitter">
           <i class='fal fa-chart-line'></i><span class="splitter-label">統計レポート</span>
         </div>

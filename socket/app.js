@@ -8,19 +8,32 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var settings = require('./routes/settings');
-
-var app = express();
+var api = require('./routes/api');
+var socket = require('./routes/module/socket_ctrl');
+var CommonUtil = require('./routes/module/class/util/common_utility');
 
 // Timezone
 process.env.TZ = 'Asia/Tokyo';
 
+const protectCfg = {
+  production: process.env.NODE_ENV === 'production', // if production is false, detailed error messages are exposed to the client
+  clientRetrySecs: 1, // Client-Retry header, in seconds (0 to disable) [default 1]
+  sampleInterval: 5, // sample rate, milliseconds [default 5]
+  maxEventLoopDelay: 2000, // maximum detected delay between event loop ticks [default 42]
+  maxHeapUsedBytes: 0, // maximum heap used threshold (0 to disable) [default 0]
+  maxRssBytes: 0, // maximum rss size threshold (0 to disable) [default 0]
+  errorPropagationMode: true // dictate behavior: take over the response
+                              // or propagate an error to the framework [default false]
+};
+
 process.on('uncaughtException', function(err) {
-  console.log("[" + Date.now() + "]" + err);
-  console.log(err.stack);
+  CommonUtil.errorLog(err);
+  CommonUtil.errorLog(err.stack);
 });
 
-// socket
-var socket = require('./routes/module/socket_ctrl');
+const app = express();
+const protect = require('overload-protection')('express', protectCfg);
+app.use(protect);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -43,7 +56,7 @@ app.use(express.static(path.join(__dirname, 'webroot')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/settings', settings);
-app.use('/socketCtrl', socket);
+app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -51,7 +64,6 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
-
 // error handlers
 
 // development error handler
@@ -75,6 +87,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 module.exports = app;

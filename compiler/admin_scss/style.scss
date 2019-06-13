@@ -739,6 +739,129 @@ div#sidebar{
 
 }
 
+/* CV請求額一覧 */
+#billing_cv_idx {
+  .action_btn {
+    width: 6em;
+  }
+
+  .navyBtn {
+    background-color: $normal-color;
+    color: #FFF;
+
+    &:hover {
+      color: #FFF;
+      background-color: $normal-hover-color;
+    }
+  }
+
+  .grayBtn {
+    background-color: #DADADA;
+    border: 1px solid #DADADA;
+    color: white;
+  }
+
+  .tr180 {
+    transform: matrix(-1, 0, 0, 1, 0, 0);
+  }
+
+  #BillingsCvForm {
+    display: inline-block;
+
+    .targetDateWrap {
+      margin-top: 22px;
+      display: inline-block;
+
+      select {
+        border: 0px;
+        border-bottom: 1px solid;
+        width: 7em;
+        margin-left: 12px;
+        padding-left: 12px;
+
+        &[selected] {
+          color: transparent;
+        }
+      }
+    }
+  }
+
+  #paging {
+    margin: 9px 0;
+    float: right;
+    width: 240px;
+    display: inline-flex;
+    justify-content: space-around;
+
+    span {
+      border-radius: 2px;
+      border: 0px;
+      width: 30px;
+      height: 30px;
+      display: inline-block;
+      padding: 3px 0px 0px 2px;
+
+      img {
+        height: 24px;
+        width: 24px;
+        display: block;
+        padding: 0.5px;
+
+        &.reverse {
+
+        }
+      }
+    }
+  }
+
+  i.fa.fa-money.fa-2x {
+    color: $normal-color;
+    margin-top: 6px;
+  }
+
+  a#searchRefine {
+    margin-top: 15px;
+    display: inline-block;
+  }
+
+  #billing_cv_list {
+    table {
+      margin-top: 15px;
+      font-size: 15px;
+
+      thead {
+        color: #fff;
+
+        th {
+          background-color: $normal-color;
+          text-align: left;
+        }
+      }
+
+      td {
+        a.loginLink {
+          color: #595959;
+          text-decoration: underline;
+
+          &:hover {
+            color: #C3D69B;
+          }
+        }
+      }
+    }
+  }
+
+  table tr:hover #delete {
+    visibility: visible;
+  }
+
+  #delete {
+    visibility: hidden;
+    cursor: pointer;
+  }
+
+}
+
 /* 契約登録画面 */
 #agreement_idx {
   .action_btn {

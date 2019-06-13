@@ -625,34 +625,38 @@ $headerNo = 1;
                   'entity' => 'MWidgetSetting.description_text_color'
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('description_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;" >標準に戻す</span></span>
 
-                  <span style="height: 35px; width: 35em;"><label>最小化／閉じるボタン色</label><?= $this->ngForm->input('close_btn_color', [
-                      'type' => 'text',
-                      'placeholder' => '最小化／閉じるボタン色',
-                      'div' => false,
-                      'class' => 'jscolor {hash:true}',
-                      'label' => false,
-                      'maxlength' => 7,
-                      'error' => false,
-                      'style' => 'width: 120px; position: relative; left: 10px;'
-                    ],
-                      [
-                        'entity' => 'MWidgetSetting.close_btn_color'
-                      ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;" >標準に戻す</span></span>
+                    <span style="height: 35px; width: 35em;"><label>最小化／閉じるボタン色</label><?= $this->ngForm->input('close_btn_color',
+                        [
+                          'type' => 'text',
+                          'placeholder' => '最小化／閉じるボタン色',
+                          'div' => false,
+                          'class' => 'jscolor {hash:true}',
+                          'label' => false,
+                          'maxlength' => 7,
+                          'error' => false,
+                          'style' => 'width: 120px; position: relative; left: 10px;'
+                        ],
+                        [
+                          'entity' => 'MWidgetSetting.close_btn_color'
+                        ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_color')"
+                                   style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;">標準に戻す</span></span>
 
-                  <span style="height: 35px; width: 35em;"><label>閉じるマウスオーバー</label><?= $this->ngForm->input('close_btn_hover_color', [
-                      'type' => 'text',
-                      'placeholder' => '閉じるマウスオーバー',
-                      'div' => false,
-                      'class' => 'jscolor {hash:true}',
-                      'label' => false,
-                      'maxlength' => 7,
-                      'error' => false,
-                      'style' => 'width: 120px; position: relative; left: 22px;',
-                      'default' => '#333333'
-                    ],
-                      [
-                        'entity' => 'MWidgetSetting.close_btn_hover_color'
-                      ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_hover_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;" >標準に戻す</span></span>
+                    <span style="height: 35px; width: 35em;"><label>閉じるマウスオーバー</label><?= $this->ngForm->input('close_btn_hover_color',
+                        [
+                          'type' => 'text',
+                          'placeholder' => '閉じるマウスオーバー',
+                          'div' => false,
+                          'class' => 'jscolor {hash:true}',
+                          'label' => false,
+                          'maxlength' => 7,
+                          'error' => false,
+                          'style' => 'width: 120px; position: relative; left: 22px;',
+                          'default' => '#333333'
+                        ],
+                        [
+                          'entity' => 'MWidgetSetting.close_btn_hover_color'
+                        ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_hover_color')"
+                                   style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 285px;">標準に戻す</span></span>
                 </div>
                 <!-- ヘッダー部end -->
 

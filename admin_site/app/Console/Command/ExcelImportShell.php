@@ -49,7 +49,7 @@ class ExcelImportShell extends AppShell
 
   private $planNameIdMap = array(
     'プレミアムプラン' => 1,
-    'チャットスタンダードプラン' => 2,
+    'チャットプラン' => 2,
     'シェアリングプラン' => 3,
     'チャットベーシックプラン' => 4
   );

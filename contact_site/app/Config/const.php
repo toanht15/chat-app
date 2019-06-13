@@ -69,6 +69,7 @@ define('C_COMPANY_USE_MESSAGE_RANKING', 'useMessageRanking');  // メッセー�
 define('C_COMPANY_USE_ICON_SETTINGS', 'iconSettings');  // ボット・有人時のアイコン設定
 define('C_COMPANY_USE_CUSTOM_WIDGET_SIZE', 'customWidgetSize');  // ウィジェットサイズ「カスタム」
 define('C_COMPANY_USE_CHATBOT_TREE_EDITOR', 'chatbotTreeEditor');  // オプション：チャットツリー
+define('C_COMPANY_ENABLE_REAL_TIME_MONITOR', 'enableRealtimeMonitor');  // リアルタイムモニター
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 5000);
@@ -208,6 +209,8 @@ define('C_AUTO_TRIGGER_SPEECH_CONTENT', 8); // 発言内容
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 9); // 最初の滞在ページ
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 define('C_AUTO_TRIGGER_VISITOR_DEVICE', 11); // 訪問者の端末
+define('C_AUTO_TRIGGER_COMPANY_INFORMATION', 12); // 企業情報
+define('C_AUTO_TRIGGER_VISITOR_INFORMATION', 13); // サイト訪問者情報
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
@@ -400,9 +403,9 @@ define('SUB_TITLE_TEXT_COLOR', "#ABCD05");
 //8.説明文文字色
 define('DESCRIPTION_TEXT_COLOR', "#666666");
 //最小化/閉じるボタン色
-define('CLOSE_BTN_COLOR', "#FFFFFF");
+  define('CLOSE_BTN_COLOR', "#FFFFFF");
 //閉じるマウスオーバー
-define('CLOSE_BTN_HOVER_COLOR', "#5432FA");
+  define('CLOSE_BTN_HOVER_COLOR', "#5432FA");
 //9.チャットエリア背景色
 define('CHAT_TALK_BACKGROUND_COLOR', "#FFFFFF");
 //10.企業名担当者名文字色
@@ -650,7 +653,7 @@ $config['widgetSpViewPattern'] = array(
 /* ウィジェット設定 ー Web接客コード */
 $config['widgetShowAccessId'] = array(
   C_SELECT_CAN => "表示する",
-  C_SELECT_CAN_NOT => "表示しない<br>　<s>※ウェブ接客コード（4桁のID）を電話口でヒアリングすることで、リアルタイムモニター上で</s><br><s>　  相手を特定することができます。（電話口の相手のウェブ行動履歴や流入経路の把握が可能）</s>"
+    C_SELECT_CAN_NOT => "表示しない<br>　<s>※ウェブ接客コード（4桁のID）を電話口でヒアリングすることで、モニタ上で</s><br><s>　  相手を特定することができます。（電話口の相手のウェブ行動履歴や流入経路の把握が可能）</s>"
 );
 
 /* ウィジェット設定 － 担当者表示名種別 */
@@ -853,7 +856,7 @@ $config['outMessageTriggerList'] = array(
     )
   ),
   // 訪問者の端末
-  C_AUTO_TRIGGER_VISITOR_DEVICE => array(
+  C_AUTO_TRIGGER_VISITOR_DEVICE      => array(
     'label' => 'サイト訪問者の端末',
     'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
     'key' => 'visitor_device',
@@ -862,7 +865,41 @@ $config['outMessageTriggerList'] = array(
       "smartphone" => false,
       "tablet" => false
     )
+  ),
+  //　企業情報
+  C_AUTO_TRIGGER_COMPANY_INFORMATION => array(
+    'label' => '企業情報',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'visitor_device',
+    'default' => array(
+      "getInfoStatus" => '1',
+      "settingCondition" => '1',
+      "settings" => array(
+        array(
+          'type' => '1',
+          'content' => '',
+          'matchCondition' => '1'
+        )
+      )
+    )
+  ),
+  //　サイト訪問者情報
+  C_AUTO_TRIGGER_VISITOR_INFORMATION => array(
+  'label' => '訪問ユーザ情報',
+  'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+  'key' => 'visitor_device',
+  'default' => array(
+    "getInfoStatus" => '1',
+    "settingCondition" => '1',
+    "settings" => array(
+      array(
+        'name' => '',
+        'content' => '',
+        'matchCondition' => '1'
+      )
+    )
   )
+)
 );
 
 /* オートメッセージ － アクション種別 */

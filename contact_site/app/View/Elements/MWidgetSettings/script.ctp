@@ -35,7 +35,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     $scope.beforeSpbPosition = 0;
 
-    $scope.closeBtnHoverDefaultColor = "<?=CLOSE_BTN_HOVER_COLOR?>";
+  $scope.closeBtnHoverDefaultColor = "<?=CLOSE_BTN_HOVER_COLOR?>";
 
     $scope.hideWidget = function(){
       $scope.resetSpView();
@@ -865,26 +865,26 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         element.style.backgroundColor = rgbcode;
         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
       }
-      if(id === 'close_btn_color') {
+      if (id === 'close_btn_color') {
         var colorid = '<?=CLOSE_BTN_COLOR?>';
         $scope.close_btn_color = colorid;
         //MWidgetSettingCloseBtnColor
         var rgb = $scope.checkRgbColor(colorid);
-        var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+        var rgbcode = 'rgb(' + rgb['r'] + ', ' + rgb['g'] + ', ' + rgb['b'] + ')';
         var element = document.getElementById('MWidgetSettingCloseBtnColor');
         element.style.backgroundColor = rgbcode;
-        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        element.style.color = $scope.checkTxtColor(rgb['r'], rgb['g'], rgb['b']);
       }
-      if(id === 'close_btn_hover_color') {
+      if (id === 'close_btn_hover_color') {
         var colorid = $scope.getContrastColor($scope.main_color);
 
         $scope.close_btn_hover_color = colorid;
         //MWidgetSettingCloseBtnColor
         var rgb = $scope.checkRgbColor(colorid);
-        var rgbcode = 'rgb(' + rgb['r']  + ', ' +  rgb['g']  + ', ' +  rgb['b'] + ')';
+        var rgbcode = 'rgb(' + rgb['r'] + ', ' + rgb['g'] + ', ' + rgb['b'] + ')';
         var element = document.getElementById('MWidgetSettingCloseBtnHoverColor');
         element.style.backgroundColor = rgbcode;
-        element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+        element.style.color = $scope.checkTxtColor(rgb['r'], rgb['g'], rgb['b']);
       }
       jscolor.installByClassName("jscolor");
     };
@@ -1218,10 +1218,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if($scope.openFlg){
         //最大化時
         $("#minimizeBtn").show();
-        $("#fw-minimize-btn").show();
+        $('#fw-minimize-btn').show();
         $("#addBtn").hide();
         $("#closeBtn").hide();
-        $("#fw-close-btn").hide();
+        $('#fw-close-btn').hide();
         //画像あるときタイトル位置
         setTimeout(function(){
           if($('#mainImage').is(':visible')) {
@@ -1237,14 +1237,14 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         //最小化時
         $("#addBtn").show();
         $("#minimizeBtn").hide();
-        $("#fw-minimize-btn").hide();
+        $('#fw-minimize-btn').hide();
         if($scope.closeButtonSettingToggle === '2'){
           $("#closeBtn").show();
-          $("#fw-close-btn").show();
+          $('#fw-close-btn').show();
         }
         else{
           $("#closeBtn").hide();
-          $("#fw-close-btn").hide();
+          $('#fw-close-btn').hide();
         }
         var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
         if(coreSettingsChat){
@@ -2511,27 +2511,27 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     };
 
     angular.element(window).on("click", ".widgetOpener", function(){
-    if(Number($scope.closeButtonSettingToggle) === 2 && Number($scope.closeButtonModeTypeToggle) === 1){
-      //閉じるボタンが無効な場合や、非表示にする場合は2段階オプションの判定をさせない
-      if(Number($scope.showWidgetType) === 3 && Number($scope.sp_widget_view_pattern) === 3){
-        //2段階表示の時は即座にバナー状態にさせる
-        $scope.closeAct();
+      if (Number($scope.closeButtonSettingToggle) === 2 && Number($scope.closeButtonModeTypeToggle) === 1) {
+        //閉じるボタンが無効な場合や、非表示にする場合は2段階オプションの判定をさせない
+        if (Number($scope.showWidgetType) === 3 && Number($scope.sp_widget_view_pattern) === 3) {
+          //2段階表示の時は即座にバナー状態にさせる
+          $scope.closeAct();
+        }
       }
-    }
-    var sincloBox = document.getElementById("sincloBox");
-    var nextFlg = true;
-    if ( $scope.openFlg ) {
-      nextFlg = false;
-    }
-    $scope.openFlg = nextFlg;
+      var sincloBox = document.getElementById('sincloBox');
+      var nextFlg = true;
+      if ($scope.openFlg) {
+        nextFlg = false;
+      }
+      $scope.openFlg = nextFlg;
 
       if ($scope.openFlg) {
         $('.fw-minimize-btn-landscape').show();
       } else {
         $('.fw-minimize-btn-landscape').hide();
       }
-    $scope.$apply();
-  });
+      $scope.$apply();
+    });
 });
 
 sincloApp.directive('errSrc', function(){
