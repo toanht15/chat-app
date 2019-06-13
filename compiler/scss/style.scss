@@ -5572,6 +5572,26 @@ ul.naviBtn {
     #m_widget_setting_entry {
       max-width: 60%;
 
+      .disable {
+        label {
+          color: #CCCCCC;
+        }
+
+        input {
+          color: #CCCCCC !important;
+          background-color: #FFFFFF !important;
+          border-bottom: 1px solid #CCCCCC;
+        }
+
+        span.btn-shadow {
+          @include defaultBtnStyle;
+          cursor: default !important;
+          background-color: #DADADA;
+          border: 1px solid #DADADA;
+          color: white;
+        }
+      }
+
       h3 {
         border-bottom: 3px solid $main-color;
         padding-left: 5px;

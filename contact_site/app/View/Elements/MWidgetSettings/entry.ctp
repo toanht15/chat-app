@@ -643,12 +643,13 @@ $headerNo = 1;
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('description_text_color')"
                            style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 304px; flex-shrink: 0;">標準に戻す</span></span>
 
-                    <span style="height: 35px; width: 35em;"><label>最小化／閉じるボタン色</label><?= $this->ngForm->input('close_btn_color',
+                    <span style="height: 35px; width: 35em;" ng-class="{disable:closeButtonSettingToggle==1}"><label>最小化／閉じるボタン色</label><?= $this->ngForm->input('close_btn_color',
                         [
                           'type' => 'text',
                           'placeholder' => '最小化／閉じるボタン色',
                           'div' => false,
-                          'class' => 'jscolor {hash:true}',
+                          'ng-mousedown' => 'changeCloseButtonSetting($event)',
+                          'class' => 'jscolor{hash:true}',
                           'label' => false,
                           'maxlength' => 7,
                           'error' => false,
@@ -656,15 +657,16 @@ $headerNo = 1;
                         ],
                         [
                           'entity' => 'MWidgetSetting.close_btn_color'
-                        ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_color')"
+                        ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_color',$event)"
                                    style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 304px; flex-shrink: 0;">標準に戻す</span></span>
 
-                    <span style="height: 35px; width: 35em;"><label>閉じるボタンマウスオーバー</label><?= $this->ngForm->input('close_btn_hover_color',
+                    <span style="height: 35px; width: 35em;" ng-class="{disable:closeButtonSettingToggle==1}"><label>閉じるボタンマウスオーバー</label><?= $this->ngForm->input('close_btn_hover_color',
                         [
                           'type' => 'text',
                           'placeholder' => '閉じるボタンマウスオーバー',
                           'div' => false,
-                          'class' => 'jscolor {hash:true}',
+                          'ng-mousedown' => 'changeCloseButtonSetting($event)',
+                          'class' => 'jscolor{hash:true}',
                           'label' => false,
                           'maxlength' => 7,
                           'error' => false,
@@ -673,7 +675,8 @@ $headerNo = 1;
                         ],
                         [
                           'entity' => 'MWidgetSetting.close_btn_hover_color'
-                        ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('close_btn_hover_color')"
+                        ]) ?><span class="greenBtn btn-shadow"
+                                   ng-click="returnStandardColor('close_btn_hover_color',$event)"
                                    style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -28px; left: 304px; flex-shrink: 0;">標準に戻す</span></span>
                 </div>
                 <!-- ヘッダー部end -->
