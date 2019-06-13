@@ -439,7 +439,25 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       element.style.backgroundColor = rgbcode;
       element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
       jscolor.installByClassName("jscolor");
+    };
+
+  // 閉じるボタン色
+  $scope.changeCloseButtonSetting = function(e) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (!$(e.target).parent().hasClass('disable')) {
+      var element = e.target;
+      if (!element.classList.contains('jscolor{hash:true}')) {
+        element.classList.add('jscolor{hash:true}');
+        jscolor.installByClassName('jscolor');
+      }
+      element.jscolor.show();
+    } else {
+      $(e.target).removeClass('jscolor{hash:true}');
+      e.target.jscolor.hide();
     }
+  };
+
     //吹き出し文字色
     $scope.changeMessageTextColor = function(){
       //現在設定されている吹き出し文字色に変更
@@ -456,7 +474,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       document.getElementById('MWidgetSettingSeTextColor').style.backgroundColor = rgbcode;
       document.getElementById('MWidgetSettingSeTextColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
       jscolor.installByClassName("jscolor");
-    }
+    };
     //その他文字色
     $scope.changeOtherTextColor = function(){
       //現在設定されているその他文字色に変更
@@ -624,7 +642,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     *その他
     * 23.ウィジット内枠線色'widget_inside_border_color':現在設定されているウィジェット枠線色に変更ok
     */
-    $scope.returnStandardColor = function(id){
+  $scope.returnStandardColor = function(id, event) {
+    if (event && $(event.target).parent().hasClass('disable')) return;
       if(id === 'widget_border_color'){
         var colorid = "<?= WIDGET_BORDER_COLOR ?>";
         $scope.widget_border_color = colorid;
