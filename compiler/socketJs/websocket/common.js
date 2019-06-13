@@ -1142,6 +1142,8 @@ var socket, // socket.io
       html += '      #sincloBox .sinclo-fal.fa-comments-alt:before { content: "\\f4b6" }';
       html += '      #sincloBox .sinclo-fal.fa-comment-lines:before { content: "\\f4b0" }';
       html += '      #sincloBox .sinclo-fal.fa-user:before { content: "\\f007" }';
+      html += '      #sincloBox .sinclo-fal.fa-times:before { content: "\\f00d" }';
+      html += '      #sincloBox .sinclo-fal.fa-minus-square:before { content: "\\f146" }';
       //アイコンフォント用
       /* http://meyerweb.com/eric/tools/css/reset/
          v2.0 | 20110126
@@ -4325,8 +4327,8 @@ var socket, // socket.io
           }
           html += '  </span>';
         }
-        html += '    <div id="fw-close-btn" onclick="sinclo.operatorInfo.closeBtn()"><i class="fal fa-times"></i></div>';
-        html += '    <div id="fw-minimize-btn" onclick="sinclo.operatorInfo.toggle()"><i class="fal fa-minus-square"></i></div>';
+        html += '    <div id="fw-close-btn" onclick="sinclo.operatorInfo.closeBtn()"><i class="sinclo-fal fa-times"></i></div>';
+        html += '    <div id="fw-minimize-btn" onclick="sinclo.operatorInfo.toggle()"><i class="sinclo-fal fa-minus-square"></i></div>';
 
         html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
         html += '  <sinclo-div id="titleWrap">';
