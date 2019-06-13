@@ -276,19 +276,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
             position: absolute;
             z-index: 2;
             font-size: 26px;
-
-        color: {
-
-        {
-        getCloseBtnColor
-        (
-        )
-        }
-        }
-        ;
-        cursor: pointer
-
-        ;
+            color: {{getCloseBtnColor()}};
+            cursor: pointer;
         }
         #sincloBox #fw-minimize-btn i {
             font-family: Font Awesome\ 5 Pro;
@@ -1062,19 +1051,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
             position: absolute;
             z-index: 2;
             font-size: 26px;
-
-        color: {
-
-        {
-        getCloseBtnColor
-        (
-        )
-        }
-        }
-        ;
-        cursor: pointer
-
-        ;
+            color: {{getCloseBtnColor()}};
+            cursor: pointer;
         }
         #sincloBox #fw-minimize-btn i {
             font-family: Font Awesome\ 5 Pro;

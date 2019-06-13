@@ -35,8 +35,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     $scope.beforeSpbPosition = 0;
 
-  $scope.closeBtnHoverDefaultColor = "<?=CLOSE_BTN_HOVER_COLOR?>";
-
     $scope.hideWidget = function(){
       $scope.resetSpView();
       $scope.switchWidget(4);

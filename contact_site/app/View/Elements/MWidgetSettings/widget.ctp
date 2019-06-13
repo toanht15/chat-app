@@ -159,19 +159,8 @@
         position: absolute;
         z-index: 2;
         font-size: 26px;
-
-    color: {
-
-    {
-    getCloseBtnColor
-    (
-    )
-    }
-    }
-    ;
-    cursor: pointer
-
-    ;
+        color: {{getCloseBtnColor()}}  ;
+        cursor: pointer;
     }
     #sincloBox #fw-minimize-btn i {
         font-family: Font Awesome\ 5 Pro;
@@ -200,33 +189,14 @@
 
     #sincloBox #fw-close-btn i {
         font-size: 23px;
-
-    color: {
-
-    {
-    getCloseBtnColor
-    (
-    )
-    }
-    }
-    ;
+        color: {{getCloseBtnColor()}};
     }
     #sincloBox #fw-close-btn i:before {
         font-family: Font Awesome\ 5 Pro;
         font-weight: 300
     }
-
     #sincloBox #fw-close-btn:hover {
-
-    background-color: {
-
-    {
-    getCloseBtnHoverColor
-    (
-    )
-    }
-    }
-    ;
+    background-color: {{getCloseBtnHoverColor()}};
     }
 
     #sincloBox p#widgetSubTitle { background-color: {{header_background_color}}; margin: 0; padding: 3px 0; text-align: left; border-width: 0 1px 0 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 74px; font-weight: bold; color: {{main_color}}; height: auto; line-height: calc(1em + 9px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size-2}}px; }
