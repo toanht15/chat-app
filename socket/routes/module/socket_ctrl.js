@@ -13,6 +13,7 @@ var ChatLogTimeManager = require('./chat_log_time_manager');
 var CommonUtil = require('./class/util/common_utility');
 var HistoryManager = require('./class/manager/history_manager');
 var CustomerInfoManager = require('./class/manager/customer_info_manager');
+var TChatbotScenario = require('./class/model/t_chatbot_scenario');
 
 var DBConnector = require('./class/util/db_connector_util');
 // log4js
@@ -4436,28 +4437,14 @@ io.sockets.on('connection', function(socket) {
   //  シナリオイベントハンドラ
   // ============================================
   socket.on('getScenario', function(data, ack) {
-    var obj = JSON.parse(data);
-    var result = {};
-    DBConnector.getPool().query(
-        'select activity from t_chatbot_scenarios where m_companies_id = ? and id = ?;',
-        [list.companyList[obj.siteKey], obj.scenarioId],
-        function(err, row) {
-          if (err !== null && err !== '') {
-            if (ack) {
-              ack(result);
-            } else {
-              emit.toMine('resGetSenario', result, socket);
-            }
-            return;
-          }
-          if (row.length !== 0) {
-            result = JSON.parse(row[0].activity);
-          }
+    let obj = JSON.parse(data);
+    let model = new TChatbotScenario();
+    model.getActivityByIdWithSiteKey(obj.scenarioId, obj.siteKey).
+        then((result) => {
           if (ack) {
-            ack({id: obj.scenarioId, activity: result});
+            ack(result);
           } else {
-            emit.toMine('resGetScenario',
-                {id: obj.scenarioId, activity: result}, socket);
+            emit.toMine('resGetScenario', result, socket);
           }
         });
   });

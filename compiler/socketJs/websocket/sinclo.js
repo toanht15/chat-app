@@ -10914,6 +10914,7 @@
         }
       },
       _pushScenarioMessage: function(targetObj, callback) {
+        sinclo.chatApi.store.save(targetObj);
         emit('sendScenarioMessage', targetObj, callback);
       },
       _saveStoredMessage: function(callback) {
@@ -13521,6 +13522,7 @@
         _pushDiagramMessage: function(targetObj) {
           var defer = $.Deferred();
           emit('sendDiagramMessage', targetObj, function() {
+            sinclo.chatApi.store.save(targetObj);
             defer.resolve();
           });
           return defer.promise();
