@@ -882,7 +882,9 @@
             }
 
             definedVariables = $.merge(variableList, storedVariableList);
-            definedVariables =  [...new Set(definedVariables)];
+            definedVariables = definedVariables.filter(function(item, pos, self) {
+              return self.indexOf(item) == pos;
+            });
             storedVariableList = definedVariables;
           });
           $scope.storedVariableList = definedVariables;
@@ -908,6 +910,9 @@
             });
           });
           if (typeof newObject === 'undefined') return;
+          // 編集されたことを検知する
+
+
           // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
           var variables = searchObj(newObject, /^variableName$/);
 

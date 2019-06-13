@@ -402,6 +402,10 @@ define('HEADER_BACKGROUND_COLOR', "#FFFFFF");
 define('SUB_TITLE_TEXT_COLOR', "#ABCD05");
 //8.説明文文字色
 define('DESCRIPTION_TEXT_COLOR', "#666666");
+//最小化/閉じるボタン色
+  define('CLOSE_BTN_COLOR', "#FFFFFF");
+//閉じるマウスオーバー
+  define('CLOSE_BTN_HOVER_COLOR', "#5432FA");
 //9.チャットエリア背景色
 define('CHAT_TALK_BACKGROUND_COLOR', "#FFFFFF");
 //10.企業名担当者名文字色

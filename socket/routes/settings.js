@@ -139,6 +139,16 @@ router.get("/", function (req, res, next) {
       if (('closeButtonSetting' in settings)) {
         closeButtonSetting = isNumeric(settings.closeButtonSetting);
       }
+      // 閉じるボタン色
+      var closeBtnColor = '#FFFFFF';
+      if (('closeBtnColor' in settings)) {
+        closeBtnColor = settings.closeBtnColor;
+      }
+      // 閉じるマウスオーバー
+      var closeBtnHoverColor = '#5432FA';
+      if (('closeBtnHoverColor' in settings)) {
+        closeBtnHoverColor = settings.closeBtnHoverColor;
+      }
 
       // 通常設定・高度設定が存在しない場合は「通常設定」
       var colorSettingType = 0;
@@ -245,10 +255,7 @@ router.get("/", function (req, res, next) {
         messageBoxTextSize = settings.messageBoxTextSize;
       }
 
-
       /* スマホ隠しパラメータ*/
-
-
       var spWidgetViewPattern = 1;
       if ('spWidgetViewPattern' in settings) {
         spWidgetViewPattern = settings.spWidgetViewPattern;
@@ -363,6 +370,10 @@ router.get("/", function (req, res, next) {
         subTitleTextColor: settings.subTitleTextColor,
         //8.説明文文字色
         descriptionTextColor: settings.descriptionTextColor,
+        // 閉じるボタン色
+        closeBtnColor: closeBtnColor,
+        // 閉じるマウスオーバー
+        closeBtnHoverColor: closeBtnHoverColor,
         //9.チャットエリア背景色
         chatTalkBackgroundColor: settings.chatTalkBackgroundColor,
         //10.企業名担当者名文字色
