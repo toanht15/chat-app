@@ -1304,7 +1304,7 @@ var socket, // socket.io
         html += '      #sincloBox #fw-close-btn {top: 3px; right: 5px; position: absolute; z-index: 2; cursor: pointer; ' +
             'display: inline-flex; align-items: center; justify-content: center; height: 27px; width: 27px; }';
         html += '      #sincloBox #fw-close-btn i {font-size: 23px; color: ' +
-            colorList['closeBtnColor'] + '; line-height: 1.25}';
+            colorList['closeBtnColor'] + '; line-height: 1}';
         html += '      #sincloBox #fw-close-btn i:before {font-family: FA5P}';
         html += '      #sincloBox #fw-close-btn:hover {background-color: ' +
             colorList['closeBtnHoverColor'] + ';}';
