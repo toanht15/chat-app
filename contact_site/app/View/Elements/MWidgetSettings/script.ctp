@@ -1360,11 +1360,19 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     var balloonR = String(255 - parseInt(r, 16));
     var balloonG = String(255 - parseInt(g, 16));
     var balloonB = String(255 - parseInt(b, 16));
-    var codeR = parseInt(balloonR).toString(16);
-    var codeG = parseInt(balloonG).toString(16);
-    var codeB = parseInt(balloonB).toString(16);
+    var codeR = $scope.formatColorCode(parseInt(balloonR).toString(16));
+    var codeG = $scope.formatColorCode(parseInt(balloonG).toString(16));
+    var codeB = $scope.formatColorCode(parseInt(balloonB).toString(16));
 
     return ('#' + codeR + codeG + codeB).toUpperCase();
+  };
+
+  $scope.formatColorCode = function(code) {
+    if (code.length === 1) {
+      return '0' + code;
+    };
+
+    return code;
   };
 
   $scope.getCloseBtnColor = function() {

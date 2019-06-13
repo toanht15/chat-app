@@ -1274,6 +1274,10 @@ class MWidgetSettingsController extends AppController {
 
   }
 
+  /**
+   * @param $color
+   * @return string
+   */
   private function getContrastColor($color) {
     $code = substr($color,1);
     if(strlen($code) === 3){
@@ -1287,10 +1291,23 @@ class MWidgetSettingsController extends AppController {
       $b = substr($code,4);
     }
 
-    $balloonR = dechex((255 - intval($r,16)));
-    $balloonG = dechex((255 - intval($g,16)));
-    $balloonB = dechex((255 - intval($b,16)));
+    $balloonR = $this->formatColorCode((dechex((255 - intval($r,16)))));
+    $balloonG = $this->formatColorCode((dechex((255 - intval($g,16)))));
+    $balloonB = $this->formatColorCode((dechex((255 - intval($b,16)))));
 
     return '#'.$balloonR.$balloonG.$balloonB;
+  }
+
+  /**
+   * @param $code
+   * @return string
+   */
+  private function formatColorCode($code)
+  {
+    if (strlen($code) == 1) {
+      return '0' . $code;
+    }
+
+    return $code;
   }
 }
