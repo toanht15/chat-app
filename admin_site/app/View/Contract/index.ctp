@@ -85,7 +85,7 @@
                     <td>プレミアムプラン</td>
               <?php } ?>
               <?php if(h($val['MCompany']['m_contact_types_id']) == 2){ ?>
-                    <td>スタンダードプラン</td>
+                    <td>チャットプラン</td>
               <?php } ?>
               <?php if(h($val['MCompany']['m_contact_types_id']) == 3){ ?>
                     <td>シェアリングプラン</td>

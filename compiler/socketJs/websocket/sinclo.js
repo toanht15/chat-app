@@ -9013,6 +9013,10 @@
               sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
+            // 自動最大化
+            if (!('widgetOpen' in cond) || (check.smartphone() &&
+                sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
+                Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
             var flg = sinclo.widget.condifiton.get();
             if (Number(cond.widgetOpen) === 1 && String(flg) === 'false') {
               console.log('シナリオ最大化処理');
@@ -9058,6 +9062,10 @@
               sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
+            // 自動最大化
+            if (!('widgetOpen' in cond) || (check.smartphone() &&
+                sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
+                Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
             var flg = sinclo.widget.condifiton.get();
             if (Number(cond.widgetOpen) === 1 && String(flg) === 'false') {
               console.log('シナリオ最大化処理');
@@ -10918,11 +10926,26 @@
         if (message) {
           return message.replace(/\{\{(.+?)\}\}/g, function(param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-            return self._getStoredVariable(name) || '';
+            var value = self._getStoredVariable(name);
+            if (!value) return '';
+
+            if (check.isJSON(value) && value.indexOf('separator') !== -1) {
+              // checkbox message
+              var checkboxData = JSON.parse(value);
+              var array        = checkboxData.message.split(checkboxData.separator);
+              var text = '';
+              array.forEach(function(item) {
+                text = text + '・' +  item + '\n';
+              });
+
+              return text;
+            }
+
+            return value;
           });
-        } else {
-          return '';
         }
+
+        return '';
       },
       _getIntervalTimeSec: function() {
         var self = sinclo.scenarioApi;

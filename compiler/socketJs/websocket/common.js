@@ -227,6 +227,27 @@ var socket, // socket.io
       var codeB = parseInt(balloonB).toString(16);
       return ('#' + codeR + codeG + codeB).toUpperCase();
     },
+    getContrastColor: function(colorCode) {
+      var code = colorCode.substr(1), r, g, b;
+      if (code.length === 3) {
+        r = String(code.substr(0, 1)) + String(code.substr(0, 1));
+        g = String(code.substr(1, 1)) + String(code.substr(1, 1));
+        b = String(code.substr(2)) + String(code.substr(2));
+      } else {
+        r = String(code.substr(0, 2));
+        g = String(code.substr(2, 2));
+        b = String(code.substr(4));
+      }
+
+      var balloonR = String(255 - parseInt(r, 16));
+      var balloonG = String(255 - parseInt(g, 16));
+      var balloonB = String(255 - parseInt(b, 16));
+      var codeR = parseInt(balloonR).toString(16);
+      var codeG = parseInt(balloonG).toString(16);
+      var codeB = parseInt(balloonB).toString(16);
+
+      return ('#' + codeR + codeG + codeB).toUpperCase();
+    },
     //サイズを返す関数
     getColorList: function(widget) {
       var widget = window.sincloInfo.widget;
@@ -413,7 +434,11 @@ var socket, // socket.io
           //27.ウィジット内枠線なし
           widgetInsideBorderNone: widgetInsideBorderNone,
           //28.ウィジット外枠線なし
-          widgetBorderNone: widgetBorderNone
+          widgetBorderNone: widgetBorderNone,
+          // 閉じるボタン色
+          closeBtnColor: widget.closeBtnColor,
+          // 閉じるマウスオーバー
+          closeBtnHoverColor: widget.closeBtnHoverColor
         };
       }
       return portioneArray;
@@ -831,31 +856,31 @@ var socket, // socket.io
     },
     //最大化時ボタン表示
     whenMaximizedBtnShow: function() {
-      $('#minimizeBtn').show();
-      $('#closeBtn').hide();
+      $('#fw-minimize-btn').show();
+      $('#fw-close-btn').hide();
     },
     //最小化時ボタン表示
     whenMinimizedBtnShow: function() {
       var widget = window.sincloInfo.widget, displaySet = '';
       if (Number(widget.closeButtonSetting) === 1) {
         //閉じるボタン無効
-        $('#minimizeBtn').hide();
-        $('#closeBtn').hide();
+        $('#fw-minimize-btn').hide();
+        $('#fw-close-btn').hide();
       } else {
         //閉じるボタン有効
-        $('#minimizeBtn').hide();
+        $('#fw-minimize-btn').hide();
         var smartphone = check.smartphone();
         if (smartphone) {
           //スマホ時
           //スマホだったら縦か横かを判定
           if (common.isPortrait()) {
             //縦
-            $('#closeBtn').show();
+            $('#fw-close-btn').show();
           } else {
-            $('#closeBtn').hide();
+            $('#fw-close-btn').hide();
           }
         } else {
-          $('#closeBtn').show();
+          $('#fw-close-btn').show();
         }
       }
     },
@@ -1273,6 +1298,18 @@ var socket, // socket.io
         html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' +
             window.sincloInfo.site.files +
             '/img/widget/close.png"); background-position-y: -1.5px; position: absolute; top: calc(50% - 8px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+        html += '      #sincloBox div#closeBtn:hover {background-color: #999999;}';
+        html += '      #sincloBox #fw-close-btn {top: 3px; right: 5px; position: absolute; z-index: 2; cursor: pointer; ' +
+            'display: inline-flex; align-items: center; justify-content: center; height: 27px; width: 27px; }';
+        html += '      #sincloBox #fw-close-btn i {font-size: 23px; color: ' +
+            colorList['closeBtnColor'] + '; line-height: 1.25}';
+        html += '      #sincloBox #fw-close-btn i:before {font-family: FA5P}';
+        html += '      #sincloBox #fw-close-btn:hover {background-color: ' +
+            colorList['closeBtnHoverColor'] + ';}';
+
+        html += '      #sincloBox #fw-minimize-btn i {top: -1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: ' +
+            colorList['closeBtnColor'] + '; cursor: pointer;}';
+        html += '      #sincloBox #fw-minimize-btn i:before {font-family: FA5P}';
       }
 
       html += '      #sincloBox div#sincloWidgetBox { position: relative; top: 0px; }';
@@ -1816,6 +1853,16 @@ var socket, // socket.io
               (6 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' +
               (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' +
               (20 * ratio) + 'px; z-index: 2; }';
+
+          html += '#sincloBox #fw-minimize-btn i {top: ' + (-1) * ratio +
+              'px; right: ' + 7 * ratio + 'px; font-size: ' + 26 * ratio +
+              'px;}';
+
+          html += '#sincloBox #fw-close-btn {top: ' + 3 * ratio +
+              'px; right: ' + 5 * ratio + 'px;' + 'height: ' + 27 * ratio +
+              'px; width: ' + 27 * ratio + 'px; }';
+          html += '#sincloBox #fw-close-btn i {font-size: ' + 27 * ratio +
+              'px; line-height: ' + 1.25 * ratio + '}';
           //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
           if (Number(widget.closeButtonSetting) === 1) {
             //閉じるボタン無効
@@ -2385,6 +2432,7 @@ var socket, // socket.io
           html += '#sincloBox section { width: 100% }';
           html += '#sincloBox section#chatTab ul { height: ' +
               (chatAreaHeight - (6.5 * hRatio)) + 'px }';
+          html += '#sincloBox #fw-minimize-btn i {top: -0.1px; right: 10px; font-size: 1.5em;}';
           if(check.android()){
             html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.25em; bottom: 0; right: 0.3em; }';
           } else {
@@ -2481,6 +2529,8 @@ var socket, // socket.io
               '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
               'margin-left: 0; ' +
               '}' ;
+
+
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
           }
@@ -2589,7 +2639,7 @@ var socket, // socket.io
         html += '      #sincloBox p#widgetTitle { border-radius: ' +
             widget.radiusRatio + 'px ' + widget.radiusRatio +
             'px 0 0; font-size: ' + widget.headerTextSize +
-            'px; padding: 7px 0px 7px 0px; height: auto; line-height: ' +
+            'px; padding: 8px 0px 8px 0px; height: auto; line-height: ' +
             widget.headerTextSize +
             'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
         html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 41px);}';
@@ -4275,14 +4325,17 @@ var socket, // socket.io
           }
           html += '  </span>';
         }
+        html += '    <div id="fw-close-btn" onclick="sinclo.operatorInfo.closeBtn()"><i class="fal fa-times"></i></div>';
+        html += '    <div id="fw-minimize-btn" onclick="sinclo.operatorInfo.toggle()"><i class="fal fa-minus-square"></i></div>';
+
         html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
         html += '  <sinclo-div id="titleWrap">';
         // タイトル
         html += '    <p id="widgetTitle">' + check.escape_html(widget.title) +
             '</p>';
         //ボタン差し替え対応
-        html += '    <div id="minimizeBtn"></div>';
-        html += '    <div id="closeBtn" onclick="sinclo.operatorInfo.closeBtn()"></div>';
+        // html += '    <div id="minimizeBtn"></div>';
+        // html += '    <div id="closeBtn" onclick="sinclo.operatorInfo.closeBtn()"></div>';
         html += '  </sinclo-div>';
         var subTitle = (widget.subTitle === undefined &&
             Number(widget.showSubtitle) === 1) ? '' : widget.subTitle;
@@ -6384,9 +6437,21 @@ var socket, // socket.io
     prevList: [],
     // TODO 画面同期時セットするようにする
     scrollSize: function() { // 全体のスクロール幅
+      var scrollHeight = document.body.scrollHeight;
+      if (check.smartphone() && !check.android()) {
+        // handle scrollHeight bug on iphone
+        var overflow = document.documentElement.style.overflow;
+        var height = document.documentElement.style.height;
+        document.documentElement.style.overflow = 'visible';
+        document.documentElement.style.height = 'auto';
+        scrollHeight = document.body.scrollHeight;
+        document.documentElement.style.overflow = overflow;
+        document.documentElement.style.height = height;
+      }
+
       return {
         x: document.body.scrollWidth - window.innerWidth,
-        y: document.body.scrollHeight - window.innerHeight
+        y: scrollHeight - window.innerHeight
       };
     },
     // TODO 画面同期時セットするようにする
@@ -7327,7 +7392,7 @@ var socket, // socket.io
       common.widgetHandler.clearShownFlg();
     }
     socket = io.connect(sincloInfo.site.socket,
-        {port: 9090, rememberTransport: false});
+        {port: 9090, rememberTransport: false, transports: ['websocket']});
 
     // 接続時
     socket.on('connect', function() {

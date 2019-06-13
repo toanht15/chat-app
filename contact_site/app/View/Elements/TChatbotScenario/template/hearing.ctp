@@ -1098,9 +1098,5 @@
       </ul>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-
-
-
+<?php echo $this->Html->script("flatpickr.js"); ?>
 

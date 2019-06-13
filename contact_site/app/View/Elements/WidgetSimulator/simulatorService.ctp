@@ -358,14 +358,20 @@
           $('#minimizeBtn').show();
           $('#addBtn').hide();
           $('#closeBtn').hide();
+
+          $('#fw-minimize-btn').show();
+          $('#fw-close-btn').hide();
         } else {
           //最小化時
           $('#addBtn').show();
           $('#minimizeBtn').hide();
+          $('#fw-minimize-btn').hide();
           if (this.closeButtonSettingToggle === '2') {
             $('#closeBtn').show();
+            $('#fw-close-btn').show();
           } else {
             $('#closeBtn').hide();
+            $('#fw-close-btn').hide();
           }
           if (this._coreSettingsChat) {
             document.getElementById('switch_widget').value = this._showWidgetType;
@@ -609,11 +615,11 @@
         return content;
       },
       createCheckboxMessage: function(message, separator) {
-        var separatorChar = this.getCheckboxSeparator(separator);
-        var array = message.split(separatorChar);
-        var html = '<ul style="margin-top: -7px">';
+        var checkboxData = JSON.parse(message);
+        var array        = checkboxData.message.split(checkboxData.separator);
+        var html = '<ul style="margin-top: -7px; display: block;">';
         angular.forEach(array, function(item) {
-          html += '<li style="list-style-type: disc; background-color: transparent; margin: 5px 0 0 15px; padding: 0;">' + item + '</li>';
+          html += '<li style="list-style-type: disc; background-color: transparent; margin: 5px 0 0 15px; padding: 0; display: list-item;">' + item + '</li>';
         });
         html += '</ul>';
 
