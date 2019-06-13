@@ -703,6 +703,7 @@
         storage.s.unset('chatAct');
         storage.s.unset('chatEmit');
         storage.l.unset('bannerAct');
+        //sinclo.chatApi.store.unset();
         sinclo.scenarioApi.reset();
         sinclo.diagramApi.common.reset();
         userInfo.setPrevpage(true);
@@ -8494,6 +8495,22 @@
             || type === sinclo.chatApi.messageType.scenario.customer.sendFile
             || type === sinclo.chatApi.messageType.scenario.customer.skipHearing
             || type === sinclo.chatApi.messageType.diagram.customer.branch;
+      },
+      store: {
+        _key: 'scl_tmp_msg',
+        save: function(msg) {
+          var data = this.get();
+          var obj = check.isJSON(msg) ? JSON.parse(msg) : msg;
+          data.push(obj);
+          storage.l.set(this._key, JSON.stringify(data));
+        },
+        get: function() {
+          var data = storage.l.get(this._key);
+          return check.isJSON(data) ? JSON.parse(data) : [];
+        },
+        unset: function() {
+          storage.l.unset(this._key);
+        }
       }
     },
     trigger: {
@@ -8942,6 +8959,9 @@
           var data = {
             chatId: id,
             message: cond.message,
+            messageType: (isSpeechContent ?
+                sinclo.chatApi.messageType.autoSpeech :
+                sinclo.chatApi.messageType.auto),
             isAutoSpeech: isSpeechContent,
             achievementFlg: 3,
             sendMailFlg: sendMail
@@ -8954,6 +8974,9 @@
           var data = {
             chatId: id,
             message: cond.message,
+            messageType: (isSpeechContent ?
+                sinclo.chatApi.messageType.autoSpeech :
+                sinclo.chatApi.messageType.auto),
             isAutoSpeech: isSpeechContent,
             sendMailFlg: sendMail
           };
@@ -8965,6 +8988,9 @@
           var data = {
             chatId: id,
             message: cond.message,
+            messageType: (isSpeechContent ?
+                sinclo.chatApi.messageType.autoSpeech :
+                sinclo.chatApi.messageType.auto),
             isAutoSpeech: isSpeechContent,
             sendMailFlg: sendMail
           };
@@ -8985,6 +9011,7 @@
           if (isSpeechContent) {
           }
           emit('sendAutoChatMessage', data);
+          sinclo.chatApi.store.save(data);
         }
       },
       setAction: function(
@@ -9806,7 +9833,7 @@
             callback(true, null);
           }
         }
-      }
+      },
     },
     /**
      * =================================

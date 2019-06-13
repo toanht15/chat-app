@@ -7451,7 +7451,7 @@ var socket, // socket.io
                     accessId: userInfo.accessId,
                     chat: {
                       historyId: null,
-                      messages: []
+                      messages: sinclo.chatApi.store.get()
                     },
                     url: f_url(browserInfo.href),
                     connectToken: userInfo.connectToken,
