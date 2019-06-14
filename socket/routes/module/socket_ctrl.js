@@ -14,6 +14,7 @@ var CommonUtil = require('./class/util/common_utility');
 var HistoryManager = require('./class/manager/history_manager');
 var CustomerInfoManager = require('./class/manager/customer_info_manager');
 var TChatbotScenario = require('./class/model/t_chatbot_scenario');
+var TChatbotDiagram = require('./class/model/t_chatbot_diagram');
 
 var DBConnector = require('./class/util/db_connector_util');
 // log4js
@@ -4113,7 +4114,7 @@ io.sockets.on('connection', function(socket) {
         && !CommonUtil.isset(
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
       SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
-      SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[obj.socketId] = socket.id;
+      SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
       let historyManager = new HistoryManager();
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
@@ -4850,43 +4851,18 @@ io.sockets.on('connection', function(socket) {
   // チャットツリーイベントハンドラ
   // ============================================
   socket.on('getChatDiagram', function(data, ack) {
-    var obj = JSON.parse(data);
-    var result = {};
-    DBConnector.getPool().query(
-        'select activity from t_chatbot_diagrams where m_companies_id = ? and id = ?;',
-        [list.companyList[obj.siteKey], obj.diagramId],
-        function(err, row) {
-          if (err !== null && err !== '') {
-            if (ack) {
-              ack(result);
-            } else {
-              emit.toMine('resGetChatDiagram', result, socket);
-            }
-            return;
-          }
-          if (row.length !== 0) {
-            result = JSON.parse(row[0].activity);
-            // そのままのデータだとクライアント側の処理のパフォーマンスが悪いため
-            // UUIDでデータを参照できるよう加工する
-            var sendObj = {};
-            for (let i = 0; i < result.cells.length; i++) {
-              let cell = result.cells[i];
-              sendObj[cell['id']] = {
-                id: cell['id'],
-                parent: cell['parent'],
-                type: cell['type'],
-                embeds: cell['embeds'],
-                attrs: cell['attrs']
-              };
-            }
-          }
-          if (ack) {
-            ack({id: obj.scenarioId, activity: sendObj});
-          } else {
-            emit.toMine('resGetChatDiagram',
-                {id: obj.diagramId, activity: sendObj}, socket);
-          }
-        });
+    let obj = JSON.parse(data);
+    let result = {};
+    let diagram = new TChatbotDiagram();
+    diagram.getActivityByIdWithSiteKey(obj.diagramId, obj.siteKey)
+        .then((data) => {
+      if (ack) {
+        ack(data);
+      } else {
+        emit.toMine('resGetChatDiagram',
+            data, socket);
+      }
+    });
   });
 
   socket.on('sendDiagramMessage', function(d, ack) {

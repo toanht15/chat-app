@@ -1273,9 +1273,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
                 if ( Number($scope.operatorIconType) === 1) {
                   $scope.changeIconToMainImage('op');
                 }
+                $("#MWidgetSettingUploadImage").val("");
                 break;
               case 2:
                 $scope.chatbot_icon = src;
+                $("#MWidgetSettingUploadImage").val("");
                 break;
               case 3:
                 $scope.operator_icon = src;
@@ -1283,7 +1285,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
               default:
                 $scope.main_image = src;
             }
-            $("#MWidgetSettingUploadImage").val("");
             $scope.$apply();
             popupEvent.close();
           };
