@@ -7523,7 +7523,6 @@ var socket, // socket.io
               });
           }, function(){
             // timeout
-            alert('timeout');
            return sinclo.connect().then(sinclo.accessInfo);
           }).then(function(connectSuccessData) {
                 window.userInfo.connectSuccessData = connectSuccessData;
