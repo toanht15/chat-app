@@ -1096,8 +1096,6 @@ var socket, // socket.io
           sincloInfo.site.files +
           '/webfonts/fa-light-300.eot?#iefix") format("embedded-opentype"), url("' +
           sincloInfo.site.files +
-          '/webfonts/fa-light-300.woff2") format("woff2"), url("' +
-          sincloInfo.site.files +
           '/webfonts/fa-light-300.woff") format("woff"), url("' +
           sincloInfo.site.files +
           '/webfonts/fa-light-300.ttf") format("truetype"), url("' +
@@ -1107,8 +1105,6 @@ var socket, // socket.io
           sincloInfo.site.files + '/webfonts/fa-solid-900.eot"); src: url("' +
           sincloInfo.site.files +
           '/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("' +
-          sincloInfo.site.files +
-          '/webfonts/fa-solid-900.woff2") format("woff2"), url("' +
           sincloInfo.site.files +
           '/webfonts/fa-solid-900.woff") format("woff"), url("' +
           sincloInfo.site.files +
@@ -4969,7 +4965,7 @@ var socket, // socket.io
             inputAreaSize + footerSize +
             $('#sincloAccessInfo').outerHeight();
         $('#chatTalk').css('height', $(window).height() - offset);
-        if ($('#minimizeBtn').is(':hidden')) {
+        if ($('#fw-minimize-btn').is(':hidden')) {
           //最大化時以外は横幅400px
           $('#sincloWidgetBox').css('width', '400px');
           return;
@@ -7394,7 +7390,7 @@ var socket, // socket.io
       common.widgetHandler.clearShownFlg();
     }
     socket = io.connect(sincloInfo.site.socket,
-        {port: 9090, rememberTransport: false, transports: ['websocket']});
+        {port: 9090, rememberTransport: false});
 
     // 接続時
     socket.on('connect', function() {
