@@ -4,6 +4,8 @@ var CommonUtil = require('./module/class/util/common_utility');
 var common = require('./module/common');
 var list = require('./module/company_list');
 var SharedData = require('./module/shared_data');
+var TChatbotScenario = require('./module/class/model/t_chatbot_scenario');
+var TChatbotDiagram = require('./module/class/model/t_chatbot_diagram');
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -805,6 +807,84 @@ router.get("/", function (req, res, next) {
     return false;
   }
   // res.render('index', { title: 'Settings' });
+});
+
+router.get("/scenario", function (req, res, next){
+  /* Cross-Origin */
+  // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  /* no-cache */
+  // http://garafu.blogspot.jp/2013/06/ajax.html
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Content-Type", "application/json");
+
+  if (!('query' in req) || (('query' in req) && !('sitekey' in req['query']))) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+    return false;
+  }
+
+  const siteKey = req['query']['sitekey'];
+  const scenarioId = req['query']['sid'];
+
+  const scenario = new TChatbotScenario();
+
+  scenario.getActivityByIdWithSiteKey(scenarioId, siteKey)
+    .then(function(result){
+      res.send(result);
+      res.status(200);
+  });
+});
+
+router.get("/diagram", function (req, res, next){
+  /* Cross-Origin */
+  // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  /* no-cache */
+  // http://garafu.blogspot.jp/2013/06/ajax.html
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Content-Type", "application/json");
+
+  if (!('query' in req) || (('query' in req) && !('sitekey' in req['query']))) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+    return false;
+  }
+
+  const siteKey = req['query']['sitekey'];
+  const scenarioId = req['query']['did'];
+
+  const diagram = new TChatbotDiagram();
+
+  diagram.getActivityByIdWithSiteKey(scenarioId, siteKey)
+  .then(function (result){
+    res.send(result);
+    res.status(200);
+  });
 });
 
 router.post("/reload/widgetSettings", function (req, res, next) {

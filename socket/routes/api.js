@@ -121,7 +121,7 @@ router.post('/auth/customer', function(req, res, next) {
     history.incrementAccessCount(list.companyList[d.siteKey],
         CommonUtil.formatDateParse());
   } else {
-    send.sincloSessionIdIsnew = false;
+    send.sincloSessionIdIsNew = false;
   }
 
   if (d.data.firstConnection || !CommonUtil.isset(d.data.accessId)) {
