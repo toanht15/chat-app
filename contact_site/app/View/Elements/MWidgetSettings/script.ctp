@@ -439,7 +439,25 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       element.style.backgroundColor = rgbcode;
       element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
       jscolor.installByClassName("jscolor");
+    };
+
+  // 閉じるボタン色
+  $scope.changeCloseButtonSetting = function(e) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (!$(e.target).parent().hasClass('disable')) {
+      var element = e.target;
+      if (!element.classList.contains('jscolor{hash:true}')) {
+        element.classList.add('jscolor{hash:true}');
+        jscolor.installByClassName('jscolor');
+      }
+      element.jscolor.show();
+    } else {
+      $(e.target).removeClass('jscolor{hash:true}');
+      e.target.jscolor.hide();
     }
+  };
+
     //吹き出し文字色
     $scope.changeMessageTextColor = function(){
       //現在設定されている吹き出し文字色に変更
@@ -456,7 +474,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       document.getElementById('MWidgetSettingSeTextColor').style.backgroundColor = rgbcode;
       document.getElementById('MWidgetSettingSeTextColor').style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
       jscolor.installByClassName("jscolor");
-    }
+    };
     //その他文字色
     $scope.changeOtherTextColor = function(){
       //現在設定されているその他文字色に変更
@@ -624,7 +642,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     *その他
     * 23.ウィジット内枠線色'widget_inside_border_color':現在設定されているウィジェット枠線色に変更ok
     */
-    $scope.returnStandardColor = function(id){
+  $scope.returnStandardColor = function(id, event) {
+    if (event && $(event.target).parent().hasClass('disable')) return;
       if(id === 'widget_border_color'){
         var colorid = "<?= WIDGET_BORDER_COLOR ?>";
         $scope.widget_border_color = colorid;
@@ -862,6 +881,27 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         var element = document.getElementById('MWidgetSettingHeaderBackgroundColor');
         element.style.backgroundColor = rgbcode;
         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
+      }
+      if (id === 'close_btn_color') {
+        var colorid = '<?=CLOSE_BTN_COLOR?>';
+        $scope.close_btn_color = colorid;
+        //MWidgetSettingCloseBtnColor
+        var rgb = $scope.checkRgbColor(colorid);
+        var rgbcode = 'rgb(' + rgb['r'] + ', ' + rgb['g'] + ', ' + rgb['b'] + ')';
+        var element = document.getElementById('MWidgetSettingCloseBtnColor');
+        element.style.backgroundColor = rgbcode;
+        element.style.color = $scope.checkTxtColor(rgb['r'], rgb['g'], rgb['b']);
+      }
+      if (id === 'close_btn_hover_color') {
+        var colorid = $scope.getContrastColor($scope.main_color);
+
+        $scope.close_btn_hover_color = colorid;
+        //MWidgetSettingCloseBtnColor
+        var rgb = $scope.checkRgbColor(colorid);
+        var rgbcode = 'rgb(' + rgb['r'] + ', ' + rgb['g'] + ', ' + rgb['b'] + ')';
+        var element = document.getElementById('MWidgetSettingCloseBtnHoverColor');
+        element.style.backgroundColor = rgbcode;
+        element.style.color = $scope.checkTxtColor(rgb['r'], rgb['g'], rgb['b']);
       }
       jscolor.installByClassName("jscolor");
     };
@@ -1195,8 +1235,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if($scope.openFlg){
         //最大化時
         $("#minimizeBtn").show();
+        $('#fw-minimize-btn').show();
         $("#addBtn").hide();
         $("#closeBtn").hide();
+        $('#fw-close-btn').hide();
         //画像あるときタイトル位置
         setTimeout(function(){
           if($('#mainImage').is(':visible')) {
@@ -1212,11 +1254,14 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         //最小化時
         $("#addBtn").show();
         $("#minimizeBtn").hide();
+        $('#fw-minimize-btn').hide();
         if($scope.closeButtonSettingToggle === '2'){
           $("#closeBtn").show();
+          $('#fw-close-btn').show();
         }
         else{
           $("#closeBtn").hide();
+          $('#fw-close-btn').hide();
         }
         var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
         if(coreSettingsChat){
@@ -1315,6 +1360,44 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       };
       return res;
     };
+
+  $scope.getCloseBtnHoverColor = function(hex) {
+    return $scope.close_btn_hover_color ? $scope.close_btn_hover_color : $scope.getContrastColor($scope.main_color);
+  };
+
+  $scope.getContrastColor = function(hex) {
+    var code = hex.substr(1), r, g, b;
+    if (code.length === 3) {
+      r = String(code.substr(0, 1)) + String(code.substr(0, 1));
+      g = String(code.substr(1, 1)) + String(code.substr(1, 1));
+      b = String(code.substr(2)) + String(code.substr(2));
+    } else {
+      r = String(code.substr(0, 2));
+      g = String(code.substr(2, 2));
+      b = String(code.substr(4));
+    }
+
+    var balloonR = String(255 - parseInt(r, 16));
+    var balloonG = String(255 - parseInt(g, 16));
+    var balloonB = String(255 - parseInt(b, 16));
+    var codeR = $scope.formatColorCode(parseInt(balloonR).toString(16));
+    var codeG = $scope.formatColorCode(parseInt(balloonG).toString(16));
+    var codeB = $scope.formatColorCode(parseInt(balloonB).toString(16));
+
+    return ('#' + codeR + codeG + codeB).toUpperCase();
+  };
+
+  $scope.formatColorCode = function(code) {
+    if (code.length === 1) {
+      return '0' + code;
+    };
+
+    return code;
+  };
+
+  $scope.getCloseBtnColor = function() {
+    return $scope.close_btn_color ? $scope.close_btn_color : '#FFFFFF';
+  };
 
     //テキストカラーの振り分け
     $scope.checkTxtColor = function(cR,cG,cB){
@@ -2258,7 +2341,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
               height += main.children[i].offsetHeight;
           }
           main.style.height = height + "px";
-        }, 0);
+        }, 0)
       }
       else {
         angular.element("#sincloBox").removeClass("open");
@@ -2454,19 +2537,25 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     };
 
     angular.element(window).on("click", ".widgetOpener", function(){
-      if(Number($scope.closeButtonSettingToggle) === 2 && Number($scope.closeButtonModeTypeToggle) === 1){
+      if (Number($scope.closeButtonSettingToggle) === 2 && Number($scope.closeButtonModeTypeToggle) === 1) {
         //閉じるボタンが無効な場合や、非表示にする場合は2段階オプションの判定をさせない
-        if(Number($scope.showWidgetType) === 3 && Number($scope.sp_widget_view_pattern) === 3){
+        if (Number($scope.showWidgetType) === 3 && Number($scope.sp_widget_view_pattern) === 3) {
           //2段階表示の時は即座にバナー状態にさせる
           $scope.closeAct();
         }
       }
-      var sincloBox = document.getElementById("sincloBox");
+      var sincloBox = document.getElementById('sincloBox');
       var nextFlg = true;
-      if ( $scope.openFlg ) {
+      if ($scope.openFlg) {
         nextFlg = false;
       }
       $scope.openFlg = nextFlg;
+
+      if ($scope.openFlg) {
+        $('.fw-minimize-btn-landscape').show();
+      } else {
+        $('.fw-minimize-btn-landscape').hide();
+      }
       $scope.$apply();
     });
 });

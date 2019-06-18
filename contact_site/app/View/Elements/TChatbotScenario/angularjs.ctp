@@ -882,7 +882,9 @@
             }
 
             definedVariables = $.merge(variableList, storedVariableList);
-            definedVariables = [...new Set(definedVariables)];
+            definedVariables = definedVariables.filter(function(item, pos, self) {
+              return self.indexOf(item) == pos;
+            });
             storedVariableList = definedVariables;
           });
           $scope.storedVariableList = definedVariables;

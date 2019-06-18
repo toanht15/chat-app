@@ -144,6 +144,16 @@ $config['default'] = [
       "descriptionTextColor" => "#666666",
 
       /**
+       * 最小化／閉じるボタン色
+       */
+      "closeBtnColor" => "#FFFFFF",
+
+      /**
+       * 閉じるボタンマウスオーバー
+       */
+      "closeBtnHoverColor" => "#5432FA",
+
+      /**
        * 9.チャットエリア背景色
        */
       "chatTalkBackgroundColor" => "#FFFFFF",
