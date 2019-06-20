@@ -1285,6 +1285,10 @@ var socket, // socket.io
       html += '      #sincloBox div#minimizeBtn { display: none; cursor: pointer; background-image: url("' +
           window.sincloInfo.site.files +
           '/img/widget/minimize.png"); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+      html += '      #sincloBox #fw-minimize-btn i {top: -1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: ' +
+          colorList['closeBtnColor'] + '; cursor: pointer;}';
+      html += '      #sincloBox #fw-minimize-btn i:before {font-family: FA5P}';
+
       //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
       if (Number(widget.closeButtonSetting) === 1) {
         //閉じるボタン無効
@@ -1304,10 +1308,6 @@ var socket, // socket.io
         html += '      #sincloBox #fw-close-btn i:before {font-family: FA5P}';
         html += '      #sincloBox #fw-close-btn:hover {background-color: ' +
             colorList['closeBtnHoverColor'] + ';}';
-
-        html += '      #sincloBox #fw-minimize-btn i {top: -1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: ' +
-            colorList['closeBtnColor'] + '; cursor: pointer;}';
-        html += '      #sincloBox #fw-minimize-btn i:before {font-family: FA5P}';
       }
 
       html += '      #sincloBox div#sincloWidgetBox { position: relative; top: 0px; }';
@@ -7727,12 +7727,22 @@ var socket, // socket.io
     window.sincloInfo.customVariable = settings.customVariable;
     window.sincloInfo.accessTime = (new Date()).getTime();
   } else {
+    console.log('<><><><><><><><>< MODIFIED ><><><><><><><><><>');
+    var  widgetSitekey = '';
+    var myTag = document.querySelector(
+        'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
+
+    if (myTag.getAttribute('data-another-widget-key')) {
+      widgetSitekey = myTag.getAttribute('data-another-widget-key');
+    }
+
     $.ajax({
       type: 'get',
       url: window.sincloInfo.site.files + '/settings/',
       cache: false,
       data: {
         'sitekey': window.sincloInfo.site.key,
+        'widgetSitekey': widgetSitekey,
         accessType: userInfo.accessType,
         s: (check.isset(userInfo.get(cnst.info_type.tab))) ?
             userInfo.get(cnst.info_type.tab) :
@@ -7953,4 +7963,3 @@ if (myTag.getAttribute('data-show-always')) {
   // オペレータ存在条件や営業時間設定に依存せずtrueであれば表示
   sincloInfo.dataset.showAlways = myTag.getAttribute('data-show-always');
 }
-

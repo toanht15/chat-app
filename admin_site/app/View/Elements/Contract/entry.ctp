@@ -101,6 +101,15 @@
       <?php $plans = array('1' => 'プレミアムプラン', '4' => 'チャットベーシックプラン', '2' => 'チャットプラン', '3' => 'シェアリングプラン'); ?>
       <?= $this->Form->input('MCompany.m_contact_types_id', array('type' => 'select', 'options' => $plans,'default' => 1,'label'=>false, 'div' => ['id' => 'planListArea'])) ?>
     </li>
+  <!-- ウィジェット設定のみ -->
+  <li>
+    <div class="labelArea fLeft"><span ><label>参照用設定</label></span></div>
+    <?= $this->Form->input('MCompany.widgetSettingOnly', array(
+      'type' => 'checkbox',
+      'default' => false,
+      'label' => 'ウィジェット設定のみ設定可能',
+    )) ?>
+  </li>
     <!-- オプション -->
     <li style="display:flex">
         <span><label>オプション</label></span>
