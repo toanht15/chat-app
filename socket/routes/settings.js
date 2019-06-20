@@ -37,18 +37,8 @@ router.get("/", function (req, res, next) {
   }
   var siteKey = req['query']['sitekey'];
   var accessType = req['query']['accessType'];
-  var tabId = req['query']['s'];
   var widgetSitekey = req['query']['widgetSitekey'] ? req['query']['widgetSitekey'] : siteKey;
   var sendData = {status: true, widget: {}, chat: {settings: {}}, messages: {}, customVariable: [], contract: {}};
-
-  if (CommonUtil.isKeyExists(SharedData.sincloCore, siteKey + '.' + tabId)) {
-    res.send({
-      status: true,
-      nm: true, // not modified
-      accessTime: (new Date()).getTime()
-    });
-    return true;
-  }
 
   function isNumeric(str) {
     var num = Number(str);

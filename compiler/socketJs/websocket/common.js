@@ -7707,17 +7707,37 @@ var socket, // socket.io
   }
 
   // ターゲットの企業ID以外の設定があれば削除する
+  var  widgetSitekey = '';
+  var myTag = document.querySelector(
+      'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
+
+  if (myTag.getAttribute('data-another-widget-key')) {
+    widgetSitekey = myTag.getAttribute('data-another-widget-key');
+  }
+
   var keys = storage.s.findKeyLike('scl_settings_');
   if (keys.length > 0) {
     for (var i = 0; i < keys.length; i++) {
-      if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key) {
-        storage.s.unset(keys[i]);
+      if (widgetSitekey == '') {
+        if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key) {
+          storage.s.unset(keys[i]);
+        }
+      } else {
+        if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey) {
+          storage.s.unset(keys[i]);
+        }
       }
     }
   }
 
-  var settings = JSON.parse(
-      storage.s.get('scl_settings_' + window.sincloInfo.site.key));
+  if (widgetSitekey == '') {
+    var settings = JSON.parse(
+        storage.s.get('scl_settings_' + window.sincloInfo.site.key));
+  } else {
+    var settings = JSON.parse(
+        storage.s.get('scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey));
+  }
+
   if (check.isset(settings)) {
     console.log('<><><><><><><><>< NOT MODIFIED ><><><><><><><><><>');
     window.sincloInfo.widget = settings.widget;
@@ -7727,15 +7747,7 @@ var socket, // socket.io
     window.sincloInfo.customVariable = settings.customVariable;
     window.sincloInfo.accessTime = (new Date()).getTime();
   } else {
-    console.log('<><><><><><><><>< MODIFIED ><><><><><><><><><>');
-    var  widgetSitekey = '';
-    var myTag = document.querySelector(
-        'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
-
-    if (myTag.getAttribute('data-another-widget-key')) {
-      widgetSitekey = myTag.getAttribute('data-another-widget-key');
-    }
-
+    console.log('<><><><><><><><>< GET SETTINGS DATA ><><><><><><><><><>');
     $.ajax({
       type: 'get',
       url: window.sincloInfo.site.files + '/settings/',
@@ -7743,10 +7755,7 @@ var socket, // socket.io
       data: {
         'sitekey': window.sincloInfo.site.key,
         'widgetSitekey': widgetSitekey,
-        accessType: userInfo.accessType,
-        s: (check.isset(userInfo.get(cnst.info_type.tab))) ?
-            userInfo.get(cnst.info_type.tab) :
-            ''
+        accessType: userInfo.accessType
       },
       dataType: 'json',
       success: function(json) {
@@ -7761,8 +7770,12 @@ var socket, // socket.io
           window.sincloInfo.contract = json.contract;
           window.sincloInfo.chat = json.chat;
           window.sincloInfo.customVariable = json.customVariable;
-          storage.s.set('scl_settings_' + window.sincloInfo.site.key,
-              JSON.stringify(json));
+
+          if (widgetSitekey == '') {
+            storage.s.set('scl_settings_' + window.sincloInfo.site.key, JSON.stringify(json));
+          } else {
+            storage.s.set('scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey, JSON.stringify(json));
+          }
           window.sincloInfo.accessTime = json.accessTime;
         } else {
           clearTimeout(timer);
