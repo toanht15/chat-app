@@ -146,6 +146,9 @@
       get re_text_color() {
         return this._settings['re_text_color'];
       },
+      get re_background_color() {
+        return this._settings['re_background_color'];
+      },
       get radioButtonBeforeTop() {
         return Math.ceil((Number(this.re_text_size) / 2));
       },
@@ -1671,24 +1674,34 @@
         var hasOldOptionValue = false;
         var style = '<style>';
         style += ' #sincloBox #' + buttonUIName + ' .sinclo-button-ui {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
-        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {background-color: ' + settings.customDesign.buttonUIBackgroundColor + '}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {width: ' + this.getButtonUIWidth() + 'px;}';
-        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {color: ' + settings.customDesign.buttonUITextColor + '}';
-        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:focus {outline: none}';
-        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
-        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:hover {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.top {border-top-left-radius: 8px; border-top-right-radius: 8px}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.bottom {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
-        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:focus {outline: none}';
+        if (settings.customDesign.isCustomize) {
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {background-color: ' + settings.customDesign.buttonUIBackgroundColor + '}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:hover {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {color: ' + settings.customDesign.buttonUITextColor + '}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
+          if (settings.customDesign.outButtonUINoneBorder) {
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: none}';
+          } else {
+            style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: 1px solid ' + settings.customDesign.buttonUIBorderColor +' }';
+          }
+        } else {
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {background-color: ' + this.re_text_color + '}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {color: ' + this.re_background_color + '}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:active {background-color: ' + this.getRawColor(this._settings.main_color, 0.5) +'}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:hover {background-color: ' + this.getRawColor(this._settings.main_color, 0.5) +'}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.selected {background-color: ' + this.getRawColor(this._settings.main_color, 0.5) + ' !important;}';
+          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: none}';
+        }
+
         style += '#sincloBox #' + buttonUIName +
             ' span.sinclo-text-line { margin: 4px 0; }';
         if (message) {
           style += ' #sincloBox #' + buttonUIName + ' {margin-top: 8px}';
-        }
-        if (settings.outButtonUINoneBorder) {
-          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: none}';
-        } else {
-          style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {border: 1px solid ' + settings.customDesign.buttonUIBorderColor +' }';
         }
         switch (Number(settings.customDesign.buttonUITextAlign)) {
           case 1:
