@@ -7573,7 +7573,7 @@ var socket, // socket.io
                 return sinclo.executeConnectSuccess(data, window.sincloInfo.accessInfoData);
               })
               .then(function(result) {
-                sinclo.setHistoryId(JSON.stringify(result));
+                sinclo.setHistoryId(result);
               });
           } else {
             // チャットのみ利用可能 => サイト訪問者がチャットを操作するまではWebSocket接続しない
