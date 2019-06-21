@@ -1676,6 +1676,7 @@
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui {color: ' + settings.customDesign.buttonUITextColor + '}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:focus {outline: none}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
+        style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui:hover {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.top {border-top-left-radius: 8px; border-top-right-radius: 8px}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.bottom {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
         style += ' #sincloBox #' + buttonUIName + ' button.sinclo-button-ui.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + ' !important;}';
