@@ -1229,8 +1229,6 @@ var socket, // socket.io
           sincloInfo.site.files +
           '/webfonts/fa-light-300.eot?#iefix") format("embedded-opentype"), url("' +
           sincloInfo.site.files +
-          '/webfonts/fa-light-300.woff2") format("woff2"), url("' +
-          sincloInfo.site.files +
           '/webfonts/fa-light-300.woff") format("woff"), url("' +
           sincloInfo.site.files +
           '/webfonts/fa-light-300.ttf") format("truetype"), url("' +
@@ -1240,8 +1238,6 @@ var socket, // socket.io
           sincloInfo.site.files + '/webfonts/fa-solid-900.eot"); src: url("' +
           sincloInfo.site.files +
           '/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("' +
-          sincloInfo.site.files +
-          '/webfonts/fa-solid-900.woff2") format("woff2"), url("' +
           sincloInfo.site.files +
           '/webfonts/fa-solid-900.woff") format("woff"), url("' +
           sincloInfo.site.files +
@@ -5102,7 +5098,7 @@ var socket, // socket.io
             inputAreaSize + footerSize +
             $('#sincloAccessInfo').outerHeight();
         $('#chatTalk').css('height', $(window).height() - offset);
-        if ($('#minimizeBtn').is(':hidden')) {
+        if ($('#fw-minimize-btn').is(':hidden')) {
           //最大化時以外は横幅400px
           $('#sincloWidgetBox').css('width', '400px');
           return;
@@ -8131,13 +8127,16 @@ function link(word, link, eventLabel) {
   data.link = link;
   data.siteKey = sincloInfo.site.key;
   data.tabId = userInfo.tabId;
+  data.sincloSessionId = userInfo.sincloSessionId;
   data.userId = userInfo.userId;
-  if (storage.s.get('requestFlg') === 'true') {
-    data.messageRequestFlg = 0;
-  } else {
+
+  if (!check.isset(storage.s.get('requestFlg')) || storage.s.get('requestFlg') === 'false') {
     data.messageRequestFlg = 1;
     storage.s.set('requestFlg', true);
+  } else  {
+    data.messageRequestFlg = 0;
   }
+
   if (common.hasGA()) {
     if (eventLabel === 'clickLink') {
       //リンククリック時に登録する値は今までと変わりないようにする
