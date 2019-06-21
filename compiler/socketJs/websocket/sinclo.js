@@ -2180,7 +2180,6 @@
             if (common.hasGA()) {
               common.callGA('autoChat', location.href, 1);
             }
-            storage.s.set('requestFlg', false);
           }
           if (obj.tabId === userInfo.tabId) {
             //シナリオ中のみ発動
