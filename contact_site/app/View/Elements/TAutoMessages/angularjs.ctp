@@ -84,7 +84,7 @@ sincloApp.controller('MainController', [
           $('#triggerList div ul li').each(function(i){
             if(i == 12) {
               $(this).addClass("commontooltip");
-              $(this).attr('data-text', '訪問ユーザ情報が登録されていません。');
+              $(this).attr('data-text', 'こちらの機能はオプションの加入が必要です。');
               $(this).attr('data-balloon-position', '14');
             }
           });
