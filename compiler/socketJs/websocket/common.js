@@ -7920,13 +7920,16 @@ function link(word, link, eventLabel) {
   data.link = link;
   data.siteKey = sincloInfo.site.key;
   data.tabId = userInfo.tabId;
+  data.sincloSessionId = userInfo.sincloSessionId;
   data.userId = userInfo.userId;
-  if (storage.s.get('requestFlg') === 'true') {
-    data.messageRequestFlg = 0;
-  } else {
+
+  if (!check.isset(storage.s.get('requestFlg')) || storage.s.get('requestFlg') === 'false') {
     data.messageRequestFlg = 1;
     storage.s.set('requestFlg', true);
+  } else  {
+    data.messageRequestFlg = 0;
   }
+
   if (common.hasGA()) {
     if (eventLabel === 'clickLink') {
       //リンククリック時に登録する値は今までと変わりないようにする
