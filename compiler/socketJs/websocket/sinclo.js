@@ -174,10 +174,10 @@
           }
           if ((check.smartphone() &&
               Number(window.sincloInfo.widget.spWidgetViewPattern) === 3 &&
-              $('#minimizeBtn').is(':hidden') &&
+              $('#fw-minimize-btn').is(':hidden') &&
               Number(window.sincloInfo.widget.closeButtonSetting) === 2 &&
               Number(window.sincloInfo.widget.closeButtonModeType) === 1) ||
-              ($('#minimizeBtn').is(':hidden') &&
+              ($('#fw-minimize-btn').is(':hidden') &&
                   check.hasCustomBannerImageSetting())) {
             console.log(
                 '<><><><><><><><><><>スマホ用隠しパラメータ、即バナー<><><><><><><><><><><>');
