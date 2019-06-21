@@ -28,10 +28,6 @@ sincloApp.controller('MainController', [
     };
 
     this.tmpList = <?php echo json_encode($outMessageTriggerList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-    this.companyInfoMap = <?php echo json_encode($companyInfoMap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-    this.visitorInfoList = <?php echo json_encode($visitorInfoList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-
-    this.usePulldownList = ["5", "6", "7", "8", "9"]
 
     $scope.decodeHtmlSpecialChar = function(action) {
       $scope.action = $("<div/>").html( action ).text();
@@ -55,29 +51,15 @@ sincloApp.controller('MainController', [
         if(<?= $operatingHourData ?> == 2 && itemId == 4) {
           //ツールチップ表示
           $('#triggerList div ul li').each(function(i){
-            if(i == 3 || i == 11) {
+            if(i == 3) {
               $(this).addClass("commontooltip");
-              // $(this).attr('data-text', 'こちらの機能は営業時間設定で「利<br>用する」を選択すると、ご利用いただけます。');
-              $(this).attr('data-text', 'こちらの機能はご利用できません。');
+              $(this).attr('data-text', 'こちらの機能は営業時間設定で「利<br>用する」を選択すると、ご利用いただけます。');
               $(this).attr('data-balloon-position', '14');
               $(this).attr('operatingHours', 'widgetHoursPage');
             }
           });
           return true;
         }
-
-        if (itemId == "<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>" && this.visitorInfoList.length == 0) {
-          //ツールチップ表示
-          $('#triggerList div ul li').each(function(i){
-            if(i == 12) {
-              $(this).addClass("commontooltip");
-              $(this).attr('data-text', 'こちらの機能はご利用できません。');
-              $(this).attr('data-balloon-position', '14');
-            }
-          });
-          return true;
-        }
-
         return false;
     };
 
@@ -93,12 +75,6 @@ sincloApp.controller('MainController', [
             if(<?= $operatingHourData ?> == 2 && tmpId == 4) {
               return false;
             }
-
-            // 訪問ユーザ情報の設定項目がない
-            if (tmpId == "<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>" && this.visitorInfoList.length == 0) {
-              return false;
-            }
-
             if(tmpId === "<?= C_AUTO_TRIGGER_STAY_PAGE ?>"
               || tmpId === "<?= C_AUTO_TRIGGER_REFERRER ?>"
               || tmpId === "<?= C_AUTO_TRIGGER_SPEECH_CONTENT ?>"
@@ -107,31 +83,8 @@ sincloApp.controller('MainController', [
               this.tmpList[tmpId].default['keyword_contains_enabled'] = true;
               this.tmpList[tmpId].default['keyword_exclusions_enabled'] = false;
             }
-
-            if (tmpId === "<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>") {
-              this.tmpList[tmpId].default['settings'][0].name = this.visitorInfoList[1];
-            };
-
             this.setItemList[tmpId].push(angular.copy(this.tmpList[tmpId].default));
         }
-    };
-
-    this.addCompanyInfoSetting = function() {
-      var defaultSetting = angular.copy(this.tmpList["<?= C_AUTO_TRIGGER_COMPANY_INFORMATION ?>"].default.settings[0]);
-      this.setItemList["<?= C_AUTO_TRIGGER_COMPANY_INFORMATION ?>"][0].settings.push(defaultSetting);
-    };
-
-    this.removeCompanyInfoSetting = function(index) {
-      this.setItemList["<?= C_AUTO_TRIGGER_COMPANY_INFORMATION ?>"][0].settings.splice(index, 1);
-    };
-
-    this.addVisitorInfoSetting = function() {
-      var defaultSetting = angular.copy(this.tmpList["<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>"].default.settings[0]);
-      this.setItemList["<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>"][0].settings.push(defaultSetting);
-    };
-
-    this.removeVisitorInfoSetting = function(index) {
-      this.setItemList["<?= C_AUTO_TRIGGER_VISITOR_INFORMATION ?>"][0].settings.splice(index, 1);
     };
 
     this.openList = function(elm){
