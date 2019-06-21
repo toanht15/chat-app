@@ -8143,6 +8143,7 @@ function link(word, link, eventLabel) {
   data.link = link;
   data.siteKey = sincloInfo.site.key;
   data.tabId = userInfo.tabId;
+  data.sincloSessionId = userInfo.sincloSessionId;
   data.userId = userInfo.userId;
   if (storage.s.get('requestFlg') === 'true') {
     data.messageRequestFlg = 0;
