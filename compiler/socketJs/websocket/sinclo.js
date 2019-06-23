@@ -8980,8 +8980,20 @@
             achievementFlg: 3,
             sendMailFlg: sendMail
           };
-          emit('sendAutoChat',
+          if (socket.isConnected()) {
+            emit('sendAutoChat',
               {messageList: sinclo.chatApi.autoMessages.getByArray()});
+          } else {
+            socket.connect().then(function() {
+              return sinclo.executeConnectSuccess(
+                window.userInfo.connectSuccessData,
+                window.userInfo.accessInfoData);
+            }).then(sinclo.setHistoryId).then(function() {
+              emit('sendAutoChat',
+                {messageList: sinclo.chatApi.autoMessages.getByArray()});
+            });
+          }
+
           sinclo.chatApi.autoMessages.unset();
           sinclo.chatApi.saveFlg = true;
         } else if (sendMail) {
@@ -8994,8 +9006,19 @@
             isAutoSpeech: isSpeechContent,
             sendMailFlg: sendMail
           };
-          emit('sendAutoChat',
+          if (socket.isConnected()) {
+            emit('sendAutoChat',
               {messageList: sinclo.chatApi.autoMessages.getByArray()});
+          } else {
+            socket.connect().then(function() {
+              return sinclo.executeConnectSuccess(
+                window.userInfo.connectSuccessData,
+                window.userInfo.accessInfoData);
+            }).then(sinclo.setHistoryId).then(function() {
+              emit('sendAutoChat',
+                {messageList: sinclo.chatApi.autoMessages.getByArray()});
+            });
+          }
           sinclo.chatApi.autoMessages.unset();
           sinclo.chatApi.saveFlg = true;
         } else {
