@@ -7659,7 +7659,7 @@ var socket, // socket.io
             });
           }
         } else {
-          socket.connect();
+          sinclo.connect();
         }
       }
 
@@ -7705,7 +7705,9 @@ var socket, // socket.io
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('accessInfo', function(d) {
-      sinclo.accessInfo(d);
+      sinclo.executeConnectSuccess(
+        sinclo.accessInfo(d),
+        JSON.parse(d));
     }); // socket-on: accessInfo
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
