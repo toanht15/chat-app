@@ -4863,8 +4863,34 @@ var socket, // socket.io
           if (!reCreateWidget && dataOpenflg === 'false') {
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
-            //ログ書き込み用にメッセージ送信
-            emit('sendWidgetShown', {widget: true});
+            if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+              if (window.sincloInfo.contract.synclo || window.sincloInfo.contract.document) {
+                emit('sendWidgetShown', {widget: true});
+              } else {
+                $.ajax({
+                  headers: {
+                    'Accept': 'text/plain, application/json; charset=utf-8',
+                    'Content-Type': 'application/json; charset=utf-8'
+                  },
+                  type: 'post',
+                  url: window.sincloInfo.site.files + '/api/widget/shown',
+                  dataType: 'json',
+                  contentType: 'application/json',
+                  data: JSON.stringify({
+                    siteKey: sincloInfo.site.key,
+                    widget: window.sincloInfo.widgetDisplay,
+                    userId: userInfo.userId,
+                    tabId: userInfo.tabId,
+                    sincloSessionId: userInfo.sincloSessionId,
+                    isFirstAccess: window.sincloInfo.isFirstAccess
+                  }),
+                  success: function(json) {
+                  }
+                });
+              }
+            } else {
+              emit('sendWidgetShown', {widget: true});
+            }
             //最小化
             if (abridgementType['MinRes']) {
               //ヘッダ非表示（シンプル表示）
@@ -7944,6 +7970,7 @@ var socket, // socket.io
     window.sincloInfo.contract = settings.contract;
     window.sincloInfo.chat = settings.chat;
     window.sincloInfo.customVariable = settings.customVariable;
+    window.sincloInfo.isFirstAccess = check.isset(settings);
     window.sincloInfo.accessTime = (new Date()).getTime();
   } else {
     if (!userInfo.getTime()) {
@@ -7974,6 +8001,7 @@ var socket, // socket.io
           window.sincloInfo.contract = json.contract;
           window.sincloInfo.chat = json.chat;
           window.sincloInfo.customVariable = json.customVariable;
+          window.sincloInfo.isFirstAccess = check.isset(settings);
           storage.s.set('scl_settings_' + window.sincloInfo.site.key,
               JSON.stringify(json));
           window.sincloInfo.accessTime = json.accessTime;
@@ -8177,4 +8205,3 @@ if (myTag.getAttribute('data-show-always')) {
   // オペレータ存在条件や営業時間設定に依存せずtrueであれば表示
   sincloInfo.dataset.showAlways = myTag.getAttribute('data-show-always');
 }
-

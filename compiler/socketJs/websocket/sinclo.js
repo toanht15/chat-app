@@ -787,6 +787,7 @@
           tabId: userInfo.tabId,
           sincloSessionId: userInfo.sincloSessionId,
           token: common.token,
+          isFirstAccess: window.sincloInfo.isFirstAccess,
           data: emitData
         }),
         success: function(json) {
@@ -14424,4 +14425,3 @@
   };
 
 }(sincloJquery));
-
