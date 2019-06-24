@@ -4859,8 +4859,34 @@ var socket, // socket.io
           if (!reCreateWidget && dataOpenflg === 'false') {
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
-            //ログ書き込み用にメッセージ送信
-            emit('sendWidgetShown', {widget: true});
+            if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+              if (window.sincloInfo.contract.synclo || window.sincloInfo.contract.document) {
+                emit('sendWidgetShown', {widget: true});
+              } else {
+                $.ajax({
+                  headers: {
+                    'Accept': 'text/plain, application/json; charset=utf-8',
+                    'Content-Type': 'application/json; charset=utf-8'
+                  },
+                  type: 'post',
+                  url: window.sincloInfo.site.files + '/api/widget/shown',
+                  dataType: 'json',
+                  contentType: 'application/json',
+                  data: JSON.stringify({
+                    siteKey: sincloInfo.site.key,
+                    widget: window.sincloInfo.widgetDisplay,
+                    userId: userInfo.userId,
+                    tabId: userInfo.tabId,
+                    sincloSessionId: userInfo.sincloSessionId,
+                    isFirstAccess: window.sincloInfo.isFirstAccess
+                  }),
+                  success: function(json) {
+                  }
+                });
+              }
+            } else {
+              emit('sendWidgetShown', {widget: true});
+            }
             //最小化
             if (abridgementType['MinRes']) {
               //ヘッダ非表示（シンプル表示）
@@ -7562,62 +7588,74 @@ var socket, // socket.io
       } else {
         sinclo.trigger.flg = false;
         if (!window.sincloInfo.contract.enableRealtimeMonitor) {
-          common.tabMessenger.ping().then(function(){
-            // pong
-            return sinclo.connect().
-              then(function(data) {
-                var obj = common.jParse(data);
-                obj.sincloSessionIdIsNew = false;
-                return sinclo.accessInfo(JSON.stringify(obj));
+          if (window.sincloInfo.contract.synclo || window.sincloInfo.contract.document) {
+            socket.connect().then(sinclo.connect)
+              .then(sinclo.accessInfo)
+              .then(function(data) {
+                return sinclo.executeConnectSuccess(data, window.sincloInfo.accessInfoData);
+              })
+              .then(function(result) {
+                sinclo.setHistoryId(result);
               });
-          }, function(){
-            // timeout
-           return sinclo.connect().then(sinclo.accessInfo);
-          }).then(function(connectSuccessData) {
-                window.userInfo.connectSuccessData = connectSuccessData;
-                if ((check.isset(connectSuccessData.sincloSessionIdIsNew) &&
-                    !connectSuccessData.sincloSessionIdIsNew) &&
-                    socket.isOnceConnected()) {
-                  socket.connect().then(function() {
-                    return sinclo.executeConnectSuccess(
-                        window.userInfo.connectSuccessData,
-                        window.userInfo.accessInfoData);
-                  }).then(sinclo.setHistoryId);
-                } else {
-                  sinclo.setHistoryId(JSON.stringify({
-                    siteKey: window.sincloInfo.site.key,
-                    userId: userInfo.userId,
-                    tabId: userInfo.tabId,
-                    sincloSessionId: userInfo.sincloSessionId,
-                    token: common.token,
-                    accessId: userInfo.accessId,
-                    chat: {
-                      historyId: null,
-                      messages: sinclo.chatApi.store.get()
-                    },
-                    url: f_url(browserInfo.href),
-                    connectToken: userInfo.connectToken,
-                    customVariables: userInfo.customVariables,
-                    confirm: false,
-                    widget: window.sincloInfo.widgetDisplay,
-                    prevList: userInfo.prev,
-                    userAgent: window.navigator.userAgent,
-                    time: userInfo.time ?
-                        userInfo.time :
-                        (new Date()).getTime(),
-                    ipAddress: userInfo.getIp(),
-                    referrer: userInfo.referrer,
-                    status: browserInfo.getActiveWindow(),
-                    title: common.title(),
+          } else {
+            // チャットのみ利用可能 => サイト訪問者がチャットを操作するまではWebSocket接続しない
+            common.tabMessenger.ping().then(function() {
+              // pong
+              return sinclo.connect().
+                then(function(data) {
+                  var obj = common.jParse(data);
+                  obj.sincloSessionIdIsNew = false;
+                  return sinclo.accessInfo(JSON.stringify(obj));
+                });
+            }, function() {
+              // timeout
+              return sinclo.connect().then(sinclo.accessInfo);
+            }).then(function(connectSuccessData) {
+              window.userInfo.connectSuccessData = connectSuccessData;
+              if ((check.isset(connectSuccessData.sincloSessionIdIsNew) &&
+                !connectSuccessData.sincloSessionIdIsNew) &&
+                socket.isOnceConnected()) {
+                socket.connect().then(function() {
+                  return sinclo.executeConnectSuccess(
+                    window.userInfo.connectSuccessData,
+                    window.userInfo.accessInfoData);
+                }).then(sinclo.setHistoryId);
+              } else {
+                sinclo.setHistoryId(JSON.stringify({
+                  siteKey: window.sincloInfo.site.key,
+                  userId: userInfo.userId,
+                  tabId: userInfo.tabId,
+                  sincloSessionId: userInfo.sincloSessionId,
+                  token: common.token,
+                  accessId: userInfo.accessId,
+                  chat: {
                     historyId: null,
-                    stayLogsId: null,
-                    orgName: null,
-                    lbcCode: null
-                  }));
-                }
-              });
+                    messages: sinclo.chatApi.store.get()
+                  },
+                  url: f_url(browserInfo.href),
+                  connectToken: userInfo.connectToken,
+                  customVariables: userInfo.customVariables,
+                  confirm: false,
+                  widget: window.sincloInfo.widgetDisplay,
+                  prevList: userInfo.prev,
+                  userAgent: window.navigator.userAgent,
+                  time: userInfo.time ?
+                    userInfo.time :
+                    (new Date()).getTime(),
+                  ipAddress: userInfo.getIp(),
+                  referrer: userInfo.referrer,
+                  status: browserInfo.getActiveWindow(),
+                  title: common.title(),
+                  historyId: null,
+                  stayLogsId: null,
+                  orgName: null,
+                  lbcCode: null
+                }));
+              }
+            });
+          }
         } else {
-          socket.connect();
+          sinclo.connect();
         }
       }
 
@@ -7663,7 +7701,9 @@ var socket, // socket.io
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('accessInfo', function(d) {
-      sinclo.accessInfo(d);
+      sinclo.executeConnectSuccess(
+        sinclo.accessInfo(d),
+        JSON.parse(d));
     }); // socket-on: accessInfo
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
@@ -7928,6 +7968,7 @@ var socket, // socket.io
     window.sincloInfo.contract = settings.contract;
     window.sincloInfo.chat = settings.chat;
     window.sincloInfo.customVariable = settings.customVariable;
+    window.sincloInfo.isFirstAccess = check.isset(settings);
     window.sincloInfo.accessTime = (new Date()).getTime();
   } else {
     if (!userInfo.getTime()) {
@@ -7958,6 +7999,7 @@ var socket, // socket.io
           window.sincloInfo.contract = json.contract;
           window.sincloInfo.chat = json.chat;
           window.sincloInfo.customVariable = json.customVariable;
+          window.sincloInfo.isFirstAccess = check.isset(settings);
           storage.s.set('scl_settings_' + window.sincloInfo.site.key,
               JSON.stringify(json));
           window.sincloInfo.accessTime = json.accessTime;
@@ -8163,4 +8205,3 @@ if (myTag.getAttribute('data-show-always')) {
   // オペレータ存在条件や営業時間設定に依存せずtrueであれば表示
   sincloInfo.dataset.showAlways = myTag.getAttribute('data-show-always');
 }
-
