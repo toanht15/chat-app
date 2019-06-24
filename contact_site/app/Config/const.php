@@ -70,6 +70,7 @@ define('C_COMPANY_USE_ICON_SETTINGS', 'iconSettings');  // ボット・有人時
 define('C_COMPANY_USE_CUSTOM_WIDGET_SIZE', 'customWidgetSize');  // ウィジェットサイズ「カスタム」
 define('C_COMPANY_USE_CHATBOT_TREE_EDITOR', 'chatbotTreeEditor');  // オプション：チャットツリー
 define('C_COMPANY_ENABLE_REAL_TIME_MONITOR', 'enableRealtimeMonitor');  // リアルタイムモニター
+define('C_COMPANY_WIDGET_SETTING_ONLY', 'widgetSettingOnly');  // ウィジェット設定のみ
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 5000);
@@ -403,9 +404,9 @@ define('SUB_TITLE_TEXT_COLOR', "#ABCD05");
 //8.説明文文字色
 define('DESCRIPTION_TEXT_COLOR', "#666666");
 //最小化/閉じるボタン色
-define('CLOSE_BTN_COLOR', "#FFFFFF");
+  define('CLOSE_BTN_COLOR', "#FFFFFF");
 //閉じるマウスオーバー
-define('CLOSE_BTN_HOVER_COLOR', "#5432FA");
+  define('CLOSE_BTN_HOVER_COLOR', "#5432FA");
 //9.チャットエリア背景色
 define('CHAT_TALK_BACKGROUND_COLOR', "#FFFFFF");
 //10.企業名担当者名文字色

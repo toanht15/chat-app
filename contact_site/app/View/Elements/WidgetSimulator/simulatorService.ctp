@@ -359,19 +359,19 @@
           $('#addBtn').hide();
           $('#closeBtn').hide();
 
-          $("#fw-minimize-btn").show();
-          $("#fw-close-btn").hide();
+          $('#fw-minimize-btn').show();
+          $('#fw-close-btn').hide();
         } else {
           //最小化時
           $('#addBtn').show();
           $('#minimizeBtn').hide();
-          $("#fw-minimize-btn").hide();
+          $('#fw-minimize-btn').hide();
           if (this.closeButtonSettingToggle === '2') {
             $('#closeBtn').show();
-            $("#fw-close-btn").show();
+            $('#fw-close-btn').show();
           } else {
             $('#closeBtn').hide();
-            $("#fw-close-btn").hide();
+            $('#fw-close-btn').hide();
           }
           if (this._coreSettingsChat) {
             document.getElementById('switch_widget').value = this._showWidgetType;

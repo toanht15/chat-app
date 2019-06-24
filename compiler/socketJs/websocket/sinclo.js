@@ -766,6 +766,9 @@
           contentType: 'application/JSON',
           data: JSON.stringify({
             confirm: false,
+            status: browserInfo.getActiveWindow(),
+            title: common.title(),
+            url: f_url(browserInfo.href),
             widget: window.sincloInfo.widgetDisplay,
             prevList: userInfo.prev,
             userAgent: window.navigator.userAgent,
@@ -828,6 +831,7 @@
 
       if (document.getElementById('sincloBox') === null) return false;
       if (obj.stayLogsId) sinclo.chatApi.stayLogsId = obj.stayLogsId;
+      if (obj.historyId) sinclo.chatApi.historyId = obj.historyId;
 
       createStartTimer = window.setInterval(function() {
         if (window.sincloInfo.widget.showTiming !== 4 ||
@@ -2536,6 +2540,19 @@
             sinclo.diagramApi.executor.setNext(obj.chatMessage.did, nextNodeId);
             sinclo.diagramApi.executor.execute();
           }
+          // オートメッセージの内容をDBに保存し、オブジェクトから削除する
+          if (!sinclo.chatApi.saveFlg && obj.tabId === userInfo.tabId) {
+            console.log('EMIT sendAutoChat');
+            emit('sendAutoChat',
+                {messageList: sinclo.chatApi.autoMessages.getByArray()});
+            sinclo.chatApi.autoMessages.unset();
+            sinclo.chatApi.saveFlg = true;
+          } else if (obj.tabId !== userInfo.tabId) {
+            // メインのオートメッセージだけ保存してサブのオートメッセージは保存しない
+            console.log('unset automessages');
+            sinclo.chatApi.autoMessages.unset();
+            sinclo.chatApi.saveFlg = true;
+          }
           return false;
         }
 
@@ -3513,7 +3530,7 @@
           if (json) {
             var array = JSON.parse(json);
             Object.keys(array).forEach(function(id, index, ar) {
-              if (allData || !array[id].applied) {
+              if (allData || (array[id].message && !array[id].applied)) {
                 returnData.push(array[id]);
               }
             });
@@ -7741,7 +7758,6 @@
             isScenarioMessage = true;
           } else if (value.did && value.sourceNodeId) {
             sinclo.diagramApi.common.changeAllowSaving();
-            sinclo.chatApi.saveFlg = true;
             messageType = sinclo.diagramApi.storage.getSendCustomerMessageType(
                 value.did, value.sourceNodeId);
             isDiagramMessage = true;
@@ -8997,6 +9013,10 @@
               sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
+            // 自動最大化
+            if (!('widgetOpen' in cond) || (check.smartphone() &&
+                sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
+                Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
             var flg = sinclo.widget.condifiton.get();
             if (Number(cond.widgetOpen) === 1 && String(flg) === 'false') {
               console.log('シナリオ最大化処理');
@@ -9042,6 +9062,10 @@
               sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
+            // 自動最大化
+            if (!('widgetOpen' in cond) || (check.smartphone() &&
+                sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
+                Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
             var flg = sinclo.widget.condifiton.get();
             if (Number(cond.widgetOpen) === 1 && String(flg) === 'false') {
               console.log('シナリオ最大化処理');
@@ -10911,9 +10935,8 @@
               var array        = checkboxData.message.split(checkboxData.separator);
               var text = '';
               array.forEach(function(item) {
-                text = text + '\n  ' + '・' +  item;
+                text = text + '・' +  item + '\n';
               });
-              text += '\n';
 
               return text;
             }

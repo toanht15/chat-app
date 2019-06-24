@@ -144,6 +144,10 @@ router.post('/auth/customer', function(req, res, next) {
   send.ipAddress = req.headers['x-forwarded-for'] ||
       req.connection.remoteAddress;
 
+  if (process.env.NODE_ENV !== 'production') {
+    send.ipAddress = '127.0.0.1';
+  }
+
   if (d.siteKey) {
     checker.widgetCheck(d, function(err, ret) {
       send.activeOperatorCnt = checker.getOperatorCnt(d.siteKey);
@@ -405,9 +409,9 @@ router.post('/auth/info', function(req, res, next) {
         if (CommonUtil.isset(SharedData.company.info[obj.siteKey]) &&
             Object.keys(SharedData.company.info[obj.siteKey]).length > 0) {
           let customerApi = new CustomerInfoManager();
-          customerApi.upsertCustomerInfo(obj).
-              then(customerApi.getInfo(obj.userId, obj.siteKey)).
-              then((information) => {
+          customerApi.upsertCustomerInfo(obj).then(function(result) {
+            return customerApi.getInfo(obj.siteKey, obj.userId);
+          }).then((information) => {
             obj.customerInfo = information;
             afterGetInformationProcess();
           });

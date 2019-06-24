@@ -138,6 +138,12 @@ class LoginController extends AppController {
         else {
           $this->TLogin->rollback();
         }
+        // redirect to MWidgetSettings if has widgetSettingOnly
+        $info = json_decode($userInfo['MCompany']['core_settings'], true);
+        if (isset($info['widgetSettingOnly']) && $info['widgetSettingOnly']) {
+          return $this->redirect(['controller' => 'MWidgetSettings']);
+        }
+
         return $this->redirect(['controller' => 'Customers']);
       }
       else {
@@ -740,7 +746,7 @@ class LoginController extends AppController {
       case 1:
         return 'プレミアムプラン';
       case 2:
-        return 'スタンダードプラン';
+        return 'チャットプラン';
       case 3:
         return 'シェアリングプラン';
       case 4:

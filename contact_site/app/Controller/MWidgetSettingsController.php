@@ -14,7 +14,19 @@ class MWidgetSettingsController extends AppController {
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'show_chatbot_icon' ,'chatbot_icon_type' ,'chatbot_icon' ,'show_operator_icon', 'operator_icon_type','operator_icon', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext','widget_custom_height','widget_custom_width',
       /* カラー設定start */
-      'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color', 'close_btn_color', 'close_btn_hover_color',
+      'color_setting_type',
+      'main_color',
+      'string_color',
+      'message_text_color',
+      'other_text_color',
+      'header_text_size',
+      'widget_border_color',
+      'chat_talk_border_color',
+      'header_background_color',
+      'sub_title_text_color',
+      'description_text_color',
+      'close_btn_color',
+      'close_btn_hover_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
       'message_box_text_color','message_box_text_size','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_text_size','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
@@ -937,12 +949,18 @@ class MWidgetSettingsController extends AppController {
               $d['description_text_color'] = DESCRIPTION_TEXT_COLOR; // デフォルト値
             }
             //最小化/閉じるボタン色
-            if ( strcmp($v, 'close_btn_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'close_btn_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['close_btn_color'] = CLOSE_BTN_COLOR; // デフォルト値
             }
             //最小化/閉じるボタン色
-            if ( strcmp($v, 'close_btn_hover_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['close_btn_hover_color'] = CLOSE_BTN_HOVER_COLOR; // デフォルト値
+            if (strcmp($v, 'close_btn_hover_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              if ($json['main_color'] || $json['main_color'] !== MAIN_COLOR) {
+                $defColor                   = $this->getContrastColor($json['main_color']);
+                $d['close_btn_hover_color'] = $defColor;
+              } else {
+                $d['close_btn_hover_color'] = CLOSE_BTN_HOVER_COLOR; // デフォルト値
+              }
             }
             //9.チャットエリア背景色
             if ( strcmp($v, 'chat_talk_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
@@ -1256,6 +1274,40 @@ class MWidgetSettingsController extends AppController {
 
   }
 
+  /**
+   * @param $color
+   * @return string
+   */
+  private function getContrastColor($color) {
+    $code = substr($color,1);
+    if(strlen($code) === 3){
+      $r = substr($code,0,1).substr($code,0,1);
+      $g = substr($code,1,1).substr($code,1,1);
+      $b = substr($code,2).substr($code,2);
+    }
+    else{
+      $r = substr($code,0,2);
+      $g = substr($code,2,2);
+      $b = substr($code,4);
+    }
 
+    $balloonR = $this->formatColorCode((dechex((255 - intval($r,16)))));
+    $balloonG = $this->formatColorCode((dechex((255 - intval($g,16)))));
+    $balloonB = $this->formatColorCode((dechex((255 - intval($b,16)))));
 
+    return '#'.$balloonR.$balloonG.$balloonB;
+  }
+
+  /**
+   * @param $code
+   * @return string
+   */
+  private function formatColorCode($code)
+  {
+    if (strlen($code) == 1) {
+      return '0' . $code;
+    }
+
+    return $code;
+  }
 }

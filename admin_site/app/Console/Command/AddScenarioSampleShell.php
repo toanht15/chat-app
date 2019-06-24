@@ -88,7 +88,7 @@ class AddScenarioSampleShell extends AppShell
         $val = 'フルプラン';
         break;
       case C_CONTRACT_CHAT_PLAN_ID:
-        $val = 'スタンダードプラン';
+        $val = 'チャットプラン';
         break;
       case C_CONTRACT_SCREEN_SHARING_ID:
         $val = 'シェアリングプラン';

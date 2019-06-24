@@ -37,19 +37,8 @@ router.get("/", function (req, res, next) {
   }
   var siteKey = req['query']['sitekey'];
   var accessType = req['query']['accessType'];
-  var tabId = req['query']['s'];
+  var widgetSitekey = req['query']['widgetSitekey'] ? req['query']['widgetSitekey'] : siteKey;
   var sendData = {status: true, widget: {}, chat: {settings: {}}, messages: {}, customVariable: [], contract: {}};
-
-  if (!list.functionManager.isEnabled(siteKey,
-      list.functionManager.keyList.enableRealtimeMonitor) &&
-      CommonUtil.isKeyExists(SharedData.sincloCore, siteKey + '.' + tabId)) {
-    res.send({
-      status: true,
-      nm: true, // not modified
-      accessTime: (new Date()).getTime()
-    });
-    return true;
-  }
 
   function isNumeric(str) {
     var num = Number(str);
@@ -73,7 +62,7 @@ router.get("/", function (req, res, next) {
         }
       }
     }
-    if ('style_settings' in common.widgetSettings[siteKey]) {
+    if ('style_settings' in common.widgetSettings[widgetSitekey]) {
       if (common.companySettings[siteKey].trial_flg) {
         // トライアル終了日を確認
         var nowTimestamp = (new Date()).getTime(),
@@ -102,7 +91,7 @@ router.get("/", function (req, res, next) {
         }
       }
       var core_settings = common.companySettings[siteKey].core_settings;
-      var settings = common.widgetSettings[siteKey].style_settings;
+      var settings = common.widgetSettings[widgetSitekey].style_settings;
       sendData['contract'] = core_settings;
       // ウィジェット表示タイミング設定が存在しない場合は「常に表示する」
       var showTimingSetting = 4;
@@ -147,7 +136,36 @@ router.get("/", function (req, res, next) {
         closeBtnColor = settings.closeBtnColor;
       }
       // 閉じるマウスオーバー
-      var closeBtnHoverColor = '#5432FA';
+      var code = settings.mainColor.substr(1), r, g, b;
+      if (code.length === 3) {
+        r = String(code.substr(0, 1)) + String(code.substr(0, 1));
+        g = String(code.substr(1, 1)) + String(code.substr(1, 1));
+        b = String(code.substr(2)) + String(code.substr(2));
+      } else {
+        r = String(code.substr(0, 2));
+        g = String(code.substr(2, 2));
+        b = String(code.substr(4));
+      }
+
+      var balloonR = String(255 - parseInt(r, 16));
+      var balloonG = String(255 - parseInt(g, 16));
+      var balloonB = String(255 - parseInt(b, 16));
+      var codeR = parseInt(balloonR).toString(16);
+      var codeG = parseInt(balloonG).toString(16);
+      var codeB = parseInt(balloonB).toString(16);
+      if (codeR.length === 1) {
+        codeR = '0' + codeR;
+      };
+
+      if (codeG.length === 1) {
+        codeG = '0' + codeG;
+      };
+
+      if (codeB.length === 1) {
+        codeB = '0' + codeB;
+      };
+
+      var closeBtnHoverColor = ('#' + codeR + codeG + codeB).toUpperCase();
       if (('closeBtnHoverColor' in settings)) {
         closeBtnHoverColor = settings.closeBtnHoverColor;
       }
@@ -533,35 +551,38 @@ router.get("/", function (req, res, next) {
         if (!Array.isArray(sendData['messages'])) {
           sendData['messages'] = [];
         }
+        var activityObj = JSON.parse(
+            common.autoMessageSettings[siteKey][i].activity);
         for (var i2 = 0; i2 < common.operationHourSettings[siteKey].length; i2++) {
           if (common.operationHourSettings[siteKey][i2].active_flg == 1 && JSON.parse(common.autoMessageSettings[siteKey][i].activity).conditions[10] != null) {
-            var jsonData = JSON.parse(common.autoMessageSettings[siteKey][i].activity);
+            var timeSetting = JSON.parse(
+                common.operationHourSettings[siteKey][i2].time_settings);
             if (common.operationHourSettings[siteKey][i2].type === 1) {
-              jsonData.conditions[10][0].everyday = JSON.parse(common.operationHourSettings[siteKey][i2].time_settings).everyday;
-              jsonData.conditions[10][0].publicHolidayConditions = JSON.parse(common.operationHourSettings[siteKey][i2].time_settings).everyday.pub;
-              jsonData.conditions[10][0].now = now;
-              jsonData.conditions[10][0].nowDay = nowDay;
-              jsonData.conditions[10][0].dateParse = dateParse;
-              jsonData.conditions[10][0].date = date;
-              jsonData.conditions[10][0].today = today;
+              activityObj.conditions[10][0].everyday = timeSetting.everyday;
+              activityObj.conditions[10][0].publicHolidayConditions = timeSetting.everyday.pub;
+              activityObj.conditions[10][0].now = now;
+              activityObj.conditions[10][0].nowDay = nowDay;
+              activityObj.conditions[10][0].dateParse = dateParse;
+              activityObj.conditions[10][0].date = date;
+              activityObj.conditions[10][0].today = today;
             }
             else {
-              jsonData.conditions[10][0].weekly = JSON.parse(common.operationHourSettings[siteKey][i2].time_settings).weekly;
-              jsonData.conditions[10][0].publicHolidayConditions = JSON.parse(common.operationHourSettings[siteKey][i2].time_settings).weekly.weekpub;
-              jsonData.conditions[10][0].now = now;
-              jsonData.conditions[10][0].nowDay = nowDay;
-              jsonData.conditions[10][0].dateParse = dateParse;
-              jsonData.conditions[10][0].date = date;
-              jsonData.conditions[10][0].today = today;
+              activityObj.conditions[10][0].weekly = timeSetting.weekly;
+              activityObj.conditions[10][0].publicHolidayConditions = timeSetting.weekly.weekpub;
+              activityObj.conditions[10][0].now = now;
+              activityObj.conditions[10][0].nowDay = nowDay;
+              activityObj.conditions[10][0].dateParse = dateParse;
+              activityObj.conditions[10][0].date = date;
+              activityObj.conditions[10][0].today = today;
             }
-            jsonData.conditions[10][0].publicHoliday = common.publicHolidaySettings[now.getFullYear()];
-            jsonData.conditions[10][0].type = common.operationHourSettings[siteKey][i2].type;
-            common.autoMessageSettings[siteKey][i].activity = JSON.stringify(jsonData);
+            activityObj.conditions[10][0].publicHoliday = common.publicHolidaySettings[now.getFullYear()];
+            activityObj.conditions[10][0].type = common.operationHourSettings[siteKey][i2].type;
+            common.autoMessageSettings[siteKey][i].activity = JSON.stringify(
+                activityObj);
           }
         }
         // ページ、参照元URL、発言内容、最初に訪れたページ、前のページの旧IF対応
-        var activityObj = JSON.parse(common.autoMessageSettings[siteKey][i].activity),
-          conditions = activityObj.conditions;
+        var conditions = activityObj.conditions;
         Object.keys(conditions).forEach(function (index, elm, arr) {
           if (index === "3") { // ページ
             var array = [],
@@ -804,7 +825,7 @@ router.post("/reload/widgetSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadWidgetSettings(req['body']['sitekey'], function(){
+    common.reloadWidgetSettings(req['body']['sitekey'], true, function() {
       res.send('OK');
       res.status(200);
     });
@@ -844,7 +865,7 @@ router.post("/reload/autoMessages", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadAutoMessageSettings(req['body']['sitekey'], function(){
+    common.reloadAutoMessageSettings(req['body']['sitekey'], true, function() {
       res.send('OK');
       res.status(200);
     });
@@ -884,7 +905,8 @@ router.post("/reload/operationHour", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadOperationHourSettings(req['body']['sitekey'], function(){
+    common.reloadOperationHourSettings(req['body']['sitekey'], true,
+        function() {
       res.send('OK');
       res.status(200);
     });
@@ -923,7 +945,7 @@ router.post("/reload/chatSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadChatSettings(req['body']['sitekey'], function(){
+    common.reloadChatSettings(req['body']['sitekey'], true, function() {
       res.send('OK');
       res.status(200);
     });
@@ -964,7 +986,8 @@ router.post("/reload/customVariableSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadCustomVariableSettings(req['body']['sitekey'], function(){
+    common.reloadCustomVariableSettings(req['body']['sitekey'], true,
+        function() {
       res.send('OK');
       res.status(200);
     });
@@ -1069,7 +1092,7 @@ function getIpRange(ipAddress) {
 }
 
 router.get('/refreshCompanyList', function(req, res, next) {
-  list.getCompanyList();
+  list.getCompanyList(true);
   res.send('OK');
   res.status(200);
 });

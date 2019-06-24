@@ -127,12 +127,12 @@ function getCompanyList(forceReload) {
           }
           if (initialized && !(row.company_key in common.companySettings)) {
             console.log('LOAD NEW COMPANY SETTINGS : ' + row.company_key);
-            common.reloadSettings(row.company_key);
+            common.reloadSettings(row.company_key, true);
           }
         }
         initialized = true;
         if (forceReload) {
-          common.reloadSettings();
+          common.reloadSettings(null, true);
         }
       });
 }
@@ -678,11 +678,13 @@ var db = {
             if (err !== null && err !== '') return false; // DB接続断対応
             var now = CommonUtil.formatDateParse();
 
-            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
-              if (CommonUtil.isset(obj.sincloSessionId)) {
+            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) { 
+              if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) && CommonUtil.isset(obj.sincloSessionId)) {
                 SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
               }
-              SharedData.sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
+              if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.tabId])) {
+                SharedData.sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
+              }
               timeUpdate(rows[0].id, obj, now, function(stayLogsId) {
                 obj.historyId = rows[0].id;
                 obj.stayLogsId = stayLogsId;
@@ -707,10 +709,12 @@ var db = {
                   function(error, results, fields) {
                     if (error && (error !== null && error !== '')) return false; // DB接続断対応
                     var historyId = results.insertId;
-                    if (CommonUtil.isset(obj.sincloSessionId)) {
+                    if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) && CommonUtil.isset(obj.sincloSessionId)) {
                       SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
                     }
-                    SharedData.sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
+                    if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.tabId])) {
+                      SharedData.sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
+                    }
                     timeUpdate(historyId, obj, now, function(stayLogsId) {
                       obj.historyId = historyId;
                       obj.stayLogsId = stayLogsId;
@@ -872,7 +876,7 @@ io.sockets.on('connection', function(socket) {
         return false;
       }
       // 履歴idか(入退室以外に)メッセージがない
-      if (!getSessionId(d.siteKey, d.tabId, 'historyId') ||
+      if (!getSessionId(d.siteKey, d.sincloSessionId, 'historyId') ||
           (!CommonUtil.isset(d.chatMessage) &&
               !(chatApi.cnst.observeType.start && d.messageType ||
                   chatApi.cnst.observeType.end && d.messageType))) {
@@ -993,7 +997,7 @@ io.sockets.on('connection', function(socket) {
     },
     commit: function(d, noReturnSelfMessage) { // DBに書き込むとき
       var insertData = {
-        t_histories_id: SharedData.sincloCore[d.siteKey][d.tabId].historyId,
+        t_histories_id: SharedData.sincloCore[d.siteKey][d.sincloSessionId].historyId,
         m_companies_id: list.companyList[d.siteKey],
         visitors_id: d.userId,
         m_users_id: d.mUserId,
@@ -2385,7 +2389,6 @@ io.sockets.on('connection', function(socket) {
         if (val.time) {
           val.term = CommonUtil.timeCalculator(val);
         }
-
         var afterGetCustomerInformations = function() {
           if (list.functionManager.isEnabled(siteKey,
               list.functionManager.keyList.chat)) {
@@ -2613,6 +2616,29 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('link', function(data) {
+    if (!list.functionManager.isEnabled(data.siteKey,
+        list.functionManager.keyList.enableRealtimeMonitor)
+        && CommonUtil.isset(SharedData.sincloCore[data.siteKey][data.tabId])
+        && !CommonUtil.isset(
+            SharedData.sincloCore[data.siteKey][data.tabId].historyId)) {
+      let historyManager = new HistoryManager();
+      let target = SharedData.sincloCore[data.siteKey][data.tabId];
+      obj = Object.assign(data, target);
+      historyManager.addHistory(obj).then((result) => {
+        emit.toSameUser('setHistoryId', result, obj.siteKey,
+            obj.sincloSessionId);
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
+        processAddLink(result);
+      });
+    } else {
+      processAddLink(data);
+    }
+  });
+
+  function processAddLink(data) {
     var d = new Date();
     DBConnector.getPool().query(
         'INSERT INTO t_history_link_count_logs (m_companies_id,t_histories_id,t_history_stay_logs_id,link_url,created) VALUES(?,?,?,?,?)',
@@ -2633,6 +2659,7 @@ io.sockets.on('connection', function(socket) {
     var ret = {
       siteKey: data.siteKey,
       tabId: data.tabId,
+      sincloSessionId: data.sincloSessionId,
       userId: data.userId,
       mUserId: null,
       chatMessage: data.link,
@@ -2644,7 +2671,9 @@ io.sockets.on('connection', function(socket) {
       autoMessageId: null
     };
     chatApi.set(ret);
-  });
+  }
+
+
 
   socket.on('connectSuccess', function(data, ack) {
     var obj = JSON.parse(data);
@@ -3000,6 +3029,17 @@ io.sockets.on('connection', function(socket) {
                           'RECORD INSERT ERROR: t_history_widget_displays(tab_id):' +
                           err);
                       return false;
+                    }
+                    if (!list.functionManager.isEnabled(obj.siteKey,
+                        list.functionManager.keyList.enableRealtimeMonitor)
+                        && CommonUtil.isset(
+                            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
+                        && !CommonUtil.isset(
+                            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
+                      let historyManager = new HistoryManager();
+                      historyManager.incrementWidgetCount(
+                          list.companyList[obj.siteKey],
+                          CommonUtil.formatDateParse());
                     }
                   });
             }
@@ -3726,9 +3766,13 @@ io.sockets.on('connection', function(socket) {
               /* チャット対応上限の処理（対応人数加算の処理） */
 
               // DBに書き込み
-              var visitorId = SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId ?
-                  SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId :
-                  '';
+              var visitorId = '';
+              if (CommonUtil.isset(
+                  SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId])) {
+                visitorId = SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId ?
+                    SharedData.connectList[SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId].userId :
+                    '';
+              }
 
               //応対数検索、登録
               getConversationCountUser(visitorId, function(results) {
@@ -4060,10 +4104,13 @@ io.sockets.on('connection', function(socket) {
   //新着チャット
   socket.on('sendChat', function(d, ack) {
     var obj = JSON.parse(d);
-    if (!list.functionManager.isEnabled(obj.siteKey,
-        list.functionManager.keyList.enableRealtimeMonitor)
-        && !CommonUtil.isset(obj.historyId)
-        && obj.messageType !== 2) {
+    if (obj.messageType !== 2
+        && !list.functionManager.isEnabled(obj.siteKey,
+            list.functionManager.keyList.enableRealtimeMonitor)
+        && CommonUtil.isset(
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
+        && !CommonUtil.isset(
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
       let historyManager = new HistoryManager();
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
@@ -4193,6 +4240,7 @@ io.sockets.on('connection', function(socket) {
               var ret = {
                 siteKey: obj.siteKey,
                 tabId: obj.tabId,
+                sincloSessionId: obj.sincloSessionId,
                 userId: obj.userId,
                 mUserId: null,
                 chatMessage: activity.message,
@@ -4207,6 +4255,7 @@ io.sockets.on('connection', function(socket) {
               var ret = {
                 siteKey: obj.siteKey,
                 tabId: obj.tabId,
+                sincloSessionId: obj.sincloSessionId,
                 userId: obj.userId,
                 mUserId: null,
                 chatMessage: activity.message,
@@ -4249,7 +4298,12 @@ io.sockets.on('connection', function(socket) {
     //応対数検索、登録
     if (!list.functionManager.isEnabled(obj.siteKey,
         list.functionManager.keyList.enableRealtimeMonitor)
-        && !CommonUtil.isset(obj.historyId)) {
+        && (CommonUtil.isset(
+                SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
+            && !CommonUtil.isset(
+                SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)
+        )
+    ) {
       let historyManager = new HistoryManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
@@ -4272,6 +4326,7 @@ io.sockets.on('connection', function(socket) {
     var ret = {
       siteKey: obj.messageList.siteKey,
       tabId: obj.messageList.tabId,
+      sincloSessionId: obj.messageList.sincloSessionId,
       chatMessage: obj.messageList.chatMessage,
       messageType: obj.messageList.messageType,
       messageDistinction: obj.messageList.messageDistinction,
@@ -4455,6 +4510,7 @@ io.sockets.on('connection', function(socket) {
           var ret = {
             siteKey: obj.siteKey,
             tabId: obj.tabId,
+            sincloSessionId: obj.sincloSessionId,
             userId: obj.userId,
             mUserId: null,
             chatMessage: elm.message,
@@ -4912,6 +4968,7 @@ io.sockets.on('connection', function(socket) {
             siteKey: obj.siteKey,
             tabId: obj.tabId,
             userId: obj.userId,
+            sincloSessionId: obj.sincloSessionId,
             mUserId: null,
             chatMessage: JSON.stringify(elm.message),
             messageType: elm.messageType,
@@ -5324,7 +5381,7 @@ io.sockets.on('connection', function(socket) {
           console.log(
               'BEGIN RELOAD DB-settings --------------------------------------------------');
           console.log('TARGET : ' + targetKey);
-          common.reloadSettings(targetKey);
+          common.reloadSettings(targetKey, true);
           console.log(
               'END   RELOAD DB-settings --------------------------------------------------');
           break;
