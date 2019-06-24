@@ -269,7 +269,7 @@ function loadOperatingHourSettings(siteKey, needNotify, callback) {
         }
         if (needNotify) {
           publisher.publish('notifyUpdateSettings', JSON.stringify({
-            type: 'operatingHour',
+            type: 'operationHour',
             siteKey: siteKey
           }));
         }
@@ -307,7 +307,7 @@ function loadOperatingHourSettings(siteKey, needNotify, callback) {
         }
         if (needNotify) {
           publisher.publish('notifyUpdateSettings', JSON.stringify({
-            type: 'operatingHour',
+            type: 'operationHour',
             siteKey: 'all'
           }));
         }

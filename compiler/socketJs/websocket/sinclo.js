@@ -660,7 +660,9 @@
       }
 
       if (obj.firstConnection) {
-        socket.clearOnceConnectedFlg();
+        if (obj.sincloSessionIdIsNew) {
+          socket.clearOnceConnectedFlg();
+        }
         if (!check.isset(userInfo.userId) && check.isset(obj.userId)) {
           userInfo.set(cnst.info_type.user, obj.userId);
         }
@@ -9035,7 +9037,8 @@
         if (!sinclo.chatApi.autoMessages.exists(data.chatId) &&
             !isSpeechContent) {
           //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
-          sinclo.chatApi.autoMessages.push(data.chatId, {});
+          data.created = new Date();
+          sinclo.chatApi.autoMessages.push(data.chatId, data);
         }
 
         if (sinclo.chatApi.saveFlg) {
