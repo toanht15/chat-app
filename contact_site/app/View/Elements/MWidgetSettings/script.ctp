@@ -1322,13 +1322,15 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
                 break;
               case 2:
                 $scope.chatbot_icon = src;
-                $("#MWidgetSettingUploadImage").val("");
+                $("#MWidgetSettingUploadBotIcon").val("");
                 break;
               case 3:
                 $scope.operator_icon = src;
+                $("#MWidgetSettingUploadOpIcon").val("");
                 break;
               default:
                 $scope.main_image = src;
+                $("#MWidgetSettingUploadImage").val("");
             }
             $scope.$apply();
             popupEvent.close();
