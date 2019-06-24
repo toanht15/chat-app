@@ -748,7 +748,7 @@
           if ((userInfo.gFrame && Number(userInfo.accessType) ===
               Number(cnst.access_type.guest)) === false) {
             emit('customerInfo', obj);
-            defer.resolve(json);
+            defer.resolve(obj);
           }
         });
       } else {
