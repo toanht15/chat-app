@@ -117,7 +117,9 @@ var socket, // socket.io
       if (!check.isset(msg)) return;
       switch (msg.t) {
         case 'pi':
-          common.tabMessenger.pong();
+          if (!socket || !socket.isOnceConnected()) {
+            common.tabMessenger.pong();
+          }
           break;
         case 'po':
           clearPingTimer();
@@ -7968,7 +7970,7 @@ var socket, // socket.io
     window.sincloInfo.contract = settings.contract;
     window.sincloInfo.chat = settings.chat;
     window.sincloInfo.customVariable = settings.customVariable;
-    window.sincloInfo.isFirstAccess = check.isset(settings);
+    window.sincloInfo.isFirstAccess = !check.isset(settings);
     window.sincloInfo.accessTime = (new Date()).getTime();
   } else {
     if (!userInfo.getTime()) {
@@ -7999,7 +8001,7 @@ var socket, // socket.io
           window.sincloInfo.contract = json.contract;
           window.sincloInfo.chat = json.chat;
           window.sincloInfo.customVariable = json.customVariable;
-          window.sincloInfo.isFirstAccess = check.isset(settings);
+          window.sincloInfo.isFirstAccess = !check.isset(settings);
           storage.s.set('scl_settings_' + window.sincloInfo.site.key,
               JSON.stringify(json));
           window.sincloInfo.accessTime = json.accessTime;
@@ -8035,6 +8037,8 @@ function f_url(url) {
 }
 
 function emit(evName, data, callback) {
+
+  if(!socket.isConnected()) return false;
 
   /* ここから：イベント名指定なし */
   data.siteKey = sincloInfo.site.key; // サイトの識別キー
