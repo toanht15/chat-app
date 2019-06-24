@@ -4510,7 +4510,29 @@ io.sockets.on('connection', function(socket) {
             messageDistinction: messageDistinction,
             achievementFlg: elm.requireCv ? -1 : null
           };
-          chatApi.set(ret);
+          if (!list.functionManager.isEnabled(obj.siteKey,
+              list.functionManager.keyList.enableRealtimeMonitor)
+            && CommonUtil.isset(
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
+            && !CommonUtil.isset(
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
+            SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
+            let historyManager = new HistoryManager();
+            let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
+            obj = Object.assign(obj, target);
+            historyManager.addHistory(obj).then((result) => {
+              emit.toSameUser('setHistoryId', result, obj.siteKey,
+                obj.sincloSessionId);
+              SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
+              SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
+              chatApi.set(ret);
+            });
+          } else {
+            chatApi.set(ret);
+          }
         });
       }
       ack();
