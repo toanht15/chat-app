@@ -118,7 +118,7 @@ router.post('/auth/customer', function(req, res, next) {
     send.sincloSessionId = uuid.v4();
     send.sincloSessionIdIsNew = true;
     d.data.firstConnection = true;
-    if (!CommonUtil.isset(d.firstConnection) || d.firstConnection) {
+    if (!CommonUtil.isset(d.isFirstAccess) || d.isFirstAccess) {
       let history = new HistoryManager();
       history.incrementAccessCount(list.companyList[d.siteKey],
         CommonUtil.formatDateParse());
