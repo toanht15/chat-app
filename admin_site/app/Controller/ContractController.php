@@ -388,7 +388,7 @@ class ContractController extends AppController
       $saveData['MCompany']['options']['hideRealtimeMonitor'] = !empty($coreSetting['hideRealtimeMonitor']) ? $coreSetting['hideRealtimeMonitor'] : false;
       $saveData['MCompany']['options']['monitorPollingMode'] = !empty($coreSetting['monitorPollingMode']) ? $coreSetting['monitorPollingMode'] : false;
       $saveData['MCompany']['options']['useCogmoAttendApi'] = !empty($coreSetting['useCogmoAttendApi']) ? $coreSetting['useCogmoAttendApi'] : false;
-      $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']['options']);
+      $companySaveData['MCompany']['core_settings'] = $this->getCoreSettings($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']);
       $this->MCompany->save($companySaveData, false);
       // 有効・無効でJSファイルの中身が変わるので書き換える
       if (!$saveData['MCompany']['options']['laCoBrowse']) {
@@ -448,6 +448,9 @@ class ContractController extends AppController
       $editData['MCompany']['options']['chatbotTreeEditor'] = json_decode($editData['MCompany']['core_settings'], TRUE)['chatbotTreeEditor'];
       $editData['MCompany']['options']['enableRealtimeMonitor'] = json_decode($editData['MCompany']['core_settings'],
           true)['enableRealtimeMonitor'];
+      $editData['MCompany']['widgetSettingOnly'] = isset(json_decode($editData['MCompany']['core_settings'],
+        true)['widgetSettingOnly']) ? json_decode($editData['MCompany']['core_settings'],
+        true)['widgetSettingOnly'] : false;
 
       // ここまで
       $agreementData = $this->MAgreements->find('first', [
@@ -631,7 +634,7 @@ class ContractController extends AppController
         "company_key" => $companyKey,
         "m_contact_types_id" => $companyInfo['m_contact_types_id'],
         "limit_users" => $companyInfo['limit_users'],
-        "core_settings" => $this->getCoreSettingsFromContactTypesId($companyInfo['m_contact_types_id'], $companyInfo['options']),
+        "core_settings" => $this->getCoreSettings($companyInfo['m_contact_types_id'], $companyInfo),
         "trial_flg" => $companyInfo['trial_flg']
       ];
       if ($companyInfo['options']['laCoBrowse']) {
@@ -650,7 +653,7 @@ class ContractController extends AppController
     return [
       'id' => $this->MCompany->getLastInsertID(),
       'companyKey' => $companyKey,
-      'core_settings' => json_decode($this->getCoreSettingsFromContactTypesId($companyInfo['m_contact_types_id'], $companyInfo['options']), TRUE)
+      'core_settings' => json_decode($this->getCoreSettings($companyInfo['m_contact_types_id'], $companyInfo), TRUE)
     ];
   }
 
@@ -1339,6 +1342,46 @@ class ContractController extends AppController
     }
     return json_encode($planObj);
   }
+
+  /**
+   * @param $m_contact_types_id
+   * @param $companyData
+   * @return false|string
+   */
+  private function getCoreSettings($m_contact_types_id, $companyData)
+  {
+    switch ($m_contact_types_id) {
+      case C_CONTRACT_FULL_PLAN_ID:
+        $plan = C_CONTRACT_FULL_PLAN;
+        break;
+      case C_CONTRACT_CHAT_PLAN_ID:
+        $plan = C_CONTRACT_CHAT_PLAN;
+        break;
+      case C_CONTRACT_SCREEN_SHARING_ID:
+        $plan = C_CONTRACT_SCREEN_SHARING_PLAN;
+        break;
+      case C_CONTRACT_CHAT_BASIC_PLAN_ID:
+        $plan = C_CONTRACT_CHAT_BASIC_PLAN;
+        break;
+      default:
+        throw Exception("不明なプランID: " . $m_contact_types_id);
+    }
+    $planObj = json_decode($plan, TRUE);
+    foreach ($companyData['options'] as $key => $enabled) {
+      if(strcmp('useCogmoAttendApi', $key) === 0) {
+        $planObj[$key] = is_string($enabled) ? $enabled : false;
+      } else {
+        $planObj[$key] = strcmp($enabled, "1") === 0;
+      }
+    }
+
+    if (strcmp($companyData['widgetSettingOnly'], "1") === 0) {
+      $planObj['widgetSettingOnly'] = true;
+    }
+
+    return json_encode($planObj);
+  }
+
 
   private function getWidgetSettingsFromContactTypesId($m_contact_types_id)
   {
