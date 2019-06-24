@@ -1418,6 +1418,10 @@ var socket, // socket.io
       html += '      #sincloBox div#minimizeBtn { display: none; cursor: pointer; background-image: url("' +
           window.sincloInfo.site.files +
           '/img/widget/minimize.png"); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
+      html += '      #sincloBox #fw-minimize-btn i {top: -1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: ' +
+          colorList['closeBtnColor'] + '; cursor: pointer;}';
+      html += '      #sincloBox #fw-minimize-btn i:before {font-family: FA5P}';
+
       //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
       if (Number(widget.closeButtonSetting) === 1) {
         //閉じるボタン無効
@@ -1437,10 +1441,6 @@ var socket, // socket.io
         html += '      #sincloBox #fw-close-btn i:before {font-family: FA5P}';
         html += '      #sincloBox #fw-close-btn:hover {background-color: ' +
             colorList['closeBtnHoverColor'] + ';}';
-
-        html += '      #sincloBox #fw-minimize-btn i {top: -1px; right: 7px; position: absolute; z-index: 2; font-size: 26px; color: ' +
-            colorList['closeBtnColor'] + '; cursor: pointer;}';
-        html += '      #sincloBox #fw-minimize-btn i:before {font-family: FA5P}';
       }
 
       html += '      #sincloBox div#sincloWidgetBox { position: relative; top: 0px; }';
@@ -2650,6 +2650,7 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle .checkmark {top: 14px;left: 12px; }';
           html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: 12px 12px 12px 56px;}';
           html += '#sincloBox ul#chatTalk li span.ok-button {width: 125px; height: 40px; line-height: 40px; margin-top: 15px; border-radius: 20px;}';
+
           var cRatio = 2.5;
           html += '#sincloBox ul#chatTalk li.carousel_msg {' +
               'padding: ' + 10 * cRatio + 'px ' + 40 * cRatio + 'px;' +
@@ -2659,8 +2660,7 @@ var socket, // socket.io
               'padding: ' + 10 * cRatio + 'px ' + 40 * cRatio + 'px; ' +
               '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
               'margin-left: 0; ' +
-              '}' ;
-
+              '}';
 
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
@@ -7950,17 +7950,37 @@ var socket, // socket.io
   }
 
   // ターゲットの企業ID以外の設定があれば削除する
+  var  widgetSitekey = '';
+  var myTag = document.querySelector(
+      'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
+
+  if (myTag.getAttribute('data-another-widget-key')) {
+    widgetSitekey = myTag.getAttribute('data-another-widget-key');
+  }
+
   var keys = storage.s.findKeyLike('scl_settings_');
   if (keys.length > 0) {
     for (var i = 0; i < keys.length; i++) {
-      if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key) {
-        storage.s.unset(keys[i]);
+      if (widgetSitekey == '') {
+        if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key) {
+          storage.s.unset(keys[i]);
+        }
+      } else {
+        if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey) {
+          storage.s.unset(keys[i]);
+        }
       }
     }
   }
 
-  var settings = JSON.parse(
-      storage.s.get('scl_settings_' + window.sincloInfo.site.key));
+  if (widgetSitekey == '') {
+    var settings = JSON.parse(
+        storage.s.get('scl_settings_' + window.sincloInfo.site.key));
+  } else {
+    var settings = JSON.parse(
+        storage.s.get('scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey));
+  }
+
   if (check.isset(settings)) {
     console.log('<><><><><><><><>< NOT MODIFIED ><><><><><><><><><>');
     window.sincloInfo.widget = settings.widget;
@@ -7971,6 +7991,7 @@ var socket, // socket.io
     window.sincloInfo.isFirstAccess = check.isset(settings);
     window.sincloInfo.accessTime = (new Date()).getTime();
   } else {
+    console.log('<><><><><><><><>< GET SETTINGS DATA ><><><><><><><><><>');
     if (!userInfo.getTime()) {
       userInfo.time = (new Date()).getTime();
       userInfo.set(cnst.info_type.time, userInfo.time, true);
@@ -7981,10 +8002,8 @@ var socket, // socket.io
       cache: false,
       data: {
         'sitekey': window.sincloInfo.site.key,
-        accessType: userInfo.accessType,
-        s: (check.isset(userInfo.get(cnst.info_type.tab))) ?
-            userInfo.get(cnst.info_type.tab) :
-            ''
+        'widgetSitekey': widgetSitekey,
+        accessType: userInfo.accessType
       },
       dataType: 'json',
       success: function(json) {
@@ -8000,8 +8019,12 @@ var socket, // socket.io
           window.sincloInfo.chat = json.chat;
           window.sincloInfo.customVariable = json.customVariable;
           window.sincloInfo.isFirstAccess = check.isset(settings);
-          storage.s.set('scl_settings_' + window.sincloInfo.site.key,
-              JSON.stringify(json));
+          if (widgetSitekey == '') {
+            storage.s.set('scl_settings_' + window.sincloInfo.site.key, JSON.stringify(json));
+          } else {
+            storage.s.set('scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey, JSON.stringify(json));
+          }
+
           window.sincloInfo.accessTime = json.accessTime;
         } else {
           clearTimeout(timer);
