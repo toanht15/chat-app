@@ -406,8 +406,7 @@ router.post('/auth/info', function(req, res, next) {
           });
         };
 
-        if (CommonUtil.isset(SharedData.company.info[obj.siteKey]) &&
-            Object.keys(SharedData.company.info[obj.siteKey]).length > 0) {
+        if (CommonUtil.isset(obj.customVariables)) {
           let customerApi = new CustomerInfoManager();
           customerApi.upsertCustomerInfo(obj).then(function(result) {
             return customerApi.getInfo(obj.siteKey, obj.userId);
@@ -415,7 +414,6 @@ router.post('/auth/info', function(req, res, next) {
             obj.customerInfo = information;
             afterGetInformationProcess();
           });
-          ;
         } else {
           afterGetInformationProcess();
         }
