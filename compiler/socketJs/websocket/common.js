@@ -7993,14 +7993,11 @@ var socket, // socket.io
     window.sincloInfo.isFirstAccess = !check.isset(settings);
     window.sincloInfo.accessTime = (new Date()).getTime();
   } else {
-<<<<<<< HEAD
     if (!userInfo.getTime()) {
       userInfo.time = (new Date()).getTime();
       userInfo.set(cnst.info_type.time, userInfo.time, true);
     }
-=======
     console.log('<><><><><><><><>< GET SETTINGS DATA ><><><><><><><><><>');
->>>>>>> origin/add_tag_parameter_release
     $.ajax({
       type: 'get',
       url: window.sincloInfo.site.files + '/settings/',
