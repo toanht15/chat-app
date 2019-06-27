@@ -2035,10 +2035,10 @@ class StatisticsController extends AppController {
     count(distinct thcl.message_distinction,thcl.t_histories_id) as automaticResponse_count
     FROM
       (select id,m_companies_id,t_histories_id,message_distinction,message_type,message_request_flg,created from t_history_chat_logs
-       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type in (5, 21, 22, 23, 27, 40, 41, 42, 45, 46, 49, 52) and m_companies_id = ? and created between ? and ? order by t_histories_id, message_distinction) as thcl
+       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type in (5, 21, 22, 23, 27, 40, 41, 42, 45, 46, 49, 52, 55, 300, 302) and m_companies_id = ? and created between ? and ? order by t_histories_id, message_distinction) as thcl
     INNER JOIN
       (select id,m_companies_id,t_histories_id,message_distinction,message_type,created from t_history_chat_logs
-       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where m_companies_id = ? and message_type in (1, 12, 13, 19, 30, 33, 34, 35, 43, 47, 50, 53) and message_request_flg = 1 and created between ? and ? group by t_histories_id order by t_histories_id, message_distinction) as thcl3
+       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where m_companies_id = ? and message_type in (1, 12, 13, 19, 30, 33, 34, 35, 43, 47, 50, 53, 301, 303) and message_request_flg = 1 and created between ? and ? group by t_histories_id order by t_histories_id, message_distinction) as thcl3
     ON (
       thcl.t_histories_id = thcl3.t_histories_id
     AND
