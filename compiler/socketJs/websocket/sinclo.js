@@ -13396,7 +13396,6 @@
           var self = sinclo.diagramApi;
           var cells = self.storage.get(self.storage._lKey.diagrams,
               Number(did));
-          debugger;
           var target = cells[nid].attrs.nodeBasicInfo.nodeType;
           return self.messageType.message[target];
         },
@@ -13699,6 +13698,10 @@
           cs += ' diagram_msg';
           if(customizeDesign.radioStyle === '1') {
             cs += ' customWidth';
+          }
+
+          if (Number(currentNode.attrs.actionParam.btnType) == 2) {
+            li.style.width = '95%';
           }
 
           li.className = cs;
