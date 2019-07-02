@@ -4843,7 +4843,6 @@ var socket, // socket.io
           //一旦非表示
           //ヘッダ非表示（シンプル表示）
           common.abridgementTypehide();
-          common.widgetHandler.saveShownFlg();
           common.widgetHandler.stopToWatchResizeEvent();
           common.widgetHandler.beginToWatchResizeEvent();
           common.widgetHandler.beginToWatchTabletResize();
@@ -4865,26 +4864,28 @@ var socket, // socket.io
               if (window.sincloInfo.contract.synclo || window.sincloInfo.contract.document) {
                 emit('sendWidgetShown', {widget: true});
               } else {
-                $.ajax({
-                  headers: {
-                    'Accept': 'text/plain, application/json; charset=utf-8',
-                    'Content-Type': 'application/json; charset=utf-8'
-                  },
-                  type: 'post',
-                  url: window.sincloInfo.site.files + '/api/widget/shown',
-                  dataType: 'json',
-                  contentType: 'application/json',
-                  data: JSON.stringify({
-                    siteKey: sincloInfo.site.key,
-                    widget: window.sincloInfo.widgetDisplay,
-                    userId: userInfo.userId,
-                    tabId: userInfo.tabId,
-                    sincloSessionId: userInfo.sincloSessionId,
-                    isFirstAccess: window.sincloInfo.isFirstAccess
-                  }),
-                  success: function(json) {
-                  }
-                });
+                if (!check.isset(common.widgetHandler.isShown()) || !common.widgetHandler.isShown()) {
+                  $.ajax({
+                    headers: {
+                      'Accept': 'text/plain, application/json; charset=utf-8',
+                      'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    type: 'post',
+                    url: window.sincloInfo.site.files + '/api/widget/shown',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                      siteKey: sincloInfo.site.key,
+                      widget: window.sincloInfo.widgetDisplay,
+                      userId: userInfo.userId,
+                      tabId: userInfo.tabId,
+                      sincloSessionId: userInfo.sincloSessionId,
+                      isFirstAccess: window.sincloInfo.isFirstAccess
+                    }),
+                    success: function(json) {
+                    }
+                  });
+                }
               }
             } else {
               emit('sendWidgetShown', {widget: true});
@@ -4981,6 +4982,9 @@ var socket, // socket.io
             common.indicateSimpleImage();
           }
         }
+
+        common.widgetHandler.saveShownFlg();
+
         if(check.smartphone() && !check.android() && window.orientation !== 0 && screen.width !== window.innerHeight) {
           $('#sincloBox').
           css(
@@ -5339,6 +5343,45 @@ var socket, // socket.io
         $('#sincloWidgetBox').show();
         common.whenMaximizedBtnShow();
         common.widgetHandler._handleResizeEvent();
+      }
+    },
+    settingLoader: {
+      get: function() {
+        var  widgetSitekey = this.getWidgetSiteKey();
+        var keys = storage.s.findKeyLike('scl_settings_');
+        if (keys.length > 0) {
+          for (var i = 0; i < keys.length; i++) {
+            if (widgetSitekey == '') {
+              if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key) {
+                storage.s.unset(keys[i]);
+              }
+            } else {
+              if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey) {
+                storage.s.unset(keys[i]);
+              }
+            }
+          }
+        }
+
+        var settings = {};
+        if (widgetSitekey == '') {
+          settings = JSON.parse(
+            storage.s.get('scl_settings_' + window.sincloInfo.site.key));
+        } else {
+          settings = JSON.parse(
+            storage.s.get('scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey));
+        }
+
+        return settings;
+      },
+      getWidgetSiteKey: function() {
+        var  widgetSitekey = '';
+        var myTag = document.querySelector(
+          'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
+        if (myTag && myTag.getAttribute('data-another-widget-key')) {
+          widgetSitekey = myTag.getAttribute('data-another-widget-key');
+        }
+        return widgetSitekey;
       }
     },
     load: {
@@ -7611,7 +7654,12 @@ var socket, // socket.io
                 });
             }, function() {
               // timeout
-              return sinclo.connect().then(sinclo.accessInfo);
+              return sinclo.connect().then(function (data) {
+                var obj = common.jParse(data);
+                var settingExists = check.isset(common.settingLoader.get());
+                obj.sincloSessionIdIsNew = !settingExists;
+                return sinclo.accessInfo(JSON.stringify(obj));
+              });
             }).then(function(connectSuccessData) {
               window.userInfo.connectSuccessData = connectSuccessData;
               if ((check.isset(connectSuccessData.sincloSessionIdIsNew) &&
@@ -7951,37 +7999,8 @@ var socket, // socket.io
     }
   }
 
-  // ターゲットの企業ID以外の設定があれば削除する
-  var  widgetSitekey = '';
-  var myTag = document.querySelector(
-      'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
-
-  if (myTag && myTag.getAttribute('data-another-widget-key')) {
-    widgetSitekey = myTag.getAttribute('data-another-widget-key');
-  }
-
-  var keys = storage.s.findKeyLike('scl_settings_');
-  if (keys.length > 0) {
-    for (var i = 0; i < keys.length; i++) {
-      if (widgetSitekey == '') {
-        if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key) {
-          storage.s.unset(keys[i]);
-        }
-      } else {
-        if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey) {
-          storage.s.unset(keys[i]);
-        }
-      }
-    }
-  }
-
-  if (widgetSitekey == '') {
-    var settings = JSON.parse(
-        storage.s.get('scl_settings_' + window.sincloInfo.site.key));
-  } else {
-    var settings = JSON.parse(
-        storage.s.get('scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey));
-  }
+  var settings = common.settingLoader.get();
+  var widgetSitekey = common.settingLoader.getWidgetSiteKey();
 
   if (check.isset(settings)) {
     console.log('<><><><><><><><>< NOT MODIFIED ><><><><><><><><><>');
