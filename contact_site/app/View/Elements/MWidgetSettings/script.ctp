@@ -443,8 +443,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
   // 閉じるボタン色
   $scope.changeCloseButtonSetting = function(e) {
-    e.preventDefault();
-    e.stopImmediatePropagation();
     if (!$(e.target).parent().hasClass('disable')) {
       var element = e.target;
       if (!element.classList.contains('jscolor{hash:true}')) {
@@ -453,6 +451,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
       element.jscolor.show();
     } else {
+      e.preventDefault();
+      e.stopImmediatePropagation();
       $(e.target).removeClass('jscolor{hash:true}');
       e.target.jscolor.hide();
     }
@@ -1329,7 +1329,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
                 $("#MWidgetSettingUploadOpIcon").val("");
                 break;
               default:
-                $scope.main_image = src;
+                $scchangeCloseButtonSettingope.main_image = src;
                 $("#MWidgetSettingUploadImage").val("");
             }
             $scope.$apply();

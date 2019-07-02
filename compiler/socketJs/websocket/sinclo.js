@@ -174,10 +174,10 @@
           }
           if ((check.smartphone() &&
               Number(window.sincloInfo.widget.spWidgetViewPattern) === 3 &&
-              $('#minimizeBtn').is(':hidden') &&
+              $('#fw-minimize-btn').is(':hidden') &&
               Number(window.sincloInfo.widget.closeButtonSetting) === 2 &&
               Number(window.sincloInfo.widget.closeButtonModeType) === 1) ||
-              ($('#minimizeBtn').is(':hidden') &&
+              ($('#fw-minimize-btn').is(':hidden') &&
                   check.hasCustomBannerImageSetting())) {
             console.log(
                 '<><><><><><><><><><>スマホ用隠しパラメータ、即バナー<><><><><><><><><><><>');
@@ -2180,7 +2180,6 @@
             if (common.hasGA()) {
               common.callGA('autoChat', location.href, 1);
             }
-            storage.s.set('requestFlg', false);
           }
           if (obj.tabId === userInfo.tabId) {
             //シナリオ中のみ発動
@@ -11771,8 +11770,10 @@
             case '3': // ラジオボタン
             case '4': // プルダウン
             case '5': // カレンダー
-            case '6':
-            case '7':
+            case '6': // カルーセル
+            case '7': // コンファーム
+            case '8': // ボタン
+            case '9': // チェックボックス
               if (!required) {
                 sinclo.chatApi.showMiniMessageArea();
                 sinclo.displayTextarea(true, true);

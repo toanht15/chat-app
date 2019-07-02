@@ -12,7 +12,7 @@ class LandscapeCodeMapper
    * 組織　上場区分フラグ
    * @var array
    */
-  public static $orgIpoTypeMap = array(
+  private static $orgIpoTypeMap = array(
     '1' => '東証一部',
     '2' => '東証二部',
     '3' => '地方上場',
@@ -22,7 +22,7 @@ class LandscapeCodeMapper
     '9' => '非上場'
   );
 
-  public static $orgGrossCodeMap = array(
+  private static $orgGrossCodeMap = array(
     '1' => '1億未満',
     '2' => '1億以上5億未満',
     '3' => '5億以上10億未満',
@@ -39,7 +39,7 @@ class LandscapeCodeMapper
    * 組織　資本金コード
    * @var array
    */
-  public static $orgCapitalCodeMap = array(
+  private static $orgCapitalCodeMap = array(
     '1' => '1千万円未満',
     '2' => '1千万円以上2千万円未満',
     '3' => '2千万円以上5千万円未満',
@@ -51,7 +51,7 @@ class LandscapeCodeMapper
   );
 
 
-  public static $orgEmployeesCodeMap = array(
+  private static $orgEmployeesCodeMap = array(
     '1' => '1人以上5人未満',
     '2' => '5人以上10人未満',
     '3' => '10人以上30人未満',
@@ -64,7 +64,7 @@ class LandscapeCodeMapper
     '99' => '不明',
   );
 
-  public static $orgIndustrialCategoryMMap = array(
+  private static $orgIndustrialCategoryMMap = array(
       '1' => '農業',
       '2' => '林業',
       '3' => '漁業（水産養殖業を除く）',
