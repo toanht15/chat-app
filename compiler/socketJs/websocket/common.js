@@ -7956,7 +7956,7 @@ var socket, // socket.io
   var myTag = document.querySelector(
       'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
 
-  if (myTag.getAttribute('data-another-widget-key')) {
+  if (myTag && myTag.getAttribute('data-another-widget-key')) {
     widgetSitekey = myTag.getAttribute('data-another-widget-key');
   }
 
