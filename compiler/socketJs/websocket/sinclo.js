@@ -9124,7 +9124,7 @@
                 emit('getScenario', {'scenarioId': scenarioId});
               });
             } else {
-
+              emit('getScenario', {'scenarioId': scenarioId});
             }
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
