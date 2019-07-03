@@ -5346,6 +5346,7 @@ var socket, // socket.io
       }
     },
     settingLoader: {
+      isDataReceived: false,
       get: function() {
         var  widgetSitekey = this.getWidgetSiteKey();
         var keys = storage.s.findKeyLike('scl_settings_');
@@ -7657,7 +7658,7 @@ var socket, // socket.io
               return sinclo.connect().then(function (data) {
                 var obj = common.jParse(data);
                 var settingExists = check.isset(common.settingLoader.get());
-                obj.sincloSessionIdIsNew = !settingExists;
+                obj.sincloSessionIdIsNew = !(!common.settingLoader.isDataReceived && settingExists);
                 return sinclo.accessInfo(JSON.stringify(obj));
               });
             }).then(function(connectSuccessData) {
@@ -8046,6 +8047,7 @@ var socket, // socket.io
             storage.s.set('scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey, JSON.stringify(json));
           }
           window.sincloInfo.accessTime = json.accessTime;
+          common.settingLoader.isDataReceived = true;
         } else {
           clearTimeout(timer);
         }
