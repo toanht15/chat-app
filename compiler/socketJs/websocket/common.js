@@ -6164,7 +6164,9 @@ var socket, // socket.io
               return sinclo.connect().then(function (data) {
                 var obj = common.jParse(data);
                 var settingExists = check.isset(common.settingLoader.get());
-                obj.sincloSessionIdIsNew = !(!common.settingLoader.isDataReceived && settingExists);
+                if(obj.sincloSessionIdIsNew) {
+                  obj.sincloSessionIdIsNew = !(!common.settingLoader.isDataReceived && settingExists);
+                }
                 return sinclo.accessInfo(JSON.stringify(obj));
               });
             }).then(function(connectSuccessData) {
@@ -8240,7 +8242,17 @@ function link(word, link, eventLabel) {
       common.callGA(eventLabel, link, 1);
     }
   }
+  if (socket && !socket.isConnected()) {
+          socket.connect().then(function() {
+            return sinclo.executeConnectSuccess(
+                window.userInfo.connectSuccessData,
+                window.userInfo.accessInfoData);
+          }).then(sinclo.setHistoryId).then(function() {
   socket.emit('link', data);
+          });
+        } else {
+  socket.emit('link', data);
+        }
 }
 
 // get type
