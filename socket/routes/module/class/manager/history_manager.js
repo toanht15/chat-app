@@ -261,7 +261,7 @@ module.exports = class HistoryManager extends DatabaseManager {
     let self = this;
     return new Promise(async (resolve, reject) => {
       try {
-        let prevArray = obj.prev;
+        let prevArray = obj.updatePrev || obj.prev;
         let result = 0;
         for (let i = 0; i < prevArray.length; i++) {
           result = await this.processTimeUpdate(self, historyId, prevArray, i);
