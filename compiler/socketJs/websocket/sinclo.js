@@ -7918,12 +7918,10 @@
               css('display', 'block').
               html('通信が切断されました。<br>こちらをタップすると再接続します。').
               on('click', function() {
-                var result = common.reconnectManual();
-                if (result) {
-                  $('sinclo-chat-alert').css('display', 'none');
-                  sinclo.chatApi.initEvent();
-                  sinclo.chatApi.sendErrCatchFlg = false;
-                }
+                $('sinclo-chat-alert').css('display', 'none');
+                $('sinclo-chat').children().remove();
+                common.handleInit();
+                sinclo.chatApi.sendErrCatchFlg = false;
               });
           sinclo.chatApi.sendErrCatchFlg = true;
           sinclo.chatApi.removeAllEvent();
@@ -7945,11 +7943,9 @@
                 css('display', 'block').
                 html('クリックして再接続').
                 on('click', function() {
-                  var result = common.reconnectManual();
-                  if (result) {
-                    $('sinclo-chat-alert').css('display', 'none');
-                    sinclo.chatApi.initEvent();
-                  }
+                  $('sinclo-chat-alert').css('display', 'none');
+                  $('sinclo-chat').children().remove();
+                  common.handleInit();
                 });
             sinclo.chatApi.removeAllEvent();
           }, 90 * 60 * 1000);
