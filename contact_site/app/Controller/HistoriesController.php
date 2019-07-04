@@ -590,7 +590,7 @@ class HistoriesController extends AppController
           $row['transmissionKind'] = '訪問者（ヒアリング回答）';
           $row['transmissionPerson'] = '';
         }
-        if ($val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 53) {
+        if ($val['THistoryChatLog']['message_type'] == 12) {
           $json = json_decode($val['THistoryChatLog']['message'], true);
           $val['THistoryChatLog']['message'] = $json['message'];
         }
@@ -706,6 +706,19 @@ class HistoriesController extends AppController
             $val['THistoryChatLog']['message'] = $json->message;
           }
         }
+        // handle checkbox answer
+        if ($val['THistoryChatLog']['message_type'] == 53 || $val['THistoryChatLog']['message_type'] == 54) {
+          $json = json_decode($val['THistoryChatLog']['message'], true);
+          $chatMessage = $json['message'];
+          $separator = $json['separator'];
+          $textOfMessage = '';
+          $arr = explode($separator, $chatMessage);
+          foreach ($arr as $item) {
+            $textOfMessage .= '・' . $item . "\n";
+          }
+          $val['THistoryChatLog']['message'] = trim($textOfMessage);
+        }
+
         if ($val['THistoryChatLog']['message_type'] == 81) {
           $row['transmissionKind'] = 'チャットボットメッセージ';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
@@ -718,6 +731,23 @@ class HistoriesController extends AppController
           // 何も表示しない
           continue;
         }
+
+        if ($val['THistoryChatLog']['message_type'] == 300 || $val['THistoryChatLog']['message_type'] == 302) {
+          $row['transmissionKind']   = 'チャットツリーメッセージ';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+          $json = json_decode($val['THistoryChatLog']['message']);
+          if (!$json->message) {
+            $val['THistoryChatLog']['message'] = 'チャットツリーメッセージ';
+          } else {
+            $val['THistoryChatLog']['message'] = $json->message;
+          }
+        }
+
+        if ($val['THistoryChatLog']['message_type'] == 301 || $val['THistoryChatLog']['message_type'] == 303) {
+          $row['transmissionKind'] = 'チャットツリー回答';
+          $row['transmissionPerson'] = '';
+        }
+
         if ($val['THistoryChatLog']['message_type'] == 998 || $val['THistoryChatLog']['message_type'] == 999) {
           $row['transmissionKind'] = '通知メッセージ';
           $row['transmissionPerson'] = "";
@@ -812,8 +842,26 @@ class HistoriesController extends AppController
       if ($val['THistoryChatLog']['delete_flg'] == 1) {
         $message = "(このメッセージは " . $val['THistoryChatLog']['deleted'] . " に " . $val['DeleteMUser']['display_name'] . " さんによって削除されました。)";
       } else {
-        if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42) {
+        if ($val['THistoryChatLog']['message_type'] == 41
+          || $val['THistoryChatLog']['message_type'] == 42
+          || $val['THistoryChatLog']['message_type'] == 45
+          || $val['THistoryChatLog']['message_type'] == 46
+          || $val['THistoryChatLog']['message_type'] == 49
+          || $val['THistoryChatLog']['message_type'] == 52
+          || $val['THistoryChatLog']['message_type'] == 55
+          || $val['THistoryChatLog']['message_type'] == 300
+          || $val['THistoryChatLog']['message_type'] == 302) {
           $message = json_decode($val['THistoryChatLog']['message'], true)['message'];
+        } else if ($val['THistoryChatLog']['message_type'] == 53
+        || $val['THistoryChatLog']['message_type'] == 54) {
+          $json = json_decode($val['THistoryChatLog']['message'], true);
+          $chatMessage = $json['message'];
+          $separator = $json['separator'];
+          $message = '';
+          $arr = explode($separator, $chatMessage);
+          foreach ($arr as $item) {
+            $message .= '・' . $item . "\n";
+          }
         } else {
           $message = $val['THistoryChatLog']['message'];
         }
@@ -848,7 +896,10 @@ class HistoriesController extends AppController
         case 33: // 訪問者（シナリオ：ヒアリング回答）radio
         case 34: // 訪問者（シナリオ：ヒアリング回答）pulldown
         case 35: // 訪問者（シナリオ：ヒアリング回答）calendar
-        case 47:
+        case 43: // 訪問者（シナリオ：ヒアリング回答）carousel
+        case 47: // 訪問者（シナリオ：ヒアリング回答）confirm
+        case 50: // 訪問者（シナリオ：ヒアリング回答）button UI
+        case 53: // 訪問者（シナリオ：ヒアリング回答）checkbox
           $row = $this->_setData($date, "訪問者（ヒアリング回答）", "", $message);
           break;
         case 13: // 訪問者（シナリオ：選択肢回答）
@@ -871,13 +922,32 @@ class HistoriesController extends AppController
         case 37: // 訪問者（シナリオ：ヒアリング再回答）radio
         case 38: // 訪問者（シナリオ：ヒアリング再回答）pulldown
         case 39: // 訪問者（シナリオ：ヒアリング再回答）calendar
-        case 48:
+        case 44: // 訪問者（シナリオ：ヒアリング再回答）carousel
+        case 48: // 訪問者（シナリオ：ヒアリング再回答）confirm
+        case 51: // 訪問者（シナリオ：ヒアリング再回答）button UI
+        case 54: // 訪問者（シナリオ：ヒアリング再回答）checkbox
           $row = $this->_setData($date, "シナリオメッセージ（ヒアリング再回答）", "", $message);
           break;
         case 41: // シナリオメッセージ（ヒアリング）pulldown
         case 42: // シナリオメッセージ（ヒアリング）calendar
-        case 46:
-          $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'],
+        case 45: // シナリオメッセージ（ヒアリング）calendar
+        case 46: // シナリオメッセージ（ヒアリング）carousel
+        case 49: // シナリオメッセージ（ヒアリング）confirm
+        case 52: // シナリオメッセージ（ヒアリング）button UI
+        case 55: // シナリオメッセージ（ヒアリング）checkbox
+          $message = $message ? $message : '質問内容なし';
+          $row     = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'],
+            $message);
+          break;
+        case 300:
+        case 302:
+          $message = $message ? $message : '質問内容なし';
+          $row     = $this->_setData($date, "チャットツリーメッセージ", $this->userInfo['MCompany']['company_name'],
+            $message);
+          break;
+        case 301:
+        case 303:
+          $row = $this->_setData($date, "チャットツリー回答", $this->userInfo['MCompany']['company_name'],
             $message);
           break;
         case 998: // 入室メッセージ
@@ -1480,7 +1550,18 @@ class HistoriesController extends AppController
         [
           'type' => 'INNER',
           'table' => '(SELECT * FROM t_history_chat_logs ' .
-            ' WHERE (m_users_id IS NOT NULL OR message_type = 5 OR (message_type >= 21 AND message_type <= 27))' .
+            ' WHERE (m_users_id IS NOT NULL OR message_type = 5 OR (message_type >= 21 AND message_type <= 27) 
+            OR message_type = 40
+            OR message_type = 41
+            OR message_type = 42
+            OR message_type = 45
+            OR message_type = 46
+            OR message_type = 49
+            OR message_type = 52
+            OR message_type = 55
+            OR message_type = 300
+            OR message_type = 302
+            OR message_type = 998)' .
             '   AND t_histories_id IN (' . implode(",", $historyList) . ')' .
             ' GROUP BY t_histories_id, m_users_id' .
             ')',
@@ -1522,7 +1603,18 @@ class HistoriesController extends AppController
             || strcmp($val['THistoryChatLog']['message_type'], "22") === 0
             || strcmp($val['THistoryChatLog']['message_type'], "23") === 0
             || strcmp($val['THistoryChatLog']['message_type'], "24") === 0
-            || strcmp($val['THistoryChatLog']['message_type'], "27") === 0) {
+            || strcmp($val['THistoryChatLog']['message_type'], "27") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "40") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "41") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "42") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "45") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "46") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "49") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "52") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "55") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "300") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "302") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "998") === 0) {
             $chat[$val['THistory']['id']] = self::LABEL_AUTO_SPEECH_OPERATOR;
           }
         }
@@ -2107,7 +2199,22 @@ class HistoriesController extends AppController
       'conditions' => [
         'OR' => [
           array('THistoryChatLog.message_type' => 998),
-          array('THistoryChatLog.message_type' => 5)
+          array('THistoryChatLog.message_type' => 5),
+          array('THistoryChatLog.message_type' => 20),
+          array('THistoryChatLog.message_type' => 21),
+          array('THistoryChatLog.message_type' => 22),
+          array('THistoryChatLog.message_type' => 23),
+          array('THistoryChatLog.message_type' => 27),
+          array('THistoryChatLog.message_type' => 40),
+          array('THistoryChatLog.message_type' => 41),
+          array('THistoryChatLog.message_type' => 42),
+          array('THistoryChatLog.message_type' => 45),
+          array('THistoryChatLog.message_type' => 46),
+          array('THistoryChatLog.message_type' => 49),
+          array('THistoryChatLog.message_type' => 52),
+          array('THistoryChatLog.message_type' => 55),
+          array('THistoryChatLog.message_type' => 300),
+          array('THistoryChatLog.message_type' => 302),
         ],
         'AND' => [
           array('THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'])
