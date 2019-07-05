@@ -708,15 +708,18 @@ class HistoriesController extends AppController
         }
         // handle checkbox answer
         if ($val['THistoryChatLog']['message_type'] == 53 || $val['THistoryChatLog']['message_type'] == 54) {
-          $json = json_decode($val['THistoryChatLog']['message'], true);
-          $chatMessage = $json['message'];
-          $separator = $json['separator'];
-          $textOfMessage = '';
-          $arr = explode($separator, $chatMessage);
-          foreach ($arr as $item) {
-            $textOfMessage .= '・' . $item . "\n";
-          }
-          $val['THistoryChatLog']['message'] = trim($textOfMessage);
+          if ($this->isJson($val['THistoryChatLog']['message'])) {
+            $json = json_decode($val['THistoryChatLog']['message'], true);
+            $chatMessage = $json['message'];
+            $separator = $json['separator'];
+            $textOfMessage = '';
+            $arr = explode($separator, $chatMessage);
+            foreach ($arr as $item) {
+              $textOfMessage .= '・' . $item . "\n";
+            }
+
+            $val['THistoryChatLog']['message'] = trim($textOfMessage);
+          } 
         }
 
         if ($val['THistoryChatLog']['message_type'] == 81) {
@@ -851,16 +854,24 @@ class HistoriesController extends AppController
           || $val['THistoryChatLog']['message_type'] == 55
           || $val['THistoryChatLog']['message_type'] == 300
           || $val['THistoryChatLog']['message_type'] == 302) {
-          $message = json_decode($val['THistoryChatLog']['message'], true)['message'];
+          if ($this->isJson($val['THistoryChatLog']['message'])) {
+            $message = json_decode($val['THistoryChatLog']['message'], true)['message'];
+          } else {
+            $message = $val['THistoryChatLog']['message'];
+          }
         } else if ($val['THistoryChatLog']['message_type'] == 53
         || $val['THistoryChatLog']['message_type'] == 54) {
-          $json = json_decode($val['THistoryChatLog']['message'], true);
-          $chatMessage = $json['message'];
-          $separator = $json['separator'];
-          $message = '';
-          $arr = explode($separator, $chatMessage);
-          foreach ($arr as $item) {
-            $message .= '・' . $item . "\n";
+          if ($this->isJson($val['THistoryChatLog']['message'])) {
+            $json = json_decode($val['THistoryChatLog']['message'], true);
+            $chatMessage = $json['message'];
+            $separator = $json['separator'];
+            $message = '';
+            $arr = explode($separator, $chatMessage);
+            foreach ($arr as $item) {
+              $message .= '・' . $item . "\n";
+            }
+          } else {
+            $message = $val['THistoryChatLog']['message'];
           }
         } else {
           $message = $val['THistoryChatLog']['message'];
@@ -2725,5 +2736,10 @@ class HistoriesController extends AppController
     $arrTime = explode('.', microtime(true));
     //日時＋ミリ秒
     $this->log($prefix . '::PROCESS_TIME ' . date('Y-m-d H:i:s', $arrTime[0]) . '.' . $arrTime[1], LOG_DEBUG);
+  }
+
+  private function isJson($string) {
+    $json = json_decode($string);
+    return $json && $string != $json;
   }
 }
