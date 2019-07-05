@@ -1550,7 +1550,12 @@ class HistoriesController extends AppController
         [
           'type' => 'INNER',
           'table' => '(SELECT * FROM t_history_chat_logs ' .
-            ' WHERE (m_users_id IS NOT NULL OR message_type = 5 OR (message_type >= 21 AND message_type <= 27) 
+            ' WHERE (m_users_id IS NOT NULL 
+            OR message_type = 5  
+            OR message_type = 21
+            OR message_type = 22
+            OR message_type = 23
+            OR message_type = 27
             OR message_type = 40
             OR message_type = 41
             OR message_type = 42
@@ -1602,7 +1607,6 @@ class HistoriesController extends AppController
             || strcmp($val['THistoryChatLog']['message_type'], "21") === 0
             || strcmp($val['THistoryChatLog']['message_type'], "22") === 0
             || strcmp($val['THistoryChatLog']['message_type'], "23") === 0
-            || strcmp($val['THistoryChatLog']['message_type'], "24") === 0
             || strcmp($val['THistoryChatLog']['message_type'], "27") === 0
             || strcmp($val['THistoryChatLog']['message_type'], "40") === 0
             || strcmp($val['THistoryChatLog']['message_type'], "41") === 0
