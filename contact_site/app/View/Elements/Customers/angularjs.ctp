@@ -1785,7 +1785,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.height = 'auto';
         div.style.padding = '0';
         li.className = cn;
-        content = $scope.createTextOfCheckbox(message);
+        if (isJSON(message)) {
+          content = $scope.createTextOfCheckbox(message);
+        } else {
+          content = $scope.createTextOfMessage(chat, message, {radio: false});
+        };
       } else if ( type === chatApi.messageType.scenario.customer.selection) {
         cn = "sinclo_re";
         div.style.textAlign = 'left';
