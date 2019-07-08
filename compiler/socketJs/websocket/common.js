@@ -8054,6 +8054,9 @@ var socket, // socket.io
           }
           window.sincloInfo.accessTime = json.accessTime;
           common.settingLoader.isDataReceived = true;
+          common.widgetHandler.clearShownFlg();
+          storage.l.unset('widgetMaximized');
+          storage.l.unset('widetOpen');
         } else {
           clearTimeout(timer);
         }
