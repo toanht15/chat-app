@@ -873,6 +873,18 @@ class HistoriesController extends AppController
           } else {
             $message = $val['THistoryChatLog']['message'];
           }
+        } else if ($val['THistoryChatLog']['message_type'] == 19) {
+          $json = json_decode($val['THistoryChatLog']['message'], true);
+          if (isset($json['downloadUrl']) && isset($json['comment'])) {
+            $message = "＜コメント＞" . "\n" . $json['comment'] . "\n" . $json['downloadUrl'];
+          } else {
+            if (isset($json['canceled']) && isset($json['message']) && $json['canceled']) {
+              $message = "（" . $json['message'] . "）";
+            }
+          }
+        } else if ($val['THistoryChatLog']['message_type'] == 27) {
+          $json = json_decode($val['THistoryChatLog']['message'], true);
+          $message = $json['fileName'] . "\n" . $this->prettyByte2Str($json['fileSize']);
         } else {
           $message = $val['THistoryChatLog']['message'];
         }
@@ -916,6 +928,9 @@ class HistoriesController extends AppController
         case 13: // 訪問者（シナリオ：選択肢回答）
           $row = $this->_setData($date, "訪問者（選択肢回答）", "", $message);
           break;
+        case 19: // シナリオメッセージ（ファイル受信）
+          $row = $this->_setData($date, "シナリオメッセージ（ファイル受信）", $this->userInfo['MCompany']['company_name'], $message);
+          break;
         case 21: // シナリオメッセージ（テキスト発言）
           $row = $this->_setData($date, "シナリオメッセージ（テキスト発言）", $this->userInfo['MCompany']['company_name'],
             $message);
@@ -927,6 +942,10 @@ class HistoriesController extends AppController
           break;
         case 23: // シナリオメッセージ（選択肢）
           $row = $this->_setData($date, "シナリオメッセージ（選択肢）", $this->userInfo['MCompany']['company_name'],
+            $message);
+          break;
+        case 27: // シナリオメッセージ（ファイル送信）
+          $row = $this->_setData($date, "シナリオメッセージ（ファイル送信）", $this->userInfo['MCompany']['company_name'],
             $message);
           break;
         case 36: // 訪問者（シナリオ：ヒアリング再回答）text

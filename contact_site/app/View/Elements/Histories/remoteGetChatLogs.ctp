@@ -171,7 +171,6 @@ $(function(){
     else if ( strcmp($val['THistoryChatLog']['message_type'], 19) === 0 ) {
       if(!json_decode($val['THistoryChatLog']['message'])) {
         $className = "sinclo_re";
-        $name = "シナリオメッセージ（ファイル受信）";
         $id = $val['THistoryChatLog']['id'];
         $historyId = $val['THistoryChatLog']['t_histories_id'];
         $deleteMessage = $val['THistoryChatLog']['message'];
@@ -184,7 +183,6 @@ $(function(){
         $imgTag = false;
       } else {
         $className = "sinclo_re";
-        $name = "シナリオメッセージ（ファイル受信）";
         $id = $val['THistoryChatLog']['id'];
         $historyId = $val['THistoryChatLog']['t_histories_id'];
         $deleteMessage = "＜コメント＞".json_decode($val['THistoryChatLog']['message'])->comment;
