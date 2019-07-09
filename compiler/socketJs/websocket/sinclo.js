@@ -13395,7 +13395,6 @@
           var self = sinclo.diagramApi;
           var cells = self.storage.get(self.storage._lKey.diagrams,
               Number(did));
-          debugger;
           var target = cells[nid].attrs.nodeBasicInfo.nodeType;
           return self.messageType.message[target];
         },
@@ -13962,6 +13961,9 @@
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui:active {background-color: ' +
                 settings.buttonUIActiveColor + '}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:hover {background-color: ' +
+                settings.buttonUIActiveColor + '}';
 
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui.selected {background-color: ' +
@@ -13984,6 +13986,10 @@
                 ' button.sinclo-button-ui:focus {outline: none}';
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui:active {background-color: ' +
+                sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
+                '}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:hover {background-color: ' +
                 sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
                 '}';
             style += '#sincloBox ul#chatTalk ' + id +
