@@ -841,6 +841,18 @@ class ChatHistoriesController extends AppController
             $row['transmissionKind'] = '訪問者（選択肢回答）';
             $row['transmissionPerson'] = '';
           }
+          if ($val['THistoryChatLog']['message_type'] == 19) {
+            $row['transmissionKind'] = 'シナリオメッセージ（ファイル受信）';
+            $row['transmissionPerson'] = "";
+            $json = json_decode($val['THistoryChatLog']['message'], true);
+            if (isset($json['downloadUrl']) && isset($json['comment'])) {
+              $val['THistoryChatLog']['message'] = "＜コメント＞" . "\n" . $json['comment'] . "\n" . $json['downloadUrl'];
+            } else {
+              if (isset($json['canceled']) && isset($json['message']) && $json['canceled']) {
+                $val['THistoryChatLog']['message'] = "（" . $json['message'] . "）";
+              }
+            }
+          }
           if ($val['THistoryChatLog']['message_type'] == 21) {
             $row['transmissionKind'] = 'シナリオメッセージ（テキスト発言）';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
