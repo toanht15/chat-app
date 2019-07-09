@@ -11770,8 +11770,10 @@
             case '3': // ラジオボタン
             case '4': // プルダウン
             case '5': // カレンダー
-            case '6':
-            case '7':
+            case '6': // カルーセル
+            case '7': // コンファーム
+            case '8': // ボタン
+            case '9': // チェックボックス
               if (!required) {
                 sinclo.chatApi.showMiniMessageArea();
                 sinclo.displayTextarea(true, true);
