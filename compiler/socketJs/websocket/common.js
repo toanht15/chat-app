@@ -7735,15 +7735,16 @@ var socket, // socket.io
     if (window.sincloInfo.contract.enableRealtimeMonitor) {
       socket.connect().then(function() {
         console.log('WS connected');
+        common.handleInit();
       });
+    } else {
+      common.handleInit();
     }
 
     // 接続時
     socket.on('connect', function() {
 
     }); // socket-on: connect
-
-    common.handleInit();
 
     socket.on('changeTabId', function(d) {
       var obj = common.jParse(d);
