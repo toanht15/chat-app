@@ -174,10 +174,10 @@
           }
           if ((check.smartphone() &&
               Number(window.sincloInfo.widget.spWidgetViewPattern) === 3 &&
-              $('#minimizeBtn').is(':hidden') &&
+              $('#fw-minimize-btn').is(':hidden') &&
               Number(window.sincloInfo.widget.closeButtonSetting) === 2 &&
               Number(window.sincloInfo.widget.closeButtonModeType) === 1) ||
-              ($('#minimizeBtn').is(':hidden') &&
+              ($('#fw-minimize-btn').is(':hidden') &&
                   check.hasCustomBannerImageSetting())) {
             console.log(
                 '<><><><><><><><><><>スマホ用隠しパラメータ、即バナー<><><><><><><><><><><>');
@@ -3484,11 +3484,11 @@
             radio: 33,
             pulldown: 34,
             calendar: 35,
-            carousel: 43,
             reInputText: 36,
             reInputRadio: 37,
             reInputPulldown: 38,
             reInputCalendar: 39,
+            carousel: 43,
             reInputCarousel: 44,
             button: 47,
             reInputButton: 48,
@@ -7918,12 +7918,10 @@
               css('display', 'block').
               html('通信が切断されました。<br>こちらをタップすると再接続します。').
               on('click', function() {
-                var result = common.reconnectManual();
-                if (result) {
-                  $('sinclo-chat-alert').css('display', 'none');
-                  sinclo.chatApi.initEvent();
-                  sinclo.chatApi.sendErrCatchFlg = false;
-                }
+                $('sinclo-chat-alert').css('display', 'none');
+                $('sinclo-chat').children().remove();
+                common.handleInit();
+                sinclo.chatApi.sendErrCatchFlg = false;
               });
           sinclo.chatApi.sendErrCatchFlg = true;
           sinclo.chatApi.removeAllEvent();
@@ -7945,11 +7943,9 @@
                 css('display', 'block').
                 html('クリックして再接続').
                 on('click', function() {
-                  var result = common.reconnectManual();
-                  if (result) {
-                    $('sinclo-chat-alert').css('display', 'none');
-                    sinclo.chatApi.initEvent();
-                  }
+                  $('sinclo-chat-alert').css('display', 'none');
+                  $('sinclo-chat').children().remove();
+                  common.handleInit();
                 });
             sinclo.chatApi.removeAllEvent();
           }, 90 * 60 * 1000);
@@ -9128,7 +9124,7 @@
                 emit('getScenario', {'scenarioId': scenarioId});
               });
             } else {
-
+              emit('getScenario', {'scenarioId': scenarioId});
             }
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
@@ -11916,8 +11912,10 @@
             case '3': // ラジオボタン
             case '4': // プルダウン
             case '5': // カレンダー
-            case '6':
-            case '7':
+            case '6': // カルーセル
+            case '7': // コンファーム
+            case '8': // ボタン
+            case '9': // チェックボックス
               if (!required) {
                 sinclo.chatApi.showMiniMessageArea();
                 sinclo.displayTextarea(true, true);
@@ -14108,6 +14106,9 @@
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui:active {background-color: ' +
                 settings.buttonUIActiveColor + '}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:hover {background-color: ' +
+                settings.buttonUIActiveColor + '}';
 
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui.selected {background-color: ' +
@@ -14130,6 +14131,10 @@
                 ' button.sinclo-button-ui:focus {outline: none}';
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui:active {background-color: ' +
+                sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
+                '}';
+            style += '#sincloBox ul#chatTalk ' + id +
+                ' button.sinclo-button-ui:hover {background-color: ' +
                 sinclo.chatApi.getRawColor(sincloInfo.widget.mainColor, 0.5) +
                 '}';
             style += '#sincloBox ul#chatTalk ' + id +
