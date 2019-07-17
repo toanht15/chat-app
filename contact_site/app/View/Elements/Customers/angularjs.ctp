@@ -2611,9 +2611,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           clearTimeout($scope.pollingModeIntervalTimer);
         }
         var pollingIntervalMSec = <?= C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC ?>;
-        if ("<?=$siteKey?>" === "5cf78e0eb1dd7") {
-          pollingIntervalMSec = 20000;
-        }
         $scope.pollingModeIntervalTimer = setTimeout(function(e){
           emit('getCustomerList',{}, function(obj){
             <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
