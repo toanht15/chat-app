@@ -2656,6 +2656,7 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle .checkmark {top: 14px;left: 12px; }';
           html += '#sincloBox ul#chatTalk li .sinclo-checkbox.buttonStyle {padding: 12px 12px 12px 56px;}';
           html += '#sincloBox ul#chatTalk li span.ok-button {width: 125px; height: 40px; line-height: 40px; margin-top: 15px; border-radius: 20px;}';
+
           var cRatio = 2.5;
           html += '#sincloBox ul#chatTalk li.carousel_msg {' +
               'padding: ' + 10 * cRatio + 'px ' + 40 * cRatio + 'px;' +
@@ -2665,8 +2666,7 @@ var socket, // socket.io
               'padding: ' + 10 * cRatio + 'px ' + 40 * cRatio + 'px; ' +
               '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
               'margin-left: 0; ' +
-              '}' ;
-
+              '}';
 
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
@@ -6167,7 +6167,9 @@ var socket, // socket.io
               return sinclo.connect().then(function (data) {
                 var obj = common.jParse(data);
                 var settingExists = check.isset(common.settingLoader.get());
-                obj.sincloSessionIdIsNew = !(!common.settingLoader.isDataReceived && settingExists);
+                if(obj.sincloSessionIdIsNew) {
+                  obj.sincloSessionIdIsNew = !(!common.settingLoader.isDataReceived && settingExists);
+                }
                 return sinclo.accessInfo(JSON.stringify(obj));
               });
             }).then(function(connectSuccessData) {
@@ -8007,8 +8009,37 @@ var socket, // socket.io
     }
   }
 
-  var settings = common.settingLoader.get();
-  var widgetSitekey = common.settingLoader.getWidgetSiteKey();
+  // ターゲットの企業ID以外の設定があれば削除する
+  var  widgetSitekey = '';
+  var myTag = document.querySelector(
+      'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
+
+  if (myTag.getAttribute('data-another-widget-key')) {
+    widgetSitekey = myTag.getAttribute('data-another-widget-key');
+  }
+
+  var keys = storage.s.findKeyLike('scl_settings_');
+  if (keys.length > 0) {
+    for (var i = 0; i < keys.length; i++) {
+      if (widgetSitekey == '') {
+        if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key) {
+          storage.s.unset(keys[i]);
+        }
+      } else {
+        if (keys[i] !== 'scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey) {
+          storage.s.unset(keys[i]);
+        }
+      }
+    }
+  }
+
+  if (widgetSitekey == '') {
+    var settings = JSON.parse(
+        storage.s.get('scl_settings_' + window.sincloInfo.site.key));
+  } else {
+    var settings = JSON.parse(
+        storage.s.get('scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey));
+  }
 
   if (check.isset(settings)) {
     console.log('<><><><><><><><>< NOT MODIFIED ><><><><><><><><><>');
@@ -8053,8 +8084,12 @@ var socket, // socket.io
           } else {
             storage.s.set('scl_settings_' + window.sincloInfo.site.key + '_' + widgetSitekey, JSON.stringify(json));
           }
+
           window.sincloInfo.accessTime = json.accessTime;
           common.settingLoader.isDataReceived = true;
+          common.widgetHandler.clearShownFlg();
+          storage.l.unset('widgetMaximized');
+          storage.l.unset('widetOpen');
         } else {
           clearTimeout(timer);
         }
@@ -8243,7 +8278,17 @@ function link(word, link, eventLabel) {
       common.callGA(eventLabel, link, 1);
     }
   }
+  if (socket && !socket.isConnected()) {
+          socket.connect().then(function() {
+            return sinclo.executeConnectSuccess(
+                window.userInfo.connectSuccessData,
+                window.userInfo.accessInfoData);
+          }).then(sinclo.setHistoryId).then(function() {
   socket.emit('link', data);
+          });
+        } else {
+  socket.emit('link', data);
+        }
 }
 
 // get type
