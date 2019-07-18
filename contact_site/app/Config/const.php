@@ -1426,3 +1426,20 @@ $config['businessModelType'] = array(
   C_FREE_B_TO_C => "BtoC",
   C_FREE_BOTH => "どちらも"
 );
+
+// 連番
+define('C_INQUIRY_NUMBER', 0);
+// これまでのチャット履歴
+define('C_PREV_CHAT_HISTORY', 1);
+
+/* システム変数 */
+$config['systemVariables'] = array(
+  C_INQUIRY_NUMBER => array(
+    'name' => 'INQUIRY_NUMBER',
+    'description' => 'INQUIRY_NUMBER INQUIRY_NUMBER INQUIRY_NUMBER INQUIRY_NUMBER INQUIRY_NUMBER'
+  ),
+  C_PREV_CHAT_HISTORY => array(
+    'name' => 'PREV_CHAT_HISTORY',
+    'description' => 'CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY'
+  )
+);
