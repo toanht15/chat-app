@@ -13714,6 +13714,10 @@
             cs += ' customWidth';
           }
 
+          if (Number(currentNode.attrs.actionParam.btnType) == 2) {
+            li.style.width = '95%';
+          }
+
           li.className = cs;
           li.innerHTML = messageHtml + buttonHtml.html;
 
