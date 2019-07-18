@@ -3258,14 +3258,12 @@
         widgetBodyHeight = window.innerHeight -
             (widgetHeaderHeight + widgetFotterHeight);
       }
-      console.log('チャットエリアの高さは' + widgetBodyHeight + 'px');
       return widgetBodyHeight;
     },
     adjustSpWidgetSize: function() {
       if (check.smartphone()) {
         var expansionRatio = document.body.clientWidth / window.innerWidth;
         if ($('#flexBoxWrap').is(':visible')) {
-          console.log('<><><><>adjustSpWidgetSizeのdisplaytextareaが作動<><><><>');
           // 縦の場合
           // 最大化以外の場合とfocus中の場合は操作しない
           if (sinclo.chatApi.spFocusFlg) return;
@@ -3273,7 +3271,7 @@
           var widgetWidth = 0,
               ratio = 0;
           if (common.isPortrait() && $(window).height() > $(window).width()) {
-            widgetWidth = $(window).width();
+            widgetWidth = common.getPageWidth();
             ratio = widgetWidth * (1 / 285);
             if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
               var fullHeight = sinclo.calcSpWidgetHeight();
@@ -3285,7 +3283,7 @@
               }
             } else {
               //余白ありの場合
-              widgetWidth = $(window).width() - 20;
+              widgetWidth = common.getPageWidth() - 20;
               ratio = widgetWidth * (1 / 285);
               var chatTalkHeight = (194 * ratio) + (60 * ratio);
               if ($('#flexBoxWrap').is(':visible')) {
@@ -3315,15 +3313,12 @@
           }
         } else {
           if (check.smartphone()) {
-            console.log('<><><><>adjustSpWidgetSizeのhidetextareaが作動<><><><>');
             if (expansionRatio > 1 || expansionRatio < 0.95) return;
             // 縦の場合
             var widgetWidth = 0,
                 ratio = 0;
             $('#flexBoxWrap').css('display', 'none');
             if (common.isPortrait() && $(window).height() > $(window).width()) {
-              console.log('ratio : ' + ratio);
-
               if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
                 var fullHeight = sinclo.calcSpWidgetHeight();
                 $('#chatTalk').outerHeight(fullHeight);
@@ -3332,7 +3327,7 @@
                 }
                 //余白ありの場合
               } else {
-                widgetWidth = $(window).width() - 20;
+                widgetWidth = common.getPageWidth() - 20;
                 ratio = widgetWidth * (1 / 285);
                 document.getElementById('chatTalk').style.height = (194 *
                     ratio) + (60 * ratio) + 'px';
@@ -4778,7 +4773,7 @@
         if (check.isJSON(obj.message) && obj.message.indexOf('separator') !==
             -1) {
           // checkbox message
-          widgetWidth = $(window).width();
+          widgetWidth = common.getPageWidth();
           ratio       = check.smartphone() ? widgetWidth * (1 / 285) : 1;
           var checkboxData = JSON.parse(obj.message);
           var array = checkboxData.message.split(checkboxData.separator);
@@ -5433,7 +5428,7 @@
         var ratio = 1;
         if (check.smartphone()) {
           if (common.isPortrait()) {
-            widgetWidth = $(window).width();
+            widgetWidth = common.getPageWidth();
             ratio = widgetWidth * (1 / 285);
           } else {
             ratio = 2.5;
@@ -5757,7 +5752,7 @@
               ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
         } else {
           if (check.smartphone()) {
-            widgetWidth = $(window).width();
+            widgetWidth = common.getPageWidth();
             ratio       = widgetWidth * (1 / 285);
 
             style += '#sincloBox ul#chatTalk #' + name +
@@ -5881,7 +5876,7 @@
             '#carousel-container' + index);
         var carouselSize = sinclo.chatApi.getCarouselSize(settings);
         if (check.smartphone()) {
-          widgetWidth = $(window).width();
+          widgetWidth = common.getPageWidth();
           ratio       = widgetWidth * (1 / 285);
           var tmp = 0;
           switch (Number(sincloInfo.widget.widgetSizeType)) {
@@ -6279,7 +6274,7 @@
         if (check.smartphone()) {
           if (common.isPortrait()) {
             // portrait
-            widgetWidth = $(window).width();
+            widgetWidth = common.getPageWidth();
             ratio = widgetWidth * (1 / 285);
             var right = arrowPosition.right > 0 ? (arrowPosition.right * 2) * ratio : (arrowPosition.right / 1.72) * ratio;
           } else {
@@ -7538,7 +7533,7 @@
             var paddingBottom = parseFloat(
                 $('#chatTalk sinclo-typing').css('padding-bottom'));
             if (check.smartphone()) {
-              ratio = $(window).width() * (1 / 285);
+              ratio = common.getPageWidth() * (1 / 285);
               paddingBottom = paddingBottom + (10 * ratio);
             }
             if (chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
@@ -7580,7 +7575,7 @@
               $('#chatTalk sinclo-typing').css('padding-bottom'));
           var ratio = 1;
           if (check.smartphone()) {
-            ratio = $(window).width() * (1 / 285);
+            ratio = common.getPageWidth() * (1 / 285);
             paddingBottom = paddingBottom + (10 * ratio);
           }
           if (chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
@@ -13899,7 +13894,7 @@
                 ' sinclo-radio [type="radio"] + label {background-color: transparent;}';
           } else {
             if (check.smartphone()) {
-              var widgetWidth = $(window).width() - 20;
+              var widgetWidth = common.getPageWidth() - 20;
               var ratio = widgetWidth * (1 / 285);
               style += '#sincloBox ul#chatTalk #' + name +
                   ' sinclo-radio {padding: ' + (8 * ratio) + 'px;}';
@@ -13922,7 +13917,7 @@
         createButtonUIStyle: function(settings, id) {
           var style = '<style>';
           if (check.smartphone()) {
-            var widgetWidth = $(window).width() - 20;
+            var widgetWidth = common.getPageWidth() - 20;
             var ratio = widgetWidth * (1 / 285);
             style += '#sincloBox ul#chatTalk ' + id +
                 ' button.sinclo-button-ui {cursor: pointer; min-height: ' +

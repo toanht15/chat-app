@@ -524,7 +524,7 @@ var socket, // socket.io
         case 4: //最大、だが幅以外の値はwidgethandlerで計算する（要素表示、現状設定の兼ね合い）
           var sizeArray = {
             boxHeight: 632,
-            boxWidth: $(window).width(),
+            boxWidth: common.getPageWidth(),
             widgetTitlePadding: 7,
             widgetTitleHeight: 32,
             widgetTitleTop: 6,
@@ -1783,9 +1783,9 @@ var socket, // socket.io
       if (check.smartphone()) {
         // TODO 関数化
         if (widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width();
+          widgetWidth = common.getPageWidth();
         } else {
-          widgetWidth = $(window).width() - 20;
+          widgetWidth = common.getPageWidth() - 20;
         }
         ratio = widgetWidth * (1 / 285);
 
@@ -1805,7 +1805,7 @@ var socket, // socket.io
         /* 縦の場合 */
         if (this.isPortrait()) {
           if (widget.spMaximizeSizeType === 2) {
-            html += '#sincloBox { width: ' + ($(window).width()) +
+            html += '#sincloBox { width: ' + (common.getPageWidth()) +
                 'px; right: 0px; left: 0px; }';
           } else {
             html += '#sincloBox { width: ' + widgetWidth + 'px; }';
@@ -4218,7 +4218,7 @@ var socket, // socket.io
     },
     //バナーを生成する関数
     sincloBannerTemplate: function(widget) {
-      var widgetWidth = $(window).width() - 20;
+      var widgetWidth = common.getPageWidth() - 20;
       var ratio = widgetWidth * (1 / 285);
       if (check.smartphone()) {
         if (common.isPortrait()) {
@@ -4287,7 +4287,7 @@ var socket, // socket.io
             (Number(widget.showMainImage) === 1 || widget.mainImage !== '')) {
           var ratio = 1;
           if (check.smartphone()) {
-            ratio = ($(window).width() - 20) * (1 / 285);
+            ratio = (common.getPageWidth() - 20) * (1 / 285);
           }
           html += '  <span id="mainImage" onclick="sinclo.operatorInfo.toggle()">';
           if (check.smartphone()) {
@@ -4952,7 +4952,7 @@ var socket, // socket.io
             $('#sincloAccessInfo').outerHeight();
         $('#chatTalk').css('height', $(window).height() - offset);
         $('#sincloWidgetBox').animate({
-          width: $(window).width() + 'px'
+          width: common.getPageWidth() + 'px'
         }, 400);
       },
       _widgetFitForWindow: function() {
@@ -4970,7 +4970,7 @@ var socket, // socket.io
           $('#sincloWidgetBox').css('width', '400px');
           return;
         }
-        $('#sincloWidgetBox').css('width', $(window).width() + 'px');
+        $('#sincloWidgetBox').css('width', common.getPageWidth() + 'px');
         $('#chatTab').css('width', '100%');
       },
       _setMaxWidthForCustom: function() {
@@ -5662,7 +5662,7 @@ var socket, // socket.io
       var loadDotSize = fontSize * 0.8;
       var heightWeight = widget.widgetSizeType - 3;
       var html = '';
-      var widgetWidth = $(window).width();
+      var widgetWidth = common.getPageWidth();
       var ratio       = check.smartphone() ? widgetWidth * (1 / 285) : 1;
       html += '<div class=\'botNowDiv\'>';
       //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
@@ -5809,9 +5809,9 @@ var socket, // socket.io
       if (check.smartphone()) {
         var widgetWidth;
         if (sincloInfo.widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width();
+          widgetWidth = common.getPageWidth();
         } else {
-          widgetWidth = $(window).width() - 20;
+          widgetWidth = common.getPageWidth() - 20;
         }
         var coverWidth = widgetWidth;
       } else {
@@ -5869,6 +5869,9 @@ var socket, // socket.io
     },
     waitDelayTimer: function() {
       return 20;
+    },
+    getPageWidth: function() {
+      return $(window).width() < $(document).width() ? $(document).width() : $(window).width();
     },
     stringReplaceProcessForGA: function(link) {
       console.log('GA連携用に電話番号とメールアドレスの修正を行います');
