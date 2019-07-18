@@ -548,6 +548,12 @@ function openChatById(id) {
       }
       $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
 
+      if(customerData.achievementType !== null) {
+        $('#achievementDetail').val(customerData.achievementType);
+      } else {
+        $('#achievementDetail').val('-');
+      }
+
       for(var i=0; i < customerInfoSettings.length; i++) {
         if(customerData.informations && customerData.informations[customerInfoSettings[i].item_name]) {
           $('#ng-customer-custom-'+customerInfoSettings[i].id).get(0).value = customerData.informations[customerInfoSettings[i].item_name];

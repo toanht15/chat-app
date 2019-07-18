@@ -49,7 +49,7 @@
             </select>
           </div>
           <div class='area-message' >
-            <resize-textarea class="variable-suggest" ng-class="{disabledArea: hearingItem.settings.balloonStyle === '2'}" maxlength="4000" ng-model="hearingItem.message" rows="1"
+            <resize-textarea class="variable-suggest system-variable-suggest" ng-class="{disabledArea: hearingItem.settings.balloonStyle === '2'}" maxlength="4000" ng-model="hearingItem.message" rows="1"
                              data-maxRow="10" ></resize-textarea>
           </div>
           <div class='area-btn'>

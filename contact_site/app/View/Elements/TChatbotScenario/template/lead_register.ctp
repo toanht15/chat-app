@@ -11,7 +11,7 @@
     <li class="styleFlexbox">
       <div class="fb15em"><label class="require">リードリスト名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="リードリスト名を設定します。">?</icon></span></div>
       <div ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>">
-        <input type="text" class="variable-suggest" ng-model="setItem.leadTitleLabel">
+        <input type="text" class="variable-suggest system-variable-suggest" ng-model="setItem.leadTitleLabel">
       </div>
       <select ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>" style="padding: 0px; flex-grow: 0;" ng-model="setItem.tLeadListSettingId" ng-init="setItem.tLeadListSettingId" ng-options="item.id as item.name for item in main.leadList" ng-change="main.handleLeadInfo(setItem.tLeadListSettingId, setActionId); main.controllLeadRegister(setActionId)">
         <option value="">リストを選択してください</option>
@@ -30,7 +30,7 @@
             <div class="area-drag-symbol handleOption" style="cursor: move;">
               <i class="fas fa-arrows-alt-v fa-2x"></i>
             </div>
-            <div class='area-name'><input type="text" class="make-box variable-suggest" ng-model="item.leadLabelName"></div>
+            <div class='area-name'><input type="text" class="make-box variable-suggest system-variable-suggest" ng-model="item.leadLabelName"></div>
             <div class='area-name'>
               <select ng-model="item.leadVariableName" class="make-box">
                 <option value="">選択してください</option>

@@ -47,6 +47,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected $campaigns;
   protected $landscapeData;
   protected $customerInfo;
+  protected $inquiryNumber;
 
   private $autoMessageBlock;
 
@@ -62,13 +63,14 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
 
   }
 
-  public function setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array()) {
+  public function setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array(), $inquiryNumber = 1) {
     $this->templateId = $templateId;
     $this->chatLogs = $chatLogs;
     $this->stayLog = $stayLog;
     $this->campaigns = $campaigns;
     $this->landscapeData = $landscapeData;
     $this->customerInfo = $customerInfo;
+    $this->inquiryNumber = $inquiryNumber;
   }
 
   public function createMessageBody() {

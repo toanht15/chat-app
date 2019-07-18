@@ -13,6 +13,7 @@ class MailSenderComponent extends Component
 {
   const MAIL_SYSTEM_FROM_ADDRESS = 'no-reply@sinclo.jp';
   const MAIL_FORMAT = 'text';
+  const MAIL_DEFAULT_FROM_ADDRESS = 'test@example.com';
 
   private $companiesId;
 

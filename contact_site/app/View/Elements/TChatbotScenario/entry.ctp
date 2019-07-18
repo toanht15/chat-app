@@ -214,6 +214,7 @@
     </div>
     <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">
       <s ng-if="setActionList.length > 0" style="display:block; margin-top: 8px;">※テキストボックス内で「@（アットマーク）」を入力すると、変数の一覧が表示されます。</s>
+      <s ng-if="setActionList.length > 0" style="display:block; margin-top: 8px;">※テキストボックス内で「$（ドルマーク）」を入力すると、システム変数の一覧が表示されます。</s>
       <!-- アクション設定一覧 -->
       <li ng-repeat="(setActionId, setItem) in setActionList" ng-model="setItem" id="action{{setActionId}}_setting" class="set_action_item" validate-action ng-focus="main.setFocusActionIndex(setActionId)">
         <h4 class="handle"><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}} <i class="error errorBtn" ng-if="!setItem.$valid"></i></a></h4>
