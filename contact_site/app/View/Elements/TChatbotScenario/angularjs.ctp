@@ -467,6 +467,11 @@
           if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
             item.default.hearings[0] = this.setDefaultColorHearing(item.default.hearings[0]);
           }
+
+          if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+            item.default.fromAddress = 'no-reply@sinclo.jp'
+          }
+
           if (isAppendAtLast) {
             $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
           } else {
