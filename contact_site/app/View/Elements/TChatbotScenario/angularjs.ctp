@@ -925,6 +925,13 @@
               suffix: '',
               limit: 1000
             });
+
+            $('.system-variable-suggest').on("hidden.atwho", function(event) {
+              $('.explainTooltip').find('icon-annotation').css('display', 'none');
+              $('.explainTooltip').find('icon-annotation').removeClass('arrow');
+              $('.explainTooltip').find('ul').css('top', '0px');
+              $('.explainTooltip').find('ul').css('bottom', 'auto');
+            });
           });
           if (typeof newObject === 'undefined') return;
           // 編集されたことを検知する
@@ -3363,9 +3370,8 @@
       $('.explainTooltip').find('ul').css('top', '0px');
       $('.explainTooltip').find('ul').css('bottom', 'auto');
     });
-
-    $(document).off('mouseenter', '.systemVar').on('mouseenter', '.systemVar', function(event) {
-      /**拡大率によって表示が崩れないよう、拡大率を取得し、表示の調整*********/
+    // handle system variables description
+    $(document).off('addcur', '.systemVar').on('addcur', '.systemVar', function(event) {
       var per_expand = window.innerHeight / 974;
       if (per_expand < 1) {
         per_expand = 1;
@@ -3383,7 +3389,6 @@
         top: $(this).offset().top - 45 - 15 * per_expand + 'px',
         left: $(this).offset().left - targetWidth * 1.2 + 'px'
       });
-      //画面の拡大率を取得(どのような状況でもしっかり処理を行えるよう
 
       // 表示サイズ調整
       var targetWidth = $(this).data('tooltip-width');
@@ -3392,7 +3397,9 @@
       } else {
         targetObj.find('icon-annotation').css('width', '18em');
       }
-    }).off('mouseleave', '.systemVar').on('mouseleave', '.systemVar', function(event) {
+    });
+
+    $(document).off('removecur', '.systemVar').on('addcur', '.removecur', function(event) {
       $('.explainTooltip').find('icon-annotation').css('display', 'none');
       $('.explainTooltip').find('icon-annotation').removeClass('arrow');
       $('.explainTooltip').find('ul').css('top', '0px');

@@ -966,13 +966,13 @@ View = (function() {
         if ($cur.hasClass('cur')) {
           return;
         }
-        $menu.find('.cur').removeClass('cur');
-        return $cur.addClass('cur');
+        $menu.find('.cur').removeClass('cur').trigger('removecur');
+        return $cur.addClass('cur').trigger('addcur');
       };
     })(this)).on('click.atwho-view', 'li', (function(_this) {
       return function(e) {
-        $menu.find('.cur').removeClass('cur');
-        $(e.currentTarget).addClass('cur');
+        $menu.find('.cur').removeClass('cur').trigger('removecur');
+        $(e.currentTarget).addClass('cur').trigger('addcur');
         _this.choose(e);
         return e.preventDefault();
       };
@@ -1023,12 +1023,12 @@ View = (function() {
 
   View.prototype.next = function() {
     var cur, next, nextEl, offset;
-    cur = this.$el.find('.cur').removeClass('cur');
+    cur = this.$el.find('.cur').removeClass('cur').trigger('removecur');
     next = cur.next();
     if (!next.length) {
       next = this.$el.find('li:first');
     }
-    next.addClass('cur');
+    next.addClass('cur').trigger('addcur');
     nextEl = next[0];
     offset = nextEl.offsetTop + nextEl.offsetHeight + (nextEl.nextSibling ? nextEl.nextSibling.offsetHeight : 0);
     return this.scrollTop(Math.max(0, offset - this.$el.height()));
@@ -1036,12 +1036,12 @@ View = (function() {
 
   View.prototype.prev = function() {
     var cur, offset, prev, prevEl;
-    cur = this.$el.find('.cur').removeClass('cur');
+    cur = this.$el.find('.cur').removeClass('cur').trigger('removecur');
     prev = cur.prev();
     if (!prev.length) {
       prev = this.$el.find('li:last');
     }
-    prev.addClass('cur');
+    prev.addClass('cur').trigger('addcur');
     prevEl = prev[0];
     offset = prevEl.offsetTop + prevEl.offsetHeight + (prevEl.nextSibling ? prevEl.nextSibling.offsetHeight : 0);
     return this.scrollTop(Math.max(0, offset - this.$el.height()));
@@ -1115,7 +1115,7 @@ View = (function() {
     }
     this.show();
     if (this.context.getOpt('highlightFirst')) {
-      return $ul.find("li:first").addClass("cur");
+      return $ul.find("li:first").addClass("cur").trigger('addcur');
     }
   };
 
