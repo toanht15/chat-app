@@ -29,7 +29,7 @@ class TCustomerInformationSettingsController extends AppController {
    * @return void
    * */
   public function index() {
-    Configure::write('debug', 2);
+    Configure::write('debug', 0);
     //DB作成後復元
     $this->paginate['TCustomerInformationSetting']['conditions']['TCustomerInformationSetting.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TCustomerInformationSetting');
