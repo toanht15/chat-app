@@ -1938,26 +1938,35 @@
         var target;
         var src;
 
-        if (optionType === '3' || optionType === '4' || optionType === '7' || optionType === '8' || optionType === '9') {
-          // ラジオボタン、プルダウン
-          src = $scope.actionList[actionType].default.hearings[0].settings.options;
-          target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
-        } else if (optionIndex === '5') {
-          // カレンダー
-          src = $scope.actionList[actionType].default.hearings[0].settings.specificDateData;
-          target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
-        } else {
-          // カルーセル
-          var imageData = {
-            title: '',
-            subTitle: '',
-            answer: '',
-            url: ''
-          };
-          target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
-          $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = false;
+        switch (Number(optionType)) {
+          case <?= C_SCENARIO_UI_TYPE_RADIO_BUTTON ?>:
+          case <?= C_SCENARIO_UI_TYPE_PULLDOWN ?>:
+          case <?= C_SCENARIO_UI_TYPE_BUTTON ?>:
+          case <?= C_SCENARIO_UI_TYPE_BUTTON_UI ?>:
+          case <?= C_SCENARIO_UI_TYPE_CHECKBOX ?>:
+            src    = $scope.actionList[actionType].default.hearings[0].settings.options;
+            target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
+            break;
+          case <?= C_SCENARIO_UI_TYPE_CALENDAR ?>: // calendar
+            src    = $scope.actionList[actionType].default.hearings[0].settings.specificDateData;
+            target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
+            break;
+          case <?= C_SCENARIO_UI_TYPE_CAROUSEL ?>: //carousel
+            var imageData = {
+              title   : '',
+              subTitle: '',
+              answer  : '',
+              url     : ''
+            };
+            target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
+            $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = false;
+            break;
+          default:
+            break;
         }
-        if (optionType === '6') {
+
+        if (Number(optionType) === <?= C_SCENARIO_UI_TYPE_CAROUSEL ?>) {
+          // carousel
           target.splice(optionIndex + 1, 0, imageData);
         } else {
           target.splice(optionIndex + 1, 0, '');
@@ -1971,7 +1980,7 @@
         }).then(function() {
           var targetElmList = $('.action' + actionStep + '_option' + listIndex);
           self.controllListView(actionType, targetElmList, target);
-          if (optionType === '5') {
+          if (Number(optionType) === <?= C_SCENARIO_UI_TYPE_CALENDAR ?>) {
             // add datepicker for new input
             angular.forEach(targetElmList, function(targetElm, index) {
               var el = $(targetElm).find('input');
