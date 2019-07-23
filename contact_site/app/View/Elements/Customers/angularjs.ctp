@@ -2610,6 +2610,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if($scope.pollingModeIntervalTimer) {
           clearTimeout($scope.pollingModeIntervalTimer);
         }
+        var pollingIntervalMSec = <?= C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC ?>;
         $scope.pollingModeIntervalTimer = setTimeout(function(e){
           emit('getCustomerList',{}, function(obj){
             <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
@@ -2623,7 +2624,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             }
             <?php endif; ?>
           });
-        }, <?= C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC ?>);
+        }, pollingIntervalMSec);
       }
     };
 
