@@ -29,7 +29,7 @@ class TCustomVariablesController extends AppController {
    * @return void
    * */
   public function index() {
-  	Configure::write('debug', 2);
+  	Configure::write('debug', 0);
   	$this->paginate['TCustomVariable']['conditions']['TCustomVariable.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TCustomVariable');
     $this->set('tCustomVariableList', $data);
