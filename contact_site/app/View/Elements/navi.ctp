@@ -103,7 +103,13 @@ if( strtolower($iconMainColor) === "#b2d251") {
 
 <!-- /* サイドバー１（ここから） */ -->
 <div id="sidebar-main">
-    <div class="submenulist">
+  <?php if(!$coreSettings[C_COMPANY_WIDGET_SETTING_ONLY]) {
+    $display = 'block';
+  } else {
+    $display = 'none';
+  }
+  ?>
+  <div class="submenulist" style="display: <?= $display ?>;">
         <div class="icon <?=$monitorSelected?>">
           <?php
           $homeTitle = 'ﾘｱﾙﾀｲﾑﾓﾆﾀ';

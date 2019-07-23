@@ -73,4 +73,9 @@ class AppHelper extends Helper {
           ) : '') .
           (isset($e['fragment']) ? "#$e[fragment]" : '');
   }
+
+  function isJson($string) {
+    $json = json_decode($string);
+    return $json && $string != $json;
+  }
 }

@@ -10,6 +10,7 @@ const CustomerInfoManager = require(
 const list = require('./module/company_list');
 const SharedData = require('./module/shared_data');
 const LandscapeAPI = require('./module/landscape');
+const DBConnector = require('./module/class/util/db_connector_util');
 const HistoryManager = require('./module/class/manager/history_manager');
 
 // socket.joinは別途やる
@@ -117,11 +118,13 @@ router.post('/auth/customer', function(req, res, next) {
     send.sincloSessionId = uuid.v4();
     send.sincloSessionIdIsNew = true;
     d.data.firstConnection = true;
-    let history = new HistoryManager();
-    history.incrementAccessCount(list.companyList[d.siteKey],
+    if (!CommonUtil.isset(d.isFirstAccess) || d.isFirstAccess) {
+      let history = new HistoryManager();
+      history.incrementAccessCount(list.companyList[d.siteKey],
         CommonUtil.formatDateParse());
+    }
   } else {
-    send.sincloSessionIdIsnew = false;
+    send.sincloSessionIdIsNew = false;
   }
 
   if (d.data.firstConnection || !CommonUtil.isset(d.data.accessId)) {
@@ -335,8 +338,14 @@ router.post('/auth/info', function(req, res, next) {
       sincloSessionId: obj.sincloSessionId
     };
 
-    // 履歴作成
-    //db.addHistory(obj, socket);
+    // 既に履歴があれば閲覧ページ情報をアップデート
+    if (SharedData.sincloCore[obj.siteKey][obj.tabId].historyId) {
+      let history = new HistoryManager();
+      let latestPrev = CommonUtil.isset(obj.prev) ? obj.prev[obj.prev.length - 1] : {};
+      obj.updatePrev = [latestPrev];
+      history.addHistory(obj);
+    }
+
     // カスタム情報自動登録
     //db.upsertCustomerInfo(obj, socket, function(result) {
     // IPアドレスの取得
@@ -406,8 +415,7 @@ router.post('/auth/info', function(req, res, next) {
           });
         };
 
-        if (CommonUtil.isset(SharedData.company.info[obj.siteKey]) &&
-            Object.keys(SharedData.company.info[obj.siteKey]).length > 0) {
+        if (CommonUtil.isset(obj.customVariables)) {
           let customerApi = new CustomerInfoManager();
           customerApi.upsertCustomerInfo(obj).then(function(result) {
             return customerApi.getInfo(obj.siteKey, obj.userId);
@@ -415,7 +423,6 @@ router.post('/auth/info', function(req, res, next) {
             obj.customerInfo = information;
             afterGetInformationProcess();
           });
-          ;
         } else {
           afterGetInformationProcess();
         }
@@ -425,6 +432,68 @@ router.post('/auth/info', function(req, res, next) {
             e.message);
       }
     });
+  }
+});
+
+router.post('/widget/shown', function(req, res, next) {
+
+  /* Cross-Origin */
+  // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers',
+      'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  /* no-cache */
+  // http://garafu.blogspot.jp/2013/06/ajax.html
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Pragma', 'no-cache');
+
+  var obj = req.body;
+  //ウィジェット件数登録処理
+  if (obj.widget === true) {
+    DBConnector.getPool().
+        query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?',
+        [obj.sincloSessionId || obj.tabId], function(err, results) {
+          if (CommonUtil.isset(err)) {
+            console.log(
+                'RECORD SElECT ERROR: t_history_widget_displays(tab_id):' +
+                err);
+            return false;
+          }
+          //ウィジェットが初めて表示された場合
+          if (Object.keys(results).length === 0) {
+            //tabId登録
+            DBConnector.getPool().query(
+                'INSERT INTO t_history_widget_displays(m_companies_id,tab_id,created) VALUES(?,?,?)',
+                [
+                  list.companyList[obj.siteKey],
+                  obj.sincloSessionId || obj.tabId,
+                  new Date()], function(err, results) {
+                  if (CommonUtil.isset(err)) {
+                    console.log(
+                        'RECORD INSERT ERROR: t_history_widget_displays(tab_id):' +
+                        err);
+                    return false;
+                  }
+                  if (!list.functionManager.isEnabled(obj.siteKey,
+                      list.functionManager.keyList.enableRealtimeMonitor)) {
+                    let historyManager = new HistoryManager();
+                    historyManager.incrementWidgetCount(
+                        list.companyList[obj.siteKey],
+                        CommonUtil.formatDateParse());
+                  }
+                });
+          }
+          res.send({result:true});
+        });
   }
 });
 
