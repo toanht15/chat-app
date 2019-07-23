@@ -1436,10 +1436,13 @@ define('C_PREV_CHAT_HISTORY', 1);
 $config['systemVariables'] = array(
   C_INQUIRY_NUMBER => array(
     'name' => 'INQUIRY_NUMBER',
-    'description' => 'INQUIRY_NUMBER INQUIRY_NUMBER INQUIRY_NUMBER INQUIRY_NUMBER INQUIRY_NUMBER'
+    'description' => 'シナリオ設定ごとに管理された一意の番号（1, 2, 3, … ）を表示します。<br>
+この値は「メール送信」アクションを実行するとサイト訪問者に付与され、シナリオ実行中は付与された連番を利用する事が可能です。<br>
+お問い合わせがあった際の管理番号を付与したい場合などにご利用下さい。'
   ),
   C_PREV_CHAT_HISTORY => array(
     'name' => 'PREV_CHAT_HISTORY',
-    'description' => 'CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY CHAT_HISTORY'
+    'description' => 'この変数を利用する前までに表示したチャットの内容全てを表示します。<br>
+この変数は「メール送信」アクションで「メール本文をカスタマイズする」設定でのメール本文設定内で使用可能です。'
   )
 );
