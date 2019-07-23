@@ -47,10 +47,10 @@
         }
     },
     "categories": {
-        "default": {"appenders":["debug"], "level": "error"},
+        "default": {"appenders":["debug"], "level": "debug"},
         "request": {"appenders":["request"], "level": "info"},
-        "error": {"appenders":["error"], "level": "info"},
-        "debug": {"appenders":["debug"], "level": "info"},
+        "error": {"appenders":["error"], "level": "warn"},
+        "debug": {"appenders":["debug"], "level": "debug"},
         "system": {"appenders":["system"], "level":"info"},
         "lbc": {"appenders":["lbc"], "level":"debug"},
         "cogmo": {"appenders":["cogmo"], "level":"debug"},

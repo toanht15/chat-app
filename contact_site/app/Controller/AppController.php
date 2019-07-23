@@ -90,6 +90,7 @@ class AppController extends Controller {
     C_COMPANY_USE_COGMO_ATTEND_API => false, // CogmoAttend連携
     C_COMPANY_USE_MESSAGE_RANKING => false, //メッセージランキング機能
     C_COMPANY_USE_ICON_SETTINGS => false, // ボット・有人時のアイコン設定
+    C_COMPANY_WIDGET_SETTING_ONLY => false, // ウィジェット設定のみ
     C_COMPANY_USE_CUSTOM_WIDGET_SIZE => false, // ウィジェットサイズ「カスタム」
       C_COMPANY_USE_CHATBOT_TREE_EDITOR => false, // チャットツリー設定
       C_COMPANY_ENABLE_REAL_TIME_MONITOR => false // リアルタイムモニタ無効

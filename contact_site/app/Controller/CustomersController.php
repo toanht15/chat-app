@@ -507,7 +507,7 @@ class CustomersController extends AppController {
         'conditions' => [
           'id' => $query['chatId'],
           'm_users_id' => $query['userId'],
-          'message_type' => 98,
+          'message_type' => 998,
         ],
         'recursive' => -1
       ];

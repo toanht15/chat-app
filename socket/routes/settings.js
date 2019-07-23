@@ -4,6 +4,8 @@ var CommonUtil = require('./module/class/util/common_utility');
 var common = require('./module/common');
 var list = require('./module/company_list');
 var SharedData = require('./module/shared_data');
+var TChatbotScenario = require('./module/class/model/t_chatbot_scenario');
+var TChatbotDiagram = require('./module/class/model/t_chatbot_diagram');
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -37,17 +39,8 @@ router.get("/", function (req, res, next) {
   }
   var siteKey = req['query']['sitekey'];
   var accessType = req['query']['accessType'];
-  var tabId = req['query']['s'];
+  var widgetSitekey = req['query']['widgetSitekey'] ? req['query']['widgetSitekey'] : siteKey;
   var sendData = {status: true, widget: {}, chat: {settings: {}}, messages: {}, customVariable: [], contract: {}};
-
-  if (CommonUtil.isKeyExists(SharedData.sincloCore, siteKey + '.' + tabId)) {
-    res.send({
-      status: true,
-      nm: true, // not modified
-      accessTime: (new Date()).getTime()
-    });
-    return true;
-  }
 
   function isNumeric(str) {
     var num = Number(str);
@@ -71,7 +64,7 @@ router.get("/", function (req, res, next) {
         }
       }
     }
-    if ('style_settings' in common.widgetSettings[siteKey]) {
+    if ('style_settings' in common.widgetSettings[widgetSitekey]) {
       if (common.companySettings[siteKey].trial_flg) {
         // トライアル終了日を確認
         var nowTimestamp = (new Date()).getTime(),
@@ -100,7 +93,7 @@ router.get("/", function (req, res, next) {
         }
       }
       var core_settings = common.companySettings[siteKey].core_settings;
-      var settings = common.widgetSettings[siteKey].style_settings;
+      var settings = common.widgetSettings[widgetSitekey].style_settings;
       sendData['contract'] = core_settings;
       // ウィジェット表示タイミング設定が存在しない場合は「常に表示する」
       var showTimingSetting = 4;
@@ -805,6 +798,84 @@ router.get("/", function (req, res, next) {
     return false;
   }
   // res.render('index', { title: 'Settings' });
+});
+
+router.get("/scenario", function (req, res, next){
+  /* Cross-Origin */
+  // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  /* no-cache */
+  // http://garafu.blogspot.jp/2013/06/ajax.html
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Content-Type", "application/json");
+
+  if (!('query' in req) || (('query' in req) && !('sitekey' in req['query']))) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+    return false;
+  }
+
+  const siteKey = req['query']['sitekey'];
+  const scenarioId = req['query']['sid'];
+
+  const scenario = new TChatbotScenario();
+
+  scenario.getActivityByIdWithSiteKey(scenarioId, siteKey)
+    .then(function(result){
+      res.send(result);
+      res.status(200);
+  });
+});
+
+router.get("/diagram", function (req, res, next){
+  /* Cross-Origin */
+  // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  /* no-cache */
+  // http://garafu.blogspot.jp/2013/06/ajax.html
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Content-Type", "application/json");
+
+  if (!('query' in req) || (('query' in req) && !('sitekey' in req['query']))) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+    return false;
+  }
+
+  const siteKey = req['query']['sitekey'];
+  const scenarioId = req['query']['did'];
+
+  const diagram = new TChatbotDiagram();
+
+  diagram.getActivityByIdWithSiteKey(scenarioId, siteKey)
+  .then(function (result){
+    res.send(result);
+    res.status(200);
+  });
 });
 
 router.post("/reload/widgetSettings", function (req, res, next) {
