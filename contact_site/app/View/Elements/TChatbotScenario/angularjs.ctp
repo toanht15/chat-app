@@ -3376,7 +3376,7 @@
       if (per_expand < 1) {
         per_expand = 1;
       }
-      $('.explainTooltip').find('ul').css('max-width', 448 * per_expand + 'px');
+      $('.explainTooltip').find('ul').css('max-width', '31em');
       /**********************************************************************/
 
       var targetObj = $('.explainTooltip');
@@ -3387,7 +3387,7 @@
       var targetHeight = Number(targetObj.find('ul').css('height').replace('px', ''));
       targetObj.css({
         top: $(this).offset().top - 45 - 15 * per_expand + 'px',
-        left: $(this).offset().left - targetWidth * 1.2 + 'px'
+        left: $(this).offset().left - targetWidth * 1.24 + 'px'
       });
 
       // 表示サイズ調整
