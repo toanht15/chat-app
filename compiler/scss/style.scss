@@ -4713,6 +4713,9 @@ ul.naviBtn {
               width: 60%;
               padding: 0.25em 0.5em;
             }
+            select {
+              padding: 0.25em 0.2em;
+            }
             textarea {
               width: 98%;
               resize: none;
@@ -4792,10 +4795,18 @@ ul.naviBtn {
           margin-top:10px;
         }
         /*@include dl2column;*/
+        dl {
+          width: 100%;
+          margin-left: -24px;
+          display: inline-block;
+          padding-inline-start: 40px;
+        }
         dt {
-          width: 12em;
-          margin: 0 0 0 24px;
+          max-width: 12.6em;
+          width: 40%;
           float: left;
+          clear: both;
+          padding: 0.25em 0.8em;
           text-overflow:
                   ellipsis;
           overflow:
@@ -4810,6 +4821,10 @@ ul.naviBtn {
                   ellipsis;
           overflow: hidden;
           white-space: nowrap;
+        }
+
+        select {
+          padding: 0.25em 0.2em;
         }
       }
     }

@@ -589,7 +589,6 @@
               <a id = "moveHistory" class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($defaultHistoryList['THistory']['id'])?>')" >(移動履歴)</a>
             <?php endif; ?></dd>
           </li>
-
             <li>
               <dt>成果</dt>
               <?php
@@ -605,25 +604,26 @@
                 $defaultAchievementType = 0;
               }
               ?>
-              <dd>
-            <span id="achievementSpan">
-              <select name="achievement" id="achievementDetail" class="infoData" data-key="achievement">
-                <?php if ($defaultAchievementType): ?>
-                  <option value="-" selected="selected">-</option>
-                <?php else: ?>
-                  <option value="-">-</option>
-                <?php endif; ?>
+                <span id="achievementSpan">
+                  <select name="achievement" id="achievementDetail" class="infoData" data-key="achievement"
+                          <?php if (!isset($adminFlg) || !$adminFlg ): ?>
+                          disabled style="background-color: #DADADA"';
+                          <?php endif; ?>>
+                    <?php if ($defaultAchievementType): ?>
+                      <option value="-" selected="selected">-</option>
+                    <?php else: ?>
+                      <option value="-">-</option>
+                    <?php endif; ?>
 
-                <?php foreach ($achievementType as $key => $value): ?>
-                  <?php if ($key === $defaultAchievementType): ?>
-                      <option value="<?= $key ?>" selected="selected"><?= $value ?></option>
-                  <?php else: ?>
-                      <option value="<?= $key ?>"><?= $value ?></option>
-                  <?php endif; ?>
-                <?php endforeach; ?>
-              </select>
-            </span>
-              </dd>
+                    <?php foreach ($achievementType as $key => $value): ?>
+                      <?php if ($key === $defaultAchievementType): ?>
+                          <option value="<?= $key ?>" selected="selected"><?= $value ?></option>
+                      <?php else: ?>
+                          <option value="<?= $key ?>"><?= $value ?></option>
+                      <?php endif; ?>
+                    <?php endforeach; ?>
+                  </select>
+                </span>
             </li>
           </dl>
            <?php } ?>
