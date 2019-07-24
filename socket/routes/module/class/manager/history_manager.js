@@ -414,7 +414,7 @@ module.exports = class HistoryManager extends DatabaseManager {
                 'VALUES(?,DATE_FORMAT(?, \'%Y\'),DATE_FORMAT(?, \'%m\'),DATE_FORMAT(?, \'%d\'),DATE_FORMAT(?, \'%H\'),1)',
                 [companiesId, targetDate, targetDate, targetDate, targetDate],
                 function(err, result) {
-                  debugger;
+
                 });
           }
         });
