@@ -113,7 +113,7 @@
                                 </label>
                             </span>
               <div>
-                <resize-textarea name="errorMessage" class="variable-suggest" maxlength="4000" ng-model="hearingItem.errorMessage"
+                <resize-textarea name="errorMessage" class="variable-suggest system-variable-suggest" maxlength="4000" ng-model="hearingItem.errorMessage"
                                  cols="48"
                                  rows="1" placeholder="入力エラー時の返信メッセージを入力してください"
                                  data-maxRow="10"></resize-textarea>
@@ -1070,7 +1070,7 @@
                                                                                        data-tooltip="確認メッセージとして送信するメッセージを設定します。<br><br>＜設定例＞<br>お名前　　　　：{{showExpression('名前')}}<br>電話番号　　　：{{showExpression('電話番号')}}<br>メールアドレス：{{showExpression('メールアドレス')}}<br>でよろしいでしょうか？">?</icon></span></label></span>
 
               <div>
-                <resize-textarea class="variable-suggest" name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="1"
+                <resize-textarea class="variable-suggest system-variable-suggest" name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="1"
                                  placeholder="確認内容のメッセージを入力してください" data-maxRow="10"></resize-textarea>
               </div>
             </li>
@@ -1078,14 +1078,14 @@
                     <span class="fb9em"><label>選択肢（OK）<span class="questionBalloon"><icon class="questionBtn"
                                                                                           data-tooltip="OK（次のアクションを実行）の場合の選択肢の名称を設定します。">?</icon></span></label></span>
               <div>
-                <input type="text" name="success" class="variable-suggest" ng-model="setItem.success">
+                <input type="text" name="success" class="variable-suggest system-variable-suggest" ng-model="setItem.success">
               </div>
             </li>
             <li class="styleFlexbox">
                     <span class="fb9em"><label>選択肢（NG）<span class="questionBalloon"><icon class="questionBtn"
                                                                                           data-tooltip="NG（再入力）の場合の選択肢の名称を設定します。">?</icon></span></label></span>
               <div>
-                <input type="text" name="cancel" class="variable-suggest" ng-model="setItem.cancel">
+                <input type="text" name="cancel" class="variable-suggest system-variable-suggest" ng-model="setItem.cancel">
               </div>
             </li>
           </ul>
