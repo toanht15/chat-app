@@ -140,8 +140,13 @@
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.makeLeadTypeList = <?php echo json_encode($chatbotScenarioLeadTypeList,
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+      $scope.fullSystemVariables = <?php echo json_encode($systemVariables,
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.systemVariables = <?php echo json_encode($systemVariables,
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+      // remove prev_chat_history
+      $scope.systemVariables = $scope.systemVariables.splice(1,1);
+
       $scope.widget = SimulatorService;
       $scope.widget.settings = getWidgetSettings();
       $scope.widget_custom_width = Number($scope.widget.settings['widget_custom_width']);
@@ -926,7 +931,24 @@
               limit: 1000
             });
 
+            $('.mail-system-variable-suggest').atwho({
+              at: "$",
+              startWithSpace: false,
+              data: $scope.fullSystemVariables,
+              displayTpl: "<li class='systemVar' data-tooltip='${description}'> ${name}</li>",
+              insertTpl: "##${name}##",
+              suffix: '',
+              limit: 1000
+            });
+
             $('.system-variable-suggest').on("hidden.atwho", function(event) {
+              $('.explainTooltip').find('icon-annotation').css('display', 'none');
+              $('.explainTooltip').find('icon-annotation').removeClass('arrow');
+              $('.explainTooltip').find('ul').css('top', '0px');
+              $('.explainTooltip').find('ul').css('bottom', 'auto');
+            });
+
+            $('.mail-system-variable-suggest').on("hidden.atwho", function(event) {
               $('.explainTooltip').find('icon-annotation').css('display', 'none');
               $('.explainTooltip').find('icon-annotation').removeClass('arrow');
               $('.explainTooltip').find('ul').css('top', '0px');
@@ -934,9 +956,6 @@
             });
           });
           if (typeof newObject === 'undefined') return;
-          // 編集されたことを検知する
-
-
           // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
           var variables = searchObj(newObject, /^variableName$/);
 
@@ -2845,9 +2864,9 @@
       };
 
       this.resetListView = function(type, setActionId) {
-        $scope.setActionList[setActionId].leadInformations   = [{leadLabelName: '', leadVariableName: ''}];
+        $scope.setActionList[setActionId].leadInformations = [{leadLabelName: '', leadVariableName: ''}];
         $scope.setActionList[setActionId].tLeadListSettingId = null;
-        $scope.setActionList[setActionId].leadTitleLabel     = '';
+        $scope.setActionList[setActionId].leadTitleLabel = '';
       };
 
       this.searchList = function(targetId) {
