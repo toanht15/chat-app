@@ -43,7 +43,7 @@
             <option value="10">メールアドレス</option>
           </select>
         </div>
-        <div class='area-name'><input type="text" class="variable-suggest" ng-model="condition.label"></div>
+        <div class='area-name'><input type="text" class="variable-suggest system-variable-suggest" ng-model="condition.label"></div>
         <div class='area-variable'><input type="text" class="raw-variable-suggest" ng-model="condition.variableName"></div>
         <div class='area-btn'>
           <div class="btnBlock">

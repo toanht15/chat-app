@@ -257,7 +257,32 @@ class ChatHistoriesController extends AppController
       }
       $this->log("END キャンペーン : " . $this->getDateWithMilliSec(), LOG_DEBUG);
 
-      $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData, ['tHistoryChatSendingPageData' => $tHistoryChatSendingPageData[0]], ['tHistoryChatLastPageData' => $tHistoryChatLastPageData[0]['LastSpeechSendPage']], ['landingData' => $landingData[0]['landingPage']], $LandscapeData[0], ['pageCount' => $pageCount[0]], ['campaignParam' => $campaignParam]);
+      $achievement = $this->THistoryChatLog->find('first', [
+        'fields' => [
+          'SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate',
+          'SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv',
+          'SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny',
+          'SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff',
+        ],
+        'conditions' => [
+          't_histories_id' => $this->params->query['historyId'],
+          'm_companies_id' => $this->userInfo['m_companies_id']
+        ],
+        'group' => 't_histories_id'
+      ]);
+
+      $achievementType = null;
+      if ($achievement[0]['eff'] != 0) {
+        $achievementType = 2;
+      } else if ($achievement[0]['deny'] != 0) {
+        $achievementType = 1;
+      } else if ($achievement[0]['terminate'] != 0 && $achievement[0]['cv'] == 0) {
+        $achievementType = 3;
+      } else if ($achievement[0]['cv'] != 0) {
+        $achievementType = 0;
+      }
+
+      $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData, ['tHistoryChatSendingPageData' => $tHistoryChatSendingPageData[0]], ['tHistoryChatLastPageData' => $tHistoryChatLastPageData[0]['LastSpeechSendPage']], ['landingData' => $landingData[0]['landingPage']], $LandscapeData[0], ['pageCount' => $pageCount[0]], ['campaignParam' => $campaignParam], ['achievementType' => $achievementType]);
     }
     $this->set('data', $data);
     // 顧客情報のテンプレート
@@ -301,14 +326,44 @@ class ChatHistoriesController extends AppController
     $this->MCustomer->begin();
     $this->MCustomer->set($saveData);
 
-    if ($this->MCustomer->save()) {
+    $this->THistoryChatLog->begin();
+    switch ($data['saveData']['achievement']) {
+      case '-':
+        $achievement = null;
+        break;
+      case 0:
+        $achievement = 0;
+        break;
+      case 1:
+        $achievement = 1;
+        break;
+      case 2:
+        $achievement = 2;
+        break;
+      case 3:
+        $achievement = -1;
+        break;
+      default:
+        $achievement = null;
+        break;
+    }
+
+    $target = ['achievement_flg' => $achievement];
+    $conditions = [
+      't_histories_id' => $data['historyId'],
+      'm_companies_id' => $this->userInfo['MCompany']['id']
+    ];
+
+    if ($this->MCustomer->save() && $this->THistoryChatLog->updateAll($target, $conditions)) {
       $this->MCustomer->commit();
+      $this->THistoryChatLog->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
     } else {
       $this->MCustomer->rollback();
-      $ret = false;
+      $this->THistoryChatLog->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
     }
+
     return $data['historyId'];
   }
 

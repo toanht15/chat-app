@@ -11060,6 +11060,15 @@
       _replaceVariable: function(message) {
         var self = sinclo.scenarioApi;
         if (message) {
+          // handle　inquiry number
+          var scenarioId = self.get(self._lKey.scenarioId);
+          var inquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
+          if (inquiryNumber) {
+            message = message.replace(/##INQUIRY_NUMBER##/g, function(param) {
+              return inquiryNumber;
+            });
+          }
+
           return message.replace(/\{\{(.+?)\}\}/g, function(param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
             var value = self._getStoredVariable(name);
@@ -12280,6 +12289,8 @@
         _process: function() {
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
+          var scenarioId = self._parent.get(self._parent._lKey.scenarioId);
+          var inquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
 
           var sendData = {
             historyId: sinclo.chatApi.historyId,
@@ -12290,7 +12301,9 @@
             templateId: self._parent.get(
                 self._parent._lKey.currentScenario).mMailTemplateId,
             withDownloadURL: self._isNeedToAddDownloadURL(),
-            variables: targetVariables
+            variables: targetVariables,
+            scenarioId: scenarioId,
+            inquiryNumber: inquiryNumber
           };
 
           // 外部連携実装後に外す

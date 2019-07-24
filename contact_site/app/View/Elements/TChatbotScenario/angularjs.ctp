@@ -140,6 +140,8 @@
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.makeLeadTypeList = <?php echo json_encode($chatbotScenarioLeadTypeList,
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+      $scope.systemVariables = <?php echo json_encode($systemVariables,
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.widget = SimulatorService;
       $scope.widget.settings = getWidgetSettings();
       $scope.widget_custom_width = Number($scope.widget.settings['widget_custom_width']);
@@ -465,6 +467,11 @@
           if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
             item.default.hearings[0] = this.setDefaultColorHearing(item.default.hearings[0]);
           }
+
+          if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+            item.default.fromAddress = 'no-reply@sinclo.jp'
+          }
+
           if (isAppendAtLast) {
             $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
           } else {
@@ -907,6 +914,23 @@
               insertTpl: "${name}",
               suffix: '',
               limit: 1000
+            });
+
+            $('.system-variable-suggest').atwho({
+              at: "$",
+              startWithSpace: false,
+              data: $scope.systemVariables,
+              displayTpl: "<li class='systemVar' data-tooltip='${description}'> ${name}</li>",
+              insertTpl: "##${name}##",
+              suffix: '',
+              limit: 1000
+            });
+
+            $('.system-variable-suggest').on("hidden.atwho", function(event) {
+              $('.explainTooltip').find('icon-annotation').css('display', 'none');
+              $('.explainTooltip').find('icon-annotation').removeClass('arrow');
+              $('.explainTooltip').find('ul').css('top', '0px');
+              $('.explainTooltip').find('ul').css('bottom', 'auto');
             });
           });
           if (typeof newObject === 'undefined') return;
@@ -3343,6 +3367,41 @@
       $('.explainTooltip').find('ul').css('top', '0px');
       $('.explainTooltip').find('ul').css('bottom', 'auto');
     });
+    // handle system variables description
+    $(document).off('addcur', '.systemVar').on('addcur', '.systemVar', function(event) {
+      var per_expand = window.innerHeight / 974;
+      if (per_expand < 1) {
+        per_expand = 1;
+      }
+      $('.explainTooltip').find('ul').css('max-width', '31em');
+      /**********************************************************************/
+
+      var targetObj = $('.explainTooltip');
+      targetObj.find('icon-annotation .detail').html($(this).data('tooltip'));
+      targetObj.find('icon-annotation').css('display', 'block');
+      targetObj.find('icon-annotation').addClass('arrow');
+      var targetWidth = Number(targetObj.find('ul').css('width').replace('px', ''));
+      var targetHeight = Number(targetObj.find('ul').css('height').replace('px', ''));
+      targetObj.css({
+        top: $(this).offset().top - 45 - 15 * per_expand + 'px',
+        left: $(this).offset().left - targetWidth * 1.24 + 'px'
+      });
+
+      // 表示サイズ調整
+      var targetWidth = $(this).data('tooltip-width');
+      if (!!targetWidth) {
+        targetObj.find('icon-annotation').css('width', targetWidth + 'px');
+      } else {
+        targetObj.find('icon-annotation').css('width', '18em');
+      }
+    });
+
+    $(document).off('removecur', '.systemVar').on('addcur', '.removecur', function(event) {
+      $('.explainTooltip').find('icon-annotation').css('display', 'none');
+      $('.explainTooltip').find('icon-annotation').removeClass('arrow');
+      $('.explainTooltip').find('ul').css('top', '0px');
+      $('.explainTooltip').find('ul').css('bottom', 'auto');
+    });
 
     // ツールチップの表示制御（エラーメッセージ）
     $(document).off('mouseenter', '.errorBtn').on('mouseenter', '.errorBtn', function(event) {
@@ -3635,6 +3694,10 @@
 
       if (!actionItem.subject) {
         messageList.push('メールタイトルが未入力です');
+      }
+
+      if (!actionItem.fromAddress) {
+        messageList.push('送信元メールアドレスが未入力です');
       }
 
       if (actionItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?> && !actionItem.template) {
