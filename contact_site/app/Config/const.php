@@ -1428,14 +1428,14 @@ $config['businessModelType'] = array(
 );
 
 // 連番
-define('C_INQUIRY_NUMBER', 0);
+define('C_MAIL_INQUIRY_NUMBER', 0);
 // これまでのチャット履歴
 define('C_PREV_CHAT_HISTORY', 1);
 
 /* システム変数 */
 $config['systemVariables'] = array(
-  C_INQUIRY_NUMBER => array(
-    'name' => 'INQUIRY_NUMBER',
+  C_MAIL_INQUIRY_NUMBER => array(
+    'name' => 'MAIL_INQUIRY_NUMBER',
     'description' => 'シナリオ設定ごとに管理された一意の番号（1, 2, 3, … ）を表示します。<br>
 この値は「メール送信」アクションを実行するとサイト訪問者に付与され、シナリオ実行中は付与された連番を利用する事が可能です。<br>
 お問い合わせがあった際の管理番号を付与したい場合などにご利用下さい。'

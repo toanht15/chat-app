@@ -11062,10 +11062,10 @@
         if (message) {
           // handle　inquiry number
           var scenarioId = self.get(self._lKey.scenarioId);
-          var inquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
-          if (inquiryNumber) {
-            message = message.replace(/##INQUIRY_NUMBER##/g, function(param) {
-              return inquiryNumber;
+          var mailInquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
+          if (mailInquiryNumber) {
+            message = message.replace(/##MAIL_INQUIRY_NUMBER##/g, function(param) {
+              return mailInquiryNumber;
             });
           }
 
@@ -12290,7 +12290,7 @@
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
           var scenarioId = self._parent.get(self._parent._lKey.scenarioId);
-          var inquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
+          var mailInquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
 
           var sendData = {
             historyId: sinclo.chatApi.historyId,
@@ -12303,7 +12303,7 @@
             withDownloadURL: self._isNeedToAddDownloadURL(),
             variables: targetVariables,
             scenarioId: scenarioId,
-            inquiryNumber: inquiryNumber
+            mailInquiryNumber: mailInquiryNumber
           };
 
           // 外部連携実装後に外す

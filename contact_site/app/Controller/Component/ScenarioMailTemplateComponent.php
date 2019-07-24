@@ -14,7 +14,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
 
   const REPLACE_TARGET_SCENARIO_VARIABLES_BLOCK_DELIMITER = '##SCENARIO_VARIABLES_BLOCK##';
   const PREV_CHAT_HISTORY = '##PREV_CHAT_HISTORY##';
-  const INQUIRY_NUMBER = '##INQUIRY_NUMBER##';
+  const MAIL_INQUIRY_NUMBER = '##MAIL_INQUIRY_NUMBER##';
 
   const MAIL_TYPE_CD = 'CS001';
 
@@ -37,8 +37,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     $this->scenarioMessageBlock = "";
   }
 
-  public function setSenarioRequiredData($mailType, $variables, $templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array(), $inquiryNumber = 1) {
-    parent::setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData, $customerInfo, $inquiryNumber);
+  public function setSenarioRequiredData($mailType, $variables, $templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array(), $mailInquiryNumber = 1) {
+    parent::setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData, $customerInfo, $mailInquiryNumber);
     $this->type = $mailType;
     $this->variables = $variables;
   }
@@ -75,7 +75,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
 
   public function replaceInquiryNumber($message)
   {
-    return str_replace(self::INQUIRY_NUMBER, $this->inquiryNumber, $message);
+    return str_replace(self::MAIL_INQUIRY_NUMBER, $this->mailInquiryNumber, $message);
   }
 
 
@@ -154,7 +154,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     $canUseInquiryNumber = false;
     foreach($this->chatLogs as $k => $v) {
       if ($canUseInquiryNumber) {
-        $this->scenarioMessageBlock .= str_replace(self::INQUIRY_NUMBER, $this->inquiryNumber, $this->generateMessageBlockStr($v['THistoryChatLog'], $v['MUser']))."\n";
+        $this->scenarioMessageBlock .= str_replace(self::MAIL_INQUIRY_NUMBER, $this->mailInquiryNumber, $this->generateMessageBlockStr($v['THistoryChatLog'], $v['MUser']))."\n";
       } else {
         $this->scenarioMessageBlock .= $this->generateMessageBlockStr($v['THistoryChatLog'], $v['MUser'])."\n";
       }
