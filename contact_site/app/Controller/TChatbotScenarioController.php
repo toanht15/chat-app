@@ -939,11 +939,11 @@ sinclo@medialink-ml.co.jp
   {
     $labelArray = [];
     $valueArray = [];
-    $targetId   = $saveData->tLeadListSettingId;
+    $targetId = $saveData->tLeadListSettingId;
     if (!empty($targetId)) {
       $currentLabelArray = $this->TLeadListSetting->find('list', [
-        'recursive'  => -1,
-        'fields'     => [
+        'recursive' => -1,
+        'fields' => [
           'list_parameter'
         ],
         'conditions' => [
@@ -953,10 +953,14 @@ sinclo@medialink-ml.co.jp
     }
     foreach ($saveData->leadInformations as $key => $result) {
       if (empty($result->leadUniqueHash)) {
-        $uniqueKey              = empty($targetId) ? "" : $this->_getSameNameHash($currentLabelArray[$targetId], $result);
+        $uniqueKey = empty($targetId) ? "" : $this->_getSameNameHash($currentLabelArray[$targetId], $result);
         $result->leadUniqueHash = $uniqueKey == "" ? $this->_makeHashProcess($result->leadLabelName) : $uniqueKey;
       }
-      $labelArray[] = ['leadUniqueHash' => $result->leadUniqueHash, 'leadLabelName' => $result->leadLabelName, 'deleted' => 0];
+      $labelArray[] = [
+        'leadUniqueHash' => $result->leadUniqueHash,
+        'leadLabelName' => $result->leadLabelName,
+        'deleted' => 0
+      ];
       $valueArray[] = ['leadUniqueHash' => $result->leadUniqueHash, 'leadVariableName' => $result->leadVariableName];
     }
     // 現在保存しようとしている対象のデータを取得
@@ -966,7 +970,7 @@ sinclo@medialink-ml.co.jp
     // t_lead_list_settingsにはここで入れる
     $this->TLeadListSetting->set([
       'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'list_name'      => $saveData->leadTitleLabel,
+      'list_name' => $saveData->leadTitleLabel,
       'list_parameter' => json_encode($labelArray)
     ]);
     // t_chatbot_scenariosに入れる情報だけreturnする
