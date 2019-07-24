@@ -4795,18 +4795,10 @@ ul.naviBtn {
           margin-top:10px;
         }
         /*@include dl2column;*/
-        dl {
-          width: 100%;
-          margin-left: -24px;
-          display: inline-block;
-          padding-inline-start: 40px;
-        }
         dt {
-          max-width: 12.6em;
-          width: 40%;
+          width: 12em;
+          margin: 0 0 0 24px;
           float: left;
-          clear: both;
-          padding: 0.25em 0.8em;
           text-overflow:
                   ellipsis;
           overflow:
