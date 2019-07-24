@@ -145,7 +145,7 @@
       $scope.systemVariables = <?php echo json_encode($systemVariables,
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       // remove prev_chat_history
-      $scope.systemVariables = $scope.systemVariables.splice(1,1);
+      $scope.systemVariables = $scope.systemVariables.splice(0,1);
 
       $scope.widget = SimulatorService;
       $scope.widget.settings = getWidgetSettings();
