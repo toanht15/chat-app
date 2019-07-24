@@ -7998,7 +7998,7 @@ var socket, // socket.io
     // set inquiry number
     socket.on('setInquiryNumber', function(data) {
       var obj = common.jParse(data);
-      storage.s.set('scenario_' + obj.scenarioId + '_inquiry_number', obj.inquiryNumber);
+      storage.s.set('scenario_' + obj.scenarioId + '_inquiry_number', obj.mailInquiryNumber);
     })
   };
 
