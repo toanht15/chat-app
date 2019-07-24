@@ -485,8 +485,8 @@ function sendSenarioMail(obj, callback) {
     options.rejectUnauthorized = false;
   }
 
-  // return inquiryNumber if have not
-  if (!obj.inquiryNumber) {
+  // return mailInquiryNumber if have not
+  if (!obj.mailInquiryNumber) {
     DBConnector.getPool().query(
         'SELECT inquiry_number FROM t_chatbot_scenarios WHERE id = ?;',
         [obj.scenarioId],
@@ -498,7 +498,7 @@ function sendSenarioMail(obj, callback) {
           } else {
             inquiryData = {
               scenarioId: obj.scenarioId,
-              inquiryNumber: row[0].inquiry_number
+              mailInquiryNumber: row[0].inquiry_number
             }
             emit.toClient('setInquiryNumber', inquiryData, obj.siteKey);
           }
@@ -537,7 +537,7 @@ function sendSenarioMail(obj, callback) {
     'withDownloadURL': obj.withDownloadURL,
     'variables': obj.variables,
     'scenarioId': obj.scenarioId,
-    'inquiryNumber': obj.inquiryNumber
+    'mailInquiryNumber': obj.mailInquiryNumber
   }));
   req.end();
 }

@@ -140,8 +140,13 @@
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.makeLeadTypeList = <?php echo json_encode($chatbotScenarioLeadTypeList,
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+      $scope.fullSystemVariables = <?php echo json_encode($systemVariables,
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.systemVariables = <?php echo json_encode($systemVariables,
         JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+      // remove prev_chat_history
+      $scope.systemVariables = $scope.systemVariables.splice(0,1);
+
       $scope.widget = SimulatorService;
       $scope.widget.settings = getWidgetSettings();
       $scope.widget_custom_width = Number($scope.widget.settings['widget_custom_width']);
@@ -923,10 +928,46 @@
               displayTpl: "<li class='systemVar' data-tooltip='${description}'> ${name}</li>",
               insertTpl: "##${name}##",
               suffix: '',
+              callbacks: {
+                beforeSave: function(data) {
+                  var copiedArray = [];
+                  angular.copy($scope.systemVariables, copiedArray);
+                  var found = false;
+                  for (var i = 0; i <= index; i++) {
+                    if (Number($scope.setActionList[i].actionType) === <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+                      found = true;
+                      break;
+                    }
+                  }
+
+                  if (!found) {
+                    copiedArray.splice(0,1);
+                  }
+
+                  return copiedArray;
+                }
+              },
+              limit: 1000
+            });
+
+            $('.mail-system-variable-suggest').atwho({
+              at: "$",
+              startWithSpace: false,
+              data: $scope.fullSystemVariables,
+              displayTpl: "<li class='systemVar' data-tooltip='${description}'> ${name}</li>",
+              insertTpl: "##${name}##",
+              suffix: '',
               limit: 1000
             });
 
             $('.system-variable-suggest').on("hidden.atwho", function(event) {
+              $('.explainTooltip').find('icon-annotation').css('display', 'none');
+              $('.explainTooltip').find('icon-annotation').removeClass('arrow');
+              $('.explainTooltip').find('ul').css('top', '0px');
+              $('.explainTooltip').find('ul').css('bottom', 'auto');
+            });
+
+            $('.mail-system-variable-suggest').on("hidden.atwho", function(event) {
               $('.explainTooltip').find('icon-annotation').css('display', 'none');
               $('.explainTooltip').find('icon-annotation').removeClass('arrow');
               $('.explainTooltip').find('ul').css('top', '0px');
