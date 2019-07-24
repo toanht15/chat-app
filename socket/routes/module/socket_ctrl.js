@@ -485,6 +485,26 @@ function sendSenarioMail(obj, callback) {
     options.rejectUnauthorized = false;
   }
 
+  // return inquiryNumber if have not
+  if (!obj.inquiryNumber) {
+    DBConnector.getPool().query(
+        'SELECT inquiry_number FROM t_chatbot_scenarios WHERE id = ?;',
+        [obj.scenarioId],
+        function(err, row) {
+          if (CommonUtil.isset(err)) {
+            console.log(
+                'RECORD SElECT ERROR: t_chatbot_scenarios(inquiry_number):' + err);
+            return;
+          } else {
+            inquiryData = {
+              scenarioId: obj.scenarioId,
+              inquiryNumber: row[0].inquiry_number
+            }
+            emit.toClient('setInquiryNumber', inquiryData, obj.siteKey);
+          }
+        });
+  }
+
   //リクエスト送信
   var req = http.request(options, function(response) {
     if (response.statusCode === 200) {
@@ -515,7 +535,9 @@ function sendSenarioMail(obj, callback) {
     'transmissionId': obj.transmissionId,
     'templateId': obj.templateId,
     'withDownloadURL': obj.withDownloadURL,
-    'variables': obj.variables
+    'variables': obj.variables,
+    'scenarioId': obj.scenarioId,
+    'inquiryNumber': obj.inquiryNumber
   }));
   req.end();
 }

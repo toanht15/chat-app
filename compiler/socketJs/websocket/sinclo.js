@@ -3293,14 +3293,12 @@
         widgetBodyHeight = window.innerHeight -
             (widgetHeaderHeight + widgetFotterHeight);
       }
-      console.log('チャットエリアの高さは' + widgetBodyHeight + 'px');
       return widgetBodyHeight;
     },
     adjustSpWidgetSize: function() {
       if (check.smartphone()) {
         var expansionRatio = document.body.clientWidth / window.innerWidth;
         if ($('#flexBoxWrap').is(':visible')) {
-          console.log('<><><><>adjustSpWidgetSizeのdisplaytextareaが作動<><><><>');
           // 縦の場合
           // 最大化以外の場合とfocus中の場合は操作しない
           if (sinclo.chatApi.spFocusFlg) return;
@@ -3350,15 +3348,12 @@
           }
         } else {
           if (check.smartphone()) {
-            console.log('<><><><>adjustSpWidgetSizeのhidetextareaが作動<><><><>');
             if (expansionRatio > 1 || expansionRatio < 0.95) return;
             // 縦の場合
             var widgetWidth = 0,
                 ratio = 0;
             $('#flexBoxWrap').css('display', 'none');
             if (common.isPortrait() && $(window).height() > $(window).width()) {
-              console.log('ratio : ' + ratio);
-
               if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
                 var fullHeight = sinclo.calcSpWidgetHeight();
                 $('#chatTalk').outerHeight(fullHeight);
@@ -11065,6 +11060,15 @@
       _replaceVariable: function(message) {
         var self = sinclo.scenarioApi;
         if (message) {
+          // handle　inquiry number
+          var scenarioId = self.get(self._lKey.scenarioId);
+          var inquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
+          if (inquiryNumber) {
+            message = message.replace(/##INQUIRY_NUMBER##/g, function(param) {
+              return inquiryNumber;
+            });
+          }
+
           return message.replace(/\{\{(.+?)\}\}/g, function(param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
             var value = self._getStoredVariable(name);
@@ -12285,6 +12289,8 @@
         _process: function() {
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
+          var scenarioId = self._parent.get(self._parent._lKey.scenarioId);
+          var inquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
 
           var sendData = {
             historyId: sinclo.chatApi.historyId,
@@ -12295,7 +12301,9 @@
             templateId: self._parent.get(
                 self._parent._lKey.currentScenario).mMailTemplateId,
             withDownloadURL: self._isNeedToAddDownloadURL(),
-            variables: targetVariables
+            variables: targetVariables,
+            scenarioId: scenarioId,
+            inquiryNumber: inquiryNumber
           };
 
           // 外部連携実装後に外す
@@ -13842,6 +13850,10 @@
           cs += ' diagram_msg';
           if(customizeDesign.radioStyle === '1') {
             cs += ' customWidth';
+          }
+
+          if (Number(currentNode.attrs.actionParam.btnType) == 2) {
+            li.style.width = '95%';
           }
 
           li.className = cs;

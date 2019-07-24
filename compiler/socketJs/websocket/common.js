@@ -1944,7 +1944,7 @@ var socket, // socket.io
         /* 縦の場合 */
         if (this.isPortrait()) {
           if (widget.spMaximizeSizeType === 2) {
-            html += '#sincloBox { width: ' + ($(window).width()) +
+            html += '#sincloBox { width: ' + (common.getPageWidth()) +
                 'px; right: 0px; left: 0px; }';
           } else {
             html += '#sincloBox { width: ' + widgetWidth + 'px; }';
@@ -7994,6 +7994,12 @@ var socket, // socket.io
       var obj = common.jParse(d);
       emit('resCheckExists', obj);
     });
+
+    // set inquiry number
+    socket.on('setInquiryNumber', function(data) {
+      var obj = common.jParse(data);
+      storage.s.set('scenario_' + obj.scenarioId + '_inquiry_number', obj.inquiryNumber);
+    })
   };
 
   $.ajaxSetup({

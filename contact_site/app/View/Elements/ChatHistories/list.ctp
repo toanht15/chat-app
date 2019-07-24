@@ -589,6 +589,42 @@
               <a id = "moveHistory" class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($defaultHistoryList['THistory']['id'])?>')" >(移動履歴)</a>
             <?php endif; ?></dd>
           </li>
+            <li>
+              <dt>成果</dt>
+              <?php
+              $defaultAchievementType = null;
+              if(!empty($defaultHistoryList['THistoryChatLog']['eff']) && $defaultHistoryList['THistoryChatLog']['eff'] != 0) {
+                $defaultAchievementType = 2;
+              } else if(!empty($defaultHistoryList['THistoryChatLog']['deny']) && $defaultHistoryList['THistoryChatLog']['deny'] != 0) {
+                $defaultAchievementType = 1;
+              }
+              if(isset($defaultHistoryList['THistoryChatLog']['terminate']) && $defaultHistoryList['THistoryChatLog']['terminate'] != 0 && $defaultHistoryList['THistoryChatLog']['cv'] == 0) {
+                $defaultAchievementType = 3;
+              } else if($defaultHistoryList['THistoryChatLog']['cv'] != 0) {
+                $defaultAchievementType = 0;
+              }
+              ?>
+                <span id="achievementSpan">
+                  <select name="achievement" id="achievementDetail" class="infoData" data-key="achievement"
+                          <?php if (!isset($adminFlg) || !$adminFlg ): ?>
+                          disabled style="background-color: #DADADA"';
+                          <?php endif; ?>>
+                    <?php if ($defaultAchievementType): ?>
+                      <option value="-" selected="selected">-</option>
+                    <?php else: ?>
+                      <option value="-">-</option>
+                    <?php endif; ?>
+
+                    <?php foreach ($achievementType as $key => $value): ?>
+                      <?php if ($key === $defaultAchievementType): ?>
+                          <option value="<?= $key ?>" selected="selected"><?= $value ?></option>
+                      <?php else: ?>
+                          <option value="<?= $key ?>"><?= $value ?></option>
+                      <?php endif; ?>
+                    <?php endforeach; ?>
+                  </select>
+                </span>
+            </li>
           </dl>
            <?php } ?>
         </div>
