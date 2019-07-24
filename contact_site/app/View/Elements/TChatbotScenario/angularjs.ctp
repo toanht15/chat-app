@@ -928,6 +928,25 @@
               displayTpl: "<li class='systemVar' data-tooltip='${description}'> ${name}</li>",
               insertTpl: "##${name}##",
               suffix: '',
+              callbacks: {
+                beforeSave: function(data) {
+                  var copiedArray = [];
+                  angular.copy($scope.systemVariables, copiedArray);
+                  var found = false;
+                  for (var i = 0; i <= index; i++) {
+                    if (Number($scope.setActionList[i].actionType) === <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+                      found = true;
+                      break;
+                    }
+                  }
+
+                  if (!found) {
+                    copiedArray.splice(0,1);
+                  }
+
+                  return copiedArray;
+                }
+              },
               limit: 1000
             });
 
