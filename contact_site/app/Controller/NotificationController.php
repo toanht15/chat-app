@@ -19,7 +19,7 @@ class NotificationController extends AppController {
   const PARAM_TEMPLATE_ID = 'templateId';
   const PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL = 'withDownloadURL';
   const PARAM_VARIABLES = 'variables';
-  const PARAM_INQUIRY_NUMBER = 'inquiryNumber';
+  const PARAM_MAIL_INQUIRY_NUMBER = 'mailInquiryNumber';
   const PARAM_SCENARIO_ID = 'scenarioId';
 
   public $components = ['AutoMessageMailTemplate', 'ScenarioMailTemplate', 'MailSender', 'Auth'];
@@ -153,21 +153,21 @@ class NotificationController extends AppController {
       $customerInfo = $this->getTargetCustomerInfoByVisitorId($targetHistory['THistory']['m_companies_id'], $targetHistory['THistory']['visitors_id']);
 
       $component = new ScenarioMailTemplateComponent();
-      if ($jsonObj[self::PARAM_INQUIRY_NUMBER]) {
-        $inquiryNumber = $jsonObj[self::PARAM_INQUIRY_NUMBER];
+      if ($jsonObj[self::PARAM_MAIL_INQUIRY_NUMBER]) {
+        $mailInquiryNumber = $jsonObj[self::PARAM_MAIL_INQUIRY_NUMBER];
       } else {
         $scenario = $this->TChatbotScenario->find('first', array(
           'conditions' => array(
             'id' => $jsonObj[self::PARAM_SCENARIO_ID]
           )
         ));
-        $inquiryNumber = $scenario['TChatbotScenario']['inquiry_number'];
+        $mailInquiryNumber = $scenario['TChatbotScenario']['inquiry_number'];
         $this->TChatbotScenario->updateAll(
-          ['inquiry_number' => $inquiryNumber + 1],
+          ['inquiry_number' => $mailInquiryNumber + 1],
           ['id' => $jsonObj[self::PARAM_SCENARIO_ID]]);
       }
 
-      $component->setSenarioRequiredData($jsonObj[self::PARAM_MAIL_TYPE], $jsonObj[self::PARAM_VARIABLES], $jsonObj[self::PARAM_TEMPLATE_ID], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData, $customerInfo, $inquiryNumber);
+      $component->setSenarioRequiredData($jsonObj[self::PARAM_MAIL_TYPE], $jsonObj[self::PARAM_VARIABLES], $jsonObj[self::PARAM_TEMPLATE_ID], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData, $customerInfo, $mailInquiryNumber);
       $component->createMessageBody($jsonObj[self::PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL]);
 
       $transmission = $this->getTransmissionConfigById($jsonObj[self::PARAM_TRANSMISSION_ID]);
