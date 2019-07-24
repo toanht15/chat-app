@@ -13,6 +13,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   const REPLACE_TARGET_SCENARIO_MESSAGE_BLOCK_DELIMITER = '##SCENARIO_ALL_MESSAGE_BLOCK##';
 
   const REPLACE_TARGET_SCENARIO_VARIABLES_BLOCK_DELIMITER = '##SCENARIO_VARIABLES_BLOCK##';
+  const PREV_CHAT_HISTORY = '##PREV_CHAT_HISTORY##';
+  const MAIL_INQUIRY_NUMBER = '##MAIL_INQUIRY_NUMBER##';
 
   const MAIL_TYPE_CD = 'CS001';
 
@@ -35,8 +37,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     $this->scenarioMessageBlock = "";
   }
 
-  public function setSenarioRequiredData($mailType, $variables, $templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array()) {
-    parent::setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData, $customerInfo);
+  public function setSenarioRequiredData($mailType, $variables, $templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array(), $mailInquiryNumber = 1) {
+    parent::setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData, $customerInfo, $mailInquiryNumber);
     $this->type = $mailType;
     $this->variables = $variables;
   }
@@ -48,6 +50,14 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   }
 
   public function replaceVariables($message) {
+    $message = $this->replaceScenarioVariables($message);
+    $message = $this->replaceInquiryNumber($message);
+
+    return $message;
+  }
+
+  public function replaceScenarioVariables($message)
+  {
     foreach($this->variables as $variable => $value) {
       if(strcmp($variable, self::RECEIVE_FILE_VARIABLE_KEY) === 0) continue;
 
@@ -63,6 +73,12 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     return $message;
   }
 
+  public function replaceInquiryNumber($message)
+  {
+    return str_replace(self::MAIL_INQUIRY_NUMBER, $this->mailInquiryNumber, $message);
+  }
+
+
   private function prepareScenarioMessageBlock($withDownloadURL) {
     switch($this->type) {
       case "1":
@@ -75,6 +91,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
         break;
       case "3":
         $this->createMetaDataMessage(false, $withDownloadURL);
+        $this->createMessages();
         break;
     }
   }
@@ -88,8 +105,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
         $this->body = str_replace(self::REPLACE_TARGET_SCENARIO_VARIABLES_BLOCK_DELIMITER, $this->scenarioMessageBlock, $this->template['MMailTemplate']['template']);
         break;
       case "3":
-        $this->body = $this->scenarioMessageBlock;
-        $this->body .= $this->replaceVariables($this->template['MMailTemplate']['template']);
+        $this->body = $this->replaceVariables($this->template['MMailTemplate']['template']);
+        $this->body = str_replace(self::PREV_CHAT_HISTORY, "\n" . $this->scenarioMessageBlock, $this->body);
         break;
     }
   }
@@ -134,8 +151,15 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   }
 
   private function createMessages() {
+    $canUseInquiryNumber = false;
     foreach($this->chatLogs as $k => $v) {
-      $this->scenarioMessageBlock .= $this->generateMessageBlockStr($v['THistoryChatLog'], $v['MUser'])."\n";
+      if ($canUseInquiryNumber) {
+        $this->scenarioMessageBlock .= str_replace(self::MAIL_INQUIRY_NUMBER, $this->mailInquiryNumber, $this->generateMessageBlockStr($v['THistoryChatLog'], $v['MUser']))."\n";
+      } else {
+        $this->scenarioMessageBlock .= $this->generateMessageBlockStr($v['THistoryChatLog'], $v['MUser'])."\n";
+      }
+
+
     }
   }
 

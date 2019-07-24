@@ -485,6 +485,26 @@ function sendSenarioMail(obj, callback) {
     options.rejectUnauthorized = false;
   }
 
+  // return mailInquiryNumber if have not
+  if (!obj.mailInquiryNumber) {
+    DBConnector.getPool().query(
+        'SELECT inquiry_number FROM t_chatbot_scenarios WHERE id = ?;',
+        [obj.scenarioId],
+        function(err, row) {
+          if (CommonUtil.isset(err)) {
+            console.log(
+                'RECORD SElECT ERROR: t_chatbot_scenarios(inquiry_number):' + err);
+            return;
+          } else {
+            inquiryData = {
+              scenarioId: obj.scenarioId,
+              mailInquiryNumber: row[0].inquiry_number
+            }
+            emit.toClient('setInquiryNumber', inquiryData, obj.siteKey);
+          }
+        });
+  }
+
   //リクエスト送信
   var req = http.request(options, function(response) {
     if (response.statusCode === 200) {
@@ -515,7 +535,9 @@ function sendSenarioMail(obj, callback) {
     'transmissionId': obj.transmissionId,
     'templateId': obj.templateId,
     'withDownloadURL': obj.withDownloadURL,
-    'variables': obj.variables
+    'variables': obj.variables,
+    'scenarioId': obj.scenarioId,
+    'mailInquiryNumber': obj.mailInquiryNumber
   }));
   req.end();
 }
@@ -4510,7 +4532,29 @@ io.sockets.on('connection', function(socket) {
             messageDistinction: messageDistinction,
             achievementFlg: elm.requireCv ? -1 : null
           };
-          chatApi.set(ret);
+          if (!list.functionManager.isEnabled(obj.siteKey,
+              list.functionManager.keyList.enableRealtimeMonitor)
+            && CommonUtil.isset(
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
+            && !CommonUtil.isset(
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
+            SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
+            let historyManager = new HistoryManager();
+            let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
+            obj = Object.assign(obj, target);
+            historyManager.addHistory(obj).then((result) => {
+              emit.toSameUser('setHistoryId', result, obj.siteKey,
+                obj.sincloSessionId);
+              SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
+              SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
+              chatApi.set(ret);
+            });
+          } else {
+            chatApi.set(ret);
+          }
         });
       }
       ack();
@@ -4945,7 +4989,29 @@ io.sockets.on('connection', function(socket) {
                 elm.shownMessage :
                 false
           };
-          chatApi.set(ret);
+          if (!list.functionManager.isEnabled(obj.siteKey,
+            list.functionManager.keyList.enableRealtimeMonitor)
+            && CommonUtil.isset(
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
+            && !CommonUtil.isset(
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
+            SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
+            SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
+            let historyManager = new HistoryManager();
+            let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
+            obj = Object.assign(obj, target);
+            historyManager.addHistory(obj).then((result) => {
+              emit.toSameUser('setHistoryId', result, obj.siteKey,
+                obj.sincloSessionId);
+              SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
+              SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
+              SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
+              chatApi.set(ret);
+            });
+          } else {
+            chatApi.set(ret);
+          }
         });
       }
       ack();

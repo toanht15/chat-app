@@ -338,8 +338,14 @@ router.post('/auth/info', function(req, res, next) {
       sincloSessionId: obj.sincloSessionId
     };
 
-    // 履歴作成
-    //db.addHistory(obj, socket);
+    // 既に履歴があれば閲覧ページ情報をアップデート
+    if (SharedData.sincloCore[obj.siteKey][obj.tabId].historyId) {
+      let history = new HistoryManager();
+      let latestPrev = CommonUtil.isset(obj.prev) ? obj.prev[obj.prev.length - 1] : {};
+      obj.updatePrev = [latestPrev];
+      history.addHistory(obj);
+    }
+
     // カスタム情報自動登録
     //db.upsertCustomerInfo(obj, socket, function(result) {
     // IPアドレスの取得

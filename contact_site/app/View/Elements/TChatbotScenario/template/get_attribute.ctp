@@ -10,7 +10,7 @@
         <div class='grid-container grid-container-body itemListGroup'>
           <div class='area-name'><input type="text" class="raw-variable-suggest" ng-model="getAttributes.variableName"></div>
           <input type="hidden" ng-model="getAttributes.type" ng-init="getAttributes.type=3" value="3"/>
-          <div class='area-selector'><input type = "text" ng-model="getAttributes.attributeValue" rows="1" data-maxRow="10" class="variable-suggest textarea-message"></input></div>
+          <div class='area-selector'><input type = "text" ng-model="getAttributes.attributeValue" rows="1" data-maxRow="10" class="variable-suggest system-variable-suggest textarea-message"></input></div>
           <div class='area-btn'>
             <div class="btnBlock">
               <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>

@@ -1426,3 +1426,24 @@ $config['businessModelType'] = array(
   C_FREE_B_TO_C => "BtoC",
   C_FREE_BOTH => "どちらも"
 );
+
+// 連番
+define('C_MAIL_INQUIRY_NUMBER', 0);
+// これまでのチャット履歴
+define('C_PREV_CHAT_HISTORY', 1);
+
+/* システム変数 */
+$config['systemVariables'] = array(
+  C_MAIL_INQUIRY_NUMBER => array(
+    'name' => 'MAIL_INQUIRY_NUMBER',
+    'description' => '「メール送信」アクションを実行したタイミングで一意となる番号（1,2,3,…）を発行します。<br>
+番号はシナリオ単位で一意となるよう採番されます（同じシナリオ内で一意となる）。<br>
+「メール送信」アクション以降、シナリオ実行中は発行された同じ番号を利用できます。<br>
+お問い合わせ毎に通知されるメールに管理番号を付与したい場合などにご利用下さい。'
+  ),
+  C_PREV_CHAT_HISTORY => array(
+    'name' => 'PREV_CHAT_HISTORY',
+    'description' => 'この変数を利用する前までに表示したチャットの内容全てを表示します。<br>
+この変数は「メール送信」アクションで「メール本文をカスタマイズする」設定でのメール本文設定内で使用可能です。'
+  )
+);

@@ -19,9 +19,11 @@ class NotificationController extends AppController {
   const PARAM_TEMPLATE_ID = 'templateId';
   const PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL = 'withDownloadURL';
   const PARAM_VARIABLES = 'variables';
+  const PARAM_MAIL_INQUIRY_NUMBER = 'mailInquiryNumber';
+  const PARAM_SCENARIO_ID = 'scenarioId';
 
   public $components = ['AutoMessageMailTemplate', 'ScenarioMailTemplate', 'MailSender', 'Auth'];
-  public $uses = ['TAutoMessage','MCustomer','TCustomerInformationSetting','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting', 'TMailTransmissionLog', 'MCompany'];
+  public $uses = ['TAutoMessage','MCustomer','TCustomerInformationSetting','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting', 'TMailTransmissionLog', 'MCompany', 'TChatbotScenario'];
 
   public function beforeFilter() {
     $this->Auth->allow('autoMessages','scenario', 'callExternalApi');
@@ -151,12 +153,30 @@ class NotificationController extends AppController {
       $customerInfo = $this->getTargetCustomerInfoByVisitorId($targetHistory['THistory']['m_companies_id'], $targetHistory['THistory']['visitors_id']);
 
       $component = new ScenarioMailTemplateComponent();
-      $component->setSenarioRequiredData($jsonObj[self::PARAM_MAIL_TYPE], $jsonObj[self::PARAM_VARIABLES], $jsonObj[self::PARAM_TEMPLATE_ID], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData, $customerInfo);
+      if ($jsonObj[self::PARAM_MAIL_INQUIRY_NUMBER]) {
+        $mailInquiryNumber = $jsonObj[self::PARAM_MAIL_INQUIRY_NUMBER];
+      } else {
+        $scenario = $this->TChatbotScenario->find('first', array(
+          'conditions' => array(
+            'id' => $jsonObj[self::PARAM_SCENARIO_ID]
+          )
+        ));
+        $mailInquiryNumber = $scenario['TChatbotScenario']['inquiry_number'];
+        $this->TChatbotScenario->updateAll(
+          ['inquiry_number' => $mailInquiryNumber + 1],
+          ['id' => $jsonObj[self::PARAM_SCENARIO_ID]]);
+      }
+
+      $component->setSenarioRequiredData($jsonObj[self::PARAM_MAIL_TYPE], $jsonObj[self::PARAM_VARIABLES], $jsonObj[self::PARAM_TEMPLATE_ID], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData, $customerInfo, $mailInquiryNumber);
       $component->createMessageBody($jsonObj[self::PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL]);
 
       $transmission = $this->getTransmissionConfigById($jsonObj[self::PARAM_TRANSMISSION_ID]);
       $sender = new MailSenderComponent(null, $targetHistory['THistory']['m_companies_id']);
-      $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
+      if (!$transmission['MMailTransmissionSetting']['from_address'] || $transmission['MMailTransmissionSetting']['from_address'] == MailSenderComponent::MAIL_DEFAULT_FROM_ADDRESS) {
+        $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
+      } else {
+        $sender->setFrom($transmission['MMailTransmissionSetting']['from_address']);
+      }
       $sender->setFromName($component->replaceVariables($transmission['MMailTransmissionSetting']['from_name']));
       $sender->setTo($component->replaceVariables($transmission['MMailTransmissionSetting']['to_address']));
       $sender->setSubject($component->replaceVariables($transmission['MMailTransmissionSetting']['subject']));

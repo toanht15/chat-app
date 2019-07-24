@@ -660,7 +660,9 @@
       }
 
       if (obj.firstConnection) {
-        socket.clearOnceConnectedFlg();
+        if (obj.sincloSessionIdIsNew) {
+          socket.clearOnceConnectedFlg();
+        }
         if (!check.isset(userInfo.userId) && check.isset(obj.userId)) {
           userInfo.set(cnst.info_type.user, obj.userId);
         }
@@ -7911,12 +7913,10 @@
               css('display', 'block').
               html('通信が切断されました。<br>こちらをタップすると再接続します。').
               on('click', function() {
-                var result = common.reconnectManual();
-                if (result) {
-                  $('sinclo-chat-alert').css('display', 'none');
-                  sinclo.chatApi.initEvent();
-                  sinclo.chatApi.sendErrCatchFlg = false;
-                }
+                $('sinclo-chat-alert').css('display', 'none');
+                $('sinclo-chat').children().remove();
+                common.handleInit();
+                sinclo.chatApi.sendErrCatchFlg = false;
               });
           sinclo.chatApi.sendErrCatchFlg = true;
           sinclo.chatApi.removeAllEvent();
@@ -7938,11 +7938,9 @@
                 css('display', 'block').
                 html('クリックして再接続').
                 on('click', function() {
-                  var result = common.reconnectManual();
-                  if (result) {
-                    $('sinclo-chat-alert').css('display', 'none');
-                    sinclo.chatApi.initEvent();
-                  }
+                  $('sinclo-chat-alert').css('display', 'none');
+                  $('sinclo-chat').children().remove();
+                  common.handleInit();
                 });
             sinclo.chatApi.removeAllEvent();
           }, 90 * 60 * 1000);
@@ -9030,7 +9028,8 @@
         if (!sinclo.chatApi.autoMessages.exists(data.chatId) &&
             !isSpeechContent) {
           //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
-          sinclo.chatApi.autoMessages.push(data.chatId, {});
+          data.created = new Date();
+          sinclo.chatApi.autoMessages.push(data.chatId, data);
         }
 
         if (sinclo.chatApi.saveFlg) {
@@ -9120,7 +9119,7 @@
                 emit('getScenario', {'scenarioId': scenarioId});
               });
             } else {
-
+              emit('getScenario', {'scenarioId': scenarioId});
             }
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
@@ -11061,6 +11060,15 @@
       _replaceVariable: function(message) {
         var self = sinclo.scenarioApi;
         if (message) {
+          // handle　inquiry number
+          var scenarioId = self.get(self._lKey.scenarioId);
+          var mailInquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
+          if (mailInquiryNumber) {
+            message = message.replace(/##MAIL_INQUIRY_NUMBER##/g, function(param) {
+              return mailInquiryNumber;
+            });
+          }
+
           return message.replace(/\{\{(.+?)\}\}/g, function(param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
             var value = self._getStoredVariable(name);
@@ -12281,6 +12289,8 @@
         _process: function() {
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
+          var scenarioId = self._parent.get(self._parent._lKey.scenarioId);
+          var mailInquiryNumber = sessionStorage.getItem('scenario_' + scenarioId + '_inquiry_number');
 
           var sendData = {
             historyId: sinclo.chatApi.historyId,
@@ -12291,7 +12301,9 @@
             templateId: self._parent.get(
                 self._parent._lKey.currentScenario).mMailTemplateId,
             withDownloadURL: self._isNeedToAddDownloadURL(),
-            variables: targetVariables
+            variables: targetVariables,
+            scenarioId: scenarioId,
+            mailInquiryNumber: mailInquiryNumber
           };
 
           // 外部連携実装後に外す
@@ -13838,6 +13850,10 @@
           cs += ' diagram_msg';
           if(customizeDesign.radioStyle === '1') {
             cs += ' customWidth';
+          }
+
+          if (Number(currentNode.attrs.actionParam.btnType) == 2) {
+            li.style.width = '95%';
           }
 
           li.className = cs;

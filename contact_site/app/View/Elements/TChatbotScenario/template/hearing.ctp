@@ -33,7 +33,7 @@
               <span class="checkmark"></span>
             </label>
           </div>
-          <div class='area-name'><input type="text" class="raw-variable-suggest" ng-model="hearingItem.variableName"></div>
+          <div class='area-name'><input type="text" class="raw-variable-suggest system-variable-suggest" ng-model="hearingItem.variableName"></div>
           <div class='area-type'>
             <select name="hearing-input-option" ng-model="hearingItem.uiType"
                     ng-change="main.handleChangeUitype(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
@@ -49,7 +49,7 @@
             </select>
           </div>
           <div class='area-message' >
-            <resize-textarea class="variable-suggest" ng-class="{disabledArea: hearingItem.settings.balloonStyle === '2'}" maxlength="4000" ng-model="hearingItem.message" rows="1"
+            <resize-textarea class="variable-suggest system-variable-suggest" ng-class="{disabledArea: hearingItem.settings.balloonStyle === '2'}" maxlength="4000" ng-model="hearingItem.message" rows="1"
                              data-maxRow="10" ></resize-textarea>
           </div>
           <div class='area-btn'>
@@ -113,7 +113,7 @@
                                 </label>
                             </span>
               <div>
-                <resize-textarea name="errorMessage" class="variable-suggest" maxlength="4000" ng-model="hearingItem.errorMessage"
+                <resize-textarea name="errorMessage" class="variable-suggest system-variable-suggest" maxlength="4000" ng-model="hearingItem.errorMessage"
                                  cols="48"
                                  rows="1" placeholder="入力エラー時の返信メッセージを入力してください"
                                  data-maxRow="10"></resize-textarea>
@@ -129,7 +129,7 @@
                             <span><label class="">選択肢 {{optionIndex + 1}}<span class="questionBalloon"><icon
                                       class="questionBtn"
                                       data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
-              <input type="text" class="variable-suggest m20lt" ng-model="hearingItem.settings.options[optionIndex]"
+              <input type="text" class="variable-suggest system-variable-suggest m20lt" ng-model="hearingItem.settings.options[optionIndex]"
                      style="width: 200px;">
               <div class="btnBlock">
                 <a><?= $this->Html->image('add.png', array(
@@ -335,20 +335,20 @@
                       <span class="carousel-label"><label class="">タイトル <span class="questionBalloon"><icon
                                 class="questionBtn"
                                 data-tooltip="説明文のタイトルの設定を行います。">?</icon></span></label></span>
-                      <input type="text" ng-model="hearingItem.settings.images[imageIndex].title" class="variable-suggest m20l m10r">
+                      <input type="text" ng-model="hearingItem.settings.images[imageIndex].title" class="variable-suggest system-variable-suggest m20l m10r">
                     </div>
                     <div class="carousel-sub-title styleFlexbox">
                       <span class="carousel-label"><label class="">本文 <span class="questionBalloon"><icon
                             class="questionBtn"
                             data-tooltip="説明文の設定を行います。">?</icon></span></label></span>
-                      <resize-textarea class="variable-suggest m20l m10r" style="height: 27px" maxlength="4000" rows="1"
+                      <resize-textarea class="variable-suggest system-variable-suggest m20l m10r" style="height: 27px" maxlength="4000" rows="1"
                                        data-maxRow="10" ng-model="hearingItem.settings.images[imageIndex].subTitle"></resize-textarea>
                     </div>
                     <div class="carousel-answer styleFlexbox">
                       <span class="carousel-label"><label class="">選択時の内容 <span class="questionBalloon"><icon
                             class="questionBtn"
                             data-tooltip="サイト訪問者（チャット利用者）が画像を選択した際に変数にセットする文言を設定します。">?</icon></span></label></span>
-                      <input type="text" class="variable-suggest m20l m10r" ng-model="hearingItem.settings.images[imageIndex].answer">
+                      <input type="text" class="variable-suggest system-variable-suggest m20l m10r" ng-model="hearingItem.settings.images[imageIndex].answer">
                     </div>
                   </div>
                   </div>
@@ -1070,7 +1070,7 @@
                                                                                        data-tooltip="確認メッセージとして送信するメッセージを設定します。<br><br>＜設定例＞<br>お名前　　　　：{{showExpression('名前')}}<br>電話番号　　　：{{showExpression('電話番号')}}<br>メールアドレス：{{showExpression('メールアドレス')}}<br>でよろしいでしょうか？">?</icon></span></label></span>
 
               <div>
-                <resize-textarea class="variable-suggest" name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="1"
+                <resize-textarea class="variable-suggest system-variable-suggest" name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="1"
                                  placeholder="確認内容のメッセージを入力してください" data-maxRow="10"></resize-textarea>
               </div>
             </li>
@@ -1078,14 +1078,14 @@
                     <span class="fb9em"><label>選択肢（OK）<span class="questionBalloon"><icon class="questionBtn"
                                                                                           data-tooltip="OK（次のアクションを実行）の場合の選択肢の名称を設定します。">?</icon></span></label></span>
               <div>
-                <input type="text" name="success" class="variable-suggest" ng-model="setItem.success">
+                <input type="text" name="success" class="variable-suggest system-variable-suggest" ng-model="setItem.success">
               </div>
             </li>
             <li class="styleFlexbox">
                     <span class="fb9em"><label>選択肢（NG）<span class="questionBalloon"><icon class="questionBtn"
                                                                                           data-tooltip="NG（再入力）の場合の選択肢の名称を設定します。">?</icon></span></label></span>
               <div>
-                <input type="text" name="cancel" class="variable-suggest" ng-model="setItem.cancel">
+                <input type="text" name="cancel" class="variable-suggest system-variable-suggest" ng-model="setItem.cancel">
               </div>
             </li>
           </ul>

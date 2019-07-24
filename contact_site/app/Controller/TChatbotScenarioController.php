@@ -80,6 +80,7 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioBranchOnConditionActionType = Configure::read('chatbotScenarioBranchOnConditionActionType');
     $this->chatbotScenarioBranchOnConditionElseActionType = Configure::read('chatbotScenarioBranchOnConditionElseActionType');
     $this->chatbotScenarioLeadTypeList = Configure::read('chatbotScenarioLeadTypeList');
+    $this->systemVariables = Configure::read('systemVariables');
 
     // FileAppController
     $this->fileTransferPrefix = "fileScenarioTransfer/";
@@ -1035,7 +1036,7 @@ sinclo@medialink-ml.co.jp
     }
     $this->MMailTransmissionSetting->set([
       'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'from_address' => 'test@example.com',
+      'from_address' => $saveData->fromAddress,
       'from_name' => $saveData->fromName,
       'to_address' => $toAddresses,
       'subject' => $saveData->subject
@@ -1229,6 +1230,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioBranchOnConditionElseActionType', $this->chatbotScenarioBranchOnConditionElseActionType);
     // リード登録リードリスト名種別
     $this->set('chatbotScenarioLeadTypeList', $this->chatbotScenarioLeadTypeList);
+    // システム変数
+    $this->set('systemVariables', $this->systemVariables);
     // ファイル受信用にcompany_keyをsetしておく
     $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
     // 最後に表示していたページ番号
@@ -1476,6 +1479,12 @@ sinclo@medialink-ml.co.jp
           $action->toAddress = explode(',', $mailTransmissionData['MMailTransmissionSetting']['to_address']);
           $action->subject = $mailTransmissionData['MMailTransmissionSetting']['subject'];
           $action->fromName = $mailTransmissionData['MMailTransmissionSetting']['from_name'];
+          if (!$mailTransmissionData['MMailTransmissionSetting']['from_address'] || $mailTransmissionData['MMailTransmissionSetting']['from_address'] == 'test@example.com') {
+            $action->fromAddress = 'no-reply@sinclo.jp';
+          } else {
+            $action->fromAddress = $mailTransmissionData['MMailTransmissionSetting']['from_address'];
+          }
+
         }
         // メールテンプレートの取得
         if (!empty($action->mMailTemplateId)) {

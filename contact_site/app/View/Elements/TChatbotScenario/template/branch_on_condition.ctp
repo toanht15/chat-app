@@ -17,7 +17,7 @@
       <ul class="condition">
         <li class="styleFlexbox">
           <span class="fb15em indentDown"><label class="require">変数の値が</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="「参照する変数名」に指定した変数の値を設定します。複数の値を設定する場合はスペースで区切ってください。">?</icon></span></span>
-          <input type="text" ng-model="condition.matchValue" class="variable-suggest">
+          <input type="text" ng-model="condition.matchValue" class="variable-suggest system-variable-suggest">
           <select class="m10r10l" ng-model="condition.matchValueType" ng-init="condition.matchValueType = condition.matchValueType.toString()" ng-options="index as type.label for (index, type) in matchValueTypeList"></select>
         </li>
         <li class="styleFlexbox m10b">
@@ -39,7 +39,7 @@
             <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = (condition.actionType ? condition.actionType : '1')" ng-options="item.value as item.label for item in processActionTypeList"></select>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 1">
-            <resize-textarea class="variable-suggest" maxlength="4000" ng-model="condition.action.message" placeholder="メッセージを入力してください"></resize-textarea>
+            <resize-textarea class="variable-suggest system-variable-suggest" maxlength="4000" ng-model="condition.action.message" placeholder="メッセージを入力してください"></resize-textarea>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 2">
             <select ng-model="condition.action.callScenarioId" ng-init="condition.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioListForBranchOnCond">

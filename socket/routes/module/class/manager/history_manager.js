@@ -66,8 +66,11 @@ module.exports = class HistoryManager extends DatabaseManager {
                         SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
                       }
                       SharedData.sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
-                      self.timeUpdate(historyId, obj, now).
-                          then(function(stayLogsId) {
+                      self.decrementAccessCount(obj.siteKey, now)
+                      .then(function(){
+                        return self.timeUpdate(historyId, obj, now);
+                      })
+                      .then(function(stayLogsId) {
                             obj.historyId = historyId;
                             obj.stayLogsId = stayLogsId;
                             resolve(obj);
@@ -261,7 +264,7 @@ module.exports = class HistoryManager extends DatabaseManager {
     let self = this;
     return new Promise(async (resolve, reject) => {
       try {
-        let prevArray = obj.prev;
+        let prevArray = obj.updatePrev || obj.prev;
         let result = 0;
         for (let i = 0; i < prevArray.length; i++) {
           result = await this.processTimeUpdate(self, historyId, prevArray, i);
@@ -373,6 +376,52 @@ module.exports = class HistoryManager extends DatabaseManager {
                 });
           }
         });
+  }
+
+  decrementAccessCount(siteKey, datetime) {
+    let self = this;
+    let targetDate = datetime.replace(/\//g, '-');
+    return new Promise((resolve) => {
+      if (list.functionManager.isEnabled(siteKey,
+        list.functionManager.keyList.enableRealtimeMonitor)) {
+        resolve();
+      }
+      self.dbPool.query('SELECT * from t_history_access_counts\n' +
+        'WHERE\n' +
+        '  m_companies_id = ?\n' +
+        'AND\n' +
+        '  year = DATE_FORMAT(?, \'%Y\')\n' +
+        'AND\n' +
+        '  month = DATE_FORMAT(?, \'%m\')\n' +
+        'AND\n' +
+        '  day = DATE_FORMAT(?, \'%d\')\n' +
+        'AND\n' +
+        '  hour = DATE_FORMAT(?, \'%H\')',
+        [list.companyList[siteKey], targetDate, targetDate, targetDate, targetDate],
+        function(err, row) {
+          if (row.length !== 0) {
+            self.dbPool.query('UPDATE  t_history_access_counts\n' +
+              'SET\n' +
+              '  access_count = access_count-1\n' +
+              'WHERE\n' +
+              '  m_companies_id = ?\n' +
+              'AND\n' +
+              '  year = DATE_FORMAT(?, \'%Y\')\n' +
+              'AND\n' +
+              '  month = DATE_FORMAT(?, \'%m\')\n' +
+              'AND\n' +
+              '  day = DATE_FORMAT(?, \'%d\')\n' +
+              'AND\n' +
+              '  hour = DATE_FORMAT(?, \'%H\')',
+              [list.companyList[siteKey], targetDate, targetDate, targetDate, targetDate],
+              function(err, result) {
+                resolve();
+              });
+          } else {
+            resolve();
+          }
+        });
+    });
   }
 
   incrementWidgetCount(companiesId, datetime) {
