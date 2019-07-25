@@ -2189,7 +2189,7 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper img { max-width: ' + 40 * ratio + 'px; }';
           html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize i { height: ' + 40 * ratio + 'px; width: ' + 40 * ratio + 'px; font-size: ' + 26 * ratio + 'px }';
           // pulldown
-          html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: ' + 10 * ratio + 'px; height: ' + 30 * ratio + 'px; font-size: ' + 12 * ratio + 'px;}';
+          html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: ' + 10 * ratio + 'px; height: ' + 30 * ratio + 'px; font-size: ' + (12 * ratio >= 16 ? 12 * ratio : 16) + 'px;}';
           // button
           html += '#sincloBox ul#chatTalk li button { cursor: pointer; min-height: ' + 35 * ratio + 'px; margin-bottom: ' + 1 * ratio + 'px; padding: ' + 10 * ratio + 'px ' + 15 * ratio + 'px; }';
           //calendar
