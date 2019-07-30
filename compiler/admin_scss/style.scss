@@ -838,6 +838,15 @@ div#sidebar{
         }
       }
 
+      tfoot {
+        color: #fff;
+
+        th {
+          background-color: #9A9A9A;
+          text-align: left;
+        }
+      }
+
       td {
         a.loginLink {
           color: #595959;

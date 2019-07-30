@@ -34,6 +34,7 @@ class ContractController extends AppController
   const ADMIN_USER_NAME = "##ADMIN_USER_NAME##";
   const ADMIN_MAIL_ADDRESS = "##ADMIN_MAIL_ADDRESS##";
   const URL = "##URL##";
+  const CUSTOMER_NUMBER = "#CUSTOMER_NUMBER#";
   const OTHER = "##OTHER##";
   const PLAN_NAME = "##PLAN_NAME##";
   const BEGIN_DATE = "##BEGIN_DATE##";
@@ -278,6 +279,7 @@ class ContractController extends AppController
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['administrator_mail_address'], self::ADMIN_MAIL_ADDRESS, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['telephone_number'], self::PHONE_NUMBER, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['installation_url'], self::URL, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['customer_number'], self::CUSTOMER_NUMBER, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MCompany']['limit_users'], self::USABLE_USER_COUNT, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['Contract']['user_password'], self::PASSWORD, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getPlanNameStr($data), self::PLAN_NAME, $mailBodyData);
@@ -423,6 +425,7 @@ class ContractController extends AppController
           'administrator_name' => $saveData['MAgreements']['administrator_name'],
           'administrator_mail_address' => $saveData['MAgreements']['administrator_mail_address'],
           'installation_url' => $saveData['MAgreements']['installation_url'],
+          'customer_number' => $saveData['MAgreements']['customer_number'],
           'business_model' => $saveData['MAgreements']['business_model'],
         ));
         $this->MAgreements->save();
@@ -732,6 +735,7 @@ class ContractController extends AppController
     $this->MAgreements->set(array(
       'm_companies_id' => $addedCompanyInfo['id'],
       'company_name' => $companyInfo['company_name'],
+      'customer_number' => $agreementInfo['customer_number'],
       'business_model' => $agreementInfo['business_model'],
       'application_day' => date("Y-m-d"), // FIXME（自動発行）
       'trial_start_day' => $agreementInfo['trial_start_day'],

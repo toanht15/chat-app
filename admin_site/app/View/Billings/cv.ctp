@@ -45,12 +45,19 @@ App::uses('CompanyExpireChecker', 'Vendor/util');
         <table>
             <thead>
             <tr>
-                <th style="width:50%;">会社名</th>
-                <th style="width:15%;">CV単価</th>
-                <th style="width:15%;">CV件数</th>
+                <th style="width:10%;">顧客番号</th>
+                <th style="width:30%;">会社名</th>
+                <th style="width:20%;">キー</th>
+                <th style="width:10%;">CV単価</th>
+                <th style="width:10%;">CV件数</th>
                 <th style="width:20%;">請求額</th>
             </tr>
             </thead>
+          <?php
+            $total_cv_value = 0;
+            $total_cv = 0;
+            $total_cv_amount = 0;
+          ?>
           <?php foreach ((array)$companyList as $key => $val): ?>
             <?php
             $companyId = $val['MCompany']['id'];
@@ -77,7 +84,9 @@ App::uses('CompanyExpireChecker', 'Vendor/util');
                   break;
               }
               ?> >
+                  <td><?= h($val['MAgreement']['customer_number']) ?></td>
                   <td><a href="#" class="loginLink"><?= h($val['MCompany']['company_name']) ?></a></td>
+                  <td><?= h($val['MCompany']['company_key']) ?></td>
                   <td><?= number_format($val['MAgreement']['cv_value']) ?></td>
                   <td class="adminId" style="display:none"><?= h($val['AdminUser']['mail_address']) ?></td>
                   <td class="adminPass" style="display:none"><?= h($val['MAgreement']['admin_password']) ?></td>
@@ -85,7 +94,20 @@ App::uses('CompanyExpireChecker', 'Vendor/util');
                   <td><?= !empty($val['CVCount']['cv']) ? number_format(intval($val['CVCount']['cv']) * intval($val['MAgreement']['cv_value'])) : 0 ?></td>
               </tr>
               </tbody>
+            <?php
+              $total_cv_value = $total_cv_value + $val['MAgreement']['cv_value'];
+              $total_cv = $total_cv + $val['CVCount']['cv'];
+              $total_cv_amount = $total_cv_amount + intval($val['CVCount']['cv']) * intval($val['MAgreement']['cv_value']);
+            ?>
           <?php endforeach; ?>
+              <tfoot>
+                <tr>
+                  <th colspan="3"><div style="text-align : left">総額</div></th>
+                  <th><div style="text-align : left"><?php echo $total_cv_value; ?></div></th>
+                  <th><div style="text-align : left"><?php echo $total_cv; ?></div></th>
+                  <th><div style="text-align : left"><?php echo $total_cv_amount; ?></div></th>
+                </tr>
+              </tfoot>
         </table>
     </div>
 </div>
