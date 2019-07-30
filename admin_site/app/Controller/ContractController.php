@@ -34,7 +34,6 @@ class ContractController extends AppController
   const ADMIN_USER_NAME = "##ADMIN_USER_NAME##";
   const ADMIN_MAIL_ADDRESS = "##ADMIN_MAIL_ADDRESS##";
   const URL = "##URL##";
-  const CUSTOMER_NUMBER = "#CUSTOMER_NUMBER#";
   const OTHER = "##OTHER##";
   const PLAN_NAME = "##PLAN_NAME##";
   const BEGIN_DATE = "##BEGIN_DATE##";
@@ -279,7 +278,6 @@ class ContractController extends AppController
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['administrator_mail_address'], self::ADMIN_MAIL_ADDRESS, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['telephone_number'], self::PHONE_NUMBER, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['installation_url'], self::URL, $mailBodyData);
-    $mailBodyData = $this->replaceConstToString($data['MAgreements']['customer_number'], self::CUSTOMER_NUMBER, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MCompany']['limit_users'], self::USABLE_USER_COUNT, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['Contract']['user_password'], self::PASSWORD, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getPlanNameStr($data), self::PLAN_NAME, $mailBodyData);
