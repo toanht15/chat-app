@@ -423,6 +423,7 @@ class ContractController extends AppController
           'administrator_name' => $saveData['MAgreements']['administrator_name'],
           'administrator_mail_address' => $saveData['MAgreements']['administrator_mail_address'],
           'installation_url' => $saveData['MAgreements']['installation_url'],
+          'customer_number' => $saveData['MAgreements']['customer_number'],
           'business_model' => $saveData['MAgreements']['business_model'],
         ));
         $this->MAgreements->save();
@@ -732,6 +733,7 @@ class ContractController extends AppController
     $this->MAgreements->set(array(
       'm_companies_id' => $addedCompanyInfo['id'],
       'company_name' => $companyInfo['company_name'],
+      'customer_number' => $agreementInfo['customer_number'],
       'business_model' => $agreementInfo['business_model'],
       'application_day' => date("Y-m-d"), // FIXME（自動発行）
       'trial_start_day' => $agreementInfo['trial_start_day'],

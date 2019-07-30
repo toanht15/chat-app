@@ -22,6 +22,11 @@
     <?= $this->Form->input('MAgreements.installation_url', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 2048)) ?>
   </li>
 
+  <li>
+    <div class="labelArea fLeft"><span><label>顧客番号</label></span></div>
+    <?= $this->Form->input('MAgreements.customer_number', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 2048)) ?>
+  </li>
+
   <li><h2>申込者情報</h2></li>
   <!-- /* 部署名 */ -->
   <li>
