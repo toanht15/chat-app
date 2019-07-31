@@ -37,7 +37,7 @@
           <?php if (ALLOW_SET_CV_VALUE): ?>
               <th style="width:8em;">CV単価</th>
           <?php endif; ?>
-
+          <th style="width:8em;">キー</th>
           <?php if ($isStrongPermission): ?>
               <th style="width:15em;">プラン</th>
               <th style="width:20em;">オプション</th>
@@ -55,7 +55,7 @@
       <?php foreach((array)$companyList as $key => $val): ?>
         <?php
           $companyId = $val['MCompany']['id'];
-//          $companyKey = $val['MCompany']['company_key'];
+          $companyKey = $val['MCompany']['company_key'];
         ?>
         <tbody>
           <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';" <?php
@@ -81,6 +81,7 @@
             <?php if (ALLOW_SET_CV_VALUE): ?>
                 <td><?= number_format($val['MAgreement']['cv_value']) ?></td>
             <?php endif; ?>
+            <td><?=h($val['MCompany']['company_key'])?></td>
 
             <?php if ($isStrongPermission): ?>
               <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>

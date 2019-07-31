@@ -102,7 +102,7 @@ App::uses('CompanyExpireChecker', 'Vendor/util');
           <?php endforeach; ?>
               <tfoot>
                 <tr>
-                  <th colspan="3"><div style="text-align : left">総額</div></th>
+                  <th colspan="3"><div style="text-align : left">合計</div></th>
                   <th><div style="text-align : left"><?php echo $total_cv_value; ?></div></th>
                   <th><div style="text-align : left"><?php echo $total_cv; ?></div></th>
                   <th><div style="text-align : left"><?php echo $total_cv_amount; ?></div></th>
