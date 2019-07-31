@@ -107,8 +107,8 @@ class BillingsController extends AppController
               array(
                   'type' => 'left',
                   'table' => '(SELECT thcl.m_companies_id as mc, date_format(th.access_date, "%Y-%m") as date, SUM(case when thcl.achievement_flg = 0 THEN 1 ELSE 0 END) cv
-      FROM (select t_histories_id, m_companies_id, achievement_flg from t_history_chat_logs
-       force index(idx_t_history_chat_logs_achievement_flg_companies_id) where achievement_flg = 0 group by m_companies_id, t_histories_id) as thcl,
+     FROM (select t_history_stay_logs.t_histories_id, m_companies_id, achievement_flg from t_history_chat_logs inner join t_history_stay_logs on t_history_chat_logs.t_history_stay_logs_id = t_history_stay_logs.id
+     where achievement_flg = 0 and t_history_stay_logs.url not like "%ScriptSettings%" group by m_companies_id, t_history_chat_logs.t_histories_id) as thcl,
        t_histories as th
       WHERE
         thcl.t_histories_id = th.id
