@@ -159,7 +159,7 @@ class BillingsController extends AppController
       $csv[] = $row;
 */
       $csv[] = array(
-        "総額",
+        "合計",
         "",
         "",
         "",
