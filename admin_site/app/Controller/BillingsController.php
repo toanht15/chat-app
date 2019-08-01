@@ -128,7 +128,6 @@ class BillingsController extends AppController
           )
       ));
 
-      $total_cv_value = 0;
       $total_cv = 0;
       $total_cv_amount = 0;
 
@@ -143,18 +142,17 @@ class BillingsController extends AppController
         $row['billing_value'] = intval($row['cv_value']) * intval($row['cv_count']);
         $csv[] = $row;
 
-        $total_cv_value = $total_cv_value + $v['MAgreement']['cv_value'];
         $total_cv = $total_cv + $v['CVCount']['cv'];
         $total_cv_amount = $total_cv_amount + intval($row['cv_value']) * intval($row['cv_count']);
 
       }
 
       $csv[] = array(
+        "",
+        "",
+        "",
+        "",
         "合計",
-        "",
-        "",
-        "",
-        $total_cv_value,
         $total_cv,
         $total_cv_amount
       );
