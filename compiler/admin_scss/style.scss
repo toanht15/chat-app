@@ -825,6 +825,9 @@ div#sidebar{
   }
 
   #billing_cv_list {
+    margin-right: 20px;
+    margin-left: 25px;
+
     table {
       margin-top: 15px;
       font-size: 15px;
@@ -836,14 +839,42 @@ div#sidebar{
           background-color: $normal-color;
           text-align: left;
         }
+
+        th.customer_number {
+          padding-left: 20px;
+        }
+
+        th.cv_amount {
+          padding-right:25px;
+        }
+      }
+
+      tbody {
+        td.customer_number {
+          padding-left: 20px;
+        }
+
+        td.cv_amount {
+          padding-right:25px;
+        }
+
       }
 
       tfoot {
         color: #fff;
 
-        th {
+        th.total {
           background-color: #9A9A9A;
           text-align: left;
+        }
+        th.total_cv {
+          background-color: #9A9A9A;
+          text-align: left;
+        }
+        th.total_cv_amount {
+          background-color: #9A9A9A;
+          text-align: left;
+          padding-right:25px;
         }
       }
 
