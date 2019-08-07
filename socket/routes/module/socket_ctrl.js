@@ -361,7 +361,6 @@ function getCompanyInfoFromApi(obj, ip, callback) {
     var api = new LandscapeAPI('json', 'utf8');
     api.getFrom(ip, callback);
   } else {
-    deblogger.debug('refCompanyData is false. siteKey : ' + obj.siteKey);
     callback({});
   }
 }
@@ -702,7 +701,7 @@ var db = {
             if (err !== null && err !== '') return false; // DB接続断対応
             var now = CommonUtil.formatDateParse();
 
-            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) { 
+            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
               if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) && CommonUtil.isset(obj.sincloSessionId)) {
                 SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
               }
@@ -2146,8 +2145,10 @@ io.sockets.on('connection', function(socket) {
     }
   };
 
+  deblogger.debug('【begin】 SET MESSAGING EVENT LISTENERS socket.id : %s', socket.id);
   // 接続時
   socket.on('connected', function(r) {
+    deblogger.debug('【connected】 socket.id : %s, data : %s', socket.id, r);
     var res = JSON.parse(r),
         send = {},
         type = '',
@@ -2700,6 +2701,7 @@ io.sockets.on('connection', function(socket) {
 
 
   socket.on('connectSuccess', function(data, ack) {
+    deblogger.debug('【connectSuccess】 socket.id : %s, data : %s', socket.id, data);
     var obj = JSON.parse(data);
     if (!CommonUtil.isset(SharedData.sincloCore[obj.siteKey])) {
       SharedData.sincloCore[obj.siteKey] = {};
