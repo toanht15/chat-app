@@ -32,6 +32,7 @@
     <table>
       <thead>
         <tr>
+          <th style="width:8em;">顧客番号</th>
           <th style="width:23em;">会社名</th>
           <?php if (ALLOW_SET_CV_VALUE): ?>
               <th style="width:8em;">CV単価</th>
@@ -75,11 +76,13 @@
                 break;
             }
             ?> >
+            <td><?=h($val['MAgreement']['customer_number'])?></td>
             <td><a href="#" class="loginLink"><?=h($val['MCompany']['company_name'])?></a></td>
             <?php if (ALLOW_SET_CV_VALUE): ?>
                 <td><?= number_format($val['MAgreement']['cv_value']) ?></td>
             <?php endif; ?>
             <td><?=h($val['MCompany']['company_key'])?></td>
+
             <?php if ($isStrongPermission): ?>
               <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>
                     <td>プレミアムプラン</td>
