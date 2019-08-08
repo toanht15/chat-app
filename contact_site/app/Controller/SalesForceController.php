@@ -130,22 +130,28 @@ class SalesForceController extends AppController
    */
   private function loadSelectionData()
   {
-    $data = [];
-    $data['name_title'] = ['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.'];
-    $data['lead_acquisition_channel'] = [
-        '電話',
-        'トライアル申込フォーム',
-        '問合せフォーム',
-        'チャット',
-        'ボクシル',
-        'ITトレンド',
-        'フォームDM',
-        'リトルクラウド',
-        'ボクシル（無効）',
-        'sales box',
-        '展示会',
-        '資料ダウンロード'
-    ];
+    $data = array();
+    $data['name_title'] = array('Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.');
+    $data['lead_acquisition_channel'] = array(
+      '【MediaSeries】問合せフォーム',
+      '【MediaSeries】資料ダウンロードフォーム',
+      '【sinclo】問合せフォーム',
+      '【sinclo】トライアル申込フォーム',
+      '【sinclo】WPDLフォーム',
+      '【LACLOS】無料相談フォーム',
+      '電話',
+      'トライアル申込フォーム',
+      '問合せフォーム',
+      'チャット',
+      'ボクシル',
+      'ITトレンド',
+      'フォームDM',
+      'リトルクラウド',
+      'ボクシル（無効）',
+      'sales box',
+      '展示会',
+      '資料ダウンロード'
+    );
     $data['customer_collection_channel'] = ['SEO', 'Google広告', '一括サイト', '比較サイト', 'リファラー', 'メールなど', '不明'];
     $data['introducer'] = ['直契約', '代理店'];
     $data['distribution_channel'] = ['直契約', '代理店'];
