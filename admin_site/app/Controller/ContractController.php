@@ -82,7 +82,7 @@ class ContractController extends AppController
         ],
         [
           'type' => 'left',
-            'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND (permission_level = 1 OR permission_level = 99) GROUP BY m_companies_id)',
+            'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND (permission_level = 99) GROUP BY m_companies_id)',
           'alias' => 'AdminUser',
           'conditions' => [
             'AdminUser.m_companies_id = MCompany.id',

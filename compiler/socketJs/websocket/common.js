@@ -116,7 +116,7 @@ var socket, // socket.io
     var pingTimer = null;
 
     var exec = function(e) {
-      if (e.key != _key) return;
+      if (e.key != _key || !check.isset(e.newValue)) return;
       var msg = JSON.parse(e.newValue);
       if (!check.isset(msg)) return;
       switch (msg.t) {
@@ -6739,7 +6739,7 @@ var socket, // socket.io
         stayCount: this.getStayCount(),
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
-        chatCnt: document.getElementsByClassName('sinclo_se').length,
+        chatCnt: $('.sinclo_se').length,
         chatUnread: {id: null, cnt: 0},
         service: check.browser(),
         widget: window.sincloInfo.widgetDisplay,

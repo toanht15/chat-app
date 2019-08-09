@@ -58,13 +58,12 @@ function reloadCompanyList(needNotify, callback) {
       for (var i = 0; key.length > i; i++) {
         var row = rows[key[i]];
         companyList[row.company_key] = row.id;
-        list.laSessionCounter.setMaxCount(row.company_key,
+        laSessionCounter.setMaxCount(row.company_key,
           row.la_limit_users);
-        list.functionManager.set(row.company_key, row.core_settings);
-        if (!(row.company_key in list.customerList)) {
+        functionManager.set(row.company_key, row.core_settings);
+        if (!(row.company_key in customerList)) {
           console.log('new list.customerList : ' + row.company_key);
-          f
-          list.customerList[row.company_key] = {};
+          customerList[row.company_key] = {};
         }
       }
 
