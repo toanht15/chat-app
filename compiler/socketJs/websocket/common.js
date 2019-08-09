@@ -116,7 +116,7 @@ var socket, // socket.io
     var pingTimer = null;
 
     var exec = function(e) {
-      if (e.key != _key) return;
+      if (e.key != _key || !check.isset(e.newValue)) return;
       var msg = JSON.parse(e.newValue);
       if (!check.isset(msg)) return;
       switch (msg.t) {
@@ -2189,7 +2189,7 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper img { max-width: ' + 40 * ratio + 'px; }';
           html += '#sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize i { height: ' + 40 * ratio + 'px; width: ' + 40 * ratio + 'px; font-size: ' + 26 * ratio + 'px }';
           // pulldown
-          html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: ' + 10 * ratio + 'px; height: auto; font-size: ' + 12 * ratio + 'px;}';
+          html += '#sincloBox ul#chatTalk li .sinclo-pulldown { margin-top: ' + 10 * ratio + 'px; height:auto; font-size: ' + (12 * ratio >= 16 ? 12 * ratio : 16) + 'px;}';
           // button
           html += '#sincloBox ul#chatTalk li button { cursor: pointer; min-height: ' + 35 * ratio + 'px; margin-bottom: ' + 1 * ratio + 'px; padding: ' + 10 * ratio + 'px ' + 15 * ratio + 'px; }';
           //calendar
@@ -4985,9 +4985,9 @@ var socket, // socket.io
               $('#mainImage').css('display') === 'inline') {
             common.indicateSimpleImage();
           }
+        common.widgetHandler.saveShownFlg();
         }
 
-        common.widgetHandler.saveShownFlg();
 
         if(check.smartphone() && !check.android() && window.orientation !== 0 && screen.width !== window.innerHeight) {
           $('#sincloBox').
@@ -6739,7 +6739,7 @@ var socket, // socket.io
         stayCount: this.getStayCount(),
         referrer: this.referrer,
         userAgent: window.navigator.userAgent,
-        chatCnt: document.getElementsByClassName('sinclo_se').length,
+        chatCnt: $('.sinclo_se').length,
         chatUnread: {id: null, cnt: 0},
         service: check.browser(),
         widget: window.sincloInfo.widgetDisplay,
@@ -8021,7 +8021,7 @@ var socket, // socket.io
   var myTag = document.querySelector(
       'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
 
-  if (myTag.getAttribute('data-another-widget-key')) {
+  if (myTag && myTag.getAttribute('data-another-widget-key')) {
     widgetSitekey = myTag.getAttribute('data-another-widget-key');
   }
 
@@ -8300,13 +8300,13 @@ function link(word, link, eventLabel) {
 // get type
 var myTag = document.querySelector(
     'script[src$=\'/client/' + sincloInfo.site.key + '.js\']');
-if (myTag.getAttribute('data-hide')) {
+if (myTag && myTag.getAttribute('data-hide')) {
   sincloInfo.dataset.hide = myTag.getAttribute('data-hide');
 }
-if (myTag.getAttribute('data-form')) {
+if (myTag && myTag.getAttribute('data-form')) {
   sincloInfo.dataset.form = myTag.getAttribute('data-form');
 }
-if (myTag.getAttribute('data-show-always')) {
+if (myTag && myTag.getAttribute('data-show-always')) {
   // オペレータ存在条件や営業時間設定に依存せずtrueであれば表示
   sincloInfo.dataset.showAlways = myTag.getAttribute('data-show-always');
 }
