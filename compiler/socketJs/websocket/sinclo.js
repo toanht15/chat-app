@@ -30,6 +30,7 @@
     },
     sorryMsgTimer: null,
     syncTimeout: '',
+    forCallingTimerArray: [],
     operatorInfo: {
       header: null,
       toggle: function() {
@@ -1394,6 +1395,10 @@
       storage.s.set('chatAct', true); // オートメッセージを表示しない
       storage.s.set('operatorEntered', true); // オペレータが入室した
       storage.l.set('leaveFlg', 'false'); // オペレータが入室した
+      $.each(this.forCallingTimerArray, function(key, timerId){
+        clearTimeout(timerId);
+      });
+      this.forCallingTimerArray = [];
       this.setOperatorInfoForIcon(obj);
       if (Number(sincloInfo.widget.operatorIconType) === 3) {
         //op別のアイコンを使用する場合はオペレーターのアイコンパスを上書きする。
@@ -2536,7 +2541,7 @@
                   {};
               for (var i = 0; i < Object.keys(data).length; i++) {
                 (function(times) {
-                  setTimeout(function() {
+                  var timeoutId = setTimeout(function() {
                     if (storage.s.get('operatorEntered') !== 'true' &&
                         data[times].message !== '') {
                       var userName = '';
@@ -2568,6 +2573,7 @@
                     }
                     storage.s.set('callingMessageSeconds', data[times].seconds);
                   }, data[times].seconds * 1000);
+                  sinclo.forCallingTimerArray.push(timeoutId);
                 })(i);
               }
               return false;
