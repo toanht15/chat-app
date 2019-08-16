@@ -8963,10 +8963,12 @@
 
         // 発言内容によるオートメッセージかチェックする
         var isSpeechContent = false;
+        var speechTriggerCond = "";
         for (var key in cond.conditions) {
           console.log('DEBUG => key : ' + key);
           if (key === '7') { // FIXME マジックナンバー
             isSpeechContent = true;
+            speechTriggerCond = cond.conditions[7][0].speechTriggerCond;
           }
         }
 
@@ -9044,7 +9046,7 @@
         }
 
         if (!sinclo.chatApi.autoMessages.exists(data.chatId) &&
-            !isSpeechContent) {
+            !isSpeechContent && String(speechTriggerCond) !== '2') {
           //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
           data.created = new Date();
           sinclo.chatApi.autoMessages.push(data.chatId, data);
@@ -9227,7 +9229,6 @@
               }
               sinclo.operatorInfo.ev();
             }
-            sinclo.chatApi.autoMessages.push(id, {});
           }
         }
       },
