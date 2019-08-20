@@ -368,7 +368,7 @@
         }
         var enableArea = browserInfo.scrollSize().y - height;
 
-        if (enableArea < window.scrollY && String(openflg) === 'false') {
+        if (enableArea < window.scrollY && String(openflg) === 'false' && window.sincloInfo.widget.widgetSizeType !== 4) {
           if (typeof window.sincloInfo.widget.spBannerPosition !==
               'undefined' &&
               (Number(window.sincloInfo.widget.spBannerPosition) === 3 ||
@@ -840,7 +840,8 @@
           tabId: userInfo.tabId,
           sincloSessionId: userInfo.sincloSessionId,
           token: common.token,
-          customVariables: userInfo.customVariables
+          customVariables: userInfo.customVariables,
+          stayCount: userInfo.getStayCount()
         }),
         success: function(json) {
           defer.resolve(JSON.stringify(json));
