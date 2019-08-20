@@ -19,6 +19,7 @@ class StatisticsController extends AppController {
       'scenarioHearing' => 22,
       'scenarioSelection' => 23,
       'scenarioReceiveFile' => 27,
+      'chatTreeAnswer' => 303,
       'enteringRoom' => 998,
       'exit' => 999
     ],
@@ -992,7 +993,7 @@ class StatisticsController extends AppController {
       m_users_id as userId,count(th.id) as response_count
       FROM (select t_histories_id,m_companies_id,m_users_id,message_type from t_history_chat_logs
       force index(idx_t_history_chat_logs_message_type_companies_id_users_id)
-      where message_type = ? and m_companies_id = ?)
+      where (message_type = ? or message_type = ?) and m_companies_id = ?)
       as thcl, t_histories as th
       WHERE
         thcl.t_histories_id = th.id
@@ -1001,8 +1002,10 @@ class StatisticsController extends AppController {
       group by date,userId";
 
       $responseNumber = $this->THistory->query($responseNumber,
-        array($date_format,$this->chatMessageType['messageType']['enteringRoom'],
-        $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,));
+        array($date_format,
+          $this->chatMessageType['messageType']['enteringRoom'],
+          $this->chatMessageType['messageType']['chatTreeAnswer'],
+          $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,));
     }
     //1人のオペレータ検索の場合
     else {
