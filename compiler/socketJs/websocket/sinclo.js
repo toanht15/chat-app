@@ -9195,12 +9195,23 @@
             return;
           } else {
             if (socket && !socket.isConnected()) {
-              socket.connect().then(function () {
-                return sinclo.executeConnectSuccess(
-                  window.userInfo.connectSuccessData,
-                  window.userInfo.accessInfoData);
-              }).then(function () {
-                  emit('getChatDiagram', {'diagramId': diagramId});
+              $.ajax({
+                type: 'get',
+                url: window.sincloInfo.site.files + '/settings/diagram',
+                cache: false,
+                data: {
+                  sitekey: window.sincloInfo.site.key,
+                  did: diagramId
+                },
+                dataType: 'json',
+                success: function(json) {
+                  sinclo.chatApi.execDiagram(json);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                  $('#XMLHttpRequest').html('XMLHttpRequest : ' + XMLHttpRequest.status);
+                  $('#textStatus').html('textStatus : ' + textStatus);
+                  $('#errorThrown').html('errorThrown : ' + errorThrown.message);
+                }
               });
             } else {
               emit('getChatDiagram', {'diagramId': diagramId});
