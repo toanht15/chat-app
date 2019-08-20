@@ -125,15 +125,12 @@ gulp.task('compress-gzip-jade', function(){
 });
 
 gulp.task('watch', function(){
-  gulp.watch([path.adScss + '**/*.scss'],
-      gulp.task(gulp.series('admin-scss-compile', 'compress-gzip-admin-css')));
-  gulp.watch([path.scss + '**/*.scss'], gulp.task(
-      gulp.series('contact-scss-compile', 'compress-gzip-contact-css')));
-  gulp.watch([path.socketSass + '**/*.sass'], gulp.task(
-      gulp.series('socket-sass-compile', 'compress-gzip-socket-css')));
-  gulp.watch([path.js], gulp.task('js-minify-dev'));
-  gulp.watch([path.jade],
-      gulp.task(gulp.series('jade-compile', 'compress-gzip-jade')));
+  gulp.watch(path.adScss + '**/*.scss',
+      gulp.series('admin-scss-compile', 'compress-gzip-admin-css'));
+  gulp.watch(path.scss + '**/*.scss', gulp.series('contact-scss-compile', 'compress-gzip-contact-css'));
+  gulp.watch(path.socketSass + '**/*.sass', gulp.series('socket-sass-compile', 'compress-gzip-socket-css'));
+  gulp.watch(path.js, gulp.series('js-minify-dev'));
+  gulp.watch(path.jade, gulp.series('jade-compile', 'compress-gzip-jade'));
 });
 
 gulp.task('js-minify', gulp.series('minify-js', 'compress-gzip-js'));

@@ -1,12 +1,15 @@
 var companyList = {};
 var customerList = {};
-var initialized = false;
 var database = require('../database');
 var common = require('./common');
 var CommonUtil = require('./class/util/common_utility');
 var SharedData = require('./shared_data');
+var initialized = false;
 // mysql
 var DBConnector = require('./class/util/db_connector_util');
+// redis
+var Redis = require('ioredis');
+var publisher = new Redis(process.env.REDIS_PORT, process.env.REDIS_HOST);
 
 function getCompanyList(forceReload) {
   DBConnector.getPool().query('select * from m_companies where del_flg = 0;',
@@ -31,7 +34,48 @@ function getCompanyList(forceReload) {
         if (forceReload) {
           common.reloadSettings(null, true);
         }
+        publisher.publish('notifyUpdateSettings', JSON.stringify({
+          type: 'companyList'
+        }));
       });
+}
+
+function reloadCompanyList(needNotify, callback) {
+  console.log('reload Company List');
+  DBConnector.getPool().query('select * from m_companies where del_flg = 0;',
+    function(err, rows) {
+      if (err !== null && err !== '') {
+        if (needNotify) {
+          publisher.publish('notifyUpdateSettings', JSON.stringify({
+            type: 'companyList'
+          }));
+        }
+        if (callback) {
+          callback();
+        }
+      } // DB接続断対応
+      var key = Object.keys(rows);
+      for (var i = 0; key.length > i; i++) {
+        var row = rows[key[i]];
+        companyList[row.company_key] = row.id;
+        laSessionCounter.setMaxCount(row.company_key,
+          row.la_limit_users);
+        functionManager.set(row.company_key, row.core_settings);
+        if (!(row.company_key in customerList)) {
+          console.log('new list.customerList : ' + row.company_key);
+          customerList[row.company_key] = {};
+        }
+      }
+
+      if (needNotify) {
+        publisher.publish('notifyUpdateSettings', JSON.stringify({
+          type: 'companyList'
+        }));
+      }
+      if (callback) {
+        callback();
+      }
+    });
 }
 
 // LiveAssistの同時セッション数管理用クラス
@@ -173,6 +217,7 @@ var CompanyFunctionManager = function() {
 var functionManager = new CompanyFunctionManager();
 
 module.exports.getCompanyList = getCompanyList;
+module.exports.reloadCompanyList = reloadCompanyList;
 module.exports.companyList = companyList;
 module.exports.customerList = customerList;
 module.exports.functionManager = functionManager;

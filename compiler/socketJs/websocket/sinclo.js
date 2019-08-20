@@ -30,6 +30,7 @@
     },
     sorryMsgTimer: null,
     syncTimeout: '',
+    forCallingTimerArray: [],
     operatorInfo: {
       header: null,
       toggle: function() {
@@ -739,6 +740,11 @@
         document.fireEvent('sinclo:connected', evt);
       }
 
+      var sendList = userInfo.getSendList();
+
+      obj.prev = sendList.prev;
+      obj.prevList = sendList.prev;
+
       window.userInfo.accessInfoData = obj;
 
       return connectSuccessData;
@@ -749,6 +755,13 @@
         emit('connectSuccess', connectSuccessData, function(ev) {
           if ((userInfo.gFrame && Number(userInfo.accessType) ===
               Number(cnst.access_type.guest)) === false) {
+            var sendList = userInfo.getSendList();
+            if(!obj.prev) {
+              obj.prev = sendList.prev;
+            }
+            if(!obj.prevList) {
+              obj.prevList = sendList.prev;
+            }
             emit('customerInfo', obj);
             defer.resolve(obj);
           }
@@ -852,7 +865,7 @@
             if (window.sincloInfo.contract.chat) {
               // チャット情報読み込み
               sinclo.chatApi.init();
-              if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+              if (!window.sincloInfo.contract.enableRealtimeMonitor && obj.chat) {
                 sinclo.chatMessageData(JSON.stringify({
                   siteKey: obj.siteKey,
                   token: obj.token,
@@ -1382,6 +1395,10 @@
       storage.s.set('chatAct', true); // オートメッセージを表示しない
       storage.s.set('operatorEntered', true); // オペレータが入室した
       storage.l.set('leaveFlg', 'false'); // オペレータが入室した
+      $.each(this.forCallingTimerArray, function(key, timerId){
+        clearTimeout(timerId);
+      });
+      this.forCallingTimerArray = [];
       this.setOperatorInfoForIcon(obj);
       if (Number(sincloInfo.widget.operatorIconType) === 3) {
         //op別のアイコンを使用する場合はオペレーターのアイコンパスを上書きする。
@@ -2524,7 +2541,7 @@
                   {};
               for (var i = 0; i < Object.keys(data).length; i++) {
                 (function(times) {
-                  setTimeout(function() {
+                  var timeoutId = setTimeout(function() {
                     if (storage.s.get('operatorEntered') !== 'true' &&
                         data[times].message !== '') {
                       var userName = '';
@@ -2556,6 +2573,7 @@
                     }
                     storage.s.set('callingMessageSeconds', data[times].seconds);
                   }, data[times].seconds * 1000);
+                  sinclo.forCallingTimerArray.push(timeoutId);
                 })(i);
               }
               return false;
@@ -8945,10 +8963,12 @@
 
         // 発言内容によるオートメッセージかチェックする
         var isSpeechContent = false;
+        var speechTriggerCond = "";
         for (var key in cond.conditions) {
           console.log('DEBUG => key : ' + key);
           if (key === '7') { // FIXME マジックナンバー
             isSpeechContent = true;
+            speechTriggerCond = cond.conditions[7][0].speechTriggerCond;
           }
         }
 
@@ -9026,7 +9046,7 @@
         }
 
         if (!sinclo.chatApi.autoMessages.exists(data.chatId) &&
-            !isSpeechContent) {
+            !isSpeechContent && String(speechTriggerCond) !== '2') {
           //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
           data.created = new Date();
           sinclo.chatApi.autoMessages.push(data.chatId, data);
@@ -9157,15 +9177,20 @@
                   targetAutomessage.action_type, targetAutomessage.activity,
                   targetAutomessage.send_mail_flg,
                   targetAutomessage.scenario_id,
-                  targetAutomessage.call_automessage_id, true);
+                  targetAutomessage.call_automessage_id, true, diagramId);
             }
           }
         } else if (String(type) === '4') {
           console.log('CHAT DIAGRAM TRIGGERED!!!!!! ' + diagramId);
+
+          var speechCondition = "";
+          if(Array.isArray(cond.conditions[id])){
+            speechCondition = cond.conditions[id][0].speechTrigger;
+          }
           if (!window.sincloInfo.contract.chatbotTreeEditor
             || !diagramId
             || sinclo.scenarioApi.isProcessing()
-            || sinclo.chatApi.autoMessages.exists(id)) {
+            || sinclo.chatApi.autoMessages.exists(id) && speechCondition === "2") {
             console.log('exists id : ' + id + ' or scenario is processing');
             return;
           } else {
@@ -9209,7 +9234,6 @@
               }
               sinclo.operatorInfo.ev();
             }
-            sinclo.chatApi.autoMessages.push(id, {});
           }
         }
       },
@@ -14276,28 +14300,19 @@
                 {messageType: self.messageType.message.text});
             self.executor.wait(self.executor.getIntervalTimeSec()).
                 then(function() {
-                  if(socket && !socket.isConnected()) {
-                    $.ajax({
-                      type: 'get',
-                      url: window.sincloInfo.site.files + '/settings/scenario',
-                      cache: false,
-                      data: {
-                        sitekey: window.sincloInfo.site.key,
-                        sid: scenarioId
-                      },
-                      dataType: 'json',
-                      success: function(json) {
-                        sinclo.chatApi.execScenario(json);
-                      },
-                      error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        $('#XMLHttpRequest').html('XMLHttpRequest : ' + XMLHttpRequest.status);
-                        $('#textStatus').html('textStatus : ' + textStatus);
-                        $('#errorThrown').html('errorThrown : ' + errorThrown.message);
-                      }
-                    });
-                  } else {
-                    emit('getScenario', {'scenarioId': scenarioId});
-                  }
+            if(socket && !socket.isConnected()) {
+              socket.connect().then(function() {
+                return sinclo.executeConnectSuccess(
+                  window.userInfo.connectSuccessData,
+                  window.userInfo.accessInfoData);
+              })
+              .then(sinclo.setHistoryId)
+              .then(function() {
+                emit('getScenario', {'scenarioId': scenarioId});
+              });
+            } else {
+              emit('getScenario', {'scenarioId': scenarioId});
+            }
                 });
           }
         },
