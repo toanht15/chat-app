@@ -839,7 +839,8 @@
           tabId: userInfo.tabId,
           sincloSessionId: userInfo.sincloSessionId,
           token: common.token,
-          customVariables: userInfo.customVariables
+          customVariables: userInfo.customVariables,
+          stayCount: userInfo.getStayCount()
         }),
         success: function(json) {
           defer.resolve(JSON.stringify(json));

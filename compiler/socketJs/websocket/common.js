@@ -7762,10 +7762,11 @@ var socket, // socket.io
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('accessInfo', function(d) {
+      var connectSuccessData = sinclo.accessInfo(d);
       sinclo.executeConnectSuccess(
-        sinclo.accessInfo(d),
-        JSON.parse(d));
-    }); // socket-on: accessInfo
+        connectSuccessData,
+        window.userInfo.accessInfoData);
+    }); // socket-on: acce ssInfo
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('syncUserInfo', function(d) {
