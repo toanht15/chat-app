@@ -9193,31 +9193,20 @@
             return;
           } else {
             if (socket && !socket.isConnected()) {
-              $.ajax({
-                type: 'get',
-                url: window.sincloInfo.site.files + '/settings/diagram',
-                cache: false,
-                data: {
-                  sitekey: window.sincloInfo.site.key,
-                  did: diagramId
-                },
-                dataType: 'json',
-                success: function(json) {
-                  sinclo.chatApi.execDiagram(json);
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  $('#XMLHttpRequest').html('XMLHttpRequest : ' + XMLHttpRequest.status);
-                  $('#textStatus').html('textStatus : ' + textStatus);
-                  $('#errorThrown').html('errorThrown : ' + errorThrown.message);
-                }
+              socket.connect().then(function () {
+                return sinclo.executeConnectSuccess(
+                  window.userInfo.connectSuccessData,
+                  window.userInfo.accessInfoData);
+              }).then(function () {
+                  emit('getChatDiagram', {'diagramId': diagramId});
               });
             } else {
               emit('getChatDiagram', {'diagramId': diagramId});
             }
-            if (sincloInfo.widget.showTiming === 3) {
-              console.log('シナリオ表示処理発動');
-              // 初回オートメッセージ表示時にフラグを立てる
-              sincloInfo.widgetDisplay = true;
+              if (sincloInfo.widget.showTiming === 3) {
+                console.log('シナリオ表示処理発動');
+                // 初回オートメッセージ表示時にフラグを立てる
+                sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
             // 自動最大化
@@ -14297,22 +14286,23 @@
             }
             common.chatBotTypingCall(
                 {messageType: self.messageType.message.text});
-            self.executor.wait(self.executor.getIntervalTimeSec()).
-                then(function() {
-            if(socket && !socket.isConnected()) {
-              socket.connect().then(function() {
-                return sinclo.executeConnectSuccess(
-                  window.userInfo.connectSuccessData,
-                  window.userInfo.accessInfoData);
-              })
-              .then(sinclo.setHistoryId)
-              .then(function() {
+            self.executor.wait(self.executor.getIntervalTimeSec()).then(function() {
+              if(socket && !socket.isConnected()) {
+                socket.connect().then(function() {
+                  return sinclo.executeConnectSuccess(
+                    window.userInfo.connectSuccessData,
+                    window.userInfo.accessInfoData);
+                })
+                  .then(function(result){
+                    sinclo.setHistoryId(result);
+                  })
+                  .then(function() {
+                    emit('getScenario', {'scenarioId': scenarioId});
+                  });
+              } else {
                 emit('getScenario', {'scenarioId': scenarioId});
-              });
-            } else {
-              emit('getScenario', {'scenarioId': scenarioId});
-            }
-                });
+              }
+            });
           }
         },
         beginWaitEndScenario: function() {
