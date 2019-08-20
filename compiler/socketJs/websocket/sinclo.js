@@ -879,8 +879,8 @@
           };
 
       if (document.getElementById('sincloBox') === null) return false;
-      if (obj.stayLogsId) sinclo.chatApi.stayLogsId = obj.stayLogsId;
-      if (obj.historyId) sinclo.chatApi.historyId = obj.historyId;
+      if (check.isset(obj.stayLogsId)) sinclo.chatApi.stayLogsId = obj.stayLogsId;
+      if (check.isset(obj.historyId)) sinclo.chatApi.historyId = obj.historyId;
 
       createStartTimer = window.setInterval(function() {
         if (window.sincloInfo.widget.showTiming !== 4 ||
@@ -1474,7 +1474,9 @@
       console.log('DATA : %s', d);
       var obj = JSON.parse(d);
       if (obj.token !== common.token) return false;
-      this.chatApi.historyId = obj.chat.historyId;
+      if (check.isset(obj.chat) && check.isset(obj.chat.historyId)) {
+        this.chatApi.historyId = obj.chat.historyId;
+      }
       var keys = (typeof (obj.chat.messages) === 'object') ?
           Object.keys(obj.chat.messages) :
           [];
