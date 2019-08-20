@@ -12643,7 +12643,7 @@
         _isMatch: function(targetValKey, condition) {
           var self = sinclo.scenarioApi._branchOnCond;
           var targetValue = self._parent._getSavedVariable(targetValKey);
-          if (check.isJSON(targetValue)) {
+          if (check.isJSON(targetValue) && check.isset(JSON.parse(targetValue).message)) {
             // checkbox message
             targetValue = JSON.parse(targetValue).message;
           }
