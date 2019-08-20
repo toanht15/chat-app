@@ -8963,10 +8963,12 @@
 
         // 発言内容によるオートメッセージかチェックする
         var isSpeechContent = false;
+        var speechTriggerCond = "";
         for (var key in cond.conditions) {
           console.log('DEBUG => key : ' + key);
           if (key === '7') { // FIXME マジックナンバー
             isSpeechContent = true;
+            speechTriggerCond = cond.conditions[7][0].speechTriggerCond;
           }
         }
 
@@ -9044,7 +9046,7 @@
         }
 
         if (!sinclo.chatApi.autoMessages.exists(data.chatId) &&
-            !isSpeechContent) {
+            !isSpeechContent && String(speechTriggerCond) !== '2') {
           //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
           data.created = new Date();
           sinclo.chatApi.autoMessages.push(data.chatId, data);
@@ -9175,7 +9177,7 @@
                   targetAutomessage.action_type, targetAutomessage.activity,
                   targetAutomessage.send_mail_flg,
                   targetAutomessage.scenario_id,
-                  targetAutomessage.call_automessage_id, true);
+                  targetAutomessage.call_automessage_id, true, diagramId);
             }
           }
         } else if (String(type) === '4') {
@@ -9232,7 +9234,6 @@
               }
               sinclo.operatorInfo.ev();
             }
-            sinclo.chatApi.autoMessages.push(id, {});
           }
         }
       },
