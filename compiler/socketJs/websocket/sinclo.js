@@ -9180,10 +9180,15 @@
           }
         } else if (String(type) === '4') {
           console.log('CHAT DIAGRAM TRIGGERED!!!!!! ' + diagramId);
+
+          var speechCondition = "";
+          if(Array.isArray(cond.conditions[id])){
+            speechCondition = cond.conditions[id][0].speechTrigger;
+          }
           if (!window.sincloInfo.contract.chatbotTreeEditor
             || !diagramId
             || sinclo.scenarioApi.isProcessing()
-            || sinclo.chatApi.autoMessages.exists(id)) {
+            || sinclo.chatApi.autoMessages.exists(id) && speechCondition === "2") {
             console.log('exists id : ' + id + ' or scenario is processing');
             return;
           } else {
