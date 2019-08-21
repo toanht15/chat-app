@@ -1791,7 +1791,7 @@ class StatisticsController extends AppController {
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg from
       t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-      where message_request_flg = ? and m_companies_id = ? and notice_flg = ?)
+      where (message_request_flg = ? and m_companies_id = ? and notice_flg = ?) or (m_companies_id = ? and message_type = ?))
       as thcl,t_histories as th
       WHERE
         thcl.t_histories_id = th.id
@@ -1801,6 +1801,7 @@ class StatisticsController extends AppController {
 
     $mannedRequestNumber = $this->THistory->query($mannedRequestNumber, array($date_format,
       $this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
+      $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['chatTreeAnswer'],
       $correctStartDate,$correctEndDate));
 
     foreach($mannedRequestNumber as $k => $v) {
@@ -1828,7 +1829,7 @@ class StatisticsController extends AppController {
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg,message_distinction from
       t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
-      where m_companies_id = ? and message_type = 1 and notice_flg = ? group by t_histories_id,
+      where m_companies_id = ? and ((message_type = 1 and notice_flg = ?) or (message_type = ? and notice_flg = ?)) group by t_histories_id,
        message_distinction)
       as thcl,
       t_histories as th
@@ -1843,6 +1844,7 @@ class StatisticsController extends AppController {
 
     $abandonRequestNumber = $this->THistory->query($abandonRequestNumber, array($date_format,
       $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
+      $this->chatMessageType['messageType']['chatTreeAnswer'],$this->chatMessageType['noticeFlg']['effectiveness'],
       $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
 
     $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
@@ -1923,7 +1925,7 @@ class StatisticsController extends AppController {
        message_distinction) as thcl
       LEFT JOIN (select t_histories_id, message_request_flg,
       message_distinction from t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
-       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?) group by t_histories_id,message_distinction) as thcl2
+       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?)or(m_companies_id = ? and message_type = 303) group by t_histories_id,message_distinction) as thcl2
       ON
       thcl.t_histories_id = thcl2.t_histories_id
       AND
@@ -1941,7 +1943,7 @@ class StatisticsController extends AppController {
       array($date_format,$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
         $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],
         $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
-        $correctStartDate,$correctEndDate,));
+        $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate,));
 
     $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
 
