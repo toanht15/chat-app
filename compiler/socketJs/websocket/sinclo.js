@@ -368,7 +368,7 @@
         }
         var enableArea = browserInfo.scrollSize().y - height;
 
-        if (enableArea < window.scrollY && String(openflg) === 'false') {
+        if (enableArea < window.scrollY && String(openflg) === 'false' && window.sincloInfo.widget.widgetSizeType !== 4) {
           if (typeof window.sincloInfo.widget.spBannerPosition !==
               'undefined' &&
               (Number(window.sincloInfo.widget.spBannerPosition) === 3 ||
@@ -11027,7 +11027,7 @@
         var json = self.get(self._lKey.variables);
         var obj = json;
         obj[valKey] = {};
-        obj[valKey].value = value ? value.trim() : '';
+        obj[valKey].value = check.isset(value) ? String(value).trim() : '';
         obj[valKey].created = (new Date()).getTime();
         obj[valKey].scId = self.get(self._lKey.scenarioId);
         self.set(self._lKey.variables, obj);
@@ -12655,7 +12655,7 @@
         _isMatch: function(targetValKey, condition) {
           var self = sinclo.scenarioApi._branchOnCond;
           var targetValue = self._parent._getSavedVariable(targetValKey);
-          if (check.isJSON(targetValue)) {
+          if (check.isJSON(targetValue) && check.isset(JSON.parse(targetValue).message)) {
             // checkbox message
             targetValue = JSON.parse(targetValue).message;
           }
