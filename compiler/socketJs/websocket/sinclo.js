@@ -13556,6 +13556,9 @@
             return obj[key] ? obj[key] : self.defaultVal[key];
           }
         },
+        init: function (){
+          sinclo.diagramApi.storage.set('d_allowSave', sinclo.chatApi.saveFlg);
+        },
         getCurrentNode: function() {
           var self = sinclo.diagramApi.storage;
           return self.get(self._lKey.currentNode);
@@ -13649,6 +13652,7 @@
       executor: {
         execute: function() {
           var self = sinclo.diagramApi;
+          self.storage.init();
           var currentNode = self.storage.getCurrentNode();
           switch (currentNode.attrs.nodeBasicInfo.nodeType) {
             case 'branch':
