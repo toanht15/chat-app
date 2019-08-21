@@ -1213,7 +1213,7 @@ io.sockets.on('connection', function(socket) {
                 SharedData.sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
               }
               DBConnector.getPool().query(
-                  'UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;',
+                  'UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND (message_type = 1 or message_type = 303) AND id = ?;',
                   [
                     SharedData.sincloCore[d.siteKey][d.tabId].historyId,
                     results.insertId],

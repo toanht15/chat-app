@@ -8964,10 +8964,12 @@
 
         // 発言内容によるオートメッセージかチェックする
         var isSpeechContent = false;
+        var speechTriggerCond = "";
         for (var key in cond.conditions) {
           console.log('DEBUG => key : ' + key);
           if (key === '7') { // FIXME マジックナンバー
             isSpeechContent = true;
+            speechTriggerCond = cond.conditions[7][0].speechTriggerCond;
           }
         }
 
@@ -9045,7 +9047,7 @@
         }
 
         if (!sinclo.chatApi.autoMessages.exists(data.chatId) &&
-            !isSpeechContent) {
+            !isSpeechContent && String(speechTriggerCond) !== '2') {
           //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
           data.created = new Date();
           sinclo.chatApi.autoMessages.push(data.chatId, data);
@@ -9176,15 +9178,20 @@
                   targetAutomessage.action_type, targetAutomessage.activity,
                   targetAutomessage.send_mail_flg,
                   targetAutomessage.scenario_id,
-                  targetAutomessage.call_automessage_id, true);
+                  targetAutomessage.call_automessage_id, true, diagramId);
             }
           }
         } else if (String(type) === '4') {
           console.log('CHAT DIAGRAM TRIGGERED!!!!!! ' + diagramId);
+
+          var speechCondition = "";
+          if(Array.isArray(cond.conditions[id])){
+            speechCondition = cond.conditions[id][0].speechTrigger;
+          }
           if (!window.sincloInfo.contract.chatbotTreeEditor
             || !diagramId
             || sinclo.scenarioApi.isProcessing()
-            || sinclo.chatApi.autoMessages.exists(id)) {
+            || sinclo.chatApi.autoMessages.exists(id) && speechCondition === "2") {
             console.log('exists id : ' + id + ' or scenario is processing');
             return;
           } else {
@@ -9228,7 +9235,6 @@
               }
               sinclo.operatorInfo.ev();
             }
-            sinclo.chatApi.autoMessages.push(id, {});
           }
         }
       },
@@ -11022,7 +11028,7 @@
         var json = self.get(self._lKey.variables);
         var obj = json;
         obj[valKey] = {};
-        obj[valKey].value = value ? value.trim() : '';
+        obj[valKey].value = check.isset(value) ? String(value).trim() : '';
         obj[valKey].created = (new Date()).getTime();
         obj[valKey].scId = self.get(self._lKey.scenarioId);
         self.set(self._lKey.variables, obj);
@@ -12650,7 +12656,7 @@
         _isMatch: function(targetValKey, condition) {
           var self = sinclo.scenarioApi._branchOnCond;
           var targetValue = self._parent._getSavedVariable(targetValKey);
-          if (check.isJSON(targetValue)) {
+          if (check.isJSON(targetValue) && check.isset(JSON.parse(targetValue).message)) {
             // checkbox message
             targetValue = JSON.parse(targetValue).message;
           }
