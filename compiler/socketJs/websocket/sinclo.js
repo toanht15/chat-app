@@ -11028,7 +11028,7 @@
         var json = self.get(self._lKey.variables);
         var obj = json;
         obj[valKey] = {};
-        obj[valKey].value = value ? value.trim() : '';
+        obj[valKey].value = check.isset(value) ? String(value).trim() : '';
         obj[valKey].created = (new Date()).getTime();
         obj[valKey].scId = self.get(self._lKey.scenarioId);
         self.set(self._lKey.variables, obj);
