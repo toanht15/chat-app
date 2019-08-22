@@ -1837,7 +1837,7 @@
               for (var i = 0; i < Object.keys(data).length; i++) {
                 if (storage.s.get('callingMessageSeconds') < data[i].seconds) {
                   (function(times) {
-                    setTimeout(function() {
+                    var timeoutId = setTimeout(function() {
                       //オペレータが入室していなかった場合
                       if (storage.s.get('operatorEntered') !== 'true' &&
                           data[times].message !== '') {
@@ -1867,6 +1867,7 @@
                       storage.s.set('callingMessageSeconds',
                           data[times].seconds);
                     }, (data[times].seconds - diff) * 1000);
+                    sinclo.forCallingTimerArray.push(timeoutId);
                     firstCheck = false;
                   })(i);
                 }
@@ -2665,7 +2666,7 @@
               {};
           for (var i = 0; i < Object.keys(data).length; i++) {
             (function(times) {
-              setTimeout(function() {
+              var timeoutId = setTimeout(function() {
                 if (storage.s.get('operatorEntered') !== 'true' &&
                     data[times].message !== '') {
                   var userName = '';
@@ -2696,6 +2697,7 @@
                 }
                 storage.s.set('callingMessageSeconds', data[times].seconds);
               }, data[times].seconds * 1000);
+              sinclo.forCallingTimerArray.push(timeoutId);
             })(i);
           }
         }
