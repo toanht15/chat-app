@@ -9046,12 +9046,7 @@
           };
         }
 
-        if (!sinclo.chatApi.autoMessages.exists(data.chatId) &&
-            !isSpeechContent && String(speechTriggerCond) !== '2') {
-          //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
-          data.created = new Date();
-          sinclo.chatApi.autoMessages.push(data.chatId, data);
-        }
+        sinclo.trigger.pushProcessedTrigger(id, cond, data);
 
         if (sinclo.chatApi.saveFlg) {
           // オートメッセージの内容をDBに保存し、オブジェクトから削除する
@@ -9063,6 +9058,28 @@
           }
           emit('sendAutoChatMessage', data);
           sinclo.chatApi.store.save(data);
+        }
+      },
+      pushProcessedTrigger: function(id, cond, data) {
+        var isSpeechContent = false;
+        var speechTriggerCond = "";
+        for (var key in cond.conditions) {
+          console.log('DEBUG => key : ' + key);
+          if (key === '7') { // FIXME マジックナンバー
+            isSpeechContent = true;
+            speechTriggerCond = cond.conditions[7][0].speechTriggerCond;
+          }
+        }
+
+        if (!sinclo.chatApi.autoMessages.exists(id) &&
+          !isSpeechContent && String(speechTriggerCond) !== '2') {
+          //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
+          if (check.isset(data)) {
+            data.created = new Date();
+          } else {
+            data = {};
+          }
+          sinclo.chatApi.autoMessages.push(id, data);
         }
       },
       setAction: function(
@@ -9191,7 +9208,7 @@
           if (!window.sincloInfo.contract.chatbotTreeEditor
             || !diagramId
             || sinclo.scenarioApi.isProcessing()
-            || sinclo.chatApi.autoMessages.exists(id) && speechCondition === "2") {
+            || sinclo.chatApi.autoMessages.exists(id)) {
             console.log('exists id : ' + id + ' or scenario is processing');
             return;
           } else {
@@ -9236,6 +9253,7 @@
               sinclo.operatorInfo.ev();
             }
           }
+          sinclo.trigger.pushProcessedTrigger(id, cond);
         }
       },
       fireChatEnterEvent: function(msg) {
