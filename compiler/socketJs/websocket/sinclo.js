@@ -9211,7 +9211,7 @@
            * 1. ツリーエディタ有効
            * 2.
            */
-          if (window.sincloInfo.contract.chatbotTreeEditor && !sinclo.scenarioApi.isProcessing() && (forceCall || diagramId || !sinclo.chatApi.autoMessages.exists(id))) {
+          if (window.sincloInfo.contract.chatbotTreeEditor && !sinclo.scenarioApi.isProcessing() && (forceCall || (diagramId && !sinclo.chatApi.autoMessages.exists(id)))) {
             if (socket && !socket.isConnected()) {
               $.ajax({
                 type: 'get',
