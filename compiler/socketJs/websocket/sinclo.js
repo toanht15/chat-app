@@ -9197,7 +9197,7 @@
                   targetAutomessage.action_type, targetAutomessage.activity,
                   targetAutomessage.send_mail_flg,
                   targetAutomessage.scenario_id,
-                  targetAutomessage.call_automessage_id, true, diagramId);
+                  targetAutomessage.call_automessage_id, true, targetAutomessage.diagram_id);
             }
           }
         } else if (String(type) === '4') {
