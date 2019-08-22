@@ -9146,8 +9146,8 @@
           }, 1);
         } else if (String(type) === '2') {
           console.log('SENARIO TRIGGERED!!!!!! ' + scenarioId);
-          if (window.sincloInfo.contract.chatbotScenario
-            && (forceCall || (window.sincloInfo.contract.chatbotScenario && scenarioId && !sinclo.scenarioApi.isProcessing()))) {
+          if (window.sincloInfo.contract.chatbotScenario && !sinclo.scenarioApi.isProcessing()
+            && (forceCall || check.isset(scenarioId))) {
             if(socket && !socket.isConnected()) {
               socket.connect().then(function() {
                 return sinclo.executeConnectSuccess(
@@ -9207,10 +9207,11 @@
           if(Array.isArray(cond.conditions[id])){
             speechCondition = cond.conditions[id][0].speechTrigger;
           }
-          if (!window.sincloInfo.contract.chatbotTreeEditor || !forceCall && (!diagramId || sinclo.scenarioApi.isProcessing() || sinclo.chatApi.autoMessages.exists(id))) {
-            console.log('exists id : ' + id + ' or scenario is processing');
-            return;
-          } else {
+          /**
+           * 1. ツリーエディタ有効
+           * 2.
+           */
+          if (window.sincloInfo.contract.chatbotTreeEditor && !sinclo.scenarioApi.isProcessing() && (forceCall || diagramId || sinclo.chatApi.autoMessages.exists(id))) {
             if (socket && !socket.isConnected()) {
               $.ajax({
                 type: 'get',
@@ -9241,8 +9242,8 @@
             }
             // 自動最大化
             if (!('widgetOpen' in cond) || (check.smartphone() &&
-                sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
-                Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
+              sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
+              Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
             var flg = sinclo.widget.condifiton.get();
             if (Number(cond.widgetOpen) === 1 && String(flg) === 'false') {
               console.log('シナリオ最大化処理');
@@ -9251,6 +9252,9 @@
               }
               sinclo.operatorInfo.ev();
             }
+          } else {
+            console.log('exists id : ' + id + ' or scenario is processing');
+            return;
           }
           sinclo.trigger.pushProcessedTrigger(id, cond);
         }
