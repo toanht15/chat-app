@@ -9205,10 +9205,10 @@
           if(Array.isArray(cond.conditions[id])){
             speechCondition = cond.conditions[id][0].speechTrigger;
           }
-          if (!window.sincloInfo.contract.chatbotTreeEditor
+          if (!forceCall && (!window.sincloInfo.contract.chatbotTreeEditor
             || !diagramId
             || sinclo.scenarioApi.isProcessing()
-            || sinclo.chatApi.autoMessages.exists(id)) {
+            || sinclo.chatApi.autoMessages.exists(id))) {
             console.log('exists id : ' + id + ' or scenario is processing');
             return;
           } else {
