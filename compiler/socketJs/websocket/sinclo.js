@@ -9144,8 +9144,8 @@
           }, 1);
         } else if (String(type) === '2') {
           console.log('SENARIO TRIGGERED!!!!!! ' + scenarioId);
-          if (window.sincloInfo.contract.chatbotScenario && scenarioId &&
-              !sinclo.scenarioApi.isProcessing()) {
+          if (window.sincloInfo.contract.chatbotScenario
+            && (forceCall || (window.sincloInfo.contract.chatbotScenario && scenarioId && !sinclo.scenarioApi.isProcessing()))) {
             if(socket && !socket.isConnected()) {
               socket.connect().then(function() {
                 return sinclo.executeConnectSuccess(
@@ -9205,10 +9205,7 @@
           if(Array.isArray(cond.conditions[id])){
             speechCondition = cond.conditions[id][0].speechTrigger;
           }
-          if (!forceCall && (!window.sincloInfo.contract.chatbotTreeEditor
-            || !diagramId
-            || sinclo.scenarioApi.isProcessing()
-            || sinclo.chatApi.autoMessages.exists(id))) {
+          if (!window.sincloInfo.contract.chatbotTreeEditor || !forceCall && (!diagramId || sinclo.scenarioApi.isProcessing() || sinclo.chatApi.autoMessages.exists(id))) {
             console.log('exists id : ' + id + ' or scenario is processing');
             return;
           } else {
