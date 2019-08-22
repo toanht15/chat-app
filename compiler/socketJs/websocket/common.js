@@ -52,7 +52,7 @@ var socket, // socket.io
           port: 9090,
           rememberTransport: false,
           autoConnect: false,
-          transports: ['websocket']
+          transports: ['polling', 'websocket']
         });
 
     this.getId = function() {
