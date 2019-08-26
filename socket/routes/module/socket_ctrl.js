@@ -4137,19 +4137,23 @@ io.sockets.on('connection', function(socket) {
             SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId)) {
       SharedData.sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
       SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
-      let historyManager = new HistoryManager();
-      let customerInfoManager = new CustomerInfoManager();
-      let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
-      obj = Object.assign(obj, target);
-      historyManager.addHistory(obj).then((result) => {
-        emit.toSameUser('setHistoryId', result, obj.siteKey,
+      if(obj.messageType === 301 && obj.isDiagramMessage){
+        emit.toMine('storeDiagramMessaage', d, socket);
+      }else{
+        let historyManager = new HistoryManager();
+        let customerInfoManager = new CustomerInfoManager();
+        let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
+        obj = Object.assign(obj, target);
+        historyManager.addHistory(obj).then((result) => {
+          emit.toSameUser('setHistoryId', result, obj.siteKey,
             obj.sincloSessionId);
-        SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
-        SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
-        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
-        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
-        processSendChat(result, ack);
-      });
+          SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
+          SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = result.stayLogsId;
+          SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = result.historyId;
+          SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = result.stayLogsId;
+          processSendChat(result, ack);
+        });
+      }
     } else {
       processSendChat(obj, ack);
     }
