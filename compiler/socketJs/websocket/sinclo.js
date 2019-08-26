@@ -840,7 +840,8 @@
           tabId: userInfo.tabId,
           sincloSessionId: userInfo.sincloSessionId,
           token: common.token,
-          customVariables: userInfo.customVariables
+          customVariables: userInfo.customVariables,
+          stayCount: userInfo.getStayCount()
         }),
         success: function(json) {
           defer.resolve(JSON.stringify(json));
@@ -1836,7 +1837,7 @@
               for (var i = 0; i < Object.keys(data).length; i++) {
                 if (storage.s.get('callingMessageSeconds') < data[i].seconds) {
                   (function(times) {
-                    setTimeout(function() {
+                    var timeoutId = setTimeout(function() {
                       //オペレータが入室していなかった場合
                       if (storage.s.get('operatorEntered') !== 'true' &&
                           data[times].message !== '') {
@@ -1866,6 +1867,7 @@
                       storage.s.set('callingMessageSeconds',
                           data[times].seconds);
                     }, (data[times].seconds - diff) * 1000);
+                    sinclo.forCallingTimerArray.push(timeoutId);
                     firstCheck = false;
                   })(i);
                 }
@@ -2664,7 +2666,7 @@
               {};
           for (var i = 0; i < Object.keys(data).length; i++) {
             (function(times) {
-              setTimeout(function() {
+              var timeoutId = setTimeout(function() {
                 if (storage.s.get('operatorEntered') !== 'true' &&
                     data[times].message !== '') {
                   var userName = '';
@@ -2695,6 +2697,7 @@
                 }
                 storage.s.set('callingMessageSeconds', data[times].seconds);
               }, data[times].seconds * 1000);
+              sinclo.forCallingTimerArray.push(timeoutId);
             })(i);
           }
         }
@@ -9045,12 +9048,7 @@
           };
         }
 
-        if (!sinclo.chatApi.autoMessages.exists(data.chatId) &&
-            !isSpeechContent && String(speechTriggerCond) !== '2') {
-          //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
-          data.created = new Date();
-          sinclo.chatApi.autoMessages.push(data.chatId, data);
-        }
+        sinclo.trigger.pushProcessedTrigger(id, cond, data);
 
         if (sinclo.chatApi.saveFlg) {
           // オートメッセージの内容をDBに保存し、オブジェクトから削除する
@@ -9062,6 +9060,28 @@
           }
           emit('sendAutoChatMessage', data);
           sinclo.chatApi.store.save(data);
+        }
+      },
+      pushProcessedTrigger: function(id, cond, data) {
+        var isSpeechContent = false;
+        var speechTriggerCond = "";
+        for (var key in cond.conditions) {
+          console.log('DEBUG => key : ' + key);
+          if (key === '7') { // FIXME マジックナンバー
+            isSpeechContent = true;
+            speechTriggerCond = cond.conditions[7][0].speechTriggerCond;
+          }
+        }
+
+        if (!sinclo.chatApi.autoMessages.exists(id) &&
+          !isSpeechContent && String(speechTriggerCond) !== '2') {
+          //resAutoMessagesで表示判定をするためにidをkeyとして空Objectを入れる
+          if (check.isset(data)) {
+            data.created = new Date();
+          } else {
+            data = {};
+          }
+          sinclo.chatApi.autoMessages.push(id, data);
         }
       },
       setAction: function(
@@ -9126,8 +9146,8 @@
           }, 1);
         } else if (String(type) === '2') {
           console.log('SENARIO TRIGGERED!!!!!! ' + scenarioId);
-          if (window.sincloInfo.contract.chatbotScenario && scenarioId &&
-              !sinclo.scenarioApi.isProcessing()) {
+          if (window.sincloInfo.contract.chatbotScenario && !sinclo.scenarioApi.isProcessing()
+            && (forceCall || check.isset(scenarioId))) {
             if(socket && !socket.isConnected()) {
               socket.connect().then(function() {
                 return sinclo.executeConnectSuccess(
@@ -9177,7 +9197,7 @@
                   targetAutomessage.action_type, targetAutomessage.activity,
                   targetAutomessage.send_mail_flg,
                   targetAutomessage.scenario_id,
-                  targetAutomessage.call_automessage_id, true, diagramId);
+                  targetAutomessage.call_automessage_id, true, targetAutomessage.diagram_id);
             }
           }
         } else if (String(type) === '4') {
@@ -9187,13 +9207,11 @@
           if(Array.isArray(cond.conditions[id])){
             speechCondition = cond.conditions[id][0].speechTrigger;
           }
-          if (!window.sincloInfo.contract.chatbotTreeEditor
-            || !diagramId
-            || sinclo.scenarioApi.isProcessing()
-            || sinclo.chatApi.autoMessages.exists(id) && speechCondition === "2") {
-            console.log('exists id : ' + id + ' or scenario is processing');
-            return;
-          } else {
+          /**
+           * 1. ツリーエディタ有効
+           * 2.
+           */
+          if (window.sincloInfo.contract.chatbotTreeEditor && !sinclo.scenarioApi.isProcessing() && (forceCall || (diagramId && !sinclo.chatApi.autoMessages.exists(id)))) {
             if (socket && !socket.isConnected()) {
               $.ajax({
                 type: 'get',
@@ -9224,8 +9242,8 @@
             }
             // 自動最大化
             if (!('widgetOpen' in cond) || (check.smartphone() &&
-                sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
-                Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
+              sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
+              Number(sincloInfo.widget.spAutoOpenFlg) === 1)) return false;
             var flg = sinclo.widget.condifiton.get();
             if (Number(cond.widgetOpen) === 1 && String(flg) === 'false') {
               console.log('シナリオ最大化処理');
@@ -9234,7 +9252,11 @@
               }
               sinclo.operatorInfo.ev();
             }
+          } else {
+            console.log('exists id : ' + id + ' or scenario is processing');
+            return;
           }
+          sinclo.trigger.pushProcessedTrigger(id, cond);
         }
       },
       fireChatEnterEvent: function(msg) {
