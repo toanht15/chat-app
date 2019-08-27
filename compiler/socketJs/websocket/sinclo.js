@@ -500,6 +500,23 @@
         }, 500);
       }
     },
+    forNotHavingConnectionMessageStack: [],
+    executeForNotHavingConnectionMessageStack: function(){
+      if(this.forNotHavingConnectionMessageStack.length !== 0){
+        $.each(this.forNotHavingConnectionMessageStack, function(index, jsonMessage){
+          var storeObj = {
+            message: [jsonMessage],
+            siteKey: sincloInfo.site.key,
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            sincloSessionId: userInfo.sincloSessionId
+          };
+          if(jsonMessage.messageType === 300){
+            socket.emit('storeDiagramMessage', JSON.stringify(storeObj));
+          }
+        });
+      }
+    },
     connect: function() {
       // 新規アクセスの場合
       var defer = $.Deferred();
@@ -7865,6 +7882,7 @@
                     value.nextNodeId)) {
               notifyToCompanyFlg = true;
             }
+            sinclo.executeForNotHavingConnectionMessageStack();
             setTimeout(function() {
               emit('sendChat', {
                 historyId: sinclo.chatApi.historyId,
@@ -13613,6 +13631,7 @@
             self.storage._pushDiagramMessage(storeObj).then(function() {
               //self._saveMessage(data.data);
             });
+            sinclo.forNotHavingConnectionMessageStack.push(storeObj);
           } else {
             return self.storage._storeMessageToDB([storeObj]);
           }
