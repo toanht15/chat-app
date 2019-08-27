@@ -13648,9 +13648,6 @@
           emit('sendDiagramMessage', targetObj, function() {
             defer.resolve();
           });
-          emit('storeDiagramMessage', targetObj, function(){
-            defer.resolve();
-          });
           sinclo.chatApi.store.save(targetObj);
           return defer.promise();
         },
@@ -14224,6 +14221,7 @@
           };
           self.storage.putDiagramMessage(currentNode.id,
               currentNode.attrs.nodeBasicInfo.nodeType, obj, false);
+          console.log(sinclo.forNotHavingConnectionMessageStack);
         }
       },
       speakText: {
