@@ -2057,7 +2057,7 @@
         sinclo.trigger.init();
       }
       if (sinclo.scenarioApi.isProcessing()) {
-        if (!keys || ($.isArray(keys) && keys.length === 0)) {
+        if (!sinclo.scenarioApi.exists()) {
           // シナリオ実行中にも関わらず受け取ったメッセージが空の場合はシナリオで>出力したメッセージが復旧できないためいったん削除する
           console.log(
               '<><><><><><><><> RESTORE SCENARIO DATA <><><><><><><<><><>');
