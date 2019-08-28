@@ -911,7 +911,7 @@
           if (window.sincloInfo.contract.chat) {
             // チャット情報読み込み
             sinclo.chatApi.init();
-            if (!window.sincloInfo.contract.enableRealtimeMonitor && obj.chat) {
+            if (!window.sincloInfo.contract.enableRealtimeMonitor && obj.chat.messages.length > 0) {
               sinclo.chatMessageData(JSON.stringify({
                 siteKey: obj.siteKey,
                 token: obj.token,
@@ -2057,7 +2057,7 @@
         sinclo.trigger.init();
       }
       if (sinclo.scenarioApi.isProcessing()) {
-        if (!sinclo.scenarioApi.exists()) {
+        if (!keys || ($.isArray(keys) && keys.length === 0)) {
           // シナリオ実行中にも関わらず受け取ったメッセージが空の場合はシナリオで>出力したメッセージが復旧できないためいったん削除する
           console.log(
               '<><><><><><><><> RESTORE SCENARIO DATA <><><><><><><<><><>');
