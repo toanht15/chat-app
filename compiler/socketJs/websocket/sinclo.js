@@ -11208,7 +11208,7 @@
         $(document).off(self._events.inputCompleted);
         self._saveWaitingInputState(false);
       },
-      _mergeScenario: function(result, executableNextAction) {
+      _mergeScenario: function(result, executableNextAction, scenarioId) {
         var targetScenario = result.activity.scenarios;
         var self = sinclo.scenarioApi;
         var scenarioObj = self.get(self._lKey.scenarios);
@@ -11219,6 +11219,7 @@
         Object.keys(scenarioObj).some(function(elm, index) {
           if (index === scenarioSeqNum) {
             Object.keys(targetScenario).forEach(function(elm, index, arr) {
+              targetScenario[elm].scenarioId = scenarioId;
               newScenarioObj[String(currentIndex)] = targetScenario[elm];
               currentIndex++;
             });
@@ -12717,15 +12718,19 @@
               var targetScenarioId = condition.action.callScenarioId;
               console.log('targetScenarioId : %s', targetScenarioId);
               if (targetScenarioId === 'self') {
-                targetScenarioId = self._parent.get(
+                targetScenarioId = self._parent._getCurrentScenario().scenarioId;
+                if (!targetScenarioId) {
+                  targetScenarioId = self._parent.get(
                     self._parent._lKey.scenarioId);
+                }
               }
+
               emit('getScenario', {scenarioId: targetScenarioId},
                   function(result) {
                     var executeNext = condition.action.executeNextAction ?
                         condition.action.executeNextAction :
                         false;
-                    self._parent._mergeScenario(result, executeNext);
+                    self._parent._mergeScenario(result, executeNext, targetScenarioId);
                     if (self._parent._goToNextScenario(true)) {
                       self._parent._process();
                     }

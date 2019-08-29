@@ -8,6 +8,8 @@
 /plugins
 /app/Plugin
 /vendors
+/vendor
+/Plugin
 /build
 /dist
 /tags
