@@ -501,20 +501,42 @@
       }
     },
     forNotHavingConnectionMessageStack: [],
+    setForNotHavingConnectionMessageStack: function(messageObject){
+      if(!sincloInfo.contract.enableRealtimeMonitor){
+        sinclo.forNotHavingConnectionMessageStack.push(messageObject);
+      }
+    },
     executeForNotHavingConnectionMessageStack: function(){
-      if(this.forNotHavingConnectionMessageStack.length !== 0){
-        $.each(this.forNotHavingConnectionMessageStack, function(index, jsonMessage){
-          var storeObj = {
-            message: [jsonMessage],
-            siteKey: sincloInfo.site.key,
-            userId: userInfo.userId,
-            tabId: userInfo.tabId,
-            sincloSessionId: userInfo.sincloSessionId
-          };
-          if(jsonMessage.messageType === 300){
+      if(!sincloInfo.contract.enableRealtimeMonitor && this.forNotHavingConnectionMessageStack.length !== 0){
+        console.log(this.forNotHavingConnectionMessageStack);
+        console.log(this.chatApi.stayLogsId);
+        console.log(this.chatApi.historyId);
+        $.each(this.forNotHavingConnectionMessageStack, function (index, jsonMessage) {
+          //変数:storeObjはstoreScenarioMessageイベントとstoreDiagramMessageイベントでインターフェイスが違うので、”絶対に"統合しないこと。
+          //cf. messages - message
+          if (jsonMessage.scenarioId) {
+            var storeObj = {
+              messages: [jsonMessage],
+              siteKey: sincloInfo.site.key,
+              userId: userInfo.userId,
+              tabId: userInfo.tabId,
+              sincloSessionId: userInfo.sincloSessionId
+            };
+            socket.emit('storeScenarioMessage', JSON.stringify(storeObj));
+          } else if (jsonMessage.message.did) {
+            var storeObj = {
+              message: [jsonMessage],
+              siteKey: sincloInfo.site.key,
+              userId: userInfo.userId,
+              tabId: userInfo.tabId,
+              sincloSessionId: userInfo.sincloSessionId
+            };
             socket.emit('storeDiagramMessage', JSON.stringify(storeObj));
+          } else if(jsonMessage.chatId){
+            emit('sendAutoChat', {messageList: [jsonMessage]});
           }
         });
+        this.forNotHavingConnectionMessageStack = [];
       }
     },
     connect: function() {
@@ -911,7 +933,10 @@
           if (window.sincloInfo.contract.chat) {
             // チャット情報読み込み
             sinclo.chatApi.init();
-            if (!window.sincloInfo.contract.enableRealtimeMonitor && obj.chat.messages.length > 0) {
+            if (!window.sincloInfo.contract.enableRealtimeMonitor &&
+              obj.chat.message !== null &&
+              obj.chat.messages.length > 0
+              ) {
               sinclo.chatMessageData(JSON.stringify({
                 siteKey: obj.siteKey,
                 token: obj.token,
@@ -7811,6 +7836,7 @@
 
           //サイト訪問者がチャット送信した初回のタイミング
           if (!check.isset(firstChatEmit)) {
+            sinclo.executeForNotHavingConnectionMessageStack();
             if (common.hasGA()) {
               common.callGA('sendChat', location.href, 1);
             }
@@ -7882,7 +7908,6 @@
                     value.nextNodeId)) {
               notifyToCompanyFlg = true;
             }
-            sinclo.executeForNotHavingConnectionMessageStack();
             setTimeout(function() {
               emit('sendChat', {
                 historyId: sinclo.chatApi.historyId,
@@ -9083,6 +9108,7 @@
           console.log('EMIT sendAutoChatMessage::setAutoMessage');
           if (isSpeechContent) {
           }
+          sinclo.setForNotHavingConnectionMessageStack(data);
           emit('sendAutoChatMessage', data);
           sinclo.chatApi.store.save(data);
         }
@@ -10804,10 +10830,10 @@
               message: message
             };
         if (self._disallowSaveing()) {
-          self._pushScenarioMessage(storeObj, function(data) {
-            self._saveMessage(data.data);
+          self._pushScenarioMessage(storeObj, function() {
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10833,9 +10859,9 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
-            self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10864,9 +10890,9 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
-            self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10892,9 +10918,9 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
-            self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10920,9 +10946,9 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
-            self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10948,9 +10974,9 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
-            self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10976,9 +11002,9 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
-            self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -11004,9 +11030,9 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
-            self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -13631,7 +13657,7 @@
             self.storage._pushDiagramMessage(storeObj).then(function() {
               //self._saveMessage(data.data);
             });
-            sinclo.forNotHavingConnectionMessageStack.push(storeObj);
+            sinclo.setForNotHavingConnectionMessageStack(storeObj);
           } else {
             return self.storage._storeMessageToDB([storeObj]);
           }
@@ -14221,7 +14247,6 @@
           };
           self.storage.putDiagramMessage(currentNode.id,
               currentNode.attrs.nodeBasicInfo.nodeType, obj, false);
-          console.log(sinclo.forNotHavingConnectionMessageStack);
         }
       },
       speakText: {
@@ -14330,9 +14355,6 @@
                     window.userInfo.connectSuccessData,
                     window.userInfo.accessInfoData);
                 })
-                  .then(function(result){
-                    sinclo.setHistoryId(result);
-                  })
                   .then(function() {
                     emit('getScenario', {'scenarioId': scenarioId});
                   });
