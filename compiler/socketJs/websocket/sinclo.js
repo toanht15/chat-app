@@ -934,7 +934,7 @@
             // チャット情報読み込み
             sinclo.chatApi.init();
             if (!window.sincloInfo.contract.enableRealtimeMonitor &&
-              obj.chat.message !== null &&
+              obj.chat !== null &&
               obj.chat.messages.length > 0
               ) {
               sinclo.chatMessageData(JSON.stringify({
