@@ -932,11 +932,10 @@
           window.clearInterval(createStartTimer);
           if (window.sincloInfo.contract.chat) {
             // チャット情報読み込み
-            sinclo.chatApi.init();
             if (!window.sincloInfo.contract.enableRealtimeMonitor &&
               obj.chat !== null &&
               obj.chat !== undefined &&
-              obj.chat.messages
+              Object.keys(obj.chat.messages).length > 0
               ) {
               sinclo.chatMessageData(JSON.stringify({
                 siteKey: obj.siteKey,
