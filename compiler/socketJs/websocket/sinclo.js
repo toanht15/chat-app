@@ -935,7 +935,8 @@
             sinclo.chatApi.init();
             if (!window.sincloInfo.contract.enableRealtimeMonitor &&
               obj.chat !== null &&
-              obj.chat.messages.length > 0
+              obj.chat !== undefined &&
+              obj.chat.messages
               ) {
               sinclo.chatMessageData(JSON.stringify({
                 siteKey: obj.siteKey,
