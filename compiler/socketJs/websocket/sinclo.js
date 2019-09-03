@@ -522,7 +522,7 @@
               tabId: userInfo.tabId,
               sincloSessionId: userInfo.sincloSessionId
             };
-            socket.emit('storeScenarioMessage', JSON.stringify(storeObj));
+            socket.emit('storeScenarioMessage', JSON.stringify(storeObj), function(){});
           } else if (jsonMessage.message.did) {
             var storeObj = {
               message: [jsonMessage],
@@ -531,7 +531,7 @@
               tabId: userInfo.tabId,
               sincloSessionId: userInfo.sincloSessionId
             };
-            socket.emit('storeDiagramMessage', JSON.stringify(storeObj));
+            socket.emit('storeDiagramMessage', JSON.stringify(storeObj), function(){});
           } else if(jsonMessage.chatId){
             emit('sendAutoChat', {messageList: [jsonMessage]});
           }
@@ -10830,7 +10830,8 @@
               message: message
             };
         if (self._disallowSaveing()) {
-          self._pushScenarioMessage(storeObj, function() {
+          self._pushScenarioMessage(storeObj, function(data) {
+            self._saveMessage(data.data);
             callback();
           });
           sinclo.setForNotHavingConnectionMessageStack(storeObj);
@@ -10859,6 +10860,7 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
+            self._saveMessage(item.data);
             callback();
           });
           sinclo.setForNotHavingConnectionMessageStack(storeObj);
@@ -10890,6 +10892,7 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
+            self._saveMessage(item.data);
             callback();
           });
           sinclo.setForNotHavingConnectionMessageStack(storeObj);
@@ -10918,6 +10921,7 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
+            self._saveMessage(item.data);
             callback();
           });
           sinclo.setForNotHavingConnectionMessageStack(storeObj);
@@ -10946,6 +10950,7 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
+            self._saveMessage(item.data);
             callback();
           });
           sinclo.setForNotHavingConnectionMessageStack(storeObj);
@@ -10974,6 +10979,7 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
+            self._saveMessage(item.data);
             callback();
           });
           sinclo.setForNotHavingConnectionMessageStack(storeObj);
@@ -11002,6 +11008,7 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
+            self._saveMessage(item.data);
             callback();
           });
           sinclo.setForNotHavingConnectionMessageStack(storeObj);
@@ -11030,6 +11037,7 @@
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
+            self._saveMessage(item.data);
             callback();
           });
           sinclo.setForNotHavingConnectionMessageStack(storeObj);
@@ -11040,9 +11048,7 @@
       _handleStoredMessage: function() {
         var self = sinclo.scenarioApi;
         if (self._disallowSaveing()) {
-          self._saveStoredMessage(function() {
-            self._unsetScenarioMessage();
-          });
+          self._unsetScenarioMessage();
         }
       },
       _pushScenarioMessage: function(targetObj, callback) {
