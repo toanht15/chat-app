@@ -598,6 +598,10 @@ function getConversationCountUser(visitors_id, callback) {
   DBConnector.getPool().query(
       'SELECT conversation_count FROM t_conversation_count WHERE visitors_id = ?',
       [visitors_id], function(err, results) {
+        deblogger.info("getConversationCountUser: visitors_id");
+        deblogger.info(visitors_id);
+        deblogger.info("getConversationCountUser: results");
+        deblogger.info(results);
         if (CommonUtil.isset(err)) {
           console.log(
               'RECORD SElECT ERROR: t_conversation_count(conversation_count):' +
@@ -702,7 +706,7 @@ var db = {
             if (err !== null && err !== '') return false; // DB接続断対応
             var now = CommonUtil.formatDateParse();
 
-            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) { 
+            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
               if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) && CommonUtil.isset(obj.sincloSessionId)) {
                 SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
               }
@@ -899,6 +903,13 @@ io.sockets.on('connection', function(socket) {
         sincloReconnect(socket);
         return false;
       }
+      deblogger.info("historyIdはありますか？");
+      deblogger.info(getSessionId(d.siteKey, d.sincloSessionId, 'historyId'));
+      deblogger.info("メッセージがあります。");
+      deblogger.info(CommonUtil.isset(d.chatMessage));
+      deblogger.info(chatApi.cnst.observeType.start);
+      deblogger.info(chatApi.cnst.observeType.end);
+      deblogger.info(d.messageType);
       // 履歴idか(入退室以外に)メッセージがない
       if (!getSessionId(d.siteKey, d.sincloSessionId, 'historyId') ||
           (!CommonUtil.isset(d.chatMessage) &&
@@ -1032,6 +1043,7 @@ io.sockets.on('connection', function(socket) {
         notice_flg: 0,
         achievement_flg: d.achievementFlg
       };
+      deblogger.info(insertData);
 
       DBConnector.getPool().query(
           'SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;',
@@ -1069,6 +1081,7 @@ io.sockets.on('connection', function(socket) {
             DBConnector.getPool().
                 query('INSERT INTO t_history_chat_logs SET ?', insertData,
                 function(error, results) {
+                  deblogger.info(results);
                   chatApi._handleInsertData(error, results, d,
                       noReturnSelfMessage, insertData);
                 });
@@ -4481,25 +4494,35 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('storeScenarioMessage', function(data, ack) {
     var obj = JSON.parse(data);
+    deblogger.info(obj);
     //応対数検索、登録
     getConversationCountUser(obj.userId, function(results) {
       var messageDistinction;
+      deblogger.info("getConversationCountUser: results");
+      deblogger.info(results);
       if (results !== null) {
         //カウント数が取れなかったとき
         if (Object.keys(results) && Object.keys(results).length === 0) {
+          deblogger.info("message distinction is true");
           messageDistinction = 1;
         }
         //カウント数が取れたとき
         else {
+          deblogger.info("message distinction is false");
           messageDistinction = results[0].conversation_count;
         }
+        deblogger.info("obj.messages");
+        deblogger.info(obj.messages);
         obj.messages.forEach(function(elm, index, arr) {
+          deblogger.info(elm);
           if (!CommonUtil.isset(elm.created)) {
             elm.created = new Date();
             elm.sort = CommonUtil.fullDateTime(elm.created);
           }
           elm.applied = true;
           var sincloSession = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId];
+          deblogger.info(CommonUtil.isset(sincloSession));
+          deblogger.info(CommonUtil.isset(sincloSession.scenario));
           if (CommonUtil.isset(sincloSession) &&
               CommonUtil.isset(sincloSession.scenario)) {
             if (!CommonUtil.isset(
@@ -4532,6 +4555,10 @@ io.sockets.on('connection', function(socket) {
             messageDistinction: messageDistinction,
             achievementFlg: elm.requireCv ? -1 : null
           };
+          deblogger.info(!list.functionManager.isEnabled(obj.siteKey, list.functionManager.keyList.enableRealtimeMonitor));
+          deblogger.info(CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]));
+          deblogger.info(!CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId));
+          deblogger.info(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId);
           if (!list.functionManager.isEnabled(obj.siteKey,
               list.functionManager.keyList.enableRealtimeMonitor)
             && CommonUtil.isset(
@@ -4553,10 +4580,12 @@ io.sockets.on('connection', function(socket) {
               chatApi.set(ret);
             });
           } else {
+            deblogger.info("historyIdがすでに存在していました。");
             chatApi.set(ret);
           }
         });
       }
+      deblogger.error(ack);
       ack();
     });
   });

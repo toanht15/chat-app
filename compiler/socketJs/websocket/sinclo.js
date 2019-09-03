@@ -508,9 +508,6 @@
     },
     executeForNotHavingConnectionMessageStack: function(){
       if(!sincloInfo.contract.enableRealtimeMonitor && this.forNotHavingConnectionMessageStack.length !== 0){
-        console.log(this.forNotHavingConnectionMessageStack);
-        console.log(this.chatApi.stayLogsId);
-        console.log(this.chatApi.historyId);
         $.each(this.forNotHavingConnectionMessageStack, function (index, jsonMessage) {
           //変数:storeObjはstoreScenarioMessageイベントとstoreDiagramMessageイベントでインターフェイスが違うので、”絶対に"統合しないこと。
           //cf. messages - message
@@ -7855,10 +7852,14 @@
               ' sinclo.scenarioApi.isWaitingInput() : ' +
               sinclo.scenarioApi.isWaitingInput());
 
+          console.log("changeAllow Saving?");
+          console.log(value.did);
+          console.log(value.sourceNodeId);
           if (sinclo.scenarioApi.isProcessing() &&
               sinclo.scenarioApi.isWaitingInput()
               && (!check.isset(storage.s.get('operatorEntered')) ||
                   storage.s.get('operatorEntered') === 'false')) {
+            console.log("change not allowed saving");
 
             sinclo.scenarioApi._hearing._setPrevSeqNum();
             messageType = sinclo.scenarioApi.getCustomerMessageType();
@@ -7869,12 +7870,13 @@
             // シナリオ中の返答はオペレータへの通知をしない
             isScenarioMessage = true;
           } else if (value.did && value.sourceNodeId) {
+            console.log("change allow saving");
             sinclo.diagramApi.common.changeAllowSaving();
             messageType = sinclo.diagramApi.storage.getSendCustomerMessageType(
                 value.did, value.sourceNodeId);
             isDiagramMessage = true;
           }
-
+          console.log(sinclo.diagramApi.storage.get(sinclo.diagramApi.storage._lKey.allowSave));
           if (sinclo.chatApi.isCustomerSendMessageType(messageType)
               && sinclo.scenarioApi.isProcessing()
               && sinclo.scenarioApi.isWaitingInput()
@@ -9220,6 +9222,8 @@
                 break;
               }
             }
+            console.log("target auto message");
+            console.log(targetAutomessage);
             if (targetAutomessage) {
               // 再帰呼び出し
               sinclo.trigger.setAction(targetAutomessage.id,
@@ -13606,9 +13610,6 @@
             return obj[key] ? obj[key] : self.defaultVal[key];
           }
         },
-        init: function (){
-          sinclo.diagramApi.storage.set('d_allowSave', sinclo.chatApi.saveFlg);
-        },
         getCurrentNode: function() {
           var self = sinclo.diagramApi.storage;
           return self.get(self._lKey.currentNode);
@@ -13659,6 +13660,9 @@
                 showTextarea: showTextArea,
                 message: message
               };
+          console.log("disallow save");
+          console.log(self.common.disallowSaveing());
+          console.log(self.storage.get(self.storage._lKey.allowSave));
           if (self.common.disallowSaveing()) {
             self.storage._pushDiagramMessage(storeObj).then(function() {
               //self._saveMessage(data.data);
@@ -13700,8 +13704,9 @@
       executor: {
         execute: function() {
           var self = sinclo.diagramApi;
-          self.storage.init();
           var currentNode = self.storage.getCurrentNode();
+          console.log("currentNode");
+          console.log(currentNode);
           switch (currentNode.attrs.nodeBasicInfo.nodeType) {
             case 'branch':
               self.storage.setDiagramMessageType(300);
@@ -13732,6 +13737,7 @@
         setNext: function(did, nextNodeId) {
           var self = sinclo.diagramApi;
           var targetNode = self.storage.getNodeById(did, nextNodeId);
+          console.log(targetNode);
           self.storage.set(self.storage._lKey.currentNode, targetNode);
         },
         isProcessing: function() {
