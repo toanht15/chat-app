@@ -7886,6 +7886,15 @@
           this.sendErrCatch();
         }
       },
+      callOperator: function() {
+        // ここから先のnodeIdは設定不可のため無視する
+        sinclo.chatApi.send({
+          did: 'manual',
+          sourceNodeId: 'callOperator',
+          nextNodeId: 'callOperator',
+          message: ''
+        });
+      },
       observeType: { // 入力中監視処理
         timer: null,
         prevMessage: '',
@@ -13583,6 +13592,7 @@
         },
         getSendCustomerMessageType: function(did, nid) {
           var self = sinclo.diagramApi;
+          if(did === 'manual' && nid === 'callOperator') return self.messageType.customer.operator;
           var cells = self.storage.get(self.storage._lKey.diagrams,
               Number(did));
           var target = 'branch';
