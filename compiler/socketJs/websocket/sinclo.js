@@ -121,9 +121,7 @@
               if ($('#sincloWidgetBox').children().is('#navigation')) {
                 //if(check.smartphone()) {
                 height += $('#sincloWidgetBox > #navigation').outerHeight(true);
-                var tab = $('#sincloWidgetBox #navigation li.selected').
-                    data('tab');
-                height += $('#sincloWidgetBox #' + tab + 'Tab').
+                height += $('#sincloWidgetBox #chatTab').
                     outerHeight(true);
               } else {
                 height += $('#sincloWidgetBox [id$=\'Tab\']').outerHeight(true);
@@ -653,6 +651,9 @@
       }
       if (obj.hasOwnProperty('pagetime')) {
         userInfo.pageTime = obj.pagetime;
+      }
+      if (check.isset(obj.isInBusinessHours)) {
+        userInfo.isInBusinessHours = obj.isInBusinessHours;
       }
 
       if (check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
@@ -7886,6 +7887,15 @@
           this.sendErrCatch();
         }
       },
+      callOperator: function() {
+        // ここから先のnodeIdは設定不可のため無視する
+        sinclo.chatApi.send({
+          did: 'manual',
+          sourceNodeId: 'callOperator',
+          nextNodeId: 'callOperator',
+          message: ''
+        });
+      },
       observeType: { // 入力中監視処理
         timer: null,
         prevMessage: '',
@@ -13588,6 +13598,7 @@
         },
         getSendCustomerMessageType: function(did, nid) {
           var self = sinclo.diagramApi;
+          if(did === 'manual' && nid === 'callOperator') return self.messageType.customer.operator;
           var cells = self.storage.get(self.storage._lKey.diagrams,
               Number(did));
           var target = 'branch';
