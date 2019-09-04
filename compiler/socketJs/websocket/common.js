@@ -4814,9 +4814,7 @@ var socket, // socket.io
       if (sincloBox && sincloBox.style.display === 'none') {
         common.widgetHandler.show();
         // sincloBox.parentNode.removeChild(sincloBox);
-      }
-
-      if (userInfo.accessType !== cnst.access_type.host) {
+      }else if (userInfo.accessType !== cnst.access_type.host) {
         var html = common.createWidget();
         $('body').append(html);
         emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
@@ -7857,10 +7855,19 @@ var socket, // socket.io
       common.handleInit();
     }
 
-    // 接続時
-    socket.on('connect', function() {
-
-    }); // socket-on: connect
+    socket.on('reconnect', function() {
+      setTimeout(function(){
+        sinclo.connect()
+        .then(sinclo.accessInfo)
+        .then(function(data) {
+          socket.onceConnected();
+          return sinclo.executeConnectSuccess(data, window.sincloInfo.accessInfoData);
+        })
+        .then(function(result) {
+          sinclo.setHistoryId(result);
+        });
+      }, 1000);
+    });
 
     socket.on('changeTabId', function(d) {
       var obj = common.jParse(d);
