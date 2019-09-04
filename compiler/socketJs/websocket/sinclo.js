@@ -500,18 +500,24 @@
         }, 500);
       }
     },
-    forNotHavingConnectionMessageStack: [],
     setForNotHavingConnectionMessageStack: function(messageObject){
+      if(sessionStorage.forNotHavingConnectionMessageStack === undefined){
+        sessionStorage.forNotHavingConnectionMessageStack = "[]";
+      }
       if(!sincloInfo.contract.enableRealtimeMonitor){
-        sinclo.forNotHavingConnectionMessageStack.push(messageObject);
+        var array = JSON.parse(sessionStorage.forNotHavingConnectionMessageStack);
+        array.push(messageObject);
+        sessionStorage.forNotHavingConnectionMessageStack = JSON.stringify(array);
       }
     },
     executeForNotHavingConnectionMessageStack: function(){
-      if(!sincloInfo.contract.enableRealtimeMonitor && this.forNotHavingConnectionMessageStack.length !== 0){
-        console.log(this.forNotHavingConnectionMessageStack);
+      if(!sincloInfo.contract.enableRealtimeMonitor &&
+        sessionStorage.forNotHavingConnectionMessageStack !== "[]" &&
+        sessionStorage.forNotHavingConnectionMessageStack !== undefined){
+        console.log(JSON.parse(sessionStorage.forNotHavingConnectionMessageStack));
         console.log(this.chatApi.stayLogsId);
         console.log(this.chatApi.historyId);
-        $.each(this.forNotHavingConnectionMessageStack, function (index, jsonMessage) {
+        $.each(JSON.parse(sessionStorage.forNotHavingConnectionMessageStack), function (index, jsonMessage) {
           //変数:storeObjはstoreScenarioMessageイベントとstoreDiagramMessageイベントでインターフェイスが違うので、”絶対に"統合しないこと。
           //cf. messages - message
           if (jsonMessage.scenarioId) {
@@ -536,7 +542,7 @@
             emit('sendAutoChat', {messageList: [jsonMessage]});
           }
         });
-        this.forNotHavingConnectionMessageStack = [];
+        sessionStorage.forNotHavingConnectionMessageStack = "[]";
       }
     },
     connect: function() {
