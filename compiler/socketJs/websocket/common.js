@@ -4526,6 +4526,12 @@ var socket, // socket.io
           'align-items: center;' +
           'cursor: pointer;' +
           '}' +
+          '#sincloBox #navigation span#callOperatorButton:hover {' +
+          'opacity: 0.8;' +
+          '}' +
+          '#sincloBox #navigation span#callOperatorButton:active {' +
+          'opacity: 1.0;' +
+          '}' +
           '#sincloBox #navigation span#callOperatorButton span#callOpButtonIconWrap {' +
           'flex-basis: 36px;' +
           'margin-left: 10px;' +
