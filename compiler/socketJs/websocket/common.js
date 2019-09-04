@@ -4512,11 +4512,10 @@ var socket, // socket.io
     widgetCallOpTemplate: function(widget) {
       var html = '';
       var buttonLabel = 'オペレータ呼び出し';
-      if (check.isset(sincloInfo.custom.widget.header.opCallButtonLabel)) {
+      if (check.objPath(sincloInfo, "custom.widget.header.opCallButtonLabel")) {
         buttonLabel = sincloInfo.custom.widget.header.opCallButtonLabel;
       }
-      if (check.isset(sincloInfo.custom)
-          && sincloInfo.custom.widget.header.showOpCallButton
+      if (check.objPath(sincloInfo, "custom.widget.header.showOpCallButton")
           && userInfo.isInBusinessHours) {
         html += '  <section id="navigation">';
         html += '    <span id="callOperatorButton" onclick="sinclo.chatApi.callOperator()">' +
@@ -4577,14 +4576,14 @@ var socket, // socket.io
       }
       var buttonColor = widget.mainColor;
       var buttonLabelColor = widget.stringColor;
-      if (check.isset(sincloInfo.custom.widget.header.opCallButtonColor)) {
+      if (check.objPath(sincloInfo, "custom.widget.header.opCallButtonColor")) {
         buttonColor = sincloInfo.custom.widget.header.opCallButtonColor;
       }
-      if (check.isset(sincloInfo.custom.widget.header.opCallButtonLabelColor)) {
+      if (check.objPath(sincloInfo, "custom.widget.header.opCallButtonLabelColor")) {
         buttonLabelColor = sincloInfo.custom.widget.header.opCallButtonLabelColor;
       }
       var buttonIconColor = buttonLabelColor;
-      if (check.isset(sincloInfo.custom.widget.header.opCallButtonIconColor)) {
+      if (check.objPath(sincloInfo, "custom.widget.header.opCallButtonIconColor")) {
         buttonIconColor = sincloInfo.custom.widget.header.opCallButtonIconColor;
       }
       return navicss +
@@ -6478,6 +6477,19 @@ var socket, // socket.io
         return (Object.keys(a).length !== 0);
       }
       return true;
+    },
+    objPath: function (obj, path) {
+      var keys = path.split('.');
+      for (var k in keys) {
+        var key = keys[k];
+
+        if (!obj.hasOwnProperty(key)) { return false; }
+
+        if (keys.length > 1) {
+          return check.objPath(obj[key], keys.splice(1).join('.'));
+        }
+        return true;
+      }
     },
     isJSON: function(arg) {
       arg = (typeof arg === 'function') ? arg() : arg;
