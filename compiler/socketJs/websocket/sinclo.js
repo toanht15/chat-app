@@ -3315,6 +3315,9 @@
         widgetBodyHeight = window.innerHeight -
             (widgetHeaderHeight + widgetFotterHeight);
       }
+      if ($('#sincloWidgetBox > #navigation').length !== 0) {
+        widgetBodyHeight -= $('#sincloWidgetBox > #navigation').outerHeight();
+      }
       return widgetBodyHeight;
     },
     adjustSpWidgetSize: function() {
@@ -3912,6 +3915,9 @@
                     $(document).one('touchstart', function(e) {
                       $(document).trigger('blur');
                     });
+                    if (check.android()) {
+                      $('#sincloBox').css('bottom', '50%');
+                    }
                   }
                 }).
             on('blur', '#sincloChatMessage,#miniSincloChatMessage',
@@ -3925,6 +3931,9 @@
                       sinclo.adjustSpWidgetSize();
                     }, 1000);
                     sinclo.chatApi.spFocusFlg = false;
+                    if (check.android()) {
+                      $('#sincloBox').css('bottom', '0px');
+                    }
                   }
                 }).
             on('click', 'input[name^=\'sinclo-radio\']', function(e) {
@@ -7887,14 +7896,20 @@
           this.sendErrCatch();
         }
       },
+      callOpTimer: null,
       callOperator: function() {
         // ここから先のnodeIdは設定不可のため無視する
+        if (check.isset(sinclo.chatApi.callOpTimer)) return false;
         sinclo.chatApi.send({
           did: 'manual',
           sourceNodeId: 'callOperator',
           nextNodeId: 'callOperator',
           message: ''
         });
+        sinclo.chatApi.callOpTimer = setTimeout(function(){
+          clearTimeout(sinclo.chatApi.callOpTimer);
+          sinclo.chatApi.callOpTimer = null;
+        }, 5000);
       },
       observeType: { // 入力中監視処理
         timer: null,
