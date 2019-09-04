@@ -43,7 +43,7 @@ class ContractController extends AppController
   const OPTION_SCENARIO = "##OPTION_SCENALIO##";
   const OPTION_CAPTURE = "##OPTION_CAPTURE##";
 
-  public $components = array('MailSender', 'Amazon');
+  public $components = array('MailSender', 'Amazon', 'SalesforceAPI');
   public $uses = array('MCompany',
     'MAgreements',
     'MUser',
@@ -82,7 +82,7 @@ class ContractController extends AppController
         ],
         [
           'type' => 'left',
-            'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND (permission_level = 1 OR permission_level = 99) GROUP BY m_companies_id)',
+            'table' => '(SELECT id,m_companies_id,mail_address,password FROM m_users WHERE del_flg != 1 AND (permission_level = 99) GROUP BY m_companies_id)',
           'alias' => 'AdminUser',
           'conditions' => [
             'AdminUser.m_companies_id = MCompany.id',
@@ -146,6 +146,24 @@ class ContractController extends AppController
         $jobMailTemplateData = $this->MJobMailTemplate->find('all');
 
         $mailTemplateData = $this->MSystemMailTemplate->find('all');
+
+        // Salesforce-API連携
+        $component = new SalesforceAPIComponent();
+        // 連携必須項目
+        $component->set(SalesforceAPIComponent::PARAM_COMPANY_NAME, $data['MCompany']['company_name']);
+        $component->set(SalesforceAPIComponent::PARAM_LAST_NAME, $data['MAgreements']['application_name']);
+        // 任意項目
+        $component->set(SalesforceAPIComponent::PARAM_WEBSITE, $data['MAgreements']['installation_url']);
+        $component->set(SalesforceAPIComponent::PARAM_DEPARTMENT, $data['MAgreements']['application_department']);
+        $component->set(SalesforceAPIComponent::PARAM_POSITION, $data['MAgreements']['application_position']);
+        $component->set(SalesforceAPIComponent::PARAM_MAIL, $data['MAgreements']['application_mail_address']);
+        $component->set(SalesforceAPIComponent::PARAM_PHONE, $data['MAgreements']['telephone_number']);
+        if ($this->isTrial($data)) {
+          $component->set(SalesforceAPIComponent::PARAM_TRIAL_BEGIN_DATE, str_replace('-', '/', $data['MAgreements']['trial_start_day']));
+          $component->set(SalesforceAPIComponent::PARAM_TRIAL_END_DATE,  str_replace('-', '/', $data['MAgreements']['trial_end_day']));
+        }
+        $component->set(SalesforceAPIComponent::PARAM_QUESTION, $data['MAgreements']['memo']);
+        $component->execute();
 
         $mailType = "false";
         //無料トライアルの場合
@@ -319,7 +337,7 @@ class ContractController extends AppController
 
   private function getBeginDate($data)
   {
-    if (intval($data['MCompany']['trial_flg']) === 1) {
+    if ($this->isTrial($data)) {
       return $data['MAgreements']['trial_start_day'];
     } else {
       return $data['MAgreements']['agreement_start_day'];
@@ -328,7 +346,7 @@ class ContractController extends AppController
 
   private function getEndDate($data)
   {
-    if (intval($data['MCompany']['trial_flg']) === 1) {
+    if ($this->isTrial($data)) {
       return $data['MAgreements']['trial_end_day'];
     } else {
       return $data['MAgreements']['agreement_end_day'];
@@ -423,6 +441,7 @@ class ContractController extends AppController
           'administrator_name' => $saveData['MAgreements']['administrator_name'],
           'administrator_mail_address' => $saveData['MAgreements']['administrator_mail_address'],
           'installation_url' => $saveData['MAgreements']['installation_url'],
+          'customer_number' => $saveData['MAgreements']['customer_number'],
           'business_model' => $saveData['MAgreements']['business_model'],
         ));
         $this->MAgreements->save();
@@ -732,6 +751,7 @@ class ContractController extends AppController
     $this->MAgreements->set(array(
       'm_companies_id' => $addedCompanyInfo['id'],
       'company_name' => $companyInfo['company_name'],
+      'customer_number' => $agreementInfo['customer_number'],
       'business_model' => $agreementInfo['business_model'],
       'application_day' => date("Y-m-d"), // FIXME（自動発行）
       'trial_start_day' => $agreementInfo['trial_start_day'],
@@ -1598,5 +1618,14 @@ class ContractController extends AppController
 
   protected function generateImageName($companyKey, $file) {
     return $companyKey."-".date("YmdHis").".".microtime(true).".png";
+  }
+
+  /**
+   * @param $data
+   * @return bool
+   */
+  private function isTrial($mCompanyData)
+  {
+    return intval($mCompanyData['MCompany']['trial_flg']) === 1;
   }
 }

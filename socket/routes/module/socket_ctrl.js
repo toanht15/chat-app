@@ -10,6 +10,7 @@ var list = require('./company_list');
 var LandscapeAPI = require('./landscape');
 var CogmoAttendAPICaller = require('./cogmo_attend');
 var ChatLogTimeManager = require('./chat_log_time_manager');
+var SCChecker = require('./class/checker/SCChecker');
 var CommonUtil = require('./class/util/common_utility');
 var HistoryManager = require('./class/manager/history_manager');
 var CustomerInfoManager = require('./class/manager/customer_info_manager');
@@ -30,6 +31,7 @@ var scenarioLogger = log4js.getLogger('traceScenario');
 //サーバインスタンス作成
 var io = require('socket.io')(process.env.WS_PORT);
 var SharedData = require('./shared_data');
+var checker = new SCChecker();
 
 // SharedData.sincloCoreオブジェクトからセッションIDを取得する関数
 function getSessionId(siteKey, tabId, key) {
@@ -361,7 +363,6 @@ function getCompanyInfoFromApi(obj, ip, callback) {
     var api = new LandscapeAPI('json', 'utf8');
     api.getFrom(ip, callback);
   } else {
-    deblogger.debug('refCompanyData is false. siteKey : ' + obj.siteKey);
     callback({});
   }
 }
@@ -702,7 +703,7 @@ var db = {
             if (err !== null && err !== '') return false; // DB接続断対応
             var now = CommonUtil.formatDateParse();
 
-            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) { 
+            if (CommonUtil.isset(rows) && CommonUtil.isset(rows[0])) {
               if (CommonUtil.isset(SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]) && CommonUtil.isset(obj.sincloSessionId)) {
                 SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
               }
@@ -1214,7 +1215,7 @@ io.sockets.on('connection', function(socket) {
                 SharedData.sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
               }
               DBConnector.getPool().query(
-                  'UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;',
+                  'UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND (message_type = 1 or message_type = 303) AND id = ?;',
                   [
                     SharedData.sincloCore[d.siteKey][d.tabId].historyId,
                     results.insertId],
@@ -2146,8 +2147,10 @@ io.sockets.on('connection', function(socket) {
     }
   };
 
+  deblogger.debug('【begin】 SET MESSAGING EVENT LISTENERS socket.id : %s', socket.id);
   // 接続時
   socket.on('connected', function(r) {
+    deblogger.debug('【connected】 socket.id : %s, data : %s', socket.id, r);
     var res = JSON.parse(r),
         send = {},
         type = '',
@@ -2337,6 +2340,7 @@ io.sockets.on('connection', function(socket) {
         //emit.toClient('getAccessInfo', send, res.siteKey);
         processReceiveAccessInfo(res.siteKey, socket);
       } else {
+        send.isInBusinessHours = checker.isInBusinessHours(res.siteKey);
         chatApi.widgetCheck(res, function(err, ret) {
           send.activeOperatorCnt = getOperatorCnt(res.siteKey);
           send.widget = ret.opFlg;
@@ -2700,6 +2704,7 @@ io.sockets.on('connection', function(socket) {
 
 
   socket.on('connectSuccess', function(data, ack) {
+    deblogger.debug('【connectSuccess】 socket.id : %s, data : %s', socket.id, data);
     var obj = JSON.parse(data);
     if (!CommonUtil.isset(SharedData.sincloCore[obj.siteKey])) {
       SharedData.sincloCore[obj.siteKey] = {};

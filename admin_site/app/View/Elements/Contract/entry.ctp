@@ -7,6 +7,11 @@
   <li><h2>企業情報</h2></li>
   <!-- /* 会社名 */ -->
   <li>
+    <div class="labelArea fLeft"><span><label>顧客番号</label></span></div>
+    <?= $this->Form->input('MAgreements.customer_number', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 2048)) ?>
+  </li>
+
+  <li>
     <div class="labelArea fLeft"><span class="require"><label>会社名</label></span></div>
     <?= $this->Form->input('MCompany.company_name', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
      <?php if (!empty($errors['company_name'])) echo "<li class='error-message'>" . h($errors['company_name'][0]) . "</li>"; ?>

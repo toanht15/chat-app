@@ -293,9 +293,7 @@ var socket, // socket.io
       var widget = window.sincloInfo.widget, displaySet = '';
       var css = this.widgetCssTemplate(widget),
           header = this.widgetHeaderTemplate(widget),
-          //プレミアムプランであってもナビゲションを非表示にする
-          //navi = this.widgetNaviTemplate(widget),
-          navi = '',
+          navi = this.widgetCallOpTemplate(widget),
           chat = this.chatWidgetTemplate(widget),
           call = this.widgetTemplate(widget),
           fotter = (check.isset(window.sincloInfo.custom) &&
@@ -316,11 +314,11 @@ var socket, // socket.io
           (window.sincloInfo.contract.synclo ||
               (window.sincloInfo.contract.hasOwnProperty('document') &&
                   window.sincloInfo.contract.document)) && check.smartphone()) {
-        displaySet += chat;
+        displaySet += navi + chat;
       } else {
         // チャットのみ契約の場合
         if (window.sincloInfo.contract.chat) {
-          displaySet += chat;
+          displaySet += navi + chat;
         }
         // 画面同期のみ契約の場合
         if (window.sincloInfo.contract.synclo ||
@@ -594,7 +592,7 @@ var socket, // socket.io
             widgetTitleTop: 6,
             widgetSubTitleHeight: 24,
             widgetDescriptionHeight: 15,
-            navigationHeight: 40,
+            navigationHeight: 55,
             chatTalkHeight: 194,
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
@@ -619,7 +617,7 @@ var socket, // socket.io
             widgetTitleTop: 6,
             widgetSubTitleHeight: 24,
             widgetDescriptionHeight: 15,
-            navigationHeight: 40,
+            navigationHeight: 55,
             chatTalkHeight: 284,
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
@@ -644,7 +642,7 @@ var socket, // socket.io
             widgetTitleTop: 6,
             widgetSubTitleHeight: 24,
             widgetDescriptionHeight: 15,
-            navigationHeight: 40,
+            navigationHeight: 55,
             chatTalkHeight: 374,
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
@@ -669,7 +667,7 @@ var socket, // socket.io
             widgetTitleTop: 6,
             widgetSubTitleHeight: 24,
             widgetDescriptionHeight: 15,
-            navigationHeight: 40,
+            navigationHeight: 55,
             chatTalkHeight: 100,
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
@@ -694,7 +692,7 @@ var socket, // socket.io
             widgetTitleTop: 6,
             widgetSubTitleHeight: 24,
             widgetDescriptionHeight: 15,
-            navigationHeight: 40,
+            navigationHeight: 55,
             chatTalkHeight: sincloInfo.widget.widgetCustomHeight,
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
@@ -719,7 +717,7 @@ var socket, // socket.io
             widgetTitleTop: 6,
             widgetSubTitleHeight: 24,
             widgetDescriptionHeight: 15,
-            navigationHeight: 40,
+            navigationHeight: 55,
             chatTalkHeight: 194,
             classFlexBoxRowHeight: 75,
             sincloAccessInfoHeight: 26.5,
@@ -1452,7 +1450,7 @@ var socket, // socket.io
       html += '      #sincloBox div#sincloWidgetBox { position: relative; top: 0px; }';
       html += '      #sincloBox div#sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
-      html += '      #sincloBox section { display: none; padding: 0!important; top:0px!important; }';
+      html += '      #sincloBox section { display: none; padding: 0; top:0px!important; }';
       html += '      #sincloBox .flexBox { position: relative; display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column }';
       if (widget.chatMessageCopy === 1) {
         html += '      #sincloBox .flexBoxRow { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: row; -webkit-flex-direction: row; flex-direction: row; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;}';
@@ -1917,6 +1915,10 @@ var socket, // socket.io
 
       html += common.injectCalendarCSS();
       html += common.injectCarouselCss();
+      if (check.isset(sincloInfo.custom)
+          && sincloInfo.custom.widget.header.showOpCallButton) {
+        html += common.injectCallOpButtonCSS(widget);
+      }
 
       /* iPhone/iPod/Androidの場合 */
       if (check.smartphone()) {
@@ -2343,7 +2345,7 @@ var socket, // socket.io
               (5 * ratio) + 'px; color: #FFF; padding: ' + (10 * ratio) +
               'px 0; }';
           html += '#sincloBox section#navigation { border-width: 0 ' +
-              (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
+              (1 * ratio) + 'px; height: ' + (48 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul { margin: 0 0 0 -' +
               (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul li { padding: ' +
@@ -4507,15 +4509,122 @@ var socket, // socket.io
       }
       return html;
     },
-    widgetNaviTemplate: function(widget) {
+    widgetCallOpTemplate: function(widget) {
       var html = '';
-      html += '  <section id="navigation" class="notSelect">';
-      html += '    <ul>';
-      html += '        <li data-tab="chat" class="widgetCtrl selected">チャットでの受付</li>';
-      html += '        <li data-tab="call" class="widgetCtrl" >電話での受付</li>';
-      html += '    </ul>';
-      html += '  </section>';
+      var buttonLabel = 'オペレータ呼び出し';
+      if (check.isset(sincloInfo.custom.widget.header.opCallButtonLabel)) {
+        buttonLabel = sincloInfo.custom.widget.header.opCallButtonLabel;
+      }
+      if (check.isset(sincloInfo.custom)
+          && sincloInfo.custom.widget.header.showOpCallButton
+          && userInfo.isInBusinessHours) {
+        html += '  <section id="navigation">';
+        html += '    <span id="callOperatorButton" onclick="sinclo.chatApi.callOperator()">' +
+            '<span id="callOpButtonIconWrap">' +
+            '<svg id="callOpButtonIcon" x="0px" y="0px" viewBox="0 0 512 512">\n' +
+            '<g>\n' +
+            '\t<path class="st0" d="M437.267,404.936c-12.213-18.384-30.777-28.6-48.256-35.198c-8.769-3.31-17.352-5.722-24.922-7.758\n' +
+            '\t\tc-7.563-2.023-14.169-3.685-18.658-5.279c-6.827-2.386-14.953-6.07-20.828-10.184c-2.948-2.044-5.3-4.194-6.687-6.036l-0.931-1.427\n' +
+            '\t\tc-1.273,0.429-2.499,0.911-3.812,1.293c-3.457,1.025-7.121,1.856-10.913,2.592c0.878,2.452,2.144,4.704,3.638,6.666\n' +
+            '\t\tc2.693,3.504,6.083,6.412,9.768,9.011l-54.132,83.864l-56.905-88.165l-6.914,4.476l63.819,98.877l61.106-94.683\n' +
+            '\t\tc5.923,3.296,12.173,5.976,17.78,7.952c0.965,0.342,2.05,0.65,3.082,0.972l19.074,58.768l-38.642-9.091l-62.399,52.276\n' +
+            '\t\tl-62.398-52.282l-38.642,9.098l20.674-63.685c5.379-2.405,10.706-5.145,15.415-8.428c3.732-2.62,7.128-5.561,9.788-9.165\n' +
+            '\t\tc2.646-3.571,4.589-8.04,4.576-13.017c0-8.006,0-18.015,0-31.729v-2.901l-1.937-2.151c-10.29-11.463-24.225-26.671-29.055-53.716\n' +
+            '\t\tl-0.764-4.321l-4.127-1.474c-2.626-0.938-4.63-1.896-6.378-3.108c-2.58-1.822-4.918-4.308-7.651-9.406\n' +
+            '\t\tc-2.7-5.065-5.561-12.628-8.689-23.609c-1.373-4.81-1.862-8.535-1.862-11.308c0.007-2.432,0.355-4.1,0.804-5.28\n' +
+            '\t\tc12.267,15.362,26.148,18.015,26.148,18.015c102.904-36.586,132.629-98.328,132.629-98.328s3.658,83.864,33.558,103.466v28.473\n' +
+            '\t\tc0,0,0.02,0.107,0.026,0.161c-1.742,1.098-3.658,1.99-6.022,2.867l-3.002,1.072l-0.556,3.135\n' +
+            '\t\tc-4.917,27.622-19.261,43.286-29.551,54.734l-1.407,1.568v2.111c0,2.552,0,4.857,0,7.162c4.027-1.099,7.658-2.452,10.974-4.046\n' +
+            '\t\tv-1.019c9.955-11.061,24.452-28.057,30.1-55.572l1.823-0.891c0.147-1.353,0.254-2.773,0.368-4.167\n' +
+            '\t\tc1.842,2.292,4.502,4.208,7.757,5.561c-0.984,8.83-2.491,16.715-4.542,23.542c-5.808,19.08-15.094,30.563-28.104,38.012\n' +
+            '\t\tc-11.048,6.291-25.311,9.507-42.589,10.344c-2.304-2.753-5.721-4.535-9.593-4.535h-18.29c-6.94,0-12.575,5.627-12.575,12.582\n' +
+            '\t\tc0,6.94,5.634,12.575,12.575,12.575h18.29c4.91,0,9.118-2.841,11.188-6.94c10.94-0.576,21.083-2.078,30.375-4.818\n' +
+            '\t\tc18.565-5.406,33.826-16.279,43.674-33.758c6.773-11.965,11.081-26.824,13.165-44.98c10.88-0.817,19.361-7.041,19.361-14.699\n' +
+            '\t\tv-59.451c0-6.592-6.297-12.112-14.973-14.062c24.513-77.694-38.153-146.645-105.396-149.72c-9.58-9.406-23.408-16.367-43.124-15.73\n' +
+            '\t\tc-27.87,0.898-45.737,22.048-54.078,47.077c-26.356,22.872-40.07,56.302-35.514,94.248c1.608,13.372,4.871,23.904,8.884,32.325\n' +
+            '\t\tc-1.655,1.521-3.222,3.276-4.434,5.554c-1.97,3.671-3.049,8.2-3.042,13.412c0.007,4.516,0.777,9.594,2.445,15.449\n' +
+            '\t\tc4.408,15.355,8.388,25.27,13.54,32.546c2.572,3.61,5.507,6.512,8.696,8.722c1.936,1.347,3.946,2.378,5.976,3.296\n' +
+            '\t\tc2.559,11.845,6.759,21.666,11.469,30c-1.694,25.431-13.847,50.259-45.502,43.928c0,15.964,19.207,27.762,27.85,32.271\n' +
+            '\t\tc-5.494,1.607-12.307,3.356-19.77,5.52c-16.26,4.749-35.534,11.483-51.237,24.862c-7.838,6.686-14.726,15.101-19.569,25.572\n' +
+            '\t\tc-4.857,10.464-7.631,22.906-7.631,37.484c0,3.37,0.147,6.854,0.456,10.472c0.221,2.546,1.186,4.602,2.318,6.297\n' +
+            '\t\tc2.157,3.176,5.018,5.528,8.602,7.946c6.277,4.154,14.973,8.214,26.108,12.2C132.461,501.107,187.631,511.98,256,512\n' +
+            '\t\tc55.544-0.007,102.428-7.216,135.891-16.266c16.742-4.536,30.108-9.507,39.768-14.471c4.837-2.499,8.75-4.971,11.852-7.678\n' +
+            '\t\tc1.554-1.367,2.914-2.801,4.06-4.509c1.125-1.694,2.097-3.751,2.318-6.297c0.308-3.618,0.456-7.116,0.456-10.492\n' +
+            '\t\tC450.365,432.846,445.387,417.162,437.267,404.936z M434.875,460.849l-0.65,0.77c-1.112,1.126-3.356,2.82-6.512,4.616\n' +
+            '\t\tc-11.127,6.425-33.088,14.31-62.566,20.312c-29.524,6.036-66.733,10.358-109.147,10.358c-54.219,0.006-99.95-7.075-131.946-15.744\n' +
+            '\t\tc-15.985-4.314-28.56-9.064-36.807-13.319c-4.106-2.11-7.135-4.126-8.81-5.6c-0.716-0.63-1.118-1.105-1.319-1.38\n' +
+            '\t\tc-0.235-2.968-0.369-5.836-0.369-8.556c0.028-16.93,4.174-29.257,10.586-38.918c9.58-14.437,24.975-23.246,41.054-29.29\n' +
+            '\t\tc8.013-3.014,16.105-5.326,23.535-7.356c7.222-1.976,13.754-3.671,19.268-5.674l-23.046,70.967l48.872-11.496l64.516,54.058\n' +
+            '\t\tl64.516-54.058l48.872,11.496l-21.88-67.376c4.602,1.226,9.566,2.499,14.752,3.999c15.576,4.456,32.767,10.827,45.576,21.888\n' +
+            '\t\tc6.424,5.527,11.804,12.173,15.663,20.534c3.846,8.361,6.21,18.504,6.217,31.206C435.251,455.007,435.11,457.882,434.875,460.849z"></path>\n' +
+            '</g>\n' +
+            '</svg>' +
+            '</span>' +
+            '<span id="callOpButtonLabel">' + buttonLabel + '</span>' +
+            '</span>';
+        html += '  </section>';
+      }
       return html;
+    },
+    injectCallOpButtonCSS: function(widget) {
+      var ratio = common.getRatio();
+      var navicss = '';
+      if (widget.widgetInsideBorderColor !== undefined &&
+          widget.widgetInsideBorderColor !== 'none') {
+        navicss = '#sincloBox section#navigation { display:flex; align-items: center; top: 0px!important; border-bottom: ' + (1 * ratio) + 'px solid ' + widget.widgetInsideBorderColor + '!important; }';
+      } else {
+        navicss = '#sincloBox section#navigation { display:flex; align-items: center; top: 0px!important; }';
+      }
+      var buttonColor = widget.mainColor;
+      var buttonLabelColor = widget.stringColor;
+      if (check.isset(sincloInfo.custom.widget.header.opCallButtonColor)) {
+        buttonColor = sincloInfo.custom.widget.header.opCallButtonColor;
+      }
+      if (check.isset(sincloInfo.custom.widget.header.opCallButtonLabelColor)) {
+        buttonLabelColor = sincloInfo.custom.widget.header.opCallButtonLabelColor;
+      }
+      var buttonIconColor = buttonLabelColor;
+      if (check.isset(sincloInfo.custom.widget.header.opCallButtonIconColor)) {
+        buttonIconColor = sincloInfo.custom.widget.header.opCallButtonIconColor;
+      }
+      return navicss +
+          '#sincloBox #navigation span#callOperatorButton {' +
+          'width: 100%; ' +
+          'background-color: ' + buttonColor + ';' +
+          'margin: 0 ' + (5 * ratio) + 'px; ' +
+          'display: block;' +
+          'height: ' + (44 * ratio) + 'px;' +
+          'border-radius: ' + (8 * ratio) + 'px;' +
+          'display: flex;' +
+          'align-items: center;' +
+          'cursor: pointer;' +
+          'box-shadow: 0 2px 2px 0 rgba(0,0,0,.12), 0 2px 2px 0 rgba(0,0,0,.24);' +
+          '}' +
+          '#sincloBox #navigation span#callOperatorButton:hover {' +
+          'box-shadow: 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.2);' +
+          '}' +
+          '#sincloBox #navigation span#callOperatorButton:active {' +
+          'box-shadow: none;' +
+          '}' +
+          '#sincloBox #navigation span#callOperatorButton span#callOpButtonIconWrap {' +
+          'flex-basis: ' + (36 * ratio) + 'px;' +
+          'margin-left: ' + (15 * ratio) + 'px;' +
+          'display: inline-flex;' +
+          '}' +
+          '#sincloBox #navigation span#callOperatorButton svg#callOpButtonIcon {' +
+          'width: ' + (32 * ratio) + 'px;' +
+          'height: ' + (32 * ratio) + 'px;' +
+          '}' +
+          '#sincloBox #navigation span#callOperatorButton svg#callOpButtonIcon g path.st0 {' +
+          'fill :' + buttonIconColor + ';' +
+          '}' +
+          '#sincloBox #navigation span#callOperatorButton span#callOpButtonLabel {' +
+          'width: 100%;' +
+          'text-align: center;' +
+          'font-weight: ' +
+          'font-size: 1.1em;' +
+          'color: ' + buttonLabelColor + ';' +
+          '}';
     },
     widgetTemplate: function(widget) {
 
@@ -6077,6 +6186,10 @@ var socket, // socket.io
     getPageWidth: function() {
       return $(window).width() < $(document).width() ? $(document).width() : $(window).width();
     },
+    getRatio: function() {
+      var widgetWidth = common.getPageWidth();
+      return check.smartphone() ? widgetWidth * (1 / 285) : 1;
+    },
     stringReplaceProcessForGA: function(link) {
       console.log('GA連携用に電話番号とメールアドレスの修正を行います');
       /*href属性値のみ取得*/
@@ -6745,7 +6858,7 @@ var socket, // socket.io
       };
     },
     setCustomVariables: function() {
-      if (sincloInfo.customVariable.length > 0) {
+      if (check.isset(sincloInfo.customVariable) && sincloInfo.customVariable.length > 0) {
         try {
           for (var i = 0; i < sincloInfo.customVariable.length; i++) {
             var getValue = userInfo._getText(
@@ -7769,10 +7882,11 @@ var socket, // socket.io
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('accessInfo', function(d) {
+      var connectSuccessData = sinclo.accessInfo(d);
       sinclo.executeConnectSuccess(
-        sinclo.accessInfo(d),
-        JSON.parse(d));
-    }); // socket-on: accessInfo
+        connectSuccessData,
+        window.userInfo.accessInfoData);
+    }); // socket-on: acce ssInfo
 
     // 接続直後（ユーザＩＤ、アクセスコード発番等）
     socket.on('syncUserInfo', function(d) {
