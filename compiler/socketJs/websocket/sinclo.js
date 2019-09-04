@@ -654,6 +654,9 @@
       if (obj.hasOwnProperty('pagetime')) {
         userInfo.pageTime = obj.pagetime;
       }
+      if (check.isset(obj.isInBusinessHours)) {
+        userInfo.isInBusinessHours = obj.isInBusinessHours;
+      }
 
       if (check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
         userInfo.set(cnst.info_type.access, obj.accessId, true);

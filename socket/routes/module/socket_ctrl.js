@@ -10,6 +10,7 @@ var list = require('./company_list');
 var LandscapeAPI = require('./landscape');
 var CogmoAttendAPICaller = require('./cogmo_attend');
 var ChatLogTimeManager = require('./chat_log_time_manager');
+var SCChecker = require('./class/checker/SCChecker');
 var CommonUtil = require('./class/util/common_utility');
 var HistoryManager = require('./class/manager/history_manager');
 var CustomerInfoManager = require('./class/manager/customer_info_manager');
@@ -30,6 +31,7 @@ var scenarioLogger = log4js.getLogger('traceScenario');
 //サーバインスタンス作成
 var io = require('socket.io')(process.env.WS_PORT);
 var SharedData = require('./shared_data');
+var checker = new SCChecker();
 
 // SharedData.sincloCoreオブジェクトからセッションIDを取得する関数
 function getSessionId(siteKey, tabId, key) {
@@ -2338,6 +2340,7 @@ io.sockets.on('connection', function(socket) {
         //emit.toClient('getAccessInfo', send, res.siteKey);
         processReceiveAccessInfo(res.siteKey, socket);
       } else {
+        send.isInBusinessHours = checker.isInBusinessHours(res.siteKey);
         chatApi.widgetCheck(res, function(err, ret) {
           send.activeOperatorCnt = getOperatorCnt(res.siteKey);
           send.widget = ret.opFlg;
