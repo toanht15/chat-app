@@ -121,9 +121,7 @@
               if ($('#sincloWidgetBox').children().is('#navigation')) {
                 //if(check.smartphone()) {
                 height += $('#sincloWidgetBox > #navigation').outerHeight(true);
-                var tab = $('#sincloWidgetBox #navigation li.selected').
-                    data('tab');
-                height += $('#sincloWidgetBox #' + tab + 'Tab').
+                height += $('#sincloWidgetBox #chatTab').
                     outerHeight(true);
               } else {
                 height += $('#sincloWidgetBox [id$=\'Tab\']').outerHeight(true);
