@@ -233,14 +233,10 @@
       //バナー表示時の位置を設定
       bannerBottomLeftRight: function() {
         if (!check.smartphone()) {
-          var bannerHorizontalPosition = (window.sincloInfo.custom &&
-              window.sincloInfo.custom.widget &&
-              window.sincloInfo.custom.widget.bannerHorizontalPosition) ?
+          var bannerHorizontalPosition = (check.objPath(window.sincloInfo, "custom.widget.bannerHorizontalPosition")) ?
               window.sincloInfo.custom.widget.bannerHorizontalPosition :
               '20px';
-          var bannerVerticalPosition = (window.sincloInfo.custom &&
-              window.sincloInfo.custom.widget &&
-              window.sincloInfo.custom.widget.bannerVerticalPosition) ?
+          var bannerVerticalPosition = (check.objPath(window.sincloInfo, "custom.widget.bannerVerticalPosition")) ?
               window.sincloInfo.custom.widget.bannerVerticalPosition :
               '20px';
           //pc
@@ -300,14 +296,10 @@
               widgetHorizontalPosition = '0px';
               widgetVerticalPosition = '0px';
             } else {
-              widgetHorizontalPosition = (window.sincloInfo.custom &&
-                  window.sincloInfo.custom.widget &&
-                  window.sincloInfo.custom.widget.horizontalPosition) ?
+              widgetHorizontalPosition = (check.objPath(window.sincloInfo, "custom.widget.horizontalPosition")) ?
                   window.sincloInfo.custom.widget.horizontalPosition :
                   '10px';
-              widgetVerticalPosition = (window.sincloInfo.custom &&
-                  window.sincloInfo.custom.widget &&
-                  window.sincloInfo.custom.widget.verticalPosition) ?
+              widgetVerticalPosition = (check.objPath(window.sincloInfo, "custom.widget.verticalPosition")) ?
                   window.sincloInfo.custom.widget.verticalPosition :
                   '0px';
             }
@@ -951,12 +943,10 @@
     getWindowInfo: function(obj) {
       if (obj.tabId !== userInfo.tabId) return false;
       if (userInfo.accessType !== Number(cnst.access_type.guest)) return false;
-      var title = (check.isset(window.sincloInfo.custom) && check.isset(
-          window.sincloInfo.custom.shareBrowse.begin.headerMessage)) ?
+      var title = (check.objPath(window.sincloInfo, "custom.shareBrowse.begin.headerMessage")) ?
           window.sincloInfo.custom.shareBrowse.begin.headerMessage :
           location.host + 'の内容';
-      var content = (check.isset(window.sincloInfo.custom) &&
-          check.isset(window.sincloInfo.custom.shareBrowse.begin.content)) ?
+      var content = (check.objPath(window.sincloInfo, "custom.shareBrowse.begin.content")) ?
           window.sincloInfo.custom.shareBrowse.begin.content :
           location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function() {
@@ -990,12 +980,10 @@
     },
     startWindowSync: function(obj) {
       if (userInfo.accessType !== Number(cnst.access_type.guest)) return false;
-      var title = (check.isset(window.sincloInfo.custom) && check.isset(
-          window.sincloInfo.custom.shareBrowse.begin.headerMessage)) ?
+      var title = (check.objPath(window.sincloInfo, "custom.shareBrowse.begin.headerMessage")) ?
           window.sincloInfo.custom.shareBrowse.begin.headerMessage :
           location.host + 'の内容';
-      var content = (check.isset(window.sincloInfo.custom) &&
-          check.isset(window.sincloInfo.custom.shareBrowse.begin.content)) ?
+      var content = (check.objPath(window.sincloInfo, "custom.shareBrowse.begin.content")) ?
           window.sincloInfo.custom.shareBrowse.begin.content :
           location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function() {
@@ -1026,12 +1014,10 @@
     },
     startCoBrowseOpen: function(obj) {
       if (userInfo.accessType !== Number(cnst.access_type.guest)) return false;
-      var title = (check.isset(window.sincloInfo.custom) && check.isset(
-          window.sincloInfo.custom.shareCoBrowse.begin.headerMessage)) ?
+      var title = (check.objPath(window.sincloInfo, "custom.shareCoBrowse.begin.headerMessage")) ?
           window.sincloInfo.custom.shareCoBrowse.begin.headerMessage :
           location.host + 'の内容';
-      var content = (check.isset(window.sincloInfo.custom) &&
-          check.isset(window.sincloInfo.custom.shareCoBrowse.begin.content)) ?
+      var content = (check.objPath(window.sincloInfo, "custom.shareCoBrowse.begin.content")) ?
           window.sincloInfo.custom.shareCoBrowse.begin.content :
           location.host + 'が閲覧ページへのアクセスを求めています。<br>許可しますか';
       popup.ok = function() {
@@ -1075,12 +1061,10 @@
         }
 
         // 終了通知
-        var title = (check.isset(window.sincloInfo.custom) && check.isset(
-            window.sincloInfo.custom.shareCoBrowse.end.headerMessage)) ?
+        var title = (check.objPath(window.sincloInfo, "custom.shareCoBrowse.end.headerMessage")) ?
             window.sincloInfo.custom.shareCoBrowse.end.headerMessage :
             location.host + 'の内容';
-        var content = (check.isset(window.sincloInfo.custom) &&
-            check.isset(window.sincloInfo.custom.shareCoBrowse.end.content)) ?
+        var content = (check.objPath(window.sincloInfo, "custom.shareCoBrowse.end.content")) ?
             window.sincloInfo.custom.shareCoBrowse.end.content :
             location.host + 'との画面共有を終了しました';
         popup.ok = function() {
@@ -2967,12 +2951,10 @@
       sessionStorage.removeItem('doc');
 
       // 終了通知
-      var title = (check.isset(window.sincloInfo.custom) && check.isset(
-          window.sincloInfo.custom.shareDocument.begin.headerMessage)) ?
+      var title = (check.objPath(window.sincloInfo, "custom.shareDocument.begin.headerMessage")) ?
           window.sincloInfo.custom.shareDocument.begin.headerMessage :
           location.host + 'の内容';
-      var content = (check.isset(window.sincloInfo.custom) &&
-          check.isset(window.sincloInfo.custom.shareDocument.begin.content)) ?
+      var content = (check.objPath(window.sincloInfo, "custom.shareDocument.begin.content")) ?
           window.sincloInfo.custom.shareDocument.begin.content :
           location.host + 'が資料共有を求めています。<br>許可しますか';
       popup.ok = function() {
@@ -3011,12 +2993,10 @@
     },
     docDisconnect: function() {
       // 終了通知
-      var title = (check.isset(window.sincloInfo.custom) && check.isset(
-          window.sincloInfo.custom.shareDocument.end.headerMessage)) ?
+      var title = (check.objPath(window.sincloInfo, "custom.shareDocument.end.headerMessage")) ?
           window.sincloInfo.custom.shareDocument.end.headerMessage :
           location.host + 'の内容';
-      var content = (check.isset(window.sincloInfo.custom) &&
-          check.isset(window.sincloInfo.custom.shareDocument.end.content)) ?
+      var content = (check.objPath(window.sincloInfo, "custom.shareDocument.end.content")) ?
           window.sincloInfo.custom.shareDocument.end.content :
           location.host + 'との資料共有を終了しました';
       popup.ok = function() {
@@ -3046,12 +3026,10 @@
       }
 
       // 終了通知
-      var title = (check.isset(window.sincloInfo.custom) &&
-          check.isset(window.sincloInfo.custom.shareBrowse.end.headerMessage)) ?
+      var title = (check.objPath(window.sincloInfo, "custom.shareCoBrowse.end.headerMessage")) ?
           window.sincloInfo.custom.shareBrowse.end.headerMessage :
           location.host + 'の内容';
-      var content = (check.isset(window.sincloInfo.custom) &&
-          check.isset(window.sincloInfo.custom.shareBrowse.end.content)) ?
+      var content = (check.objPath(window.sincloInfo, "custom.shareCoBrowse.end.content")) ?
           window.sincloInfo.custom.shareBrowse.end.content :
           location.host + 'との画面共有を終了しました';
       popup.ok = function() {
@@ -3098,12 +3076,10 @@
       }
 
       // 終了通知
-      var title = (check.isset(window.sincloInfo.custom) && check.isset(
-          window.sincloInfo.custom.shareCoBrowse.end.headerMessage)) ?
+      var title = (check.objPath(window.sincloInfo, "custom.shareCoBrowse.end.headerMessage")) ?
           window.sincloInfo.custom.shareCoBrowse.end.headerMessage :
           location.host + 'の内容';
-      var content = (check.isset(window.sincloInfo.custom) &&
-          check.isset(window.sincloInfo.custom.shareCoBrowse.end.content)) ?
+      var content = (check.objPath(window.sincloInfo, "custom.shareCoBrowse.end.content")) ?
           window.sincloInfo.custom.shareCoBrowse.end.content :
           location.host + 'との画面共有を終了しました';
       popup.ok = function() {
@@ -3183,9 +3159,8 @@
       console.log(
           '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaCalled<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
       if (!document.getElementById('flexBoxWrap')) return;
-      if ((check.isset(window.sincloInfo.custom)
-          && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-          && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+      if (check.objPath(window.sincloInfo, "custom.widget.forceHideMessageArea")
+          && window.sincloInfo.custom.widget.forceHideMessageArea) {
         sinclo.hideTextarea();
         return;
       }
@@ -4169,9 +4144,8 @@
       },
       showMiniMessageArea: function() {
         console.log('>>>>>>>>>>>>>>>>>>>>>showMiniMessageArea');
-        if ((check.isset(window.sincloInfo.custom)
-            && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+        if (check.objPath(window.sincloInfo, "custom.widget.forceHideMessageArea")
+            && window.sincloInfo.custom.widget.forceHideMessageArea) {
           return;
         }
         // オペレータ未入室のシナリオのヒアリングモードのみ有効
@@ -4200,9 +4174,8 @@
       forceHideMiniMessageArea: false,
       hideMiniMessageArea: function() {
         console.log('>>>>>>>>>>>>>>>>>>>>>hideMiniMessageArea');
-        if ((check.isset(window.sincloInfo.custom)
-            && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+        if (check.objPath(window.sincloInfo, "custom.widget.forceHideMessageArea")
+            && window.sincloInfo.custom.widget.forceHideMessageArea) {
           return;
         }
         // ①シナリオのヒアリングモード中
