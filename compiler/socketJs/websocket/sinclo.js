@@ -12967,6 +12967,8 @@
                 emit('addLastMessageToCV',
                     {historyId: sinclo.chatApi.historyId});
               }, 1000);
+              self._clearConfirmState();
+              self._clearWaitingInputState();
               if (self._parent._goToNextScenario()) {
                 self._parent._process();
               }
@@ -13120,6 +13122,14 @@
         _saveConfirmState: function() {
           var self = sinclo.scenarioApi._bulkHearing;
           self._parent.set(self._state.confirm, true);
+        },
+        _clearWaitingInputState: function() {
+          var self = sinclo.scenarioApi._bulkHearing;
+          self._parent.unset(self._state.waitInput);
+        },
+        _clearConfirmState: function() {
+          var self = sinclo.scenarioApi._bulkHearing;
+          self._parent.unset(self._state.confirm);
         },
         _isStatusConfirming: function() {
           var self = sinclo.scenarioApi._bulkHearing;
