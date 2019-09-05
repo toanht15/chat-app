@@ -12379,7 +12379,12 @@
         _process: function() {
           var self = sinclo.scenarioApi._anotherScenario;
           self._getScenario(function(result) {
-            self._parent._mergeScenario(result, self._isExecutableNextAction());
+            var targetScenarioId = self._parent._getCurrentScenario().tChatbotScenarioId;
+            if (!targetScenarioId) {
+              targetScenarioId = self._parent.get(
+                  self._parent._lKey.scenarioId);
+            }
+            self._parent._mergeScenario(result, self._isExecutableNextAction(), targetScenarioId);
             if (self._parent._goToNextScenario(true)) {
               self._parent._process();
             }
