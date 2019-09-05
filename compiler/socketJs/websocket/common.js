@@ -1915,7 +1915,7 @@ var socket, // socket.io
 
       html += common.injectCalendarCSS();
       html += common.injectCarouselCss();
-      if (check.isset(sincloInfo.custom)
+      if (check.objPath(sincloInfo, "custom.widget.header.showOpCallButton")
           && sincloInfo.custom.widget.header.showOpCallButton) {
         html += common.injectCallOpButtonCSS(widget);
       }
@@ -4596,14 +4596,15 @@ var socket, // socket.io
           'border-radius: ' + (8 * ratio) + 'px;' +
           'display: flex;' +
           'align-items: center;' +
+          'justify-content: center;' +
           'cursor: pointer;' +
-          'box-shadow: 0 2px 2px 0 rgba(0,0,0,.12), 0 2px 2px 0 rgba(0,0,0,.24);' +
+          'border-bottom: solid 4px #627295;' +
           '}' +
           '#sincloBox #navigation span#callOperatorButton:hover {' +
-          'box-shadow: 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.2);' +
           '}' +
           '#sincloBox #navigation span#callOperatorButton:active {' +
-          'box-shadow: none;' +
+          'transform: translateY(4px);' +
+          'border-bottom: none;' +
           '}' +
           '#sincloBox #navigation span#callOperatorButton span#callOpButtonIconWrap {' +
           'flex-basis: ' + (36 * ratio) + 'px;' +
@@ -4618,10 +4619,10 @@ var socket, // socket.io
           'fill :' + buttonIconColor + ';' +
           '}' +
           '#sincloBox #navigation span#callOperatorButton span#callOpButtonLabel {' +
-          'width: 100%;' +
           'text-align: center;' +
           'font-weight: ' +
           'font-size: 1.1em;' +
+          'margin-left: ' + (10 * ratio) + 'px;' +
           'color: ' + buttonLabelColor + ';' +
           '}';
     },
