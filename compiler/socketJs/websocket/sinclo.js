@@ -11233,7 +11233,7 @@
         var self = sinclo.scenarioApi;
         if (self._hearing._getCurrentHearingProcess().uiType > 2) return true;
         var regex = new RegExp(self._validation[Number(typeStr)]);
-        return val === '' || regex.test(val);
+        return val === ' ' || regex.test(val);
       },
       _speakText: function() {
         // クロージャー用
