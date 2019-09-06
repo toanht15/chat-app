@@ -5044,7 +5044,7 @@ var socket, // socket.io
               }
             }
           } else {
-            if (dataOpenflg === 'false') {
+            if (dataOpenflg === 'false' && storage.s.get('preWidgetOpened') === 'true') {
               console.log('saisyouka');
               //最小化
               if (abridgementType['MinRes']) {
