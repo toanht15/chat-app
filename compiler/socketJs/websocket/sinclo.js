@@ -13928,38 +13928,40 @@
           sinclo.chatApi.scDown();
 
           if (customizeDesign.radioStyle === '1') {
-            $('#sinclo-radio-button-' + buttonHtml.timestamp).css('line-height', 0);
-            var radioTarget = $('#sinclo-radio-button-' + buttonHtml.timestamp + ' input[type="radio"]');
-            var radioLabelTarget = $('#sinclo-radio-button-' + buttonHtml.timestamp + ' sinclo-radio');
-            radioLabelTarget.css({
-              'background-color': customizeDesign.radioEntireBackgroundColor,
-              'display': 'block'
-            });
-            radioTarget.each(function() {
-              if ($(this).prop('checked')) {
-                $(this).parent().css('background-color', customizeDesign.radioEntireActiveColor);
-                $(this).parent().find('label').css('color', customizeDesign.radioActiveTextColor);
-              } else {
-                $(this).parent().find('label').css('color', customizeDesign.radioTextColor);
-              }
-            });
-            radioTarget.on('change', function() {
+            buttonHtml.timestampArray.forEach(function(timestamp, idx, arr){
+              $('#sinclo-radio-button-' + timestamp).css('line-height', 0);
+              var radioTarget = $('#sinclo-radio-button-' + timestamp + ' input[type="radio"]');
+              var radioLabelTarget = $('#sinclo-radio-button-' + timestamp + ' sinclo-radio');
+              radioLabelTarget.css({
+                'background-color': customizeDesign.radioEntireBackgroundColor,
+                'display': 'block'
+              });
               radioTarget.each(function() {
                 if ($(this).prop('checked')) {
-                  if (customizeDesign.radioStyle !== '1') {
-                    $(this).parent().css('background-color', 'transparent');
-                  } else {
-                    $(this).parent().css('background-color', customizeDesign.radioEntireActiveColor);
-                    $(this).parent().find('label').css('color', customizeDesign.radioActiveTextColor);
-                  }
+                  $(this).parent().css('background-color', customizeDesign.radioEntireActiveColor);
+                  $(this).parent().find('label').css('color', customizeDesign.radioActiveTextColor);
                 } else {
-                  if (customizeDesign.radioStyle !== '1') {
-                    $(this).parent().css('background-color', 'transparent');
-                  } else {
-                    $(this).parent().css('background-color', customizeDesign.radioEntireBackgroundColor);
-                    $(this).parent().find('label').css('color', customizeDesign.radioTextColor);
-                  }
+                  $(this).parent().find('label').css('color', customizeDesign.radioTextColor);
                 }
+              });
+              radioTarget.on('change', function() {
+                radioTarget.each(function() {
+                  if ($(this).prop('checked')) {
+                    if (customizeDesign.radioStyle !== '1') {
+                      $(this).parent().css('background-color', 'transparent');
+                    } else {
+                      $(this).parent().css('background-color', customizeDesign.radioEntireActiveColor);
+                      $(this).parent().find('label').css('color', customizeDesign.radioActiveTextColor);
+                    }
+                  } else {
+                    if (customizeDesign.radioStyle !== '1') {
+                      $(this).parent().css('background-color', 'transparent');
+                    } else {
+                      $(this).parent().css('background-color', customizeDesign.radioEntireBackgroundColor);
+                      $(this).parent().find('label').css('color', customizeDesign.radioTextColor);
+                    }
+                  }
+                });
               });
             });
           }
@@ -14002,6 +14004,8 @@
           var self = sinclo.diagramApi;
           var html = '';
           var firstTimestamp = 0;
+          var timestampArray = [];
+          var firstBlock = true;
           Object.keys(labels).forEach(function(index, idx, arr) {
             var timestamp = common.makeToken();
             console.log(timestamp);
@@ -14015,6 +14019,7 @@
                 check.isset(labels[arr[idx]]['value']) &&
                 Number(labels[arr[idx]]['type']) === 2) {
               html += sinclo.chatApi.createMessageHtml(labels[arr[idx]]['value']);
+              firstBlock = true;
             } else {
               var message = check.isset(labels[arr[idx]]['value']) ?
                   labels[arr[idx]]['value'] :
@@ -14028,10 +14033,12 @@
                   var radioStyle = customizeDesign.radioStyle === '1' ?
                       'buttonStyle' :
                       'labelStyle';
-                  if (idx === 0) {
+                  if (firstBlock) {
                     firstTimestamp = timestamp;
+                    timestampArray.push(firstTimestamp);
                     html += '<div id="' + name + '" class="' + radioStyle + '">';
                     html += style;
+                    firstBlock = false;
                   }
                   html += '<sinclo-radio>';
                   html += '<input type="radio" name="sinclo-radio-' +
@@ -14044,7 +14051,9 @@
                   html += '<label for="sinclo-radio-btn-' + timestamp + '">' +
                       message + '</label>';
                   html += '</sinclo-radio>' + '\n';
-                  if (idx === arr.length - 1) {
+                  if (idx === arr.length - 1 || (check.isset(labels[arr[idx + 1]]['type']) &&
+                      check.isset(labels[arr[idx + 1]]['value']) &&
+                      Number(labels[arr[idx + 1]]['type']) === 2)) {
                     html += '</div>';
                   }
                   break;
@@ -14062,8 +14071,9 @@
                   var name = 'sinclo-buttonUI_' + timestamp;
                   var style = self.branch.createButtonUIStyle(customizeDesign,
                       '#' + name);
-                  if (idx === 0) {
+                  if (firstBlock) {
                     firstTimestamp = timestamp;
+                    timestampArray.push(firstTimestamp);
                     html += '<div id="' + name + '">';
                     html += style;
                   }
@@ -14072,7 +14082,9 @@
                       '" data-nid="' + nid +
                       '" data-next-nid="' + selectionMap[labels[arr[idx]]['uuid']] + '">' +
                       message + '</button>';
-                  if (idx === arr.length - 1) {
+                  if (idx === arr.length - 1 || (check.isset(labels[arr[idx + 1]]['type']) &&
+                      check.isset(labels[arr[idx + 1]]['value']) &&
+                      Number(labels[arr[idx + 1]]['type']) === 2)) {
                     html += '</div>';
                   }
                   break;
@@ -14081,6 +14093,7 @@
           });
           return {
             timestamp: firstTimestamp,
+            timestampArray: timestampArray,
             html: html
           };
         },
