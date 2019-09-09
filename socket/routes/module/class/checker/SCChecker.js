@@ -506,6 +506,119 @@ module.exports = class SCChecker {
     return callback(true, {opFlg: ret, message: message});
   }
 
+  /**
+   * 営業時間中かどうか
+   * @param siteKey 企業キー
+   * @returns {boolean} 営業時間中、または営業時間設定を利用していない場合はtrue
+   * そうでない場合はfalseを返す
+   */
+  isInBusinessHours(siteKey) {
+    var now = new Date(),
+        nowDay = now.getDay(),
+        day = '',
+        timeData = [],
+        publicHolidayData = null,
+        active_flg = '',
+        check = '',
+        dateParse = Date.parse(now),
+        date = now.getFullYear() + '/' +
+            ('0' + (now.getMonth() + 1)).slice(-2) + '/' +
+            ('0' + (now.getDate())).slice(-2) + ' ';
+    if (common.operationHourSettings[siteKey] != '') {
+      for (var i = 0; i <
+      common.operationHourSettings[siteKey].length; i++) {
+        dayType = JSON.parse(common.operationHourSettings[siteKey][i].type);
+        //営業時間設定の条件が「毎日」の場合
+        if (dayType == 1) {
+          day = this.dayMap[nowDay];
+          timeData = JSON.parse(
+              common.operationHourSettings[siteKey][i].time_settings).everyday[day];
+          publicHolidayData = JSON.parse(
+              common.operationHourSettings[siteKey][i].time_settings).everyday['pub'];
+        }
+        //営業時間設定の条件が「平日・週末」の場合
+        else {
+          var dayType = 'week';
+          if (nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 ||
+              nowDay == 5) {
+            dayType = 'week';
+          } else {
+            dayType = 'weekend';
+          }
+          timeData = JSON.parse(
+              common.operationHourSettings[siteKey][i].time_settings).weekly[dayType];
+          publicHolidayData = JSON.parse(
+              common.operationHourSettings[siteKey][i].time_settings).weekly['weekpub'];
+        }
+        active_flg = JSON.parse(
+            common.operationHourSettings[siteKey][i].active_flg);
+      }
+    }
+
+    //営業時間設定を利用している場合
+    if (active_flg === 1) {
+      for (var i2 = 0; i2 < common.publicHolidaySettingsArray.length; i2++) {
+        //祝日の場合
+        if (this.isTodayPublicHoliday(now, i2)) {
+          check = true;
+          //祝日の営業時間設定が「休み」でない場合
+          if (this.isTimeSettingActive(publicHolidayData)) {
+            for (var i = 0; i < publicHolidayData.length; i++) {
+              var endTime = publicHolidayData[i].end;
+              // 営業時間の終了時刻が24:00の場合
+              if (publicHolidayData[i].end == '24:00') {
+                endTime = '23:59:59';
+              }
+              //営業時間内の場合
+              if (this.isTimeSettingInTime(date, publicHolidayData, i,
+                  dateParse, endTime)) {
+                return true;
+              }
+              //営業時間外の場合
+              else {
+                return false;
+              }
+            }
+          }
+          //休みの設定にしているとき
+          else {
+            return false;
+          }
+        }
+      }
+
+      //祝日でない場合
+      if (check != true) {
+        //営業時間設定が「休み」の場合
+        if (!this.isTimeSettingActive(timeData)) {
+          return false;
+        }
+        //営業時間設定が「休み」でない場合
+        else {
+          for (var i = 0; i < timeData.length; i++) {
+            var endTime = timeData[i].end;
+            // 営業時間の終了時刻が24:00の場合
+            if (timeData[i].end == '24:00') {
+              endTime = '23:59:59';
+            }
+            //営業時間内の場合
+            if (this.isTimeSettingInTime(date, timeData, i, dateParse,
+                endTime)) {
+              check = true;
+              return true;
+            }
+          }
+          // 営業時間外の場合
+          if (check != true) {
+            return false;
+          }
+        }
+      }
+    }
+    // 営業時間設定を利用していない場合
+    return true;
+  }
+
   isSCListExists(siteKey) {
     return CommonUtil.isKeyExists(SharedData.scList, siteKey);
   }

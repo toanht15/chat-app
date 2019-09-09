@@ -152,6 +152,7 @@ router.post('/auth/customer', function(req, res, next) {
   }
 
   if (d.siteKey) {
+    send.isInBusinessHours = checker.isInBusinessHours(d.siteKey);
     checker.widgetCheck(d, function(err, ret) {
       send.activeOperatorCnt = checker.getOperatorCnt(d.siteKey);
       send.widget = ret.opFlg;
