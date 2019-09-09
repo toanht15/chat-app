@@ -495,15 +495,12 @@
       if(sessionStorage.forNotHavingConnectionMessageStack === undefined){
         sessionStorage.forNotHavingConnectionMessageStack = "[]";
       }
-      if(!sincloInfo.contract.enableRealtimeMonitor){
-        var array = JSON.parse(sessionStorage.forNotHavingConnectionMessageStack);
-        array.push(messageObject);
-        sessionStorage.forNotHavingConnectionMessageStack = JSON.stringify(array);
-      }
+      var array = JSON.parse(sessionStorage.forNotHavingConnectionMessageStack);
+      array.push(messageObject);
+      sessionStorage.forNotHavingConnectionMessageStack = JSON.stringify(array);
     },
     executeForNotHavingConnectionMessageStack: function(){
-      if(!sincloInfo.contract.enableRealtimeMonitor &&
-        sessionStorage.forNotHavingConnectionMessageStack !== "[]" &&
+      if(sessionStorage.forNotHavingConnectionMessageStack !== "[]" &&
         sessionStorage.forNotHavingConnectionMessageStack !== undefined){
         console.log(JSON.parse(sessionStorage.forNotHavingConnectionMessageStack));
         console.log(this.chatApi.stayLogsId);
