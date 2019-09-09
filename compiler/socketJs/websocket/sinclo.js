@@ -2567,14 +2567,17 @@
             }
           }
           var nextNodeId = obj.chatMessage.nextNodeId;
-          sinclo.chatApi.createMessageUnread({
-            cn: cn,
-            message: obj.chatMessage.message,
-            name: userName,
-            chatId: obj.chatId
-          }, false, false, false);
+          if (obj.chatMessage.nextNodeId !== 'callOperator')
+          {
+            sinclo.chatApi.createMessageUnread({
+              cn: cn,
+              message: obj.chatMessage.message,
+              name: userName,
+              chatId: obj.chatId
+            }, false, false, false);
+          }
           sinclo.chatApi.scDown(obj);
-          if (obj.tabId === userInfo.tabId) {
+          if (check.isset(obj.chatMessage.did) && obj.chatMessage.did !== 'manual' && obj.tabId === userInfo.tabId) {
             sinclo.diagramApi.executor.setDiagramId(obj.chatMessage.did);
             sinclo.diagramApi.executor.setNext(obj.chatMessage.did, nextNodeId);
             sinclo.diagramApi.executor.execute();
