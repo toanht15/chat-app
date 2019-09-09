@@ -11336,8 +11336,8 @@
             // initがコールされていないのでヒアリング開始していない
             return false;
           } else {
-            return String(self._parent._getCurrentScenario().actionType) ===
-                '2';
+            return String(self._parent._getCurrentScenario().actionType) === '2'
+            || String(self._parent._getCurrentScenario().actionType) === '12';
           }
         },
         isHearingAnswer: function(obj) {
