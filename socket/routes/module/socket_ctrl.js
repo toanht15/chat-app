@@ -4967,8 +4967,6 @@ io.sockets.on('connection', function(socket) {
                 SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
             && CommonUtil.isset(
                 SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
-          messages = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram.concat(
-              messages);
           SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
         }
         messages.forEach(function(elm, index, arr) {
