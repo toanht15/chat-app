@@ -11814,7 +11814,7 @@
                 // スキップされた場合は半角空白が保存されているので、その場合は空にする
                 if (self._parent._getSavedVariable(
                     self._getCurrentHearingProcess().variableName).
-                    match(/\s/)) {
+                    match(/^\s/)) {
                   $('#miniSincloChatMessage').val('');
                 }
                 // 変数を復元したときは再度ボタン文言ハンドラを起動する
