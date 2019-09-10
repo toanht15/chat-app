@@ -1097,6 +1097,3 @@
         </li>
       </ul>
 </div>
-
-<?php echo $this->Html->script("flatpickr.js"); ?>
-

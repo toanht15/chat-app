@@ -161,6 +161,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/angular-slick-carousel/3.1.7/angular-slick.js");
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.js");
     echo $this->Html->css("https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.css");
+    echo $this->Html->script("flatpickr.js");
   }
   if (strcmp($this->name,'TChatbotDiagrams') === 0) {
     echo $this->Html->css('https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css"');
@@ -184,6 +185,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/angular-slick-carousel/3.1.7/angular-slick.js");
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.js");
     echo $this->Html->css("https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.css");
+    echo $this->Html->script("flatpickr.js");
   }
  ?>
 
