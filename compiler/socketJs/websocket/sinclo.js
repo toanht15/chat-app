@@ -2036,7 +2036,7 @@
         }
       }
       // jumpLinkのページ遷移後
-      if (sessionStorage.getItem('nextNodeKey')){
+      if (storage.s.get('nextNodeKey') === 'true'){
         sinclo.diagramApi.executor.execute();
         sessionStorage.removeItem('nextNodeKey');
       }
@@ -14427,7 +14427,7 @@
           self.executor.wait(0.5).then(function() {
             switch (jumpType) {
               case 'same':
-                sessionStorage.setItem('nextNodeKey', 'true');
+                storage.s.set('nextNodeKey', true);
                 window.location.href = url;
                 break;
               case 'another':
