@@ -2035,6 +2035,11 @@
           sinclo.scenarioApi.begin();
         }
       }
+      // jumpLinkのページ遷移後
+      if (sessionStorage.getItem('nextNodeKey')){
+        sinclo.diagramApi.executor.execute();
+        sessionStorage.removeItem('nextNodeKey');
+      }
       // 未読数
       sinclo.chatApi.showUnreadCnt();
       // handle radio border when browser zoom
@@ -14415,20 +14420,21 @@
           console.log('<><><><><> JUMP TO LINK <><><><><>');
           var self = sinclo.diagramApi;
           var currentNode = self.storage.getCurrentNode();
+          var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
           var url = currentNode.attrs.actionParam.link;
           var jumpType = currentNode.attrs.actionParam.linkType;
+          self.executor.setNext(self.common.getDiagramId(), nextNodeId);
           self.executor.wait(0.5).then(function() {
             switch (jumpType) {
               case 'same':
+                sessionStorage.setItem('nextNodeKey', 'true');
                 window.location.href = url;
                 break;
               case 'another':
                 window.open(url);
+                self.executor.execute();
                 break;
             }
-            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
-            self.executor.setNext(self.common.getDiagramId(), nextNodeId);
-            self.executor.execute();
           });
         }
       },
