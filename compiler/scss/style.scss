@@ -11459,7 +11459,7 @@ ul.naviBtn {
         padding: 0.25em 1em;margin: 0 0.25em;
       }
 
-      form#StatisticsForChatForm,form#StatisticsForOperatorForm {
+      form#StatisticsForChatForm,form#StatisticsForOperatorForm,form#StatisticsForMessageRankingForm {
         width: 22em;
       }
 
@@ -11528,7 +11528,7 @@ ul.naviBtn {
       flex: 1;
     }
 
-    form#StatisticsForChatForm,form#StatisticsForOperatorForm {
+    form#StatisticsForChatForm,form#StatisticsForOperatorForm,form#StatisticsForMessageRankingForm {
       margin-bottom: 0;
     }
 
