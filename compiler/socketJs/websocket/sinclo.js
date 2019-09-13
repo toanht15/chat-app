@@ -13304,29 +13304,30 @@
         _roundResult: function(value, digits, roundRule) {
           var index = Math.pow(10, digits - 1);
           // 1桁目指定の場合は整数部だけ取り出して計算
-          if (Number(digits) === 0) {
+          if (Number(digits) > 0) {
+            switch (Number(roundRule)) {
+              case 1:
+                //四捨五入の場合
+                value = Math.round(value * index) / index;
+                break;
+              case 2:
+                //切り捨ての場合
+                value = Math.floor(value * index) / index;
+                break;
+              case 3:
+                //切り上げの場合
+                value = Math.ceil(value * index) / index;
+                break;
+              default:
+                //デフォルトは四捨五入
+                value = Math.round(value * index) / index;
+            }
+          } else {
             if (value > 0) {
               value = Math.floor(value);
             } else {
               value = Math.ceil(value);
             }
-          }
-          switch (Number(roundRule)) {
-            case 1:
-              //四捨五入の場合
-              value = Math.round(value * index) / index;
-              break;
-            case 2:
-              //切り捨ての場合
-              value = Math.floor(value * index) / index;
-              break;
-            case 3:
-              //切り上げの場合
-              value = Math.ceil(value * index) / index;
-              break;
-            default:
-              //デフォルトは四捨五入
-              value = Math.round(value * index) / index;
           }
 
           return value;
