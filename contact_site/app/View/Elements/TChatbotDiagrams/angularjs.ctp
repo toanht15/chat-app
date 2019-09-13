@@ -574,18 +574,31 @@
           for(var i=0; i<list.length; i++){
             if(Number(list[i].type) === 1) {
               this.textList.push(list[i].value);
+            }else if (Number(list[i].type) === 2) {
+                this.textList.push(list[i].value);
             }
           }
         },
         _initPopupOverlapEvent: function() {
           popupEventOverlap.closePopup = function() {
+              var branchSelectionTypeList = [];
+              for(var i=0; i<$scope.branchSelectionList.length; i++){
+                  branchSelectionTypeList.push($scope.branchSelectionList[i].type);
+              }
             $scope.branchSelectionList.length = 0;
             this.textList = $("#bulk_textarea").val().split("\n");
             for(var i=0; i < this.textList.length; i++){
-              $scope.branchSelectionList.push({
-                type: "1",
-                value: this.textList[i]
-              });
+                if (Number(branchSelectionTypeList[i]) === 2){
+                    $scope.branchSelectionList.push({
+                        type: "2",
+                        value: this.textList[i],
+                    });
+                } else {
+                    $scope.branchSelectionList.push({
+                        type: "1",
+                        value: this.textList[i],
+                    });
+                }
             }
             popupEventOverlap.closeNoPopupOverlap();
             $scope.$apply();
