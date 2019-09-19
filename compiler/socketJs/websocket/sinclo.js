@@ -7876,6 +7876,9 @@
       callOperator: function() {
         // ここから先のnodeIdは設定不可のため無視する
         if (check.isset(sinclo.chatApi.callOpTimer)) return false;
+        if (sinclo.scenarioApi.isProcessing()) {
+          sinclo.scenarioApi._end();
+        }
         sinclo.chatApi.send({
           did: 'manual',
           sourceNodeId: 'callOperator',
@@ -10386,7 +10389,7 @@
       _enablePreviousRadioButton: function(length) {
         var self = sinclo.scenarioApi;
         var chatMessageBlock = $('sinclo-chat').
-            find('div:not(.sinclo-scenario-msg)');
+            find('div:not(.sinclo-scenario-msg) > li[class*="sinclo"]');
         console.log(length);
         if (typeof length === 'undefined') {
           length = self.get(self._lKey.previousChatMessageLength);
