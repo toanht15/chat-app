@@ -3994,8 +3994,7 @@
             sinclo.chatApi.bodyPosition = document.body.style.position;
             document.body.style.position = 'fixed';
           }
-        })
-        .on('blur', '.formInput', function(e) {
+        }).on('blur', '.formInput', function(e) {
           if (check.smartphone()) {
             document.body.style.position = sinclo.chatApi.bodyPosition;
           }
@@ -4315,7 +4314,7 @@
         window.addEventListener('touchmove',
             sinclo.chatApi.lockPageScrollHandler);
         sinclo.chatApi.targetTextarea.addEventListener('scroll',
-            sinclo.chatApi.unlockPageScrollHandler);
+            sinclo.chatApi.unlockPageScrollHandler, { passive: false });
       },
       unlockPageScroll: function() {
         if (!check.smartphone()) return false;
