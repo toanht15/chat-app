@@ -3988,15 +3988,16 @@
               }
             });
 
-        $(document).on('focus', 'input', function(e) {
-          var position = document.body.style.position;
-          document.body.style.position = 'fixed';
+        $(document).on('focus', '.formInput', function(e) {
+          if (e) e.stopPropagation();
+          if (check.smartphone()) {
+            sinclo.chatApi.bodyPosition = document.body.style.position;
+            document.body.style.position = 'fixed';
+          }
         })
-        .on('blur', 'input', function(e) {
-          if (position) {
-            document.body.style.position = position;
-          } else {
-            document.body.style.position = '';
+        .on('blur', '.formInput', function(e) {
+          if (check.smartphone()) {
+            document.body.style.position = sinclo.chatApi.bodyPosition;
           }
         });
 
