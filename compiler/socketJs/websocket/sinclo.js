@@ -3988,17 +3988,6 @@
               }
             });
 
-        $(document).on('focus', '.formInput', function(e) {
-          if (e) e.stopPropagation();
-          if (check.smartphone()) {
-            sinclo.chatApi.bodyPosition = document.body.style.position;
-            document.body.style.position = 'fixed';
-          }
-        }).on('blur', '.formInput', function(e) {
-          if (check.smartphone()) {
-            document.body.style.position = sinclo.chatApi.bodyPosition;
-          }
-        });
 
         $('input[name^=\'sinclo-radio\']').each(function(index) {
           if (!sinclo.scenarioApi.isProcessing() &&
@@ -4314,7 +4303,7 @@
         window.addEventListener('touchmove',
             sinclo.chatApi.lockPageScrollHandler);
         sinclo.chatApi.targetTextarea.addEventListener('scroll',
-            sinclo.chatApi.unlockPageScrollHandler, { passive: false });
+            sinclo.chatApi.unlockPageScrollHandler);
       },
       unlockPageScroll: function() {
         if (!check.smartphone()) return false;
