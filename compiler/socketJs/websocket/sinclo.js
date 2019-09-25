@@ -3465,6 +3465,7 @@
       opUser: '',
       opUserName: '',
       continueClickThresholdMSec: 3000,
+      bodyPosition: '',
       messageType: {
         customer: 1,
         company: 2,
@@ -3895,6 +3896,9 @@
                   if (e) e.stopPropagation();
                   sinclo.chatApi.clearPlaceholderMessage();
                   if (check.smartphone()) {
+                    sinclo.chatApi.bodyPosition = document.body.style.position;
+                    document.body.style.position = 'fixed';
+
                     $(document).one('touchstart', function(e) {
                       $(document).trigger('blur');
                     });
@@ -3909,6 +3913,8 @@
                   sinclo.chatApi.setPlaceholderMessage(
                       sinclo.chatApi.getPlaceholderMessage());
                   if (check.smartphone()) {
+                    document.body.style.position = sinclo.chatApi.bodyPosition;
+
                     console.log('スマホ入力フォーカスアウト');
                     setTimeout(function() {
                       sinclo.adjustSpWidgetSize();
@@ -3986,6 +3992,19 @@
                 }
               }
             });
+
+        $(document).on('focus', 'input', function(e) {
+          var position = document.body.style.position;
+          document.body.style.position = 'fixed';
+        })
+        .on('blur', 'input', function(e) {
+          if (position) {
+            document.body.style.position = position;
+          } else {
+            document.body.style.position = '';
+          }
+        });
+
         $('input[name^=\'sinclo-radio\']').each(function(index) {
           if (!sinclo.scenarioApi.isProcessing() &&
               $(this).parents('.sinclo-scenario-msg').length !== 0) {
