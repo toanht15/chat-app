@@ -296,11 +296,14 @@ var socket, // socket.io
           navi = this.widgetCallOpTemplate(widget),
           chat = this.chatWidgetTemplate(widget),
           call = this.widgetTemplate(widget),
-          fotter = (check.isset(window.sincloInfo.custom) &&
-              check.isset(window.sincloInfo.custom.widget.hideFotter) &&
-              window.sincloInfo.custom.widget.hideFotter) ?
-              '' :
-              '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
+          fotter = '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
+
+      if (check.objPath(window.sincloInfo, "custom.widget.hideFotter") && window.sincloInfo.custom.widget.hideFotter) {
+        fotter = '';
+      } else if(check.objPath(window.sincloInfo, "custom.widget.changeFotter") && check.isset(window.sincloInfo.custom.widget.changeFotter)) {
+        fotter = window.sincloInfo.custom.widget.changeFotter;
+      }
+
       // フルプランのPCの場合
       if (window.sincloInfo.contract.chat &&
           (window.sincloInfo.contract.synclo ||
@@ -1912,6 +1915,8 @@ var socket, // socket.io
             '; font-size: 12.5px; cursor: pointer; vertical-align: middle; margin-right: 5px; }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
       }
+
+      html += '      #sincloBox p#fotter.no-hover a:hover { color: #333; }';
 
       html += common.injectCalendarCSS();
       html += common.injectCarouselCss();
