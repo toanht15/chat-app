@@ -3886,6 +3886,17 @@
         });
 
         $(document).
+          on('focus', '.formInput',
+            function(e) {
+              if (e) e.stopPropagation();
+              sinclo.chatApi.bodyPosition = document.body.style.position;
+              document.body.style.position = 'fixed';
+            }).on('blur', '.formInput',
+          function(e) {
+            document.body.style.position = sinclo.chatApi.bodyPosition;
+          });
+
+        $(document).
             on('focus', '#sincloChatMessage,#miniSincloChatMessage',
                 function(e) {
                   if (e) e.stopPropagation();
