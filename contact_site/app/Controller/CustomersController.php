@@ -413,11 +413,11 @@ class CustomersController extends AppController {
             'conditions' => [
               'THistory.id = THistoryChatLog.t_histories_id',
               'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
-
             ]
           ]
         ],
         'conditions' => [
+          'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
           'THistoryChatLog.visitors_id' => $this->params->query['userId']
         ],
         'order' => ['created' => 'desc'],
