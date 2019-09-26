@@ -4969,10 +4969,6 @@ var socket, // socket.io
           var dataOpenflg = sinclo.widget.condifiton.get();
           //最小化時と最大化時の状態を取得
           var abridgementType = common.getAbridgementType();
-          //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
-          if (!reCreateWidget && dataOpenflg === 'false' && storage.s.get('preWidgetOpened') !== 'true') {
-            sinclo.widget.condifiton.set(false, true);
-            sinclo.chatApi.unlockPageScroll();
             if (!window.sincloInfo.contract.enableRealtimeMonitor) {
               if (window.sincloInfo.contract.synclo || window.sincloInfo.contract.document) {
                 emit('sendWidgetShown', {widget: true});
@@ -5003,6 +4999,10 @@ var socket, // socket.io
             } else {
               emit('sendWidgetShown', {widget: true});
             }
+          //ウィジェットの再生成処理呼び出しでなければ最小化表示設定で呼び出す
+          if (!reCreateWidget && dataOpenflg === 'false' && storage.s.get('preWidgetOpened') !== 'true') {
+            sinclo.widget.condifiton.set(false, true);
+            sinclo.chatApi.unlockPageScroll();
             //最小化
             if (abridgementType['MinRes']) {
               //ヘッダ非表示（シンプル表示）
