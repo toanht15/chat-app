@@ -1421,17 +1421,22 @@
           _checkPastPortListFromCurrent: function(targetList, number, coverIndex, groupListLength, port) {
             var textList = [];
             var typeList = [];
+            var idList = [];
             for (var j = 0; j < $scope.oldSelectionList.length; j++) {
               textList.push($scope.oldSelectionList[j].value);
               typeList.push($scope.oldSelectionList[j].type);
+              idList.push($scope.oldSelectionList[j].uuid)
             }
             var contentNum = textList.indexOf(targetList[number].value);
-            if (contentNum === -1) {
+            var idNum = idList.indexOf(targetList[number].uuid);
+            var isNotExist = targetList[number].uuid == undefined || idNum === -1 || (idNum !== -1 && contentNum != number);
+            if (isNotExist) {
               /* 追加するパターン */
               /* 過去にはないが、現在にあるパターン */
               $scope.currentEditCellParent.embed(port);
               initNodeEvent([port]);
               graph.addCell(port);
+              targetList[number]['uuid'] = port.id;
             } else {
               /* 追加するパターン */
               /* 両方にあるが、タイプが違うパターン */
@@ -1439,13 +1444,16 @@
                 $scope.currentEditCellParent.embed(port);
                 initNodeEvent([port]);
                 graph.addCell(port);
+                targetList[number]['uuid'] = port.id;
               }
               /* 編集するパターン */
               /* 両方にあり、タイプも同じパターン */
               var childList = this._getCurrentPortList();
+              var flg = true;
               for (var i = 0; i < childList.length; i++) {
-                if (childList[i].attr("nodeBasicInfo/tooltip") === targetList[number].value) {
+                if (childList[i].id === targetList[number].uuid) {
                   this._setSelfPosition(childList[i], this._getSelfPosition(number, targetList));
+
                   var topOpacity = 1,
                       bottomOpacity = 1;
                   if (coverIndex === 0) {
@@ -1463,16 +1471,19 @@
           _checkCurrentPortListFromPast: function(targetList) {
             var textList = [];
             var typeList = [];
+            var idList = [];
             /* テキストと選択肢で内容が同一の場合は削除すること */
             for (var j = 0; j < targetList.length; j++) {
               textList.push(targetList[j].value);
               typeList.push(targetList[j].type);
+              idList.push(targetList[j].uuid);
             }
 
             var childList = this._getCurrentPortList();
             for (var i = 0; i < childList.length; i++) {
               var containNum = textList.indexOf(childList[i].attr("nodeBasicInfo/tooltip"));
-              if (containNum === -1) {
+              var idNum = idList.indexOf(childList[i].id);
+              if (containNum === -1 || idNum === -1) {
                 /* 過去には有るが、現在に見つからない場合は削除 */
                 childList[i].remove();
               } else {
