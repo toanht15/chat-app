@@ -277,6 +277,8 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 43:
       case 47:
       case 50:
+        $message = $this->generateScenarioHearingAnswerBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 53:
         if ($chatLog['message_type'] == 53) {
           $json = json_decode($chatLog['message'], TRUE);
