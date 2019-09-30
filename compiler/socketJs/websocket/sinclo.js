@@ -745,6 +745,11 @@
             '';
         userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId,
             'sincloSessionId');
+        var nowTime = (new Date()).getTime();
+        userInfo.accessTime = nowTime;
+        userInfo.time = nowTime;
+        userInfo.set(cnst.info_type.time, userInfo.time, true);
+        sinclo.trigger.flg = false;
         common.widgetHandler.resetMessageAreaState();
         storage.l.set('leaveFlg', 'false');
         storage.l.unset('amsg');
