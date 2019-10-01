@@ -1429,7 +1429,8 @@
             }
             var contentNum = textList.indexOf(targetList[number].value);
             var idNum = idList.indexOf(targetList[number].uuid);
-            var isNotExist = targetList[number].uuid == undefined || idNum === -1 || (idNum !== -1 && contentNum != number);
+            var isTextEdited = (targetList[number].uuid === idList[number]) && (targetList[number].value !== textList[number]);
+            var isNotExist = targetList[number].uuid == undefined || idNum === -1 || isTextEdited;
             if (isNotExist) {
               /* 追加するパターン */
               /* 過去にはないが、現在にあるパターン */
@@ -1440,7 +1441,7 @@
             } else {
               /* 追加するパターン */
               /* 両方にあるが、タイプが違うパターン */
-              if (typeList[contentNum] !== targetList[number].type) {
+              if (typeList[idNum] !== targetList[number].type) {
                 $scope.currentEditCellParent.embed(port);
                 initNodeEvent([port]);
                 graph.addCell(port);
@@ -1449,7 +1450,6 @@
               /* 編集するパターン */
               /* 両方にあり、タイプも同じパターン */
               var childList = this._getCurrentPortList();
-              var flg = true;
               for (var i = 0; i < childList.length; i++) {
                 if (childList[i].id === targetList[number].uuid) {
                   this._setSelfPosition(childList[i], this._getSelfPosition(number, targetList));
@@ -1483,12 +1483,13 @@
             for (var i = 0; i < childList.length; i++) {
               var containNum = textList.indexOf(childList[i].attr("nodeBasicInfo/tooltip"));
               var idNum = idList.indexOf(childList[i].id);
-              if (containNum === -1 || idNum === -1) {
+              var shouldRemove = (idList[i] === childList[i].id) && (textList[i] !== childList[i].attr("nodeBasicInfo/tooltip"));
+              if (containNum === -1 || idNum === -1 || shouldRemove) {
                 /* 過去には有るが、現在に見つからない場合は削除 */
                 childList[i].remove();
               } else {
                 /* 過去にも現在にも同名のテキストがあるが、タイプが違う場合は削除 */
-                switch (Number(typeList[containNum])) {
+                switch (Number(typeList[idNum])) {
                   case 1:
                     /* 現在は選択肢　過去は文章 */
                     if (childList[i].attr("nodeBasicInfo/nodeType") === "childTextNode") {
