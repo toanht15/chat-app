@@ -4306,7 +4306,7 @@
           sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
         }
         window.addEventListener('touchmove',
-            sinclo.chatApi.lockPageScrollHandler, {passive: false});
+            sinclo.chatApi.lockPageScrollHandler);
         sinclo.chatApi.targetTextarea.addEventListener('scroll',
             sinclo.chatApi.unlockPageScrollHandler);
       },
