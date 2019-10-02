@@ -7827,14 +7827,6 @@
             isDiagramMessage = true;
           }
 
-          if (sinclo.chatApi.isCustomerSendMessageType(messageType)
-              && sinclo.scenarioApi.isProcessing()
-              && sinclo.scenarioApi.isWaitingInput()
-              && (!check.isset(storage.s.get('operatorEntered')) ||
-                  storage.s.get('operatorEntered') === 'false')) {
-            sinclo.scenarioApi.triggerInputWaitComplete(value);
-          }
-
           sinclo.trigger.judge.matchAllSpeechContent(value, function(result) {
             if ((isScenarioMessage || isDiagramMessage || result) &&
                 (!check.isset(storage.s.get('operatorEntered')) ||
@@ -7875,6 +7867,15 @@
                 isDiagramMessage: isDiagramMessage
               });
             }, 100);
+            setTimeout(function () {
+              if (sinclo.chatApi.isCustomerSendMessageType(messageType)
+                && sinclo.scenarioApi.isProcessing()
+                && sinclo.scenarioApi.isWaitingInput()
+                && (!check.isset(storage.s.get('operatorEntered')) ||
+                  storage.s.get('operatorEntered') === 'false')) {
+                sinclo.scenarioApi.triggerInputWaitComplete(value);
+              }
+            }, 500);
           });
 
           storage.s.set('chatEmit', true);
