@@ -2311,7 +2311,7 @@ class HistoriesController extends AppController
     }
 
     $stayList = [];
-    if (defined('LIMIT_EXPORT_HISTORY_CSV') && LIMIT_EXPORT_HISTORY_CSV === true && count($historyIdList) >= 100) {
+    if (defined('LIMIT_EXPORT_HISTORY_CSV') && LIMIT_EXPORT_HISTORY_CSV === true && count($historyIdList) >= 100000) {
 
     } else {
       $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
@@ -2354,7 +2354,7 @@ class HistoriesController extends AppController
 
     $list = array();
 
-    if (defined('LIMIT_EXPORT_HISTORY_CSV') && LIMIT_EXPORT_HISTORY_CSV === true && count($historyIdList) >= 100) {
+    if (defined('LIMIT_EXPORT_HISTORY_CSV') && LIMIT_EXPORT_HISTORY_CSV === true && count($historyIdList) >= 100000) {
 
     } else {
       $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
