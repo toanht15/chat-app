@@ -719,7 +719,7 @@ class HistoriesController extends AppController
             }
 
             $val['THistoryChatLog']['message'] = trim($textOfMessage);
-          } 
+          }
         }
 
         if ($val['THistoryChatLog']['message_type'] == 81) {
@@ -2311,11 +2311,7 @@ class HistoriesController extends AppController
     }
 
     $stayList = [];
-    if (count($historyIdList) >= 100000) {
-
-    } else {
       $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
-
       foreach ($chunkedHistoryIdList as $index => $list) {
         $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
           'fields' => [
@@ -2340,8 +2336,6 @@ class HistoriesController extends AppController
           ];
         }
       }
-    }
-    
     return $stayList;
   }
 
@@ -2353,10 +2347,6 @@ class HistoriesController extends AppController
     }
 
     $list = array();
-
-    if (count($historyIdList) >= 100000) {
-
-    } else {
       $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
       $chatList = array();
       foreach ($chunkedHistoryIdList as $index => $chunk) {
@@ -2382,7 +2372,6 @@ class HistoriesController extends AppController
       foreach ($chatList as $k => $chat) {
         $list[$chat['THistoryChatLog']['t_histories_id']] = $chat[0]['created'];
       }
-    }
     return $list;
   }
 
