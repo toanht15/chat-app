@@ -2311,7 +2311,11 @@ class HistoriesController extends AppController
     }
 
     $stayList = [];
+    if (defined('LIMIT_EXPORT_HISTORY_CSV') && LIMIT_EXPORT_HISTORY_CSV === true && count($historyIdList) >= 100) {
+
+    } else {
       $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
+
       foreach ($chunkedHistoryIdList as $index => $list) {
         $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
           'fields' => [
@@ -2336,6 +2340,8 @@ class HistoriesController extends AppController
           ];
         }
       }
+    }
+
     return $stayList;
   }
 
@@ -2347,6 +2353,10 @@ class HistoriesController extends AppController
     }
 
     $list = array();
+
+    if (defined('LIMIT_EXPORT_HISTORY_CSV') && LIMIT_EXPORT_HISTORY_CSV === true && count($historyIdList) >= 100) {
+
+    } else {
       $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
       $chatList = array();
       foreach ($chunkedHistoryIdList as $index => $chunk) {
@@ -2372,6 +2382,7 @@ class HistoriesController extends AppController
       foreach ($chatList as $k => $chat) {
         $list[$chat['THistoryChatLog']['t_histories_id']] = $chat[0]['created'];
       }
+    }
     return $list;
   }
 
