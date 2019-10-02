@@ -34,24 +34,44 @@
     </div><!-- #statistic_menu -->
 
     <div id='statistics_content' class="p20x" style="visibility:hidden;">
+      <div id='allAccessNumber' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>ページにアクセスされた件数(ページ遷移はカウントせず、別タブ、別ブラウザで開いた場合は1件カウント)</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='widgetDisplayNumber' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>ウィジェットが表示された件数 <br>
+                （サイト訪問者のチャット操作の有無に関わらず、ウィジェットが表示されたら1件カウント）</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
       <div id='chatRequestTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>サイト訪問者がチャットを利用（発言／選択肢を選択／リンククリック）した件数（※初回のみカウント）</span></li>
+            <li><span>サイト訪問者がチャットを利用（発言／選択肢を選択／リンククリック）した件数（※発言／選択肢を選択／リンククリックのそれぞれ初回のみを1件としてカウント）</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='chatResponseTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>有人チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
+            <li><span>有人チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）<br>
+                ※オペレーターが退室をして同じサイト訪問者から再度メッセージを受け取り、オペレーターが入室した場合はさらにプラス1件カウントする<br>
+                ※応対中に他のオペレーターが入室してもカウントしない</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='chatAutomaticResponseTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>オートリプライまたはシナリオが利用された件数（※初回のみカウント）</span></li>
+            <li><span>オートリプライまたはシナリオが利用された件数（※初回のみカウント）<br>
+                ※自動返信応対のみ⇒自動返信応対件数としてカウント<br>
+                有人チャット応対のみ⇒チャット応対件数としてカウント<br>
+                両方存在⇒チャット応対件数としてカウント</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -79,7 +99,7 @@
       <div id='chatRequestAverageTimeTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>サイト訪問者がサイトアクセスしてから初回メッセージを送信するまでの平均時間</span></li>
+            <li><span>サイト訪問者がサイトアクセスしてからチャットを利用（発言／選択肢を選択／リンククリック）するまでの時間</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -128,14 +148,16 @@
       <div id='chatRequestAbandonTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>有人チャットリクエストに対してオペレータが入室せず放棄した件数（※初回のみカウント）</span></li>
+            <li><span>有人チャットリクエストに対して待機中のオペレーターが入室せず放棄した件数（※初回のみカウント）</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='chatRequestMannedTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>有人チャットリクエストの対象となる件数（※初回のみカウント）</span></li>
+            <li><span>有人チャットリクエストの対象となる件数（※初回のみカウント）<br>
+                （サイト訪問者からのチャットが自動返信の条件に引っかからなかった場合、初回のみをカウントする）<br>
+                ※有人チャットリクエスト件数は、チャット応対件数/チャット放棄件数/チャット拒否件数の合計件数</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -181,19 +203,27 @@
     <tbody>
     <?php if($date == '日別' or $date == '月別') { ?>
       <tr>
-        <td class = 'tooltip'>合計アクセス件数</td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <?php if(is_int($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
-              <td><?php echo number_format($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]);?></td>
-            <?php }
-            else { ?>
-              <td><?php echo $data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
-            <?php } ?>
+        <td id="allAccessNumber" class = 'tooltip'>合計アクセス件数
+          <div class="questionBalloon">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+        <?php for ($i = $start; $i <= $end; $i++) { ?>
+          <?php if(is_int($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]);?></td>
+          <?php }
+          else { ?>
+            <td><?php echo $data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)] ?></td>
           <?php } ?>
-           <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
+        <?php } ?>
+        <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
       </tr>
       <tr>
-        <td class = 'tooltip'>ウィジェット表示件数</td>
+        <td id="widgetDisplayNumber" class = 'tooltip'>ウィジェット表示件数
+          <div class="questionBalloon">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
           <?php if(is_int($data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
             <td><?php echo number_format($data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -463,14 +493,22 @@
 
       else if($date == '時別') { ?>
         <tr>
-          <td class = 'tooltip'>合計アクセス件数</td>
+          <td id = 'allAccessNumber' class = 'tooltip'>合計アクセス件数
+            <div class="questionBalloon">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo number_format($data['accessDatas']['accessNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
           <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
         </tr>
         <tr>
-          <td class = 'tooltip'>ウィジェット表示件数</td>
+          <td id = 'widgetDisplayNumber' class = 'tooltip'>ウィジェット表示件数
+            <div class="questionBalloon">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo number_format($data['widgetDatas']['widgetNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
