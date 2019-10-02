@@ -4322,11 +4322,11 @@
             && sinclo.chatApi.targetTextarea.scrollTop +
             sinclo.chatApi.targetTextarea.clientHeight <
             sinclo.chatApi.targetTextarea.scrollHeight) {
-          console.log('a');
           event.stopPropagation();
         } else {
-          console.log('b');
-          event.preventDefault();
+          if (event.cancelable && !check.android()) {
+            event.preventDefault();
+          }
         }
       },
       unlockPageScrollHandler: function(event) {
