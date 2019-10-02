@@ -9,7 +9,12 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var settings = require('./routes/settings');
 var api = require('./routes/api');
-var socket = require('./routes/module/socket_ctrl');
+if (process.env.WS_PORT) {
+  console.log('process.env.WS_PORT is set');
+  var socket = require('./routes/module/socket_ctrl');
+} else {
+  console.log('process.env.WS_PORT is undefined.');
+}
 var CommonUtil = require('./routes/module/class/util/common_utility');
 
 // Timezone
