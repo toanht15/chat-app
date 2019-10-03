@@ -280,13 +280,9 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         $message = $this->generateScenarioHearingAnswerBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 53:
-        if ($chatLog['message_type'] == 53) {
-          $json = json_decode($chatLog['message'], TRUE);
-          $chatMessage = $json['message'];
-          $separator = $json['separator'];
-        } else {
-          $chatMessage = $chatLog['message'];
-        }
+        $json = json_decode($chatLog['message'], TRUE);
+        $chatMessage = $json['message'];
+        $separator = $json['separator'];
         $message = $this->generateScenarioHearingCheckboxAnswerBlockStr($chatLog['created'], $chatMessage, $separator);
         break;
       case 44:
