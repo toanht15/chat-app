@@ -259,6 +259,9 @@
 
       $scope.createImageIcon = function ( icon ) {
         var elm = document.createElement("img");
+        if ($scope.isNeedAnimationClass()){
+            elm.classList.add("effect_left");
+        }
         elm.src = icon;
         return elm;
       };
