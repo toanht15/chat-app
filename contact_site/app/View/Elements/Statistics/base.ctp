@@ -34,14 +34,14 @@
     </div><!-- #statistic_menu -->
 
     <div id='statistics_content' class="p20x" style="visibility:hidden;">
-      <div id='allAccessNumber' class="explainTooltip">
+      <div id='allAccessNumberTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
             <li><span>ページにアクセスされた件数(ページ遷移はカウントせず、別タブ、別ブラウザで開いた場合は1件カウント)</span></li>
           </ul>
         </icon-annotation>
       </div>
-      <div id='widgetDisplayNumber' class="explainTooltip">
+      <div id='widgetDisplayNumberTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
             <li><span>ウィジェットが表示された件数 <br>
@@ -120,7 +120,7 @@
       <div id='chatResponseRateTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>有人チャット応対率：チャット応対件数／有人チャットリクエスト件数</span></li>
+            <li><span>チャット応対件数／有人チャットリクエスト件数</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -155,8 +155,7 @@
       <div id='chatRequestMannedTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>有人チャットリクエストの対象となる件数（※初回のみカウント）<br>
-                （サイト訪問者からのチャットが自動返信の条件に引っかからなかった場合、初回のみをカウントする）<br>
+            <li><span>有人チャットリクエストの対象となる件数（※サイト訪問者からのチャットが自動返信の条件に引っかからなかった場合、初回のみをカウントする）<br>
                 ※有人チャットリクエスト件数は、チャット応対件数/チャット放棄件数/チャット拒否件数の合計件数</span></li>
           </ul>
         </icon-annotation>
@@ -203,7 +202,7 @@
     <tbody>
     <?php if($date == '日別' or $date == '月別') { ?>
       <tr>
-        <td id="allAccessNumber" class = 'tooltip'>合計アクセス件数
+        <td id="allAccessNumberLabel" class = 'tooltip'>合計アクセス件数
           <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
           </div>
@@ -219,7 +218,7 @@
         <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
       </tr>
       <tr>
-        <td id="widgetDisplayNumber" class = 'tooltip'>ウィジェット表示件数
+        <td id="widgetDisplayNumberLabel" class = 'tooltip'>ウィジェット表示件数
           <div class="questionBalloon">
             <icon class="questionBtn">？</icon>
           </div>
@@ -493,7 +492,7 @@
 
       else if($date == '時別') { ?>
         <tr>
-          <td id = 'allAccessNumber' class = 'tooltip'>合計アクセス件数
+          <td id = 'allAccessNumberLabel' class = 'tooltip'>合計アクセス件数
             <div class="questionBalloon">
               <icon class="questionBtn">？</icon>
             </div>
@@ -504,7 +503,7 @@
           <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
         </tr>
         <tr>
-          <td id = 'widgetDisplayNumber' class = 'tooltip'>ウィジェット表示件数
+          <td id = 'widgetDisplayNumberLabel' class = 'tooltip'>ウィジェット表示件数
             <div class="questionBalloon">
               <icon class="questionBtn">？</icon>
             </div>
