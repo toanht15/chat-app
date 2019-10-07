@@ -737,6 +737,7 @@
         common.widgetHandler.resetMessageAreaState();
         storage.l.set('leaveFlg', 'false');
         storage.l.unset('amsg');
+        sinclo.trigger.flg = false;
         storage.s.unset('_scl_d_msg');
         storage.s.unset('chatAct');
         storage.s.unset('chatEmit');
@@ -787,6 +788,8 @@
     executeConnectSuccess: function(connectSuccessData, obj) {
       var defer = $.Deferred();
       if (window.sincloInfo.contract.enableRealtimeMonitor) {
+        connectSuccessData.historyId = sinclo.chatApi.historyId;
+        connectSuccessData.stayLogsId = sinclo.chatApi.stayLogsId;
         emit('connectSuccess', connectSuccessData, function(ev) {
           if ((userInfo.gFrame && Number(userInfo.accessType) ===
               Number(cnst.access_type.guest)) === false) {

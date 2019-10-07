@@ -2844,6 +2844,23 @@ io.sockets.on('connection', function(socket) {
         }
       }
 
+      if (CommonUtil.isKeyExists(SharedData.sincloCore,
+          obj.siteKey + '.' + obj.sincloSessionId + '.historyId')) {
+        obj.historyId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
+            'historyId');
+        obj.stayLogsId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
+            'stayLogsId');
+      } else if (CommonUtil.isset(obj.historyId) && CommonUtil.isset(obj.stayLogsId)) {
+        if (CommonUtil.isKeyExists(SharedData.sincloCore, obj.siteKey + '.' + obj.sincloSessionId)) {
+          SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = obj.historyId;
+          SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = obj.stayLogsId;
+        }
+        if (CommonUtil.isKeyExists(SharedData.sincloCore, obj.siteKey + '.' + obj.tabId)) {
+          SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = obj.historyId;
+          SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = obj.stayLogsId;
+        }
+      }
+
       // 履歴作成
       db.addHistory(obj, socket);
       if (!CommonUtil.isKeyExists(SharedData.sincloCore,
