@@ -737,7 +737,6 @@
         common.widgetHandler.resetMessageAreaState();
         storage.l.set('leaveFlg', 'false');
         storage.l.unset('amsg');
-        sinclo.trigger.flg = false;
         storage.s.unset('_scl_d_msg');
         storage.s.unset('chatAct');
         storage.s.unset('chatEmit');
@@ -747,6 +746,7 @@
         sinclo.diagramApi.common.reset();
         userInfo.setPrevpage(true);
       }
+      sinclo.trigger.flg = false;
 
       obj.prev = userInfo.writePrevToLocalStorage();
       obj.stayCount = userInfo.getStayCount();
