@@ -1,5 +1,5 @@
 <div id="testpage_bg">
-<style>body { overflow: auto!important; }</style>
+<style>body { overflow: auto; }</style>
 <?php switch($layoutNumber){ ?>
 <?php   case 1: ?>
   <?php
