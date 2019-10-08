@@ -3891,15 +3891,17 @@
                   if (e) e.stopPropagation();
                   sinclo.chatApi.clearPlaceholderMessage();
                   if (check.smartphone()) {
-                    sinclo.chatApi.bodyPosition = document.body.style.position;
-                    document.body.style.position = 'fixed';
+                    if (check.android() && window.sincloInfo.widget.spMaximizeSizeType === 2) {
+                      sinclo.chatApi.bodyPosition = $('#sincloBox ul#chatTab').css('position');
+                      $('#sincloBox ul#chatTab').css('position', 'fixed');
+                    } else if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
+                      sinclo.chatApi.bodyPosition = document.body.style.position;
+                      document.body.style.position = 'fixed';
+                    }
 
                     $(document).one('touchstart', function(e) {
                       $(document).trigger('blur');
                     });
-                    if (check.android()) {
-                      $('#sincloBox').css('bottom', '50%');
-                    }
                   }
                 }).
             on('blur', '#sincloChatMessage,#miniSincloChatMessage',
@@ -3908,16 +3910,17 @@
                   sinclo.chatApi.setPlaceholderMessage(
                       sinclo.chatApi.getPlaceholderMessage());
                   if (check.smartphone()) {
-                    document.body.style.position = sinclo.chatApi.bodyPosition;
+                    if (check.android() && window.sincloInfo.widget.spMaximizeSizeType === 2) {
+                      $('#sincloBox ul#chatTab').css('position', sinclo.chatApi.bodyPosition);
+                    } else if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
+                      document.body.style.position = sinclo.chatApi.bodyPosition;
+                    }
 
                     console.log('スマホ入力フォーカスアウト');
                     setTimeout(function() {
                       sinclo.adjustSpWidgetSize();
                     }, 1000);
                     sinclo.chatApi.spFocusFlg = false;
-                    if (check.android()) {
-                      $('#sincloBox').css('bottom', '0px');
-                    }
                   }
                 }).
             on('click', 'input[name^=\'sinclo-radio\']', function(e) {
