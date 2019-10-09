@@ -3461,6 +3461,7 @@
       opUserName: '',
       continueClickThresholdMSec: 3000,
       bodyPosition: '',
+      bodyScrollPosition: 0,
       messageType: {
         customer: 1,
         company: 2,
@@ -3891,12 +3892,14 @@
                   if (e) e.stopPropagation();
                   sinclo.chatApi.clearPlaceholderMessage();
                   if (check.smartphone()) {
+                    sinclo.chatApi.bodyScrollPosition = {
+                      x: window.scrollX,
+                      y: window.scrollY
+                    };
                     if (check.android() && window.sincloInfo.widget.spMaximizeSizeType === 2) {
-                      sinclo.chatApi.bodyPosition = $('#sincloBox ul#chatTab').css('position');
-                      $('#sincloBox ul#chatTab').css('position', 'fixed');
-                    } else if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
-                      sinclo.chatApi.bodyPosition = document.body.style.position;
-                      document.body.style.position = 'fixed';
+                      sinclo.chatApi.bodyPosition = $('#sincloBox section#chatTab').css('position');
+                      $('#sincloBox section#chatTab').css('position', 'fixed');
+                      $('#sincloBox section#chatTab').css('bottom', '0px');
                     }
 
                     $(document).one('touchstart', function(e) {
@@ -3910,10 +3913,10 @@
                   sinclo.chatApi.setPlaceholderMessage(
                       sinclo.chatApi.getPlaceholderMessage());
                   if (check.smartphone()) {
+                    window.scrollTo(sinclo.chatApi.bodyScrollPosition.x, sinclo.chatApi.bodyScrollPosition.y);
                     if (check.android() && window.sincloInfo.widget.spMaximizeSizeType === 2) {
-                      $('#sincloBox ul#chatTab').css('position', sinclo.chatApi.bodyPosition);
-                    } else if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
-                      document.body.style.position = sinclo.chatApi.bodyPosition;
+                      $('#sincloBox section#chatTab').css('position', sinclo.chatApi.bodyPosition);
+                      $('#sincloBox section#chatTab').css('bottom', '');
                     }
 
                     console.log('スマホ入力フォーカスアウト');
