@@ -873,7 +873,7 @@ var console = {
 };
 
 //接続確立時の処理
-io.sockets.on('connection', function(socket) {
+io.on('connection', function(socket) {
 
   // チャット用
   var chatApi = {
@@ -2705,6 +2705,10 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('connectSuccess', function(data, ack) {
     deblogger.debug('【connectSuccess】 socket.id : %s, data : %s', socket.id, data);
+    try {
+      var stack = new Error().stack;
+      deblogger.debug( stack );
+    } catch (e) {}
     var obj = JSON.parse(data);
     if (!CommonUtil.isset(SharedData.sincloCore[obj.siteKey])) {
       SharedData.sincloCore[obj.siteKey] = {};
@@ -2892,11 +2896,10 @@ io.sockets.on('connection', function(socket) {
               list.functionManager.keyList.monitorPollingMode)) {
             emit.toCompany('syncNewInfo', obj, obj.siteKey);
           }
+          if (ack) {
+            ack(data);
+          }
         });
-
-        if (ack) {
-          ack(data);
-        }
       });
     }
   });

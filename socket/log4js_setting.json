@@ -15,11 +15,10 @@
             "alwaysIncludePattern": "true"
         },
         "debug": {
-            "type": "dateFile",
-          "filename": "./logs/debug",
-            "pattern": "yyyyMMdd.log",
-            "daysToKeep": 7,
-            "alwaysIncludePattern": "false"
+            "type": "file",
+            "filename": "./logs/debug.log",
+            "maxLogSize": 512000000,
+            "backups": 6
         },
         "system": {
             "type": "file",
