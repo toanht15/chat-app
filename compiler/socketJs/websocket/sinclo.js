@@ -531,6 +531,8 @@
           }
         });
         sessionStorage.forNotHavingConnectionMessageStack = "[]";
+        sinclo.chatApi.saveFlg = true;
+        sinclo.chatApi.autoMessages.unset();
       }
     },
     connect: function() {
