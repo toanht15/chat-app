@@ -4146,7 +4146,7 @@ io.sockets.on('connection', function(socket) {
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
-      historyManager.addHistory(obj).then((result) => {
+      historyManager.addHistory(obj).then(function(result) {
         emit.toSameUser('setHistoryId', result, obj.siteKey,
             obj.sincloSessionId);
         SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
