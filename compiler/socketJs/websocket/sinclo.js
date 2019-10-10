@@ -495,15 +495,12 @@
       if(sessionStorage.forNotHavingConnectionMessageStack === undefined){
         sessionStorage.forNotHavingConnectionMessageStack = "[]";
       }
-      if(!sincloInfo.contract.enableRealtimeMonitor){
-        var array = JSON.parse(sessionStorage.forNotHavingConnectionMessageStack);
-        array.push(messageObject);
-        sessionStorage.forNotHavingConnectionMessageStack = JSON.stringify(array);
-      }
+      var array = JSON.parse(sessionStorage.forNotHavingConnectionMessageStack);
+      array.push(messageObject);
+      sessionStorage.forNotHavingConnectionMessageStack = JSON.stringify(array);
     },
     executeForNotHavingConnectionMessageStack: function(){
-      if(!sincloInfo.contract.enableRealtimeMonitor &&
-        sessionStorage.forNotHavingConnectionMessageStack !== "[]" &&
+      if(sessionStorage.forNotHavingConnectionMessageStack !== "[]" &&
         sessionStorage.forNotHavingConnectionMessageStack !== undefined){
         console.log(JSON.parse(sessionStorage.forNotHavingConnectionMessageStack));
         console.log(this.chatApi.stayLogsId);
@@ -754,6 +751,7 @@
         sinclo.diagramApi.common.reset();
         userInfo.setPrevpage(true);
       }
+      sinclo.trigger.flg = false;
 
       obj.prev = userInfo.writePrevToLocalStorage();
       obj.stayCount = userInfo.getStayCount();
@@ -795,6 +793,8 @@
     executeConnectSuccess: function(connectSuccessData, obj) {
       var defer = $.Deferred();
       if (window.sincloInfo.contract.enableRealtimeMonitor) {
+        connectSuccessData.historyId = sinclo.chatApi.historyId;
+        connectSuccessData.stayLogsId = sinclo.chatApi.stayLogsId;
         emit('connectSuccess', connectSuccessData, function(ev) {
           if ((userInfo.gFrame && Number(userInfo.accessType) ===
               Number(cnst.access_type.guest)) === false) {

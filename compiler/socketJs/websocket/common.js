@@ -4819,7 +4819,7 @@ var socket, // socket.io
       if (sincloBox && sincloBox.style.display === 'none') {
         common.widgetHandler.show();
         // sincloBox.parentNode.removeChild(sincloBox);
-      }else if (userInfo.accessType !== cnst.access_type.host) {
+      } else if (userInfo.accessType !== cnst.access_type.host) {
         var html = common.createWidget();
         $('body').append(html);
         emit('syncReady', {widget: window.sincloInfo.widgetDisplay});

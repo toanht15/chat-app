@@ -255,25 +255,6 @@ router.post('/auth/info', function(req, res, next) {
     console.log('delete id : ' + oldSessionId);
     delete sessionIds[oldSessionId];
     console.log('remains : ' + Object.keys(sessionIds).length);
-    /* FIXME
-    Object.keys(sessionIds).forEach(function(key) {
-      if (!CommonUtil.isset(io.sockets.connected[key])) {
-        console.log('delete not exist sessionId : ' + key);
-        delete sessionIds[key];
-        console.log('remains : ' + Object.keys(sessionIds).length);
-        var keys = Object.keys(list.customerList[obj.siteKey]);
-        if (keys && keys.length > 0) {
-          keys.forEach(function(customerListId) {
-            if (customerListId.indexOf(key) >= 0) {
-              console.log(
-                  'delete not exist list.customerList : ' + customerListId);
-              delete list.customerListId[info.siteKey][customerListId];
-            }
-          });
-        }
-      }
-    });
-     */
   }
 
   SharedData.connectList[obj.socketId] = {
