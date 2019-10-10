@@ -3902,9 +3902,13 @@
                       y: window.scrollY
                     };
                     if (check.android() && window.sincloInfo.widget.spMaximizeSizeType === 2) {
-                      sinclo.chatApi.bodyPosition = $('#sincloBox section#chatTab').css('position');
-                      $('#sincloBox section#chatTab').css('position', 'fixed');
-                      $('#sincloBox section#chatTab').css('bottom', '0px');
+                      sinclo.chatApi.bodyPosition = $('#sincloBox section#chatTab #flexBoxWrap').css('position');
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('position', 'fixed');
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('bottom', '0px');
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('width', '100%');
+                    } else {
+                      sinclo.chatApi.bodyPosition = document.body.style.position;
+                      document.body.style.position = 'fixed';
                     }
 
                     $(document).one('touchstart', function(e) {
@@ -3920,8 +3924,11 @@
                   if (check.smartphone()) {
                     window.scrollTo(sinclo.chatApi.bodyScrollPosition.x, sinclo.chatApi.bodyScrollPosition.y);
                     if (check.android() && window.sincloInfo.widget.spMaximizeSizeType === 2) {
-                      $('#sincloBox section#chatTab').css('position', sinclo.chatApi.bodyPosition);
-                      $('#sincloBox section#chatTab').css('bottom', '');
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('position', sinclo.chatApi.bodyPosition);
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('bottom', '');
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('width', 'auto');
+                    } else {
+                      document.body.style.position = sinclo.chatApi.bodyPosition;
                     }
 
                     console.log('スマホ入力フォーカスアウト');
