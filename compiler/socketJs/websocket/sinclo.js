@@ -13911,7 +13911,7 @@
             if ((targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode' || targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childTextNode')
                 && targetNode['attrs']['nodeBasicInfo']['tooltip']) {
               for(var j=0; j < labels.length; j++) {
-                if(labels[j].uuid === targetNode.id) {
+                if(labels[j].uuid === targetNode.id || labels[j].value === targetNode['attrs']['nodeBasicInfo']['tooltip']) {
                   labels[j]['uuid'] = idKeys[i];
                   map[j] = labels[j];
                   break;
