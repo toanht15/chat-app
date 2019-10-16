@@ -491,7 +491,385 @@
         }, 500);
       }
     },
+    oldFunction: {
+      connect: function() {
+          // 新規アクセスの場合
+          var defer = $.Deferred();
+          var oldIpAddress = userInfo.getIp();
+          if (!check.isset(userInfo.getTabId())) {
+            userInfo.firstConnection = true;
+            window.opener = null;
+            userInfo.strageReset();
+            userInfo.setReferrer();
+            userInfo.gFrame = false;
+          }
+          userInfo.init();
+          var emitData = {
+            referrer: userInfo.referrer,
+            time: userInfo.getTime(),
+            firstConnection: userInfo.firstConnection,
+            userAgent: window.navigator.userAgent,
+            service: check.browser(),
+            prevList: userInfo.prevList
+          };
+
+          // チャットの契約をしている場合
+          if (window.sincloInfo.contract.chat
+              && window.sincloInfo.contract.enableRealtimeMonitor
+              && !(userInfo.gFrame && Number(userInfo.accessType) ===
+                  Number(cnst.access_type.guest))) {
+            sinclo.chatApi.observeType.emit(false, '');
+          }
+          // モニタリング中であればスルー
+          if (check.isset(userInfo.connectToken)) {
+            common.load.start();
+            if (Number(userInfo.accessType) === Number(cnst.access_type.guest)) {
+              emitData.connectToken = userInfo.connectToken;
+              userInfo.syncInfo.get();
+              common.judgeShowWidget();
+
+              emit('connectSuccess',
+                  {prevList: userInfo.prevList, prev: userInfo.prev}, function(ev) {
+                    emit('customerInfo', userInfo.getSendList());
+                  });
+              emit('connectedForSync', {});
+
+              // チャットの契約をしている場合はウィジェット表示
+              if (window.sincloInfo.contract.chat &&
+                  !(userInfo.gFrame && Number(userInfo.accessType) ===
+                      Number(cnst.access_type.guest))) {
+                common.makeAccessIdTag();
+              }
+            }
+
+            if (check.isset(common.tmpParams) && Number(userInfo.accessType) ===
+                Number(cnst.access_type.host)) {
+              browserInfo.resetPrevList();
+              emit('requestSyncStart', {
+                accessType: common.params.type
+              });
+            }
+
+            emit('reqUrlChecker', {reconnectFlg: browserInfo.connectFlg});
+
+            // connectフラグ
+            browserInfo.connectFlg = true;
+
+            browserInfo.setPrevList();
+
+            if (!check.isset(common.tmpParams)) {
+              emit('connectContinue', {
+                connectToken: userInfo.connectToken,
+                accessType: common.params.type,
+                receiverID: userInfo.vc_receiverID
+              });
+
+              var vcInfo = common.getVcInfo();
+              if (typeof vcInfo !== 'undefined') {
+                vcPopup.set(vcInfo.toTabId, vcInfo.receiverID);
+              }
+
+              window.clearTimeout(this.syncTimeout);
+              this.syncTimeout = window.setTimeout(function() {
+                emit('requestSyncStop', emitData);
+                userInfo.syncInfo.unset();
+              }, 5000);
+
+            }
+            return false;
+          }
+          // LiveAssistのSDKがあれば、このタイミングでイベントハンドラをセットしておき
+          if (typeof (AssistSDK) !== 'undefined') {
+            console.log('Assist SDK found. initSDKCallbacks');
+            laUtil.initSDKCallbacks();
+            if (storage.l.get('assist-localstorage-config') &&
+                !storage.s.get('assist-session-config')) {
+              console.log(
+                  'LA localstorage found. but sessionstorage not found. deleting');
+              storage.l.unset('assist-localstorage-config');
+            }
+          }
+
+          // connectフラグ
+          browserInfo.connectFlg = true;
+
+          if (check.isset(userInfo.accessId)) {
+            emitData.accessId = userInfo.accessId;
+          }
+
+          if (check.isset(storage.s.get('inactiveTimeout')) &&
+              storage.s.get('inactiveTimeout') === 'true') {
+            // 再接続扱いとする
+            emitData.inactiveReconnect = true;
+            storage.s.set('inactiveTimeout', false);
+          }
+
+          if (!check.isset(oldIpAddress)) {
+            console.log('FORCE FIRST CONNECT');
+            emitData.forceFirstConnect = true;
+          }
+
+          if (!window.sincloInfo.contract.enableRealtimeMonitor) {
+            sinclo.callApiAuth(emitData).then(function(data) {
+              defer.resolve(data);
+            });
+          } else {
+            emit('connected', {
+              type: 'user',
+              data: emitData
+            });
+          }
+          return defer.promise();
+      },
+      accessInfo: function(d) {
+        var obj = common.jParse(d);
+        if (obj.token !== common.token) return false;
+        if (obj.hasOwnProperty('activeOperatorCnt')) {
+          window.sincloInfo.activeOperatorCnt = obj.activeOperatorCnt;
+        }
+        if (obj.hasOwnProperty('opFlg')) {
+          window.sincloInfo.opFlg = obj.opFlg;
+        }
+        if (obj.hasOwnProperty('pagetime')) {
+          userInfo.pageTime = obj.pagetime;
+        }
+        if (check.isset(obj.isInBusinessHours)) {
+          userInfo.isInBusinessHours = obj.isInBusinessHours;
+        }
+
+        if (check.isset(obj.accessId) && !check.isset(obj.connectToken)) {
+          userInfo.set(cnst.info_type.access, obj.accessId, true);
+          sinclo.executeMakeWidget();
+        }
+
+        if (obj.firstConnection) {
+          if (obj.sincloSessionIdIsNew) {
+            socket.clearOnceConnectedFlg();
+          }
+          if (!check.isset(userInfo.userId) && check.isset(obj.userId)) {
+            userInfo.set(cnst.info_type.user, obj.userId);
+          }
+
+          if (userInfo.accessType === Number(cnst.access_type.guest)) {
+            userInfo.set(cnst.info_type.ip, obj.ipAddress);
+            userInfo.set(cnst.info_type.time, obj.time, true);
+          }
+          userInfo.setTabId();
+        }
+
+        if (obj.sincloSessionIdIsNew) {
+          userInfo.setStayCount();
+          if (check.isIE()) {
+            if (storage.s.get('Waiting_on_IE') !== null) {
+              storage.s.unset('Waiting_on_IE');
+            }
+          }
+          storage.l.unset('widgetOpen');
+          storage.l.unset('widgetMaximized');
+        } else {
+          var widgetOpened = storage.l.get('widgetOpen');
+          var widgetMaximized = storage.l.get('widgetMaximized');
+          storage.s.set('widgetOpen', widgetOpened);
+          storage.s.set('widgetMaximized', widgetMaximized);
+        }
+
+        if (obj.sincloSessionIdIsNew || (!check.isset(userInfo.sincloSessionId) &&
+            check.isset(obj.sincloSessionId))) {
+          if (obj.sincloSessionIdIsNew) console.log('sincloSessionIdIsNew');
+          userInfo.oldSincloSessionId = userInfo.sincloSessionId ?
+              userInfo.sincloSessionId :
+              '';
+          userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId,
+              'sincloSessionId');
+          common.widgetHandler.resetMessageAreaState();
+          storage.l.set('leaveFlg', 'false');
+          storage.l.unset('amsg');
+          storage.s.unset('_scl_d_msg');
+          storage.s.unset('chatAct');
+          storage.s.unset('chatEmit');
+          storage.l.unset('bannerAct');
+          sinclo.chatApi.store.unset();
+          sinclo.scenarioApi.reset();
+          sinclo.diagramApi.common.reset();
+          userInfo.setPrevpage(true);
+        }
+
+        obj.prev = userInfo.writePrevToLocalStorage();
+        obj.stayCount = userInfo.getStayCount();
+        var connectSuccessData = {
+          confirm: false,
+          widget: window.sincloInfo.widgetDisplay,
+          prevList: userInfo.prev,
+          userAgent: window.navigator.userAgent,
+          time: userInfo.time,
+          ipAddress: userInfo.getIp(),
+          referrer: userInfo.referrer,
+          sincloSessionIdIsNew: obj.sincloSessionIdIsNew
+        };
+
+        if (obj.inactiveReconnect) {
+          var tmpAutoMessages = sinclo.chatApi.autoMessages.get(true);
+          connectSuccessData.tmpAutoMessages = tmpAutoMessages;
+        }
+
+        // customEvent
+        if (document.createEvent) {
+          var evt = document.createEvent('HTMLEvents');
+          evt.initEvent('sinclo:connected', true, true);
+          document.dispatchEvent(evt);
+        } else {
+          var evt = document.createEventObject();
+          document.fireEvent('sinclo:connected', evt);
+        }
+
+        var sendList = userInfo.getSendList();
+
+        obj.prev = sendList.prev;
+        obj.prevList = sendList.prev;
+
+        window.userInfo.accessInfoData = obj;
+
+        return connectSuccessData;
+      },
+      executeConnectSuccess: function(connectSuccessData, obj) {
+        var defer = $.Deferred();
+        if (window.sincloInfo.contract.enableRealtimeMonitor) {
+          emit('connectSuccess', connectSuccessData, function(ev) {
+            if ((userInfo.gFrame && Number(userInfo.accessType) ===
+                Number(cnst.access_type.guest)) === false) {
+              var sendList = userInfo.getSendList();
+              if(!obj.prev) {
+                obj.prev = sendList.prev;
+              }
+              if(!obj.prevList) {
+                obj.prevList = sendList.prev;
+              }
+              emit('customerInfo', obj);
+              defer.resolve(obj);
+            }
+          });
+        } else {
+          sinclo.callApiInfo().then(function(json) {
+            defer.resolve(json);
+          });
+        }
+        return defer.promise();
+      },
+      executeConnectSuccess: function(connectSuccessData, obj) {
+        var defer = $.Deferred();
+        if (window.sincloInfo.contract.enableRealtimeMonitor) {
+          connectSuccessData.historyId = sinclo.chatApi.historyId;
+          connectSuccessData.stayLogsId = sinclo.chatApi.stayLogsId;
+          emit('connectSuccess', connectSuccessData, function(ev) {
+            if ((userInfo.gFrame && Number(userInfo.accessType) ===
+                Number(cnst.access_type.guest)) === false) {
+              var sendList = userInfo.getSendList();
+              if(!obj.prev) {
+                obj.prev = sendList.prev;
+              }
+              if(!obj.prevList) {
+                obj.prevList = sendList.prev;
+              }
+              emit('customerInfo', obj);
+              defer.resolve(obj);
+            }
+          });
+        } else {
+          sinclo.callApiInfo().then(function(json) {
+            defer.resolve(json);
+          });
+        }
+        return defer.promise();
+      },
+      callApiInfo: function() {
+        var defer = $.Deferred();
+        $.ajax({
+          headers: {
+            'Accept': 'text/plain, application/json; charset=utf-8',
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          type: 'post',
+          url: window.sincloInfo.site.files + '/api/auth/info',
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            confirm: false,
+            status: browserInfo.getActiveWindow(),
+            title: common.title(),
+            url: f_url(browserInfo.href),
+            widget: window.sincloInfo.widgetDisplay,
+            prevList: userInfo.prev,
+            userAgent: window.navigator.userAgent,
+            time: userInfo.time,
+            accessId: userInfo.accessId,
+            ipAddress: userInfo.getIp(),
+            referrer: userInfo.referrer,
+            siteKey: sincloInfo.site.key,
+            socketId: socket.getId(),
+            userId: userInfo.userId,
+            tabId: userInfo.tabId,
+            sincloSessionId: userInfo.sincloSessionId,
+            token: common.token,
+            customVariables: userInfo.customVariables,
+            stayCount: userInfo.getStayCount()
+          }),
+          success: function(json) {
+            defer.resolve(JSON.stringify(json));
+          }
+        });
+        return defer.promise();
+      },
+    },
+    setForNotHavingConnectionMessageStack: function(messageObject){
+      if(sessionStorage.forNotHavingConnectionMessageStack === undefined){
+        sessionStorage.forNotHavingConnectionMessageStack = "[]";
+      }
+      var array = JSON.parse(sessionStorage.forNotHavingConnectionMessageStack);
+      array.push(messageObject);
+      sessionStorage.forNotHavingConnectionMessageStack = JSON.stringify(array);
+    },
+    executeForNotHavingConnectionMessageStack: function(){
+      if(sessionStorage.forNotHavingConnectionMessageStack !== "[]" &&
+        sessionStorage.forNotHavingConnectionMessageStack !== undefined){
+        console.log(JSON.parse(sessionStorage.forNotHavingConnectionMessageStack));
+        console.log(this.chatApi.stayLogsId);
+        console.log(this.chatApi.historyId);
+        $.each(JSON.parse(sessionStorage.forNotHavingConnectionMessageStack), function (index, jsonMessage) {
+          //変数:storeObjはstoreScenarioMessageイベントとstoreDiagramMessageイベントでインターフェイスが違うので、”絶対に"統合しないこと。
+          //cf. messages - message
+          if (jsonMessage.scenarioId) {
+            var storeObj = {
+              messages: [jsonMessage],
+              siteKey: sincloInfo.site.key,
+              userId: userInfo.userId,
+              tabId: userInfo.tabId,
+              sincloSessionId: userInfo.sincloSessionId
+            };
+            socket.emit('storeScenarioMessage', JSON.stringify(storeObj), function(){});
+          } else if (jsonMessage.message.did) {
+            var storeObj = {
+              message: [jsonMessage],
+              siteKey: sincloInfo.site.key,
+              userId: userInfo.userId,
+              tabId: userInfo.tabId,
+              sincloSessionId: userInfo.sincloSessionId
+            };
+            socket.emit('storeDiagramMessage', JSON.stringify(storeObj), function(){});
+          } else if(jsonMessage.chatId){
+            emit('sendAutoChat', {messageList: [jsonMessage]});
+          }
+        });
+        sessionStorage.forNotHavingConnectionMessageStack = "[]";
+        sinclo.chatApi.saveFlg = true;
+        sinclo.chatApi.autoMessages.unset();
+      }
+    },
     connect: function() {
+      // 2019.10.16 m.shimizu 画面共有時に不具合（画面遷移時に必ずセッションが切れる）が生じたため
+      // 暫定対応として画面共有ありの場合は問題の無かった処理を呼び出すよう変更
+      if (window.sincloInfo.contract.synclo || window.sincloInfo.contract.document) {
+        return sinclo.oldFunction.connect();
+      }
       // 新規アクセスの場合
       var defer = $.Deferred();
       var oldIpAddress = userInfo.getIp();
@@ -633,6 +1011,11 @@
       }
     },
     accessInfo: function(d) {
+      // 2019.10.16 m.shimizu 画面共有時に不具合（画面遷移時に必ずセッションが切れる）が生じたため
+      // 暫定対応として画面共有ありの場合は問題の無かった処理を呼び出すよう変更
+      if (window.sincloInfo.contract.synclo || window.sincloInfo.contract.document) {
+        return sinclo.oldFunction.accessInfo(d);
+      }
       var obj = common.jParse(d);
       if (obj.token !== common.token) return false;
       if (obj.hasOwnProperty('activeOperatorCnt')) {
@@ -692,6 +1075,11 @@
             '';
         userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId,
             'sincloSessionId');
+        var nowTime = (new Date()).getTime();
+        userInfo.accessTime = nowTime;
+        userInfo.time = nowTime;
+        userInfo.set(cnst.info_type.time, userInfo.time, true);
+        sinclo.trigger.flg = false;
         common.widgetHandler.resetMessageAreaState();
         storage.l.set('leaveFlg', 'false');
         storage.l.unset('amsg');
@@ -704,6 +1092,7 @@
         sinclo.diagramApi.common.reset();
         userInfo.setPrevpage(true);
       }
+      sinclo.trigger.flg = false;
 
       obj.prev = userInfo.writePrevToLocalStorage();
       obj.stayCount = userInfo.getStayCount();
@@ -743,8 +1132,15 @@
       return connectSuccessData;
     },
     executeConnectSuccess: function(connectSuccessData, obj) {
+      // 2019.10.16 m.shimizu 画面共有時に不具合（画面遷移時に必ずセッションが切れる）が生じたため
+      // 暫定対応として画面共有ありの場合は問題の無かった処理を呼び出すよう変更
+      if (window.sincloInfo.contract.synclo || window.sincloInfo.contract.document) {
+        return sinclo.oldFunction.executeConnectSuccess(connectSuccessData, obj);
+      }
       var defer = $.Deferred();
       if (window.sincloInfo.contract.enableRealtimeMonitor) {
+        connectSuccessData.historyId = sinclo.chatApi.historyId;
+        connectSuccessData.stayLogsId = sinclo.chatApi.stayLogsId;
         emit('connectSuccess', connectSuccessData, function(ev) {
           if ((userInfo.gFrame && Number(userInfo.accessType) ===
               Number(cnst.access_type.guest)) === false) {
@@ -805,6 +1201,11 @@
       return defer.promise();
     },
     callApiInfo: function() {
+      // 2019.10.16 m.shimizu 画面共有時に不具合（画面遷移時に必ずセッションが切れる）が生じたため
+      // 暫定対応として画面共有ありの場合は問題の無かった処理を呼び出すよう変更
+      if (window.sincloInfo.contract.synclo || window.sincloInfo.contract.document) {
+        return sinclo.oldFunction.callApiInfo();
+      }
       var defer = $.Deferred();
       $.ajax({
         headers: {
@@ -831,6 +1232,8 @@
           socketId: socket.getId(),
           userId: userInfo.userId,
           tabId: userInfo.tabId,
+          historyId: sinclo.chatApi.historyId,
+          stayLogsId: sinclo.chatApi.stayLogsId,
           sincloSessionId: userInfo.sincloSessionId,
           token: common.token,
           customVariables: userInfo.customVariables,
@@ -872,8 +1275,8 @@
           };
 
       if (document.getElementById('sincloBox') === null) return false;
-      if (obj.stayLogsId) sinclo.chatApi.stayLogsId = obj.stayLogsId;
-      if (obj.historyId) sinclo.chatApi.historyId = obj.historyId;
+      if (check.isset(obj.stayLogsId)) sinclo.chatApi.stayLogsId = obj.stayLogsId;
+      if (check.isset(obj.historyId)) sinclo.chatApi.historyId = obj.historyId;
 
       createStartTimer = window.setInterval(function() {
         if (window.sincloInfo.widget.showTiming !== 4 ||
@@ -886,7 +1289,19 @@
           window.clearInterval(createStartTimer);
           if (window.sincloInfo.contract.chat) {
             // チャット情報読み込み
-            sinclo.chatApi.init();
+            if (!window.sincloInfo.contract.enableRealtimeMonitor &&
+              obj.chat !== null &&
+              obj.chat !== undefined &&
+              Object.keys(obj.chat.messages).length > 0
+              ) {
+              sinclo.chatMessageData(JSON.stringify({
+                siteKey: obj.siteKey,
+                token: obj.token,
+                chat: obj.chat,
+                tabId: obj.tabId,
+                sincloSessionId: obj.sincloSessionId
+              }));
+            }
           }
         }
       }, 500);
@@ -1454,7 +1869,9 @@
       console.log('DATA : %s', d);
       var obj = JSON.parse(d);
       if (obj.token !== common.token) return false;
-      this.chatApi.historyId = obj.chat.historyId;
+      if (check.isset(obj.chat) && check.isset(obj.chat.historyId)) {
+        this.chatApi.historyId = obj.chat.historyId;
+      }
       var keys = (typeof (obj.chat.messages) === 'object') ?
           Object.keys(obj.chat.messages) :
           [];
@@ -7796,6 +8213,7 @@
 
           //サイト訪問者がチャット送信した初回のタイミング
           if (!check.isset(firstChatEmit)) {
+            sinclo.executeForNotHavingConnectionMessageStack();
             if (common.hasGA()) {
               common.callGA('sendChat', location.href, 1);
             }
@@ -9083,6 +9501,7 @@
           console.log('EMIT sendAutoChatMessage::setAutoMessage');
           if (isSpeechContent) {
           }
+          sinclo.setForNotHavingConnectionMessageStack(data);
           emit('sendAutoChatMessage', data);
           sinclo.chatApi.store.save(data);
         }
@@ -9259,10 +9678,10 @@
             } else {
               emit('getChatDiagram', {'diagramId': diagramId});
             }
-            if (sincloInfo.widget.showTiming === 3) {
-              console.log('シナリオ表示処理発動');
-              // 初回オートメッセージ表示時にフラグを立てる
-              sincloInfo.widgetDisplay = true;
+              if (sincloInfo.widget.showTiming === 3) {
+                console.log('シナリオ表示処理発動');
+                // 初回オートメッセージ表示時にフラグを立てる
+                sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
             }
             // 自動最大化
@@ -10836,6 +11255,7 @@
             self._saveMessage(data.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10864,6 +11284,7 @@
             self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10895,6 +11316,7 @@
             self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10923,6 +11345,7 @@
             self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10951,6 +11374,7 @@
             self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -10979,6 +11403,7 @@
             self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -11007,6 +11432,7 @@
             self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -11035,6 +11461,7 @@
             self._saveMessage(item.data);
             callback();
           });
+          sinclo.setForNotHavingConnectionMessageStack(storeObj);
         } else {
           self._storeMessageToDB([storeObj], callback);
         }
@@ -11042,9 +11469,7 @@
       _handleStoredMessage: function() {
         var self = sinclo.scenarioApi;
         if (self._disallowSaveing()) {
-          self._saveStoredMessage(function() {
-            self._unsetScenarioMessage();
-          });
+          self._unsetScenarioMessage();
         }
       },
       _pushScenarioMessage: function(targetObj, callback) {
@@ -13678,6 +14103,7 @@
             self.storage._pushDiagramMessage(storeObj).then(function() {
               //self._saveMessage(data.data);
             });
+            sinclo.setForNotHavingConnectionMessageStack(storeObj);
           } else {
             return self.storage._storeMessageToDB([storeObj]);
           }

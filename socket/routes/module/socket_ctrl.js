@@ -2848,6 +2848,23 @@ io.on('connection', function(socket) {
         }
       }
 
+      if (CommonUtil.isKeyExists(SharedData.sincloCore,
+          obj.siteKey + '.' + obj.sincloSessionId + '.historyId')) {
+        obj.historyId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
+            'historyId');
+        obj.stayLogsId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
+            'stayLogsId');
+      } else if (CommonUtil.isset(obj.historyId) && CommonUtil.isset(obj.stayLogsId)) {
+        if (CommonUtil.isKeyExists(SharedData.sincloCore, obj.siteKey + '.' + obj.sincloSessionId)) {
+          SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = obj.historyId;
+          SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = obj.stayLogsId;
+        }
+        if (CommonUtil.isKeyExists(SharedData.sincloCore, obj.siteKey + '.' + obj.tabId)) {
+          SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = obj.historyId;
+          SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = obj.stayLogsId;
+        }
+      }
+
       // 履歴作成
       db.addHistory(obj, socket);
       if (!CommonUtil.isKeyExists(SharedData.sincloCore,
@@ -4149,7 +4166,7 @@ io.on('connection', function(socket) {
       let customerInfoManager = new CustomerInfoManager();
       let target = SharedData.sincloCore[obj.siteKey][obj.tabId];
       obj = Object.assign(obj, target);
-      historyManager.addHistory(obj).then((result) => {
+      historyManager.addHistory(obj).then(function(result) {
         emit.toSameUser('setHistoryId', result, obj.siteKey,
             obj.sincloSessionId);
         SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = result.historyId;
@@ -4970,8 +4987,6 @@ io.on('connection', function(socket) {
                 SharedData.sincloCore[obj.siteKey][obj.sincloSessionId])
             && CommonUtil.isset(
                 SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram)) {
-          messages = SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram.concat(
-              messages);
           SharedData.sincloCore[obj.siteKey][obj.sincloSessionId].diagram = [];
         }
         messages.forEach(function(elm, index, arr) {

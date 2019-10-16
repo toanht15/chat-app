@@ -9,8 +9,9 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var settings = require('./routes/settings');
 var api = require('./routes/api');
+console.log('process.env.PORT is ' + process.env.PORT);
 if (process.env.WS_PORT) {
-  console.log('process.env.WS_PORT is set');
+  console.log('process.env.WS_PORT is set ' + process.env.WS_PORT);
   var socket = require('./routes/module/socket_ctrl');
 } else {
   console.log('process.env.WS_PORT is undefined.');

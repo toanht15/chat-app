@@ -2989,7 +2989,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('unsetUser', function(data){
       var obj = JSON.parse(data);
-      if ( obj.tabId !== undefined ) {
+      if ( obj.tabId !== undefined && !$scope.monitorList[obj.tabId] ) {
         if ( obj.accessType !== _access_type_host ) {
           delete $scope.monitorList[obj.tabId];
           $scope.chatList = $scope.chatList.filter(function(v){
