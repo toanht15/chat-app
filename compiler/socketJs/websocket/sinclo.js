@@ -495,6 +495,9 @@
       if(sessionStorage.forNotHavingConnectionMessageStack === undefined){
         sessionStorage.forNotHavingConnectionMessageStack = "[]";
       }
+      if (!check.isset(messageObject.created)) {
+        messageObject.created = new Date();
+      }
       var array = JSON.parse(sessionStorage.forNotHavingConnectionMessageStack);
       array.push(messageObject);
       sessionStorage.forNotHavingConnectionMessageStack = JSON.stringify(array);
