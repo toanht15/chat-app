@@ -3882,6 +3882,8 @@
       opUser: '',
       opUserName: '',
       continueClickThresholdMSec: 3000,
+      bodyPosition: '',
+      bodyScrollPosition: 0,
       messageType: {
         customer: 1,
         company: 2,
@@ -4312,12 +4314,23 @@
                   if (e) e.stopPropagation();
                   sinclo.chatApi.clearPlaceholderMessage();
                   if (check.smartphone()) {
+                    sinclo.chatApi.bodyScrollPosition = {
+                      x: window.scrollX,
+                      y: window.scrollY
+                    };
+                    if (check.android() && window.sincloInfo.widget.spMaximizeSizeType === 2) {
+                      sinclo.chatApi.bodyPosition = $('#sincloBox section#chatTab #flexBoxWrap').css('position');
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('position', 'fixed');
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('bottom', '0px');
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('width', '100%');
+                    } else {
+                      sinclo.chatApi.bodyPosition = document.body.style.position;
+                      document.body.style.position = 'fixed';
+                    }
+
                     $(document).one('touchstart', function(e) {
                       $(document).trigger('blur');
                     });
-                    if (check.android()) {
-                      $('#sincloBox').css('bottom', '50%');
-                    }
                   }
                 }).
             on('blur', '#sincloChatMessage,#miniSincloChatMessage',
@@ -4326,14 +4339,20 @@
                   sinclo.chatApi.setPlaceholderMessage(
                       sinclo.chatApi.getPlaceholderMessage());
                   if (check.smartphone()) {
+                    window.scrollTo(sinclo.chatApi.bodyScrollPosition.x, sinclo.chatApi.bodyScrollPosition.y);
+                    if (check.android() && window.sincloInfo.widget.spMaximizeSizeType === 2) {
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('position', sinclo.chatApi.bodyPosition);
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('bottom', '');
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('width', 'auto');
+                    } else {
+                      document.body.style.position = sinclo.chatApi.bodyPosition;
+                    }
+
                     console.log('スマホ入力フォーカスアウト');
                     setTimeout(function() {
                       sinclo.adjustSpWidgetSize();
                     }, 1000);
                     sinclo.chatApi.spFocusFlg = false;
-                    if (check.android()) {
-                      $('#sincloBox').css('bottom', '0px');
-                    }
                   }
                 }).
             on('click', 'input[name^=\'sinclo-radio\']', function(e) {
@@ -4403,6 +4422,8 @@
                 }
               }
             });
+
+
         $('input[name^=\'sinclo-radio\']').each(function(index) {
           if (!sinclo.scenarioApi.isProcessing() &&
               $(this).parents('.sinclo-scenario-msg').length !== 0) {
@@ -4714,20 +4735,14 @@
         if (!sinclo.chatApi.targetTextarea) {
           sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
         }
-        window.addEventListener('touchmove',
-            sinclo.chatApi.lockPageScrollHandler);
-        sinclo.chatApi.targetTextarea.addEventListener('scroll',
-            sinclo.chatApi.unlockPageScrollHandler);
+        bodyScrollLock.disableBodyScroll(sinclo.chatApi.targetTextarea);
       },
       unlockPageScroll: function() {
         if (!check.smartphone()) return false;
         if (!sinclo.chatApi.targetTextarea) {
           sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
         }
-        window.removeEventListener('touchmove',
-            sinclo.chatApi.lockPageScrollHandler);
-        sinclo.chatApi.targetTextarea.removeEventListener('scroll',
-            sinclo.chatApi.unlockPageScrollHandler);
+        bodyScrollLock.enableBodyScroll(sinclo.chatApi.targetTextarea);
       },
       lockPageScrollHandler: function(event) {
         if ($(event.target).parents('#chatTalk').get(0) ===
@@ -4736,11 +4751,11 @@
             && sinclo.chatApi.targetTextarea.scrollTop +
             sinclo.chatApi.targetTextarea.clientHeight <
             sinclo.chatApi.targetTextarea.scrollHeight) {
-          console.log('a');
           event.stopPropagation();
         } else {
-          console.log('b');
-          event.preventDefault();
+          if (event.cancelable && !check.android()) {
+            event.preventDefault();
+          }
         }
       },
       unlockPageScrollHandler: function(event) {
@@ -8237,14 +8252,6 @@
             isDiagramMessage = true;
           }
 
-          if (sinclo.chatApi.isCustomerSendMessageType(messageType)
-              && sinclo.scenarioApi.isProcessing()
-              && sinclo.scenarioApi.isWaitingInput()
-              && (!check.isset(storage.s.get('operatorEntered')) ||
-                  storage.s.get('operatorEntered') === 'false')) {
-            sinclo.scenarioApi.triggerInputWaitComplete(value);
-          }
-
           sinclo.trigger.judge.matchAllSpeechContent(value, function(result) {
             if ((isScenarioMessage || isDiagramMessage || result) &&
                 (!check.isset(storage.s.get('operatorEntered')) ||
@@ -8285,6 +8292,15 @@
                 isDiagramMessage: isDiagramMessage
               });
             }, 100);
+            setTimeout(function () {
+              if (sinclo.chatApi.isCustomerSendMessageType(messageType)
+                && sinclo.scenarioApi.isProcessing()
+                && sinclo.scenarioApi.isWaitingInput()
+                && (!check.isset(storage.s.get('operatorEntered')) ||
+                  storage.s.get('operatorEntered') === 'false')) {
+                sinclo.scenarioApi.triggerInputWaitComplete(value);
+              }
+            }, 500);
           });
 
           storage.s.set('chatEmit', true);
@@ -12231,7 +12247,7 @@
                 // スキップされた場合は半角空白が保存されているので、その場合は空にする
                 if (self._parent._getSavedVariable(
                     self._getCurrentHearingProcess().variableName).
-                    match(/\s/)) {
+                    match(/^\s/)) {
                   $('#miniSincloChatMessage').val('');
                 }
                 // 変数を復元したときは再度ボタン文言ハンドラを起動する
@@ -12250,7 +12266,7 @@
                 // スキップされた場合は半角空白が保存されているので、その場合は空にする
                 if (self._parent._getSavedVariable(
                     self._getCurrentHearingProcess().variableName).
-                    match(/\s/)) {
+                    match(/^\s/)) {
                   $('#sincloChatMessage').val('');
                 }
                 // 変数を復元したときは再度ボタン文言ハンドラを起動する
@@ -14321,7 +14337,7 @@
             if ((targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode' || targetNode['attrs']['nodeBasicInfo']['nodeType'] === 'childTextNode')
                 && targetNode['attrs']['nodeBasicInfo']['tooltip']) {
               for(var j=0; j < labels.length; j++) {
-                if(labels[j].value === targetNode['attrs']['nodeBasicInfo']['tooltip']) {
+                if(labels[j].uuid === targetNode.id || labels[j].value === targetNode['attrs']['nodeBasicInfo']['tooltip']) {
                   labels[j]['uuid'] = idKeys[i];
                   map[j] = labels[j];
                   break;
@@ -14975,3 +14991,262 @@
   };
 
 }(sincloJquery));
+
+/**
+ * willmcpo/body-scroll-lock
+ * @see https://github.com/willmcpo/body-scroll-lock
+ */
+(function (global, factory) {
+  var mod = {
+    exports: {}
+  };
+  factory(mod.exports);
+  global.bodyScrollLock = mod.exports;
+})(this, function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  function _toConsumableArray(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+        arr2[i] = arr[i];
+      }
+
+      return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  }
+
+  // Older browsers don't support event options, feature detect it.
+
+  // Adopted and modified solution from Bohdan Didukh (2017)
+  // https://stackoverflow.com/questions/41594997/ios-10-safari-prevent-scrolling-behind-a-fixed-overlay-and-maintain-scroll-posi
+
+  var hasPassiveEvents = false;
+  if (typeof window !== 'undefined') {
+    var passiveTestOptions = {
+      get passive() {
+        hasPassiveEvents = true;
+        return undefined;
+      }
+    };
+    window.addEventListener('testPassive', null, passiveTestOptions);
+    window.removeEventListener('testPassive', null, passiveTestOptions);
+  }
+
+  var isIosDevice = typeof window !== 'undefined' && window.navigator && window.navigator.platform && /iP(ad|hone|od)/.test(window.navigator.platform);
+
+
+  var locks = [];
+  var documentListenerAdded = false;
+  var initialClientY = -1;
+  var previousBodyOverflowSetting = void 0;
+  var previousBodyPaddingRight = void 0;
+
+  // returns true if `el` should be allowed to receive touchmove events.
+  var allowTouchMove = function allowTouchMove(el) {
+    return locks.some(function (lock) {
+      if (lock.options.allowTouchMove && lock.options.allowTouchMove(el)) {
+        return true;
+      }
+
+      return false;
+    });
+  };
+
+  var preventDefault = function preventDefault(rawEvent) {
+    var e = rawEvent || window.event;
+
+    // For the case whereby consumers adds a touchmove event listener to document.
+    // Recall that we do document.addEventListener('touchmove', preventDefault, { passive: false })
+    // in disableBodyScroll - so if we provide this opportunity to allowTouchMove, then
+    // the touchmove event on document will break.
+    if (allowTouchMove(e.target)) {
+      return true;
+    }
+
+    // Do not prevent if the event has more than one touch (usually meaning this is a multi touch gesture like pinch to zoom).
+    if (e.touches.length > 1) return true;
+
+    if (e.preventDefault) e.preventDefault();
+
+    return false;
+  };
+
+  var setOverflowHidden = function setOverflowHidden(options) {
+    // Setting overflow on body/documentElement synchronously in Desktop Safari slows down
+    // the responsiveness for some reason. Setting within a setTimeout fixes this.
+    setTimeout(function () {
+      // If previousBodyPaddingRight is already set, don't set it again.
+      if (previousBodyPaddingRight === undefined) {
+        var _reserveScrollBarGap = !!options && options.reserveScrollBarGap === true;
+        var scrollBarGap = window.innerWidth - document.documentElement.clientWidth;
+
+        if (_reserveScrollBarGap && scrollBarGap > 0) {
+          previousBodyPaddingRight = document.body.style.paddingRight;
+          document.body.style.paddingRight = scrollBarGap + 'px';
+        }
+      }
+
+      // If previousBodyOverflowSetting is already set, don't set it again.
+      if (previousBodyOverflowSetting === undefined) {
+        previousBodyOverflowSetting = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  };
+
+  var restoreOverflowSetting = function restoreOverflowSetting() {
+    // Setting overflow on body/documentElement synchronously in Desktop Safari slows down
+    // the responsiveness for some reason. Setting within a setTimeout fixes this.
+    setTimeout(function () {
+      if (previousBodyPaddingRight !== undefined) {
+        document.body.style.paddingRight = previousBodyPaddingRight;
+
+        // Restore previousBodyPaddingRight to undefined so setOverflowHidden knows it
+        // can be set again.
+        previousBodyPaddingRight = undefined;
+      }
+
+      if (previousBodyOverflowSetting !== undefined) {
+        document.body.style.overflow = previousBodyOverflowSetting;
+
+        // Restore previousBodyOverflowSetting to undefined
+        // so setOverflowHidden knows it can be set again.
+        previousBodyOverflowSetting = undefined;
+      }
+    });
+  };
+
+  // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#Problems_and_solutions
+  var isTargetElementTotallyScrolled = function isTargetElementTotallyScrolled(targetElement) {
+    return targetElement ? targetElement.scrollHeight - targetElement.scrollTop <= targetElement.clientHeight : false;
+  };
+
+  var handleScroll = function handleScroll(event, targetElement) {
+    var clientY = event.targetTouches[0].clientY - initialClientY;
+
+    if (allowTouchMove(event.target)) {
+      return false;
+    }
+
+    if (targetElement && targetElement.scrollTop === 0 && clientY > 0) {
+      // element is at the top of its scroll.
+      return preventDefault(event);
+    }
+
+    if (isTargetElementTotallyScrolled(targetElement) && clientY < 0) {
+      // element is at the top of its scroll.
+      return preventDefault(event);
+    }
+
+    event.stopPropagation();
+    return true;
+  };
+
+  var disableBodyScroll = exports.disableBodyScroll = function disableBodyScroll(targetElement, options) {
+    if (isIosDevice) {
+      // targetElement must be provided, and disableBodyScroll must not have been
+      // called on this targetElement before.
+      if (!targetElement) {
+        // eslint-disable-next-line no-console
+        console.error('disableBodyScroll unsuccessful - targetElement must be provided when calling disableBodyScroll on IOS devices.');
+        return;
+      }
+
+      if (targetElement && !locks.some(function (lock) {
+        return lock.targetElement === targetElement;
+      })) {
+        var lock = {
+          targetElement: targetElement,
+          options: options || {}
+        };
+
+        locks = [].concat(_toConsumableArray(locks), [lock]);
+
+        targetElement.ontouchstart = function (event) {
+          if (event.targetTouches.length === 1) {
+            // detect single touch.
+            initialClientY = event.targetTouches[0].clientY;
+          }
+        };
+        targetElement.ontouchmove = function (event) {
+          if (event.targetTouches.length === 1) {
+            // detect single touch.
+            handleScroll(event, targetElement);
+          }
+        };
+
+        if (!documentListenerAdded) {
+          document.addEventListener('touchmove', preventDefault, hasPassiveEvents ? { passive: false } : undefined);
+          documentListenerAdded = true;
+        }
+      }
+    } else {
+      setOverflowHidden(options);
+      var _lock = {
+        targetElement: targetElement,
+        options: options || {}
+      };
+
+      locks = [].concat(_toConsumableArray(locks), [_lock]);
+    }
+  };
+
+  var clearAllBodyScrollLocks = exports.clearAllBodyScrollLocks = function clearAllBodyScrollLocks() {
+    if (isIosDevice) {
+      // Clear all locks ontouchstart/ontouchmove handlers, and the references.
+      locks.forEach(function (lock) {
+        lock.targetElement.ontouchstart = null;
+        lock.targetElement.ontouchmove = null;
+      });
+
+      if (documentListenerAdded) {
+        document.removeEventListener('touchmove', preventDefault, hasPassiveEvents ? { passive: false } : undefined);
+        documentListenerAdded = false;
+      }
+
+      locks = [];
+
+      // Reset initial clientY.
+      initialClientY = -1;
+    } else {
+      restoreOverflowSetting();
+      locks = [];
+    }
+  };
+
+  var enableBodyScroll = exports.enableBodyScroll = function enableBodyScroll(targetElement) {
+    if (isIosDevice) {
+      if (!targetElement) {
+        // eslint-disable-next-line no-console
+        console.error('enableBodyScroll unsuccessful - targetElement must be provided when calling enableBodyScroll on IOS devices.');
+        return;
+      }
+
+      targetElement.ontouchstart = null;
+      targetElement.ontouchmove = null;
+
+      locks = locks.filter(function (lock) {
+        return lock.targetElement !== targetElement;
+      });
+
+      if (documentListenerAdded && locks.length === 0) {
+        document.removeEventListener('touchmove', preventDefault, hasPassiveEvents ? { passive: false } : undefined);
+
+        documentListenerAdded = false;
+      }
+    } else {
+      locks = locks.filter(function (lock) {
+        return lock.targetElement !== targetElement;
+      });
+      if (!locks.length) {
+        restoreOverflowSetting();
+      }
+    }
+  };
+});

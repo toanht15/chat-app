@@ -719,7 +719,7 @@ class HistoriesController extends AppController
             }
 
             $val['THistoryChatLog']['message'] = trim($textOfMessage);
-          } 
+          }
         }
 
         if ($val['THistoryChatLog']['message_type'] == 81) {
@@ -2311,7 +2311,7 @@ class HistoriesController extends AppController
     }
 
     $stayList = [];
-    if (count($historyIdList) >= 100000) {
+    if (defined('LIMIT_EXPORT_HISTORY_CSV') && LIMIT_EXPORT_HISTORY_CSV === true && count($historyIdList) >= 100000) {
 
     } else {
       $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
@@ -2341,7 +2341,7 @@ class HistoriesController extends AppController
         }
       }
     }
-    
+
     return $stayList;
   }
 

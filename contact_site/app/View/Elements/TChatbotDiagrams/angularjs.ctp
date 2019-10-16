@@ -574,18 +574,31 @@
           for(var i=0; i<list.length; i++){
             if(Number(list[i].type) === 1) {
               this.textList.push(list[i].value);
+            }else if (Number(list[i].type) === 2) {
+                this.textList.push(list[i].value);
             }
           }
         },
         _initPopupOverlapEvent: function() {
           popupEventOverlap.closePopup = function() {
+              var branchSelectionTypeList = [];
+              for(var i=0; i<$scope.branchSelectionList.length; i++){
+                  branchSelectionTypeList.push($scope.branchSelectionList[i].type);
+              }
             $scope.branchSelectionList.length = 0;
             this.textList = $("#bulk_textarea").val().split("\n");
             for(var i=0; i < this.textList.length; i++){
-              $scope.branchSelectionList.push({
-                type: "1",
-                value: this.textList[i]
-              });
+                if (Number(branchSelectionTypeList[i]) === 2){
+                    $scope.branchSelectionList.push({
+                        type: "2",
+                        value: this.textList[i],
+                    });
+                } else {
+                    $scope.branchSelectionList.push({
+                        type: "1",
+                        value: this.textList[i],
+                    });
+                }
             }
             popupEventOverlap.closeNoPopupOverlap();
             $scope.$apply();
@@ -1421,31 +1434,39 @@
           _checkPastPortListFromCurrent: function(targetList, number, coverIndex, groupListLength, port) {
             var textList = [];
             var typeList = [];
+            var idList = [];
             for (var j = 0; j < $scope.oldSelectionList.length; j++) {
               textList.push($scope.oldSelectionList[j].value);
               typeList.push($scope.oldSelectionList[j].type);
+              idList.push($scope.oldSelectionList[j].uuid)
             }
             var contentNum = textList.indexOf(targetList[number].value);
-            if (contentNum === -1) {
+            var idNum = idList.indexOf(targetList[number].uuid);
+            var isTextEdited = (targetList[number].uuid === idList[number]) && (targetList[number].value !== textList[number]);
+            var isNotExist = targetList[number].uuid == undefined || idNum === -1 || isTextEdited;
+            if (isNotExist) {
               /* 追加するパターン */
               /* 過去にはないが、現在にあるパターン */
               $scope.currentEditCellParent.embed(port);
               initNodeEvent([port]);
               graph.addCell(port);
+              targetList[number]['uuid'] = port.id;
             } else {
               /* 追加するパターン */
               /* 両方にあるが、タイプが違うパターン */
-              if (typeList[contentNum] !== targetList[number].type) {
+              if (typeList[idNum] !== targetList[number].type) {
                 $scope.currentEditCellParent.embed(port);
                 initNodeEvent([port]);
                 graph.addCell(port);
+                targetList[number]['uuid'] = port.id;
               }
               /* 編集するパターン */
               /* 両方にあり、タイプも同じパターン */
               var childList = this._getCurrentPortList();
               for (var i = 0; i < childList.length; i++) {
-                if (childList[i].attr("nodeBasicInfo/tooltip") === targetList[number].value) {
+                if (childList[i].id === targetList[number].uuid) {
                   this._setSelfPosition(childList[i], this._getSelfPosition(number, targetList));
+
                   var topOpacity = 1,
                       bottomOpacity = 1;
                   if (coverIndex === 0) {
@@ -1463,21 +1484,25 @@
           _checkCurrentPortListFromPast: function(targetList) {
             var textList = [];
             var typeList = [];
+            var idList = [];
             /* テキストと選択肢で内容が同一の場合は削除すること */
             for (var j = 0; j < targetList.length; j++) {
               textList.push(targetList[j].value);
               typeList.push(targetList[j].type);
+              idList.push(targetList[j].uuid);
             }
 
             var childList = this._getCurrentPortList();
             for (var i = 0; i < childList.length; i++) {
               var containNum = textList.indexOf(childList[i].attr("nodeBasicInfo/tooltip"));
-              if (containNum === -1) {
+              var idNum = idList.indexOf(childList[i].id);
+              var shouldRemove = (idList[i] === childList[i].id) && (textList[i] !== childList[i].attr("nodeBasicInfo/tooltip"));
+              if (containNum === -1 || idNum === -1 || shouldRemove) {
                 /* 過去には有るが、現在に見つからない場合は削除 */
                 childList[i].remove();
               } else {
                 /* 過去にも現在にも同名のテキストがあるが、タイプが違う場合は削除 */
-                switch (Number(typeList[containNum])) {
+                switch (Number(typeList[idNum])) {
                   case 1:
                     /* 現在は選択肢　過去は文章 */
                     if (childList[i].attr("nodeBasicInfo/nodeType") === "childTextNode") {

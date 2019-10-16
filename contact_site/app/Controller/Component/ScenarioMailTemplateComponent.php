@@ -67,8 +67,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
           $value = trim($this->createHearingAnswerMessageContent($data['message'], $data['separator']), "\n");
         }
       }
-
-      $message = preg_replace("/{{(".$variable.")\}}/", $value, $message);
+      $qvariable = preg_quote($variable, '/');
+      $message = preg_replace("/{{(".$qvariable.")\}}/", $value, $message);
     }
     return $message;
   }

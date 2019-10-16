@@ -14,6 +14,7 @@ class ChatHistoriesController extends AppController
     'THistory' => [
       'limit' => 100,
       'order' => [
+        'THistory.firstSpeechTime' => 'desc',
         'THistory.id' => 'desc'
       ],
       'fields' => [
