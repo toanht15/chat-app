@@ -3908,7 +3908,7 @@
                       $('#sincloBox section#chatTab #flexBoxWrap').css('width', '100%');
                     } else {
                       sinclo.chatApi.bodyPosition = document.body.style.position;
-                      document.body.style.position = 'fixed';
+                      //document.body.style.position = 'fixed';
                     }
 
                     $(document).one('touchstart', function(e) {
