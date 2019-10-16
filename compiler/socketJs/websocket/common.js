@@ -5050,7 +5050,7 @@ var socket, // socket.io
             }
           } else {
             if ((check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
-                Number(sincloInfo.widget.spAutoOpenFlg) === 1) || (dataOpenflg === 'false' && storage.s.get('preWidgetOpened') !== 'true')) {
+                Number(sincloInfo.widget.spAutoOpenFlg) === 1 && dataOpenflg !== 'true') || (dataOpenflg === 'false' && storage.s.get('preWidgetOpened') !== 'true')) {
               console.log('saisyouka');
               //最小化
               if (abridgementType['MinRes']) {
@@ -5116,6 +5116,7 @@ var socket, // socket.io
       },
       hide: function() {
         sincloBox.style.display = 'none';
+        sinclo.chatApi.unlockPageScroll();
       },
       saveShownFlg: function() {
         storage.s.set('widgetShown', 'true');
