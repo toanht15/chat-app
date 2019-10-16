@@ -5116,6 +5116,7 @@ var socket, // socket.io
       },
       hide: function() {
         sincloBox.style.display = 'none';
+        sinclo.chatApi.unlockPageScroll();
       },
       saveShownFlg: function() {
         storage.s.set('widgetShown', 'true');
