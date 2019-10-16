@@ -6546,16 +6546,14 @@ var socket, // socket.io
         }[match];
       });
       return str;
-    }
-    ,
+    },
     firstUrl: function() {
       if (location.href.match('/sincloData\=/')) {
         return true;
       } else {
         return false;
       }
-    }
-    ,
+    },
     ref: function() {
       var reg = new RegExp(
           '^http(s)?:\/\/([A-z]+.)?' + location.hostname + '\/'),
