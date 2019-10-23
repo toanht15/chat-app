@@ -693,6 +693,7 @@
         userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId,
             'sincloSessionId');
         common.widgetHandler.resetMessageAreaState();
+        sinclo.chatApi.saveFlg = false;
         storage.l.set('leaveFlg', 'false');
         storage.l.unset('amsg');
         storage.s.unset('_scl_d_msg');
@@ -8559,9 +8560,6 @@
       execScenario: function(d) {
         var obj = check.isJSON(d) ? common.jParse(d) : d;
         sinclo.scenarioApi.init(obj.id, obj.activity.scenarios);
-        if (sinclo.diagramApi.callScenario.isCalledFromDiagram()) {
-          sinclo.chatApi.saveFlg = true;
-        }
         sinclo.scenarioApi.begin();
       }
     },
