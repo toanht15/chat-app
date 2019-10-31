@@ -746,7 +746,6 @@
         sinclo.trigger.flg = false;
         common.widgetHandler.resetMessageAreaState();
         sinclo.chatApi.saveFlg = false;
-        sinclo.trigger.judge.speechContentRegEx = [];
         storage.l.set('leaveFlg', 'false');
         storage.l.unset('amsg');
         storage.s.unset('_scl_d_msg');
@@ -8648,6 +8647,7 @@
         if (!('messages' in window.sincloInfo) ||
             (('messages' in window.sincloInfo) &&
                 typeof (window.sincloInfo.messages) !== 'object')) return false;
+        sinclo.trigger.judge.speechContentRegEx = [];
         this.flg = true;
         var messages = window.sincloInfo.messages;
         console.log('MESSAGES : ' + JSON.stringify(messages));
