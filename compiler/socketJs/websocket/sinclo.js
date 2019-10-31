@@ -694,6 +694,7 @@
             'sincloSessionId');
         common.widgetHandler.resetMessageAreaState();
         sinclo.chatApi.saveFlg = false;
+        sinclo.trigger.judge.speechContentRegEx = [];
         storage.l.set('leaveFlg', 'false');
         storage.l.unset('amsg');
         storage.s.unset('_scl_d_msg');
