@@ -4819,9 +4819,7 @@ var socket, // socket.io
       if (sincloBox && sincloBox.style.display === 'none') {
         common.widgetHandler.show();
         // sincloBox.parentNode.removeChild(sincloBox);
-      }
-
-      if (userInfo.accessType !== cnst.access_type.host) {
+      } else if (userInfo.accessType !== cnst.access_type.host) {
         var html = common.createWidget();
         $('body').append(html);
         emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
@@ -5052,7 +5050,7 @@ var socket, // socket.io
             }
           } else {
             if ((check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') &&
-                Number(sincloInfo.widget.spAutoOpenFlg) === 1) || (dataOpenflg === 'false' && storage.s.get('preWidgetOpened') !== 'true')) {
+                Number(sincloInfo.widget.spAutoOpenFlg) === 1 && dataOpenflg !== 'true') || (dataOpenflg === 'false' && storage.s.get('preWidgetOpened') !== 'true')) {
               console.log('saisyouka');
               //最小化
               if (abridgementType['MinRes']) {
@@ -5118,6 +5116,7 @@ var socket, // socket.io
       },
       hide: function() {
         sincloBox.style.display = 'none';
+        sinclo.chatApi.unlockPageScroll();
       },
       saveShownFlg: function() {
         storage.s.set('widgetShown', 'true');
@@ -7876,10 +7875,19 @@ var socket, // socket.io
       common.handleInit();
     }
 
-    // 接続時
-    socket.on('connect', function() {
-
-    }); // socket-on: connect
+    socket.on('reconnect', function() {
+      setTimeout(function(){
+        sinclo.connect()
+        .then(sinclo.accessInfo)
+        .then(function(data) {
+          socket.onceConnected();
+          return sinclo.executeConnectSuccess(data, window.sincloInfo.accessInfoData);
+        })
+        .then(function(result) {
+          sinclo.setHistoryId(result);
+        });
+      }, 1000);
+    });
 
     socket.on('changeTabId', function(d) {
       var obj = common.jParse(d);

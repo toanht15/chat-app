@@ -255,25 +255,6 @@ router.post('/auth/info', function(req, res, next) {
     console.log('delete id : ' + oldSessionId);
     delete sessionIds[oldSessionId];
     console.log('remains : ' + Object.keys(sessionIds).length);
-    /* FIXME
-    Object.keys(sessionIds).forEach(function(key) {
-      if (!CommonUtil.isset(io.sockets.connected[key])) {
-        console.log('delete not exist sessionId : ' + key);
-        delete sessionIds[key];
-        console.log('remains : ' + Object.keys(sessionIds).length);
-        var keys = Object.keys(list.customerList[obj.siteKey]);
-        if (keys && keys.length > 0) {
-          keys.forEach(function(customerListId) {
-            if (customerListId.indexOf(key) >= 0) {
-              console.log(
-                  'delete not exist list.customerList : ' + customerListId);
-              delete list.customerListId[info.siteKey][customerListId];
-            }
-          });
-        }
-      }
-    });
-     */
   }
 
   SharedData.connectList[obj.socketId] = {
@@ -360,6 +341,15 @@ router.post('/auth/info', function(req, res, next) {
           'historyId');
       obj.stayLogsId = SharedData.getSessionId(obj.siteKey, obj.sincloSessionId,
           'stayLogsId');
+    } else if (CommonUtil.isset(obj.historyId) && CommonUtil.isset(obj.stayLogsId)) {
+      if (CommonUtil.isKeyExists(SharedData.sincloCore, obj.siteKey + '.' + obj.sincloSessionId)) {
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['historyId'] = obj.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.sincloSessionId]['stayLogsId'] = obj.stayLogsId;
+      }
+      if (CommonUtil.isKeyExists(SharedData.sincloCore, obj.siteKey + '.' + obj.tabId)) {
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['historyId'] = obj.historyId;
+        SharedData.sincloCore[obj.siteKey][obj.tabId]['stayLogsId'] = obj.stayLogsId;
+      }
     }
 
     var getCompanyInfoFromApi = function(obj, ip, callback) {
@@ -395,9 +385,6 @@ router.post('/auth/info', function(req, res, next) {
         }
 
         obj.term = CommonUtil.timeCalculator(obj);
-        if (SharedData.getSessionId(obj.siteKey, obj.tabId, 'chat')) {
-          obj.chat = SharedData.getSessionId(obj.siteKey, obj.tabId, 'chat');
-        }
 
         var afterGetInformationProcess = function() {
           list.customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress +
@@ -412,6 +399,7 @@ router.post('/auth/info', function(req, res, next) {
 
           let history = new HistoryManager();
           history.getChatHistory(obj).then((addedObj) => {
+            obj.chat = addedObj.chat;
             res.json(obj);
           });
         };
