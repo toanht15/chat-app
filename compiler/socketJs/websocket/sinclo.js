@@ -746,6 +746,7 @@
         sinclo.trigger.flg = false;
         common.widgetHandler.resetMessageAreaState();
         sinclo.chatApi.saveFlg = false;
+        storage.s.unset('forNotHavingConnectionMessageStack');
         storage.l.set('leaveFlg', 'false');
         storage.l.unset('amsg');
         storage.s.unset('_scl_d_msg');
@@ -3996,7 +3997,7 @@
                   if (check.smartphone()) {
                     window.scrollTo(sinclo.chatApi.bodyScrollPosition.x, sinclo.chatApi.bodyScrollPosition.y);
                     if (check.android() && window.sincloInfo.widget.spMaximizeSizeType === 2) {
-                      $('#sincloBox section#chatTab #flexBoxWrap').css('position', sinclo.chatApi.bodyPosition);
+                      $('#sincloBox section#chatTab #flexBoxWrap').css('position', 'static');
                       $('#sincloBox section#chatTab #flexBoxWrap').css('bottom', '');
                       $('#sincloBox section#chatTab #flexBoxWrap').css('width', 'auto');
                     } else {
