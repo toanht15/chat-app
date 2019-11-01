@@ -2662,11 +2662,7 @@
           }
           // オートメッセージの内容をDBに保存し、オブジェクトから削除する
           if (!sinclo.chatApi.saveFlg && obj.tabId === userInfo.tabId) {
-            console.log('EMIT sendAutoChat');
-            emit('sendAutoChat',
-                {messageList: sinclo.chatApi.autoMessages.getByArray()});
-            sinclo.chatApi.autoMessages.unset();
-            sinclo.chatApi.saveFlg = true;
+            sinclo.executeForNotHavingConnectionMessageStack();
           } else if (obj.tabId !== userInfo.tabId) {
             // メインのオートメッセージだけ保存してサブのオートメッセージは保存しない
             console.log('unset automessages');
@@ -7869,7 +7865,6 @@
 
           //サイト訪問者がチャット送信した初回のタイミング
           if (!check.isset(firstChatEmit)) {
-            sinclo.executeForNotHavingConnectionMessageStack();
             if (common.hasGA()) {
               common.callGA('sendChat', location.href, 1);
             }
