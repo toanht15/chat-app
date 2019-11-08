@@ -10,10 +10,12 @@
     self.receiveFileEventListener = null;
     self.firstActionFlg = true;
     self.callFirst = true;
+    self.messageIntervalTimeSec = 2; // default
 
     self.actionInit = function() {
       self.beginNodeId = '';
       self.currentNodeId = '';
+      self.callFirst = true;
 
       Object.keys(self.setActionList).some(function(uuid, index, arr){
         if(self.setActionList[uuid].type !== 'devs.Model') return false;
@@ -42,7 +44,7 @@
           return;
         }
 
-        var time = 2;
+        var time = self.messageIntervalTimeSec;
         if(self.callFirst
             || actionNode.attrs.nodeBasicInfo.nodeType === 'scenario'
             || actionNode.attrs.nodeBasicInfo.nodeType === 'jump'

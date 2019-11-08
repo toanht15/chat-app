@@ -2158,6 +2158,7 @@
       // シミュレーターの起動
       this.openSimulator = function() {
         $scope.diagramSimulatorService.actionListOrigin = graph.toJSON();
+        $scope.diagramSimulatorService.messageIntervalTimeSec = $scope.messageIntervalTimeSec;
         $scope.$broadcast('openSimulator', $scope.diagramSimulatorService.actionListOrigin);
         // シミュレータ起動時、強制的に自由入力エリアを有効の状態で表示する
         $scope.$broadcast('switchSimulatorChatTextArea', true);
